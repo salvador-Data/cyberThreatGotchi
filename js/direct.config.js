@@ -102,8 +102,8 @@ window.HPL_DIRECT = {
       stripeKey: "coreKit",
       source: "direct",
       description:
-        "Complete CyberThreatGotchi Cipherhorn build - BPI-R3 Mini (~$160 supplier floor), e-ink HAT, 3D enclosure, flashed SD, PSU, Philly flash and burn-in. Display variant (e-ink vs IPS) is the only hardware customization.",
-      includes: ["BPI-R3 Mini", "E-ink HAT", "Enclosure", "SD + PSU"],
+        "Complete CyberThreatGotchi Cipherhorn build - BPI-R3 Mini 2 GB RAM (~$160 supplier floor), e-ink HAT, 3D enclosure, flashed SD, PSU, Philly flash and burn-in. Display variant (e-ink vs IPS) is the only hardware customization.",
+      includes: ["BPI-R3 Mini (2 GB RAM)", "E-ink HAT", "Enclosure", "SD + PSU"],
       badge: "Popular",
     },
     {

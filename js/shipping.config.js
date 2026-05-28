@@ -98,5 +98,12 @@ window.HPL_SHIPPING = {
     dsEsp32Cyd: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
     dsWiringLab: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
     dsKaliNetHunter: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
+    dsRtlSdrKit: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
+    dsNesdrSmart: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
+    dsLanTap: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
+    dsThrowingStarKit: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
+    dsEsp32WifiLab: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
+    dsUsbRubberDucky: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
+    dsHak5WifiPineapple: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
   },
 };
