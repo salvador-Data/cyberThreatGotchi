@@ -40,7 +40,7 @@ body {
   margin: 0;
   font-family: var(--font-body);
   font-size: 1.05rem;
-  line-height: 1.65;
+  line-height: 1.55;
   color: var(--ink);
   background: var(--bg);
   min-height: 100vh;
@@ -192,8 +192,9 @@ img {
 
 /* Hero */
 .hero {
-  padding: 1.75rem 0 1.25rem;
+  padding: 1.25rem 0 0.75rem;
   text-align: center;
+  overflow: visible;
 }
 
 .hero-badge {
@@ -206,7 +207,7 @@ img {
   background: var(--panel);
   font-size: 0.82rem;
   color: var(--muted);
-  margin-bottom: 1rem;
+  margin-bottom: 0.65rem;
 }
 
 .hero-badge .dot {
@@ -227,9 +228,13 @@ img {
   font-family: var(--font-display);
   font-size: clamp(2.4rem, 6vw, 3.75rem);
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.22;
   letter-spacing: -0.03em;
-  margin: 0 0 0.85rem;
+  margin: 0 0 0.6rem;
+  padding-bottom: 0.14em;
+  overflow: visible;
+  position: relative;
+  z-index: 2;
   background: linear-gradient(135deg, var(--ink) 0%, var(--accent) 50%, var(--magenta) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -240,7 +245,8 @@ img {
   font-size: 1.1rem;
   color: var(--muted);
   max-width: 36rem;
-  margin: 0 auto 1.25rem;
+  margin: 0 auto 0.85rem;
+  line-height: 1.5;
 }
 
 .hero-actions {
@@ -248,7 +254,7 @@ img {
   flex-wrap: wrap;
   gap: 0.75rem;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.65rem;
 }
 
 .btn {
@@ -310,13 +316,23 @@ img {
   pointer-events: none;
 }
 
+/* Inner pages: hero image below page-hero (replaces inline margin-bottom) */
+.wrap > .hero-visual {
+  margin-bottom: 1.25rem;
+}
+
+.page-hero .hero-actions {
+  justify-content: flex-start;
+  margin-top: 0.65rem;
+}
+
 /* Sections */
 section {
-  padding: 1.5rem 0;
+  padding: 1rem 0;
 }
 
 .section-compact {
-  padding: 1.15rem 0;
+  padding: 0.75rem 0;
 }
 
 .section-label {
@@ -325,7 +341,7 @@ section {
   letter-spacing: 0.15em;
   color: var(--accent);
   font-weight: 700;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.45rem;
 }
 
 .section-title {
@@ -333,18 +349,20 @@ section {
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 700;
   letter-spacing: -0.02em;
-  margin: 0 0 1rem;
+  line-height: 1.2;
+  margin: 0 0 0.6rem;
 }
 
 .section-sub {
   color: var(--muted);
   max-width: 32rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.6rem;
+  line-height: 1.5;
 }
 
 .section-cta {
   text-align: center;
-  margin: 1.25rem 0 0;
+  margin: 0.85rem 0 0;
   font-size: 0.95rem;
 }
 
@@ -490,7 +508,7 @@ section {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.75rem;
-  margin: 1.25rem 0 0;
+  margin: 0.85rem 0 0;
 }
 
 .stat {
@@ -517,16 +535,22 @@ section {
 
 /* Page header (inner pages) */
 .page-hero {
-  padding: 1.35rem 0 0.85rem;
+  padding: 1.1rem 0 0.95rem;
   border-bottom: 1px solid var(--panel-border);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  overflow: visible;
 }
 
 .page-hero h1 {
   font-family: var(--font-display);
   font-size: clamp(2rem, 5vw, 3rem);
-  margin: 0 0 0.75rem;
+  line-height: 1.22;
+  margin: 0 0 0.55rem;
+  padding-bottom: 0.14em;
   letter-spacing: -0.02em;
+  overflow: visible;
+  position: relative;
+  z-index: 2;
 }
 
 .page-hero .lead {
@@ -534,6 +558,7 @@ section {
   font-size: 1.15rem;
   max-width: 40rem;
   margin: 0;
+  line-height: 1.5;
 }
 
 /* Prose */
@@ -544,7 +569,8 @@ section {
 .prose h2 {
   font-family: var(--font-display);
   font-size: 1.35rem;
-  margin: 1.75rem 0 0.65rem;
+  line-height: 1.25;
+  margin: 1.25rem 0 0.5rem;
   color: var(--ink);
 }
 
@@ -596,7 +622,7 @@ section {
 
 /* Footer */
 .site-footer {
-  margin-top: 1.75rem;
+  margin-top: 1.25rem;
   padding: 1.25rem 0;
   border-top: 1px solid var(--panel-border);
   text-align: center;
