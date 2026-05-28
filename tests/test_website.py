@@ -196,6 +196,11 @@ def test_cardputer_page_content():
     assert "CARDPUTER_PRODUCTS.md" in html
     assert "BLE-Bot-Cardputer/releases" in html
     assert "m5stack-cardputer" in html
+    assert "ST7789" in html
+    assert "240x135" in html
+    assert "QWERTY" in html
+    assert 'id="ble-bot"' in html
+    assert "WhiteHat CyberSecurity" in html
     assert "SHA-256" in html or "sha256" in html
     assert "SECURITY.md" in html
 
