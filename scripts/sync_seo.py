@@ -44,6 +44,17 @@ def _page_label(filename: str) -> str:
     return Path(filename).stem.replace("-", " ").title()
 
 
+def _alternate_names(cfg: dict[str, Any]) -> list[str]:
+    names: list[str] = []
+    for name in cfg.get("alternateNames", []):
+        if name and name not in names:
+            names.append(name)
+    legal = cfg.get("legalName", "")
+    if legal and legal not in names:
+        names.append(legal)
+    return names
+
+
 def _city_address(cfg: dict[str, Any]) -> dict[str, Any]:
     return {
         "@type": "PostalAddress",
@@ -74,6 +85,56 @@ def _area_served(cfg: dict[str, Any]) -> list[dict[str, Any]]:
     return areas
 
 
+def _brand_description(cfg: dict[str, Any]) -> str:
+    tagline = (cfg.get("tagline") or "").strip()
+    base = (
+        "Hacker Planet LLC — Philadelphia cybersecurity hardware lab. "
+        "Blue Team, Red Team, OSINT, remote US consulting, and authorized ethical hacking lab hardware. "
+        "City-only public address; no walk-in retail."
+    )
+    if tagline and tagline not in base:
+        return f"{cfg['siteName']} — {tagline}. {base.split('. ', 1)[1]}"
+    return base
+
+
+def _organization_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
+    return {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": cfg["siteName"],
+        "alternateName": _alternate_names(cfg),
+        "legalName": cfg["legalName"],
+        "url": base.rstrip("/") + "/",
+        "logo": _abs(base, cfg["defaultOgImage"]),
+        "email": cfg["email"],
+        "telephone": cfg["phone"],
+        "address": _city_address(cfg),
+        "areaServed": _area_served(cfg),
+        "sameAs": cfg.get("sameAs", []),
+        "description": _brand_description(cfg),
+    }
+
+
+def _local_business_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
+    org = _organization_ld(cfg, base)
+    org["@type"] = ["LocalBusiness", "Organization"]
+    return org
+
+
+def _website_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
+    home = base.rstrip("/") + "/"
+    block: dict[str, Any] = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": cfg["siteName"],
+        "alternateName": _alternate_names(cfg),
+        "url": home,
+        "publisher": {"@type": "Organization", "name": cfg["siteName"], "legalName": cfg["legalName"]},
+        "description": _brand_description(cfg),
+    }
+    return block
+
+
 def _breadcrumb_ld(base: str, filename: str, site_name: str) -> dict[str, Any]:
     path = "" if filename == "index.html" else filename
     url = _abs(base, path)
@@ -101,96 +162,17 @@ def _breadcrumb_ld(base: str, filename: str, site_name: str) -> dict[str, Any]:
     }
 
 
-def _local_business_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
-    return {
-        "@context": "https://schema.org",
-        "@type": ["LocalBusiness", "Organization"],
-        "name": cfg["legalName"],
-        "alternateName": cfg["siteName"],
-        "url": base.rstrip("/") + "/",
-        "logo": _abs(base, cfg["defaultOgImage"]),
-        "email": cfg["email"],
-        "telephone": cfg["phone"],
-        "address": _city_address(cfg),
-        "areaServed": _area_served(cfg),
-        "sameAs": cfg.get("sameAs", []),
-        "description": (
-            "Philadelphia cybersecurity firm — Blue Team, Red Team, OSINT, remote US consulting, "
-            "and authorized ethical hacking lab hardware. City-only public address; no walk-in retail."
-        ),
-    }
-
-
-def _organization_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
-    return _local_business_ld(cfg, base)
-
-
-def _website_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
-    return {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": cfg["siteName"],
-        "url": base.rstrip("/") + "/",
-        "publisher": {"@type": "Organization", "name": cfg["legalName"]},
-    }
-
-
-def _professional_service_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
-    return {
-        "@context": "https://schema.org",
-        "@type": "ProfessionalService",
-        "name": cfg["legalName"],
-        "url": base.rstrip("/") + "/",
-        "email": cfg["email"],
-        "telephone": cfg["phone"],
-        "areaServed": _area_served(cfg),
-        "address": _city_address(cfg),
-        "serviceType": [
-            "Cybersecurity consulting",
-            "Managed Blue Team",
-            "Authorized Red Team assessment",
-            "OSINT investigation",
-            "Ethical hacking lab hardware",
-            "Remote cybersecurity consulting",
-        ],
-    }
-
-
-def _contact_page_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
-    return {
-        "@context": "https://schema.org",
-        "@type": "ContactPage",
-        "name": "Contact Hacker Planet LLC",
-        "url": _abs(base, "contact.html"),
-    }
-
-
-def _product_ld(page: dict[str, Any], cfg: dict[str, Any], base: str, filename: str) -> dict[str, Any]:
-    return {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": page["title"].split("·")[0].strip(),
-        "description": page["description"],
-        "brand": {"@type": "Brand", "name": cfg["siteName"]},
-        "url": _abs(base, filename if filename != "index.html" else ""),
-    }
-
-
 def _json_ld_blocks(
     cfg: dict[str, Any], page: dict[str, Any], base: str, filename: str
 ) -> list[dict[str, Any]]:
     blocks: list[dict[str, Any]] = []
     for kind in page.get("jsonLd", []):
-        if kind in ("organization", "localBusiness"):
+        if kind == "organization":
+            blocks.append(_organization_ld(cfg, base))
+        elif kind in ("localBusiness",):
             blocks.append(_local_business_ld(cfg, base))
         elif kind == "website":
             blocks.append(_website_ld(cfg, base))
-        elif kind == "professionalService":
-            blocks.append(_professional_service_ld(cfg, base))
-        elif kind == "contactPage":
-            blocks.append(_contact_page_ld(cfg, base))
-        elif kind == "product":
-            blocks.append(_product_ld(page, cfg, base, filename))
         elif kind == "breadcrumb":
             blocks.append(_breadcrumb_ld(base, filename, cfg["siteName"]))
     return blocks
@@ -206,6 +188,7 @@ def _seo_block(cfg: dict[str, Any], page: dict[str, Any], filename: str) -> str:
     desc = page["description"]
     keywords = page.get("keywords", "")
     og_type = page.get("ogType", "website")
+    brand = cfg["siteName"]
 
     lines = [
         MARKER_START,
@@ -219,7 +202,10 @@ def _seo_block(cfg: dict[str, Any], page: dict[str, Any], filename: str) -> str:
         f'  <link rel="canonical" href="{escape(canonical)}"/>',
         f'  <link rel="alternate" hreflang="en-us" href="{escape(canonical)}"/>',
         f'  <link rel="alternate" href="{escape(gh_alt)}"/>',
-        f'  <meta property="og:site_name" content="{escape(cfg["siteName"])}"/>',
+        f'  <meta name="apple-mobile-web-app-title" content="{escape(brand)}"/>',
+        f'  <link rel="icon" href="{escape(_abs(base, cfg["defaultOgImage"]))}" type="image/png"/>',
+        f'  <link rel="apple-touch-icon" href="{escape(_abs(base, cfg["defaultOgImage"]))}"/>',
+        f'  <meta property="og:site_name" content="{escape(brand)}"/>',
         f'  <meta property="og:locale" content="{escape(cfg["locale"])}"/>',
         f'  <meta property="og:type" content="{escape(og_type)}"/>',
         f'  <meta property="og:title" content="{escape(title)}"/>',

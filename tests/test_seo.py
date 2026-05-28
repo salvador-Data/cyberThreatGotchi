@@ -20,6 +20,9 @@ def _load_pages() -> dict:
 def test_seo_config_valid():
     data = json.loads(SEO_JSON.read_text(encoding="utf-8"))
     assert data["canonicalBase"] == "https://hackerplanet.dev"
+    assert data["siteName"] == "Hacker Planet"
+    assert "Hacker Planet LLC" in data.get("alternateNames", [])
+    assert "https://hackerplanet.dev" in data.get("sameAs", [])
     assert "salvadorData@proton.me" in data["email"]
     assert len(data["pages"]) >= 11
     assert "cybersecurity-philadelphia.html" in data["pages"]
@@ -68,6 +71,29 @@ def test_no_duplicate_titles():
     pages = _load_pages()
     titles = [meta["title"] for meta in pages.values()]
     assert len(titles) == len(set(titles)), "duplicate titles in site.json"
+
+
+def test_brand_in_all_titles():
+    pages = _load_pages()
+    for name, meta in pages.items():
+        title = meta["title"]
+        assert title.startswith("Hacker Planet |"), f"{name}: {title!r}"
+
+
+def test_brand_in_injected_head_tags():
+    pages = _load_pages()
+    for name in pages:
+        html = (WEB / name).read_text(encoding="utf-8")
+        assert 'property="og:site_name" content="Hacker Planet"' in html, name
+        assert "Hacker Planet |" in html, name
+
+
+def test_organization_schema_brand_name():
+    html = (WEB / "index.html").read_text(encoding="utf-8")
+    assert '"name": "Hacker Planet"' in html or '"name":"Hacker Planet"' in html
+    assert "alternateName" in html
+    assert "WebSite" in html
+    assert "Organization" in html or "LocalBusiness" in html
 
 
 def test_json_ld_valid_on_all_pages():

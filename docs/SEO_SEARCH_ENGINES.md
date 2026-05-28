@@ -240,43 +240,48 @@ China traffic is not the primary market. If you expand:
 | Item | Location |
 |------|----------|
 | Central meta + JSON-LD | `website/seo/site.json` → `scripts/sync_seo.py` |
-| LocalBusiness / Organization (city only, no street) | JSON-LD on all public pages |
+| Brand-first `<title>` pattern | `Hacker Planet \| …` on every page in `site.json` |
+| Organization / WebSite / LocalBusiness JSON-LD | `"name": "Hacker Planet"` with `alternateName` |
+| `og:site_name` + `apple-mobile-web-app-title` | Injected per page |
 | Service area (Philly metro + remote US) | `areaServed` in schema |
-| Landing page | `website/cybersecurity-philadelphia.html` |
+| Brand landing for local queries | `website/cybersecurity-philadelphia.html` |
 | Canonical URLs | `https://hackerplanet.dev/...` |
 | Open Graph + Twitter cards | Injected per page |
 | `robots.txt` | Explicit allow for Googlebot, Bingbot, DuckDuckBot, Slurp, Yandex, Applebot, Baiduspider, Brave, facebot; blocks `payments.config.js` only |
 | `sitemap.xml` | All pages in `site.json` |
+| IndexNow | `hpl-hackerplanet-indexnow-key.txt` + `scripts/ping_indexnow.py` |
 
-### Target keywords (natural copy, not stuffing)
+### Brand query targets (search engines)
 
-- cybersecurity Philadelphia
-- Philadelphia cybersecurity firm
-- ethical hacking lab Philadelphia
-- authorized penetration testing lab
-- remote cybersecurity consulting
-- relocate cybersecurity / MSP Philadelphia
-- computer hacking (framed: **authorized lab only**)
-- homelab security / CyberThreatGotchi
+Primary brand queries to monitor in GSC / Bing after verification:
+
+- `hacker planet`
+- `hacker planet llc`
+- `hacker planet philadelphia`
+- `hackerplanet.dev`
+- `site:hackerplanet.dev`
+
+**Why brand may not rank yet:** `site:hackerplanet.dev` returning zero results usually means Google has **not indexed** the domain — not a title-tag problem. Fix: GSC domain verification → submit sitemap → URL inspection → request indexing.
+
+**Differentiation in SERP:** Unrelated entities use “hacker planet” (e.g. media titles, other labs). Our schema and titles consistently pair **Hacker Planet** with **Philadelphia cybersecurity hardware lab** and **Hacker Planet LLC** so crawlers associate the brand with this site.
+
+**Knowledge panel:** Unlikely at launch without Wikipedia/major press. Brand consistency (NAP, sameAs, titles) helps long-term entity recognition.
 
 ---
 
-## 10. Content calendar & backlinks (3–6 months)
+## 10. Brand SERP checklist (search engines only)
 
-| Week | Action |
+| Step | Action |
 |------|--------|
-| 1 | GSC + Bing verify, submit sitemap, IndexNow ping |
-| 2 | Reddit u/SalvadorData — defensive lab posts linking to `cybersecurity-philadelphia.html` |
-| 3 | GitHub README + releases link to hackerplanet.dev pages |
-| 4 | Kickstarter / product updates with canonical URLs |
-| Monthly | One new FAQ or case-study section on services or Philly landing page |
-| Ongoing | MSP outreach, Philadelphia tech meetups (virtual OK), Pro feed testimonials |
+| 1 | Verify `hackerplanet.dev` in GSC (DNS TXT) |
+| 2 | Verify in Bing Webmaster Tools |
+| 3 | Submit `https://hackerplanet.dev/sitemap.xml` to both |
+| 4 | Run `python scripts/ping_indexnow.py` after deploy |
+| 5 | GSC URL inspection → request indexing for `/` and `cybersecurity-philadelphia.html` |
+| 6 | Week 2+: check `site:hackerplanet.dev` on Google and Bing |
+| 7 | Track brand queries in GSC Performance tab |
 
-**Backlink sources (authorized framing only):**
-
-- [github.com/salvador-Data](https://github.com/salvador-Data)
-- [reddit.com/user/SalvadorData](https://www.reddit.com/user/SalvadorData/)
-- GitHub Pages mirror (alternate link, canonical stays hackerplanet.dev)
+**sameAs (entity signals):** GitHub profile, CyberThreatGotchi repo, Reddit u/SalvadorData, and `https://hackerplanet.dev` — configured in `website/seo/site.json`.
 
 ---
 
@@ -288,8 +293,9 @@ Run automated preflight: `.\scripts\seo_go_live_checklist.ps1`
 
 - [ ] Domain verified in Search Console
 - [ ] Sitemap submitted and processed
-- [ ] `cybersecurity-philadelphia.html` indexed
-- [ ] No coverage errors on key pages
+- [ ] Homepage and `cybersecurity-philadelphia.html` indexed
+- [ ] `site:hackerplanet.dev` returns results
+- [ ] Brand queries tracked: `hacker planet`, `hacker planet llc`, `hacker planet philadelphia`
 
 ### Bing / Yahoo / DuckDuckGo / Ecosia
 

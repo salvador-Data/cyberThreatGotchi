@@ -137,12 +137,39 @@ if ($docCode -eq 0) {
 }
 
 Write-Host ""
+Write-Host "Live brand signals (search engines)" -ForegroundColor Yellow
+try {
+    $homeHtml = (Invoke-WebRequest -Uri "$Domain/" -UseBasicParsing -TimeoutSec 25).Content
+    if ($homeHtml -match "<title>Hacker Planet \|") {
+        Write-Host "  OK   homepage title starts with Hacker Planet |" -ForegroundColor Green
+    } else {
+        Write-Host "  MISS homepage title missing Hacker Planet | prefix (deploy pending?)" -ForegroundColor Red
+        $fail++
+    }
+    if ($homeHtml -match 'property="og:site_name" content="Hacker Planet"') {
+        Write-Host "  OK   og:site_name is Hacker Planet" -ForegroundColor Green
+    } else {
+        Write-Host "  MISS og:site_name not Hacker Planet (deploy pending?)" -ForegroundColor Red
+        $fail++
+    }
+    if ($homeHtml -match '"name":"Hacker Planet"' -or $homeHtml -match '"name": "Hacker Planet"') {
+        Write-Host "  OK   Organization/WebSite JSON-LD brand name" -ForegroundColor Green
+    } else {
+        Write-Host "  MISS JSON-LD missing name Hacker Planet (deploy pending?)" -ForegroundColor Red
+        $fail++
+    }
+} catch {
+    Write-Host "  FAIL could not fetch homepage for brand checks - $($_.Exception.Message)" -ForegroundColor Red
+    $fail++
+}
+
+Write-Host ""
 Write-Host "Andy - manual steps remaining" -ForegroundColor Yellow
 Write-Host "  - GSC: verify domain TXT - python scripts/seo_verification_dns.py --doc"
-Write-Host "  - Bing: verify CNAME or meta tag in site.json"
+Write-Host "  - Bing: verify CNAME or meta tag in site.json bingSiteVerification"
 Write-Host "  - Submit sitemap in GSC + Bing Webmaster Tools"
-Write-Host "  - DuckDuckGo: ensure Bing indexed; optional suggest at duckduckgo.com/duckduckgo-help-pages/company/suggesting-a-site/"
-Write-Host "  - Google Business Profile - docs/SEO_GOOGLE_BUSINESS_PROFILE.md"
+Write-Host "  - Request indexing for https://hackerplanet.dev/ and cybersecurity-philadelphia.html"
+Write-Host "  - Test brand query: site:hackerplanet.dev then search hacker planet philadelphia"
 Write-Host "  - After deploy: python scripts/ping_indexnow.py"
 Write-Host ""
 
