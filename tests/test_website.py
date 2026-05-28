@@ -154,6 +154,8 @@ def test_about_page_content():
     assert "Philadelphia" in html
     assert "Mr. CrackBot" in html or "CrackBot" in html
     assert "Hacker Planet LLC" in html
+    assert "ecosystem.html" in html
+    assert "shop.html" in html
 
 
 def test_no_warehouse_address_in_public_html():
@@ -168,12 +170,11 @@ def test_shipping_config_has_internal_warehouse():
     text = (WEB / "js" / "shipping.config.js").read_text(encoding="utf-8")
     assert "664 Walker Street" in text
     assert "11135" in text
-    assert "line1:" in text
-    assert "Pat" in html
-    assert "Philadelphia" in html
-    assert "Hacker Planet LLC" in html
-    assert "ecosystem.html" in html
-    assert "shop.html" in html
+    assert "shipFrom" in text
+    assert 'street: "664 Walker Street"' in text
+    assert "publicLabel" in text
+    origin_block = text.split("origin:")[1].split("disclaimer:")[0]
+    assert "664 Walker" not in origin_block
 
 
 def test_sync_website_to_docs():
