@@ -33,13 +33,44 @@
   ],
   "pages": {
     "index.html": {
-      "title": "Hacker Planet | Philadelphia Cybersecurity Firm & Ethical Hacking Lab",
-      "description": "Hacker Planet LLC — Philadelphia cybersecurity firm for Blue Team, Red Team, and OSINT. Remote US consulting, ethical hacking lab hardware, CyberThreatGotchi IPS, and authorized penetration testing training gear.",
+      "title": "Hacker Planet | Official Site — Philadelphia Cybersecurity Lab",
+      "description": "Hacker Planet — official site of Hacker Planet LLC, Philadelphia cybersecurity firm for Blue Team, Red Team, and OSINT. Remote US consulting, ethical hacking lab hardware, CyberThreatGotchi IPS, and authorized penetration testing training gear.",
       "keywords": "Hacker Planet, Hacker Planet LLC, hacker planet philadelphia, cybersecurity Philadelphia, ethical hacking lab Philadelphia, CyberThreatGotchi",
       "ogType": "website",
       "ogImage": "/images/og-cybertech.png",
-      "jsonLd": ["organization", "website", "localBusiness"],
+      "jsonLd": ["organization", "website", "localBusiness", "faq"],
+      "faqs": [
+        {
+          "question": "What is Hacker Planet?",
+          "answer": "Hacker Planet is the brand and official site of Hacker Planet LLC — a Philadelphia cybersecurity firm offering Blue Team retainers, authorized Red Team assessments, OSINT support, and ethical hacking lab hardware including CyberThreatGotchi edge IPS."
+        },
+        {
+          "question": "Is Hacker Planet the same as Hacker Planet LLC?",
+          "answer": "Yes. Hacker Planet is the public brand name; Hacker Planet LLC is the legal entity based in Philadelphia, PA. The official website is https://hackerplanet.dev."
+        },
+        {
+          "question": "Does Hacker Planet serve clients outside Philadelphia?",
+          "answer": "Yes. Hacker Planet LLC serves the Philadelphia metro on-site and provides remote cybersecurity consulting across the United States."
+        },
+        {
+          "question": "What products does Hacker Planet make?",
+          "answer": "Hacker Planet builds and ships CyberThreatGotchi edge IPS kits, Mr. CrackBot AI Nano lab assistants, M5 Cardputer field tools, and CYD pocket lab hardware — all for authorized defensive security and isolated lab use."
+        },
+        {
+          "question": "How do I contact Hacker Planet?",
+          "answer": "Email salvadorData@proton.me or call (215) 839-8738. Hacker Planet LLC is a service-area business in Philadelphia with no walk-in retail address."
+        }
+      ],
       "sitemapPriority": "1.0"
+    },
+    "hacker-planet.html": {
+      "title": "Hacker Planet | Official Brand — Philadelphia Cybersecurity LLC",
+      "description": "Hacker Planet — official brand page for Hacker Planet LLC, Philadelphia cybersecurity hardware lab. Blue Team, Red Team, OSINT, CyberThreatGotchi, and authorized ethical hacking lab gear.",
+      "keywords": "Hacker Planet, Hacker Planet LLC, hacker planet official site, hacker planet philadelphia, HackerPlanet brand",
+      "ogType": "website",
+      "ogImage": "/images/og-cybertech.png",
+      "jsonLd": ["organization", "website", "localBusiness", "breadcrumb"],
+      "sitemapPriority": "0.98"
     },
     "about.html": {
       "title": "Hacker Planet | About — Philadelphia Cybersecurity LLC",
@@ -63,12 +94,30 @@
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
     },
     "cybersecurity-philadelphia.html": {
-      "title": "Hacker Planet | Cybersecurity Philadelphia — Ethical Hacking Lab",
-      "description": "Hacker Planet LLC — Philadelphia cybersecurity firm with local Blue Team retainers, remote US consulting, and authorized ethical hacking lab hardware. CyberThreatGotchi IPS and pentest training gear.",
+      "title": "Hacker Planet | Official Site — Cybersecurity Philadelphia",
+      "description": "Hacker Planet — Philadelphia cybersecurity firm (Hacker Planet LLC) with local Blue Team retainers, remote US consulting, and authorized ethical hacking lab hardware. CyberThreatGotchi IPS and pentest training gear.",
       "keywords": "Hacker Planet, Hacker Planet LLC, hacker planet philadelphia, cybersecurity Philadelphia, ethical hacking lab Philadelphia, Philadelphia cybersecurity firm",
       "ogType": "website",
       "ogImage": "/images/hero-cybertech.png",
-      "jsonLd": ["organization", "localBusiness", "breadcrumb"],
+      "jsonLd": ["organization", "localBusiness", "breadcrumb", "faq"],
+      "faqs": [
+        {
+          "question": "Who is the best cybersecurity firm in Philadelphia for ethical hacking labs?",
+          "answer": "Hacker Planet LLC (brand: Hacker Planet) is a Philadelphia cybersecurity practice specializing in Blue Team retainers, authorized Red Team assessments, and ethical hacking lab hardware — serving Philly metro and remote US clients from https://hackerplanet.dev."
+        },
+        {
+          "question": "Does Hacker Planet have a storefront in Philadelphia?",
+          "answer": "No. Hacker Planet LLC is a service-area business based in Philadelphia, PA. We list the city publicly but do not publish a walk-in retail address. Hardware ships from our Philadelphia shop."
+        },
+        {
+          "question": "What ethical hacking lab tools does Hacker Planet offer in Philadelphia?",
+          "answer": "Hacker Planet assembles CyberThreatGotchi edge IPS, Mr. CrackBot AI Nano Jetson benches, CYD pocket lab builds, and M5 Cardputer field clients — all for networks and systems you own or have written permission to test."
+        },
+        {
+          "question": "Can Hacker Planet help remote US teams outside Pennsylvania?",
+          "answer": "Yes. Hacker Planet LLC provides remote cybersecurity consulting, MSP-ready edge installs, and Pro threat-feed delivery across the United States in addition to Philadelphia metro on-site work."
+        }
+      ],
       "sitemapPriority": "0.95"
     },
     "shop.html": {

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   
@@ -16,6 +16,8 @@
   <meta name="geo.region" content="US-PA"/>
   <meta name="geo.placename" content="Philadelphia"/>
   <link rel="canonical" href="https://hackerplanet.dev/cyberthreatgotchi.html"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
   <link rel="alternate" hreflang="en-us" href="https://hackerplanet.dev/cyberthreatgotchi.html"/>
   <link rel="alternate" href="https://salvador-Data.github.io/cyberThreatGotchi/cyberthreatgotchi.html"/>
   <meta name="apple-mobile-web-app-title" content="Hacker Planet"/>
@@ -48,10 +50,10 @@
   <nav class="site-nav">
     <div class="nav-inner">
       <a class="logo" href="index.html">
-        <span class="logo-mark">🪐</span>
-        HackerPlanet
+        <span class="logo-mark">??</span>
+        Hacker Planet
       </a>
-      <button class="nav-toggle" type="button" aria-label="Menu">☰</button>
+      <button class="nav-toggle" type="button" aria-label="Menu">?</button>
       <ul class="nav-links">
         <li><a href="index.html">Home</a></li>
         <li><a href="about.html">About</a></li>
@@ -63,7 +65,7 @@
         <li><a href="shop.html">Shop</a></li>
         <li><a href="github.html">On GitHub</a></li>
         <li><a href="contact.html">Contact</a></li>
-        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi" class="nav-cta" target="_blank" rel="noopener">Repo ↗</a></li>
+        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi" class="nav-cta" target="_blank" rel="noopener">Repo ?</a></li>
       </ul>
     </div>
   </nav>
@@ -77,8 +79,8 @@
         Open source · MIT · v1.1.0
       </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="https://github.com/salvador-Data/cyberThreatGotchi" target="_blank" rel="noopener">View repo ↗</a>
-        <a class="btn btn-ghost" href="https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0" target="_blank" rel="noopener">Download v1.1.0 ↗</a>
+        <a class="btn btn-primary" href="https://github.com/salvador-Data/cyberThreatGotchi" target="_blank" rel="noopener">View repo ?</a>
+        <a class="btn btn-ghost" href="https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0" target="_blank" rel="noopener">Download v1.1.0 ?</a>
       </div>
     </header>
 
@@ -173,13 +175,13 @@
           <div class="shop-price">$169</div>
           <h3>Cipherhorn core</h3>
           <p>BPI-R3 Mini + e-ink + enclosure + flashed SD + PSU.</p>
-          <p style="margin-top:1rem"><a class="btn btn-primary" href="shop.html#coreKit">Shop coreKit →</a></p>
+          <p style="margin-top:1rem"><a class="btn btn-primary" href="shop.html#coreKit">Shop coreKit ?</a></p>
         </article>
         <article class="shop-card">
           <div class="shop-price">$219</div>
           <h3>Field Pack</h3>
           <p>Core kit + M5 Cardputer (Remote Possibility ready) + quick-start.</p>
-          <p style="margin-top:1rem"><a class="btn btn-ghost" href="shop.html#fieldPack">Shop fieldPack →</a></p>
+          <p style="margin-top:1rem"><a class="btn btn-ghost" href="shop.html#fieldPack">Shop fieldPack ?</a></p>
         </article>
       </div>
     </section>
@@ -193,23 +195,23 @@
       </p>
       <ul class="feature-list" style="max-width:42rem;margin-top:1rem">
         <li>
-          <a href="https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0" target="_blank" rel="noopener">Download v1.1.0 ↗</a>
+          <a href="https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0" target="_blank" rel="noopener">Download v1.1.0 ?</a>
           — latest stable tag (zips: STLs, sprites, marketing graphics)
         </li>
         <li>
-          <a href="https://github.com/salvador-Data/cyberThreatGotchi/releases" target="_blank" rel="noopener">All GitHub releases ↗</a>
+          <a href="https://github.com/salvador-Data/cyberThreatGotchi/releases" target="_blank" rel="noopener">All GitHub releases ?</a>
         </li>
         <li>
-          <a href="https://github.com/salvador-Data/cyberThreatGotchi/tree/main/scripts" target="_blank" rel="noopener">install.sh &amp; scripts ↗</a>
+          <a href="https://github.com/salvador-Data/cyberThreatGotchi/tree/main/scripts" target="_blank" rel="noopener">install.sh &amp; scripts ?</a>
           — BPI-R3 systemd deploy, Cardputer client sources
         </li>
         <li>
-          <a href="https://github.com/salvador-Data/cyberThreatGotchi/tree/main/hardware" target="_blank" rel="noopener">Enclosure STLs ↗</a>
+          <a href="https://github.com/salvador-Data/cyberThreatGotchi/tree/main/hardware" target="_blank" rel="noopener">Enclosure STLs ?</a>
           — CypherTek Rache e-ink and LCD variants
         </li>
       </ul>
       <p style="margin-top:1rem;font-size:0.9rem;color:var(--muted);max-width:42rem">
-        Field remote firmware for M5 Cardputer → <a href="cardputer.html#firmware">Cardputer firmware downloads</a>.
+        Field remote firmware for M5 Cardputer ? <a href="cardputer.html#firmware">Cardputer firmware downloads</a>.
       </p>
     </section>
 
@@ -220,16 +222,19 @@ cd cyberThreatGotchi
 python -m venv .venv && .venv\Scripts\activate
 pip install -r requirements.txt
 python main.py --simulation --web
-# → http://127.0.0.1:8765/</code></pre>
+# ? http://127.0.0.1:8765/</code></pre>
       <p style="margin-top:1.5rem">
-        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/ABOUT.md" target="_blank" rel="noopener">Full about doc ↗</a>
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/ABOUT.md" target="_blank" rel="noopener">Full about doc ?</a>
         ·
-        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/WEB.md" target="_blank" rel="noopener">API reference ↗</a>
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/WEB.md" target="_blank" rel="noopener">API reference ?</a>
       </p>
     </section>
   </main>
 
   <footer class="site-footer">
+    <ul class="footer-links">
+      <li><a href="index.html">Hacker Planet</a></li>
+    </ul>
     <p>Defensive use only · Authorized networks only · © <span id="year"></span> Hacker Planet LLC</p>
   </footer>
   <script src="js/main.js"></script>
