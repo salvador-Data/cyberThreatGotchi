@@ -30,6 +30,10 @@ def create_web_app(
     def index() -> Response:
         return Response((STATIC / "index.html").read_text(encoding="utf-8"), mimetype="text/html")
 
+    @app.get("/api/health")
+    def api_health() -> Response:
+        return jsonify({"ok": True, "service": "cyberthreatgotchi"})
+
     @app.get("/api/status")
     def api_status() -> Response:
         return jsonify(bus.snapshot())

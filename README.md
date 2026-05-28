@@ -26,7 +26,7 @@
 
 Built for the **Banana Pi BPI-R3 Mini** (2× 2.5GbE, Wi-Fi 6) and dev machines. Your mascot **Cipherhorn** is a unicorn CISO in a business suit and mask, orbited by **cat sentinels** (business, mass-market, and SOC personas).
 
-Full story → **[docs/ABOUT.md](docs/ABOUT.md)** · Web UI → **[docs/WEB.md](docs/WEB.md)** · Ecosystem → **[docs/ECOSYSTEM.md](docs/ECOSYSTEM.md)**
+Full story → **[docs/ABOUT.md](docs/ABOUT.md)** · Web UI → **[docs/WEB.md](docs/WEB.md)** · Integrations → **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)** · Ecosystem → **[docs/ECOSYSTEM.md](docs/ECOSYSTEM.md)**
 
 ## Features
 
@@ -78,6 +78,8 @@ sudo systemctl start cyberthreatgotchi
 | `CTG_DISPLAY` | `terminal` | `terminal`, `eink`, `lcd` |
 | `CTG_IPS` | `true` | Enable IPS blocking |
 | `CTG_DATA_DIR` | `./data` | SQLite + hash DB |
+| `CTG_WEBHOOK_URL` | *(empty)* | POST JSON on each threat |
+| `CTG_WEBHOOK_SECRET` | *(empty)* | Optional `X-CTG-Secret` header |
 
 ## Recommended hardware
 

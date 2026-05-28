@@ -46,6 +46,11 @@ SPI_DEVICE = os.environ.get("CTG_SPI_DEVICE", "0,0")
 # Hardware target
 TARGET_PLATFORM = os.environ.get("CTG_PLATFORM", "bpi-r3-mini")
 
+# Integrations
+WEBHOOK_URL = os.environ.get("CTG_WEBHOOK_URL", "").strip()
+WEBHOOK_SECRET = os.environ.get("CTG_WEBHOOK_SECRET", "").strip()
+WEBHOOK_TIMEOUT_SEC = float(os.environ.get("CTG_WEBHOOK_TIMEOUT", "5"))
+
 
 @dataclass
 class ThreatWeights:
@@ -67,6 +72,9 @@ class Settings:
     ips_enabled: bool = field(default_factory=lambda: IPS_ENABLED)
     display_backend: str = field(default_factory=lambda: DISPLAY_BACKEND)
     weights: ThreatWeights = field(default_factory=ThreatWeights)
+    webhook_url: str = field(default_factory=lambda: WEBHOOK_URL)
+    webhook_secret: str = field(default_factory=lambda: WEBHOOK_SECRET)
+    webhook_timeout: float = field(default_factory=lambda: WEBHOOK_TIMEOUT_SEC)
 
     def ensure_dirs(self) -> None:
         self.data_dir.mkdir(parents=True, exist_ok=True)

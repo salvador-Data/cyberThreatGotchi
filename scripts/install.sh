@@ -56,6 +56,8 @@ CTG_SIMULATION=false
 CTG_DATA_DIR=/var/lib/cyberthreatgotchi
 CLAMAV_HOST=127.0.0.1
 CLAMAV_PORT=3310
+# CTG_WEBHOOK_URL=http://192.168.1.10:9090/ctg
+# CTG_WEBHOOK_SECRET=
 EOF
 
 cat >/etc/systemd/system/${USER_SERVICE}.service <<EOF

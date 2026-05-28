@@ -28,6 +28,7 @@ from core.ips import IntrusionPreventionSystem
 from core.network_manager import NetworkManager
 from core.sniffer import PacketSniffer
 from core.state_bus import GotchiSnapshot, StateBus
+from core.webhook import WebhookDispatcher
 from dashboard.cli import CyberThreatDashboard
 from dashboard.web_server import WebDashboard
 from db.logger import GotchiRecord, ThreatLogger, ThreatRecord
@@ -57,6 +58,11 @@ class CyberThreatGotchiApp:
         self.display = create_display(args.display)
         self.dashboard = CyberThreatDashboard(self.gotchi, self.logger, self.ips)
         self.bus = StateBus()
+        self.webhook = WebhookDispatcher(
+            self.settings.webhook_url,
+            secret=self.settings.webhook_secret,
+            timeout=self.settings.webhook_timeout,
+        )
         self.web: WebDashboard | None = None
         if args.web:
             self.web = WebDashboard(
@@ -87,13 +93,31 @@ class CyberThreatGotchiApp:
         row = {
             "severity": event.severity,
             "source_ip": event.source_ip,
+            "dest_ip": event.dest_ip,
             "category": event.category,
             "action_taken": action,
             "description": event.description,
+            "score": event.score,
         }
         self.dashboard.push_threat_row(row)
         self.bus.push_threat(row)
         self._sync_bus()
+        if self.webhook.enabled:
+            gs = self.gotchi.state
+            self.webhook.notify(
+                self.webhook.build_threat_payload(
+                    timestamp=ThreatLogger.utc_now(),
+                    event=row,
+                    gotchi={
+                        "name": gs.name,
+                        "mood": gs.mood.value,
+                        "level": gs.level,
+                        "threats_blocked": gs.threats_blocked,
+                        "threats_seen": gs.threats_seen,
+                        "status_line": gs.status_line,
+                    },
+                )
+            )
         compact = (
             f"[{event.severity.upper()}] {event.source_ip} -> {event.dest_ip} "
             f"({action}) score={event.score}"
@@ -157,6 +181,8 @@ class CyberThreatGotchiApp:
         print(self.net.interface_summary())
         print(f"Mode: {'SIMULATION' if self.settings.simulation else 'LIVE'} | Interface: {self.settings.interface}")
         print(f"AV status: {self.detector.av.status()}")
+        if self.webhook.enabled:
+            print(f"Webhook: {self.settings.webhook_url}")
 
         if self.web:
             self.web.start()

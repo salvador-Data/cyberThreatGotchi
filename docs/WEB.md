@@ -27,6 +27,7 @@ On the BPI-R3 Mini installer, the service binds `0.0.0.0:8765` so you can open i
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/` | Dashboard HTML |
+| `GET` | `/api/health` | Liveness probe `{ "ok": true }` |
 | `GET` | `/api/status` | JSON snapshot (mood, stats, recent threats) |
 | `GET` | `/api/sprite/<mood>.png` | PNG sprite (`idle`, `happy`, `alert`, …) |
 | `POST` | `/api/feed` | Feed Cipherhorn |

@@ -43,6 +43,15 @@ def test_flask_status_endpoint():
     assert "gotchi" in resp.get_json()
 
 
+def test_flask_health_endpoint():
+    bus = StateBus()
+    app = create_web_app(bus)
+    client = app.test_client()
+    resp = client.get("/api/health")
+    assert resp.status_code == 200
+    assert resp.get_json()["ok"] is True
+
+
 def test_sprite_png_exist():
     # Generate if missing
     png_dir = ROOT / "assets" / "sprites" / "png"

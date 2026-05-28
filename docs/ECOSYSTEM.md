@@ -21,6 +21,7 @@ flowchart LR
   M5[M5 OS\nCardputer shell]
 
   CTG -->|logs threats SQLite| SOC[SOC / analyst]
+  CTG -->|webhook CTG_WEBHOOK_URL| SOC
   BJ -->|authorized tests| SOC
   CB -->|crack lab only| SOC
   M5 -->|portable tools| FIELD[field kit]
@@ -32,6 +33,8 @@ flowchart LR
 - **M5 OS** — SD-based payload launcher for Cardputer field use.
 
 There is **no hard dependency** between repos today — clone and run each independently.
+
+**Integrations:** CTG can **push** threat webhooks (`CTG_WEBHOOK_URL`) or be **polled** at `/api/status` from Bjorn, Cardputer, or your SOC. See **[INTEGRATIONS.md](INTEGRATIONS.md)** in this repo.
 
 ## Recommended lab layout
 
