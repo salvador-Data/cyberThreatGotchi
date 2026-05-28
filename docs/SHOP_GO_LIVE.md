@@ -2,6 +2,8 @@
 
 One-page checklist to launch the Philadelphia shop + partner drop-ship catalog.
 
+**Full business go-live (Voice, domain, email, then payments):** [SETUP_CHECKLIST.md](SETUP_CHECKLIST.md)
+
 ## 1. GitHub Pages (site live)
 
 **Website on GitHub (source):** https://github.com/salvador-Data/cyberThreatGotchi/tree/main/website  

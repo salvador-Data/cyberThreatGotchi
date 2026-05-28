@@ -292,6 +292,7 @@ def test_contact_page_content():
     assert "hello@hackerplanet.dev" in html
     assert "MSP" in html
     assert "Call forwarding setup in progress" in html
+    assert "SETUP_CHECKLIST.md" in html
     assert "CONTACT_AND_PHONE.md" in html
     assert "services.html" in html
     assert "shop.html" in html
