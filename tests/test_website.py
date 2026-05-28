@@ -69,9 +69,21 @@ def test_shop_config_alignment():
 def test_shipping_config_structure():
     text = (WEB / "js" / "shipping.config.js").read_text(encoding="utf-8")
     assert "HPL_SHIPPING" in text
+    assert "shipFrom" in text
+    assert "664 Walker Street" in text
+    assert "11135" in text
+    assert "publicLabel" in text
     assert "sabretoAkachi" in text
     assert "fulfillment: \"direct\"" in text or '"direct"' in text
     assert "nexusStates" in text
+
+
+def test_no_street_address_on_public_site():
+    for html_file in WEB.glob("*.html"):
+        text = html_file.read_text(encoding="utf-8")
+        assert "664 Walker" not in text, html_file.name
+        assert "Walker Street" not in text, html_file.name
+        assert "11135" not in text, html_file.name
 
 
 def test_direct_config_structure():
@@ -136,8 +148,32 @@ def test_shop_renderers_support_images():
 
 def test_about_page_content():
     html = (WEB / "about.html").read_text(encoding="utf-8")
-    assert "Cipherhorn" in html
+    assert "Cipherhorn" in html or "CypherTek" in html
     assert "Andy Klwal" in html
+    assert "Pat" in html
+    assert "Philadelphia" in html
+    assert "Mr. CrackBot" in html or "CrackBot" in html
+    assert "Hacker Planet LLC" in html
+
+
+def test_no_warehouse_address_in_public_html():
+    forbidden = ("664 Walker", "664 Walker Street", "11135")
+    for html_file in sorted(WEB.glob("*.html")):
+        text = html_file.read_text(encoding="utf-8")
+        for token in forbidden:
+            assert token not in text, f"{token!r} found in website/{html_file.name}"
+
+
+def test_shipping_config_has_internal_warehouse():
+    text = (WEB / "js" / "shipping.config.js").read_text(encoding="utf-8")
+    assert "664 Walker Street" in text
+    assert "11135" in text
+    assert "line1:" in text
+    assert "Pat" in html
+    assert "Philadelphia" in html
+    assert "Hacker Planet LLC" in html
+    assert "ecosystem.html" in html
+    assert "shop.html" in html
 
 
 def test_sync_website_to_docs():

@@ -186,7 +186,7 @@ img {
 
 /* Hero */
 .hero {
-  padding: 4.5rem 0 3rem;
+  padding: 1.75rem 0 1.25rem;
   text-align: center;
 }
 
@@ -200,7 +200,7 @@ img {
   background: var(--panel);
   font-size: 0.82rem;
   color: var(--muted);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .hero-badge .dot {
@@ -223,7 +223,7 @@ img {
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.03em;
-  margin: 0 0 1.25rem;
+  margin: 0 0 0.85rem;
   background: linear-gradient(135deg, var(--ink) 0%, var(--accent) 50%, var(--magenta) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -231,18 +231,18 @@ img {
 }
 
 .hero-lead {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: var(--muted);
   max-width: 36rem;
-  margin: 0 auto 2rem;
+  margin: 0 auto 1.25rem;
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.75rem;
   justify-content: center;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
 }
 
 .btn {
@@ -298,7 +298,11 @@ img {
 
 /* Sections */
 section {
-  padding: 4rem 0;
+  padding: 1.5rem 0;
+}
+
+.section-compact {
+  padding: 1.15rem 0;
 }
 
 .section-label {
@@ -321,23 +325,49 @@ section {
 .section-sub {
   color: var(--muted);
   max-width: 32rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.section-cta {
+  text-align: center;
+  margin: 1.25rem 0 0;
+  font-size: 0.95rem;
 }
 
 /* Cards */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.card-grid-tight {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.card-grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 .card {
   background: var(--panel);
   border: 1px solid var(--panel-border);
   border-radius: var(--radius);
-  padding: 1.75rem;
+  padding: 1.35rem;
   backdrop-filter: blur(8px);
   transition: border-color 0.25s, transform 0.25s;
+}
+
+.card-compact {
+  padding: 1.15rem;
+}
+
+.card-compact .card-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 1.25rem;
+  margin-bottom: 0.65rem;
 }
 
 .card:hover {
@@ -377,7 +407,7 @@ section {
   background: linear-gradient(135deg, rgba(201, 162, 39, 0.12), rgba(0, 180, 140, 0.08));
   border-top: 1px solid var(--panel-border);
   border-bottom: 1px solid var(--panel-border);
-  padding: 3rem 0;
+  padding: 1.75rem 0;
   text-align: center;
 }
 
@@ -396,9 +426,9 @@ section {
 .feature-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  gap: 1.35rem;
   align-items: center;
-  margin-bottom: 4rem;
+  margin-bottom: 1.25rem;
 }
 
 .feature-row.reverse {
@@ -434,13 +464,13 @@ section {
 .stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin: 2rem 0;
+  gap: 0.75rem;
+  margin: 1.25rem 0 0;
 }
 
 .stat {
   text-align: center;
-  padding: 1.25rem;
+  padding: 0.85rem;
   background: var(--panel);
   border-radius: var(--radius-sm);
   border: 1px solid var(--panel-border);
@@ -462,9 +492,9 @@ section {
 
 /* Page header (inner pages) */
 .page-hero {
-  padding: 3rem 0 2rem;
+  padding: 1.35rem 0 0.85rem;
   border-bottom: 1px solid var(--panel-border);
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .page-hero h1 {
@@ -488,9 +518,22 @@ section {
 
 .prose h2 {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  margin: 2.5rem 0 1rem;
+  font-size: 1.35rem;
+  margin: 1.75rem 0 0.65rem;
   color: var(--ink);
+}
+
+.prose-tight h2:first-child {
+  margin-top: 0;
+}
+
+.prose-tight p {
+  margin: 0 0 0.85rem;
+}
+
+.muted-inline {
+  color: var(--muted);
+  font-size: 0.95rem;
 }
 
 .prose p {
@@ -528,8 +571,8 @@ section {
 
 /* Footer */
 .site-footer {
-  margin-top: 4rem;
-  padding: 2.5rem 0;
+  margin-top: 1.75rem;
+  padding: 1.25rem 0;
   border-top: 1px solid var(--panel-border);
   text-align: center;
   color: var(--muted);
@@ -619,8 +662,8 @@ section {
   flex-wrap: wrap;
   gap: 0.75rem 1.25rem;
   justify-content: center;
-  padding: 1rem 1.25rem;
-  margin-bottom: 2.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
   background: var(--panel);
   border: 1px solid var(--panel-border);
   border-radius: var(--radius);
@@ -631,7 +674,7 @@ section {
 .shop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .shop-card {
@@ -639,12 +682,12 @@ section {
   background: var(--panel);
   border: 1px solid var(--panel-border);
   border-radius: var(--radius);
-  padding: 1.75rem;
+  padding: 1.35rem;
   backdrop-filter: blur(8px);
 }
 
 .shop-card-img-wrap {
-  margin: -1.75rem -1.75rem 1rem;
+  margin: -1.35rem -1.35rem 0.85rem;
   border-radius: var(--radius) var(--radius) 0 0;
   overflow: hidden;
   background: var(--bg-elevated);
@@ -653,13 +696,13 @@ section {
 
 .shop-card-img {
   width: 100%;
-  height: 200px;
+  height: 180px;
   object-fit: cover;
   display: block;
 }
 
 .featured-shop-grid .shop-card-img {
-  height: 180px;
+  height: 160px;
 }
 
 .shop-card-featured {
@@ -821,11 +864,11 @@ section {
 }
 
 .catalog-section {
-  margin-bottom: 3rem;
+  margin-bottom: 1.25rem;
 }
 
 .catalog-intro {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .catalog-card {
@@ -885,13 +928,14 @@ section {
 
 .legal-shop {
   border-top: 1px solid var(--panel-border);
-  padding-top: 2rem;
+  padding-top: 1.25rem;
+  margin-top: 1rem !important;
 }
 
 /* Shipping & tax calculator */
 .ship-calc-panel {
-  margin-bottom: 2.5rem;
-  padding: 1.75rem;
+  margin-bottom: 1rem;
+  padding: 1.15rem;
   background: var(--panel);
   border: 1px solid rgba(0, 180, 140, 0.35);
   border-radius: var(--radius);

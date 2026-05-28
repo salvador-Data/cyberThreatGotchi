@@ -66,12 +66,12 @@
       </div>
     </header>
 
-    <section class="reveal">
+    <section class="reveal section-compact">
       <p class="section-label">Why we exist</p>
-      <h2 class="section-title">Dashboards drown people.<br/>Mascots don't.</h2>
+      <h2 class="section-title">Dashboards drown people. Mascots don't.</h2>
       <p class="section-sub">
-        SOCs need evidence. Executives need signal. Homelabs need something on the desk that proves the sensor is alive.
-        We ship both — SQLite audit trails and a Tamagotchi face that goes alert when someone port-scans you at 2 AM.
+        SOCs need evidence. Executives need signal. Homelabs need proof the sensor is alive —
+        SQLite audit trails and a Tamagotchi face that goes alert at 2 AM.
       </p>
       <div class="stats">
         <div class="stat">
@@ -93,42 +93,30 @@
       </div>
     </section>
 
-    <section class="reveal">
+    <section class="reveal section-compact">
       <p class="section-label">Flagship</p>
       <h2 class="section-title">CyberThreatGotchi</h2>
-      <p class="section-sub">Portable edge IPS dressed as a Tamagotchi. Banana Pi BPI-R3 Mini · e-ink · web · webhooks.</p>
-      <div class="card-grid">
-        <article class="card">
+      <p class="section-sub">Portable edge IPS dressed as a Tamagotchi · BPI-R3 Mini · e-ink · audit chain · Pro feed API.</p>
+      <div class="card-grid card-grid-tight">
+        <article class="card card-compact">
           <div class="card-icon card-accent-ctg">🦄</div>
           <h3>Cipherhorn</h3>
           <p>Unicorn CISO whose mood tracks live threat pressure — idle, alert, attack, defend.</p>
         </article>
-        <article class="card">
+        <article class="card card-compact">
           <div class="card-icon card-accent-ctg">🛡️</div>
           <h3>Edge IPS</h3>
           <p>Signatures, YARA, ClamAV, hash deny-lists. Auto-block repeat offenders on Linux.</p>
         </article>
-        <article class="card">
-          <div class="card-icon card-accent-ctg">📜</div>
-          <h3>Audit chain</h3>
-          <p>Tamper-evident hash-linked export for compliance and incident response.</p>
-        </article>
-        <article class="card">
-          <div class="card-icon card-accent-ctg">⚡</div>
-          <h3>Pro feed API</h3>
-          <p>Stripe-ready subscription endpoints for signatures, YARA, and hash packs.</p>
-        </article>
       </div>
-      <p style="text-align:center;margin-top:2rem;">
-        <a class="btn btn-primary" href="cyberthreatgotchi.html">Full product story →</a>
-      </p>
+      <p class="section-cta"><a class="btn btn-primary" href="cyberthreatgotchi.html">Full product story →</a></p>
     </section>
 
-    <section class="reveal featured-shop" id="featured-shop">
+    <section class="reveal featured-shop section-compact" id="featured-shop">
       <p class="section-label">Shop</p>
       <h2 class="section-title">Featured hardware</h2>
       <p class="section-sub">
-        Real listings from OlleAdventures, HoneyHoneyTrading, Heltec, RAKwireless, and HackerPlanet Philly builds.
+        OlleAdventures, HoneyHoneyTrading, Heltec, and HackerPlanet Philly builds.
         <a href="shop.html">Full catalog →</a>
       </p>
       <div class="shop-grid featured-shop-grid">
@@ -138,17 +126,18 @@
           </div>
           <div class="shop-price">$99</div>
           <h3>Netgotchi v2</h3>
-          <p>OlleAdventures — honeypot and intrusion alerts for 2.4 GHz WiFi. Case color customization at checkout.</p>
+          <p>OlleAdventures — honeypot and intrusion alerts for 2.4 GHz WiFi.</p>
           <a class="btn btn-ghost" href="shop.html#catalog-gotchi-pods">View in shop</a>
         </article>
-        <article class="shop-card">
+        <article class="shop-card shop-card-featured">
           <div class="shop-card-img-wrap">
-            <img class="shop-card-img" src="images/products/ds-night-hunter.jpg" alt="ESP32 Marauder pocket with GPS v2" loading="lazy"/>
+            <img class="shop-card-img" src="images/products/direct-sabreto-akachi.jpg" alt="Sabreto Akachi HackerPlanet field build" loading="lazy"/>
           </div>
+          <div class="shop-badge">Philly</div>
           <div class="shop-price">$189</div>
-          <h3>Night Hunter pod</h3>
-          <p>HoneyHoneyTrading Marauder + GPS v2 — wardrive PCAP, dual SMA, printed enclosure.</p>
-          <a class="btn btn-ghost" href="shop.html#catalog-gotchi-pods">View in shop</a>
+          <h3>Sabreto Akachi</h3>
+          <p>HackerPlanet custom CYD build — ships from Philadelphia.</p>
+          <a class="btn btn-primary" href="shop.html#catalog-hpl-direct">View in shop</a>
         </article>
         <article class="shop-card">
           <div class="shop-card-img-wrap">
@@ -159,57 +148,10 @@
           <p>ESP32-S3 + SX1262 OLED Meshtastic node — pick LoRa band and optional shell.</p>
           <a class="btn btn-ghost" href="shop.html#catalog-meshtastic">View in shop</a>
         </article>
-        <article class="shop-card shop-card-featured">
-          <div class="shop-card-img-wrap">
-            <img class="shop-card-img" src="images/products/direct-sabreto-akachi.jpg" alt="Sabreto Akachi HackerPlanet field build" loading="lazy"/>
-          </div>
-          <div class="shop-badge">Philly</div>
-          <div class="shop-price">$189</div>
-          <h3>Sabreto Akachi</h3>
-          <p>HackerPlanet custom CYD build — ships from Philadelphia; firmware and enclosure are your only options.</p>
-          <a class="btn btn-primary" href="shop.html#catalog-hpl-direct">View in shop</a>
-        </article>
       </div>
+      <p class="section-cta"><a href="about.html">About Hacker Planet LLC →</a> · <a href="ecosystem.html">Ecosystem map →</a></p>
     </section>
   </main>
-
-  <div class="philly-band reveal">
-    <div class="wrap">
-      <h2>Built in Philadelphia</h2>
-      <p>East Coast pragmatism · 2600 meetings · homelab cred · defensive only</p>
-    </div>
-  </div>
-
-  <section class="wrap reveal">
-    <p class="section-label">Toolkit</p>
-    <h2 class="section-title">The HackerPlanet ecosystem</h2>
-    <p class="section-sub">Separate repos, one philosophy — authorized defense and lab work with open tooling.</p>
-    <div class="card-grid">
-      <a class="card" href="cyberthreatgotchi.html" style="color:inherit">
-        <div class="card-icon card-accent-ctg">🦄</div>
-        <h3>CyberThreatGotchi</h3>
-        <p>Edge IPS + Tamagotchi UI · BPI-R3 Mini</p>
-      </a>
-      <a class="card" href="https://github.com/salvador-Data/Bjorn" target="_blank" rel="noopener" style="color:inherit">
-        <div class="card-icon card-accent-bj">🍓</div>
-        <h3>Bjorn</h3>
-        <p>Pi network assessment · authorized targets</p>
-      </a>
-      <a class="card" href="https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano" target="_blank" rel="noopener" style="color:inherit">
-        <div class="card-icon card-accent-cb">🤖</div>
-        <h3>Mr. CrackBot AI Nano</h3>
-        <p>Wordlist & password lab assistant</p>
-      </a>
-      <a class="card" href="https://github.com/salvador-Data/M5_OS-Cardputer" target="_blank" rel="noopener" style="color:inherit">
-        <div class="card-icon card-accent-m5">📱</div>
-        <h3>M5 OS Cardputer</h3>
-        <p>Pocket field launcher · polls CTG status</p>
-      </a>
-    </div>
-    <p style="text-align:center;margin-top:2rem;">
-      <a href="ecosystem.html">See how they fit together →</a>
-    </p>
-  </section>
 
   <footer class="site-footer">
     <ul class="footer-links">

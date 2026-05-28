@@ -12,6 +12,10 @@ Hacker Planet LLC is based in **Philadelphia, Pennsylvania**. The shop uses **tw
 
 Config: `website/js/shipping.config.js` · Calculator: `website/js/shipping.js`
 
+### Internal — origin warehouse (not public)
+
+Full ship-from address lives in `shipping.config.js` → `shipFrom` (664 Walker Street, Philadelphia, PA 11135). Customer-facing labels use `origin.publicLabel` (**Philadelphia, PA**).
+
 ---
 
 ## Direct ship (your builds)

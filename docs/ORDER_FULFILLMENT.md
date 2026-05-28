@@ -8,6 +8,18 @@ Config references:
 - **Drop-ship products:** `website/js/catalog.config.js` → `supplierUrl`
 - **Shipping zones:** `website/js/shipping.config.js`
 
+### Internal — ship-from address (not on public website)
+
+Direct orders ship from the warehouse in `shipping.config.js` → `shipFrom`:
+
+| Field | Value |
+|-------|-------|
+| Company | Hacker Planet LLC |
+| Line 1 | 664 Walker Street |
+| City / State / ZIP | Philadelphia, PA 11135 |
+
+Use this on carrier labels and packing slips. The public site and shipping calculator show **Philadelphia, PA** only.
+
 ---
 
 ## Direct ship — Philadelphia (you pack & ship)

@@ -82,7 +82,9 @@
     } else if (fulfillment === "direct") {
       var ship = directShipping(state, meta.weightOz);
       shipping = ship.amount;
-      shippingLabel = ship.label + " · from Philadelphia, PA";
+      var originLabel =
+        (cfg().origin && cfg().origin.publicLabel) || "Philadelphia, PA";
+      shippingLabel = ship.label + " · from " + originLabel;
     }
 
     var rate = taxRate(state, zip);
@@ -212,7 +214,8 @@
       }
       var fulfill =
         r.fulfillment === "direct"
-          ? "Ships from Philadelphia (you build)"
+          ? "Ships from " +
+            ((cfg().origin && cfg().origin.publicLabel) || "Philadelphia, PA")
           : r.fulfillment === "digital"
             ? "Digital / no shipping"
             : "Partner drop-ship (shipping included)";
