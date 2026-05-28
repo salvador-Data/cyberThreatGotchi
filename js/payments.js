@@ -322,7 +322,8 @@
   function loadCustomerProfile() {
     var api = prefillApi();
     if (!api) return {};
-    return api.load() || {};
+    var data = api.load() || {};
+    return data.email ? data : {};
   }
 
   function saveCustomerProfile(profile) {
@@ -410,7 +411,7 @@
         payBtn("Manage billing & saved cards", portal, "portal", "")
       );
     }
-    if (profile) {
+    if (profile.email) {
       var clearBtn = el("button", "returning-clear-btn", "Clear saved ship-to on this device");
       clearBtn.type = "button";
       clearBtn.addEventListener("click", function () {
@@ -636,7 +637,17 @@
       callback(true);
       return;
     }
-    var intent = c.vault ? "&intent=capture&vault=true" : "";
+    var intent = "";
+    var subs = cfg().paypalSubscriptions || {};
+    var needsSubs = Object.keys(subs).some(function (k) {
+      var entry = subs[k];
+      return entry && (entry.planId || (typeof entry === "string" && entry));
+    });
+    if (needsSubs) {
+      intent = "&vault=true&intent=subscription";
+    } else if (c.vault) {
+      intent = "&intent=capture&vault=true";
+    }
     var s = document.createElement("script");
     s.src =
       "https://www.paypal.com/sdk/js?client-id=" +
@@ -752,6 +763,7 @@
   window.HPL_PRODUCTS = PRODUCTS;
   window.HPL_renderCheckout = renderCheckout;
   window.HPL_initShop = initShop;
+  window.HPL_renderReturningCustomer = renderReturningCustomerBar;
   window.HPL_loadCustomerProfile = loadCustomerProfile;
   window.HPL_saveCustomerProfile = saveCustomerProfile;
   window.HPL_clearCustomerProfile = clearCustomerProfile;
