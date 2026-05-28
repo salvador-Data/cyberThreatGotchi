@@ -37,19 +37,21 @@ git push origin main
 
 | Script | Pass means |
 |--------|------------|
-| `check_shop.py` | All 30 products aligned across payments / shipping / catalog |
+| `check_shop.py` | All 42 products aligned across payments / shipping / catalog |
 | `check_payments.py` | Every Stripe link filled + `demoMode: false` |
+| `stripe_link_checklist.py` | Lists empty `stripePaymentLinks` keys with USD amounts |
 
 ---
 
 ## 3. Stripe (checkout)
 
 1. [Stripe Dashboard](https://dashboard.stripe.com) → enable **Tax** (Pennsylvania minimum)
-2. Create **Payment Links** for every key in `website/js/payments.config.js`
-3. Paste URLs → set `demoMode: false`
-4. **Direct ship products:** add shipping rates or line-item shipping on those links
+2. Create **Payment Links** for every key in `website/js/payments.config.js` — follow [STRIPE_ADD_LINKS.md](STRIPE_ADD_LINKS.md)
+3. Run `py scripts\stripe_link_checklist.py` until no empty keys remain
+4. Paste URLs → set `demoMode: false` (only after all URLs filled)
+5. **Direct ship products:** add shipping rates or line-item shipping on those links
 
-Full key table: [PAYMENTS.md](PAYMENTS.md)
+Full key table: [PAYMENTS.md](PAYMENTS.md) · [STRIPE_ADD_LINKS.md](STRIPE_ADD_LINKS.md)
 
 ---
 

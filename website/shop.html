@@ -132,7 +132,24 @@
 
     <div id="returning-customer-bar" class="wrap reveal" aria-live="polite"></div>
 
-    <div id="pay-trust-bar" class="pay-trust-bar reveal pay-trust-bar--muted" aria-label="Payment methods">
+    <section class="reveal section-compact" id="payment-methods" aria-labelledby="payment-methods-title">
+      <p class="section-label">Checkout</p>
+      <h2 class="section-title" id="payment-methods-title">Secure hosted payment methods</h2>
+      <p class="section-sub">
+        Card data never touches hackerplanet.dev (PCI SAQ-A). Apple Pay and Google Pay appear on Stripe Payment Links when enabled in your Stripe Dashboard.
+      </p>
+      <div class="pay-method-badges" aria-label="Accepted payment methods">
+        <span class="pay-method-badge pay-method-badge--stripe">Stripe - cards &amp; debit</span>
+        <span class="pay-method-badge pay-method-badge--apple">Apple Pay</span>
+        <span class="pay-method-badge pay-method-badge--google">Google Pay</span>
+        <span class="pay-method-badge pay-method-badge--link">Stripe Link</span>
+        <span class="pay-method-badge pay-method-badge--paypal">PayPal</span>
+        <span class="pay-method-badge pay-method-badge--venmo">Venmo</span>
+        <span class="pay-method-badge pay-method-badge--cashapp">Cash App</span>
+      </div>
+    </section>
+
+    <div id="pay-trust-bar" class="pay-trust-bar reveal pay-trust-bar--muted" aria-label="Payment status">
       <span>Checkout coming soon</span>
       <span>Stripe | PayPal | Venmo | Cash App</span>
     </div>
@@ -251,6 +268,8 @@
         <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/ORDER_FULFILLMENT.md" target="_blank" rel="noopener">Fulfillment -></a>
          | 
         <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/PAYMENTS.md" target="_blank" rel="noopener">Payments -></a>
+         | 
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/STRIPE_ADD_LINKS.md" target="_blank" rel="noopener">Stripe links -></a>
          | 
         <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/PAYMENTS_RECURRING.md" target="_blank" rel="noopener">Recurring -></a>
          | 

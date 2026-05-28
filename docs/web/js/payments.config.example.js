@@ -1,7 +1,7 @@
 /**
  * Hacker Planet LLC - payment configuration
  *
- * Copy to payments.config.js and fill in your live links from Stripe / PayPal dashboards.
+ * Copy to payments.config.js and fill in my live links from Stripe / PayPal dashboards.
  * See docs/PAYMENTS.md and docs/PAYMENTS_RECURRING.md for setup steps.
  *
  * Safe to commit: Payment Link URLs, Customer Portal URL, and PayPal client IDs are publishable.
@@ -22,7 +22,7 @@ window.HPL_PAYMENTS = {
    * Stripe Payment Link metadata (Dashboard -> Payment link -> Metadata).
    * Required for auto-fulfillment via checkout.session.completed:
    *   Key: stripe_key   Value: same as the property name below (e.g. dsMeshtasticHeltec).
-   * See docs/STRIPE_FULFILLMENT_METADATA.md for Andy's Dashboard checklist.
+   * See docs/STRIPE_FULFILLMENT_METADATA.md for my Stripe Dashboard checklist.
    */
   stripePaymentLinkMetadataExamples: {
     dsMeshtasticHeltec: { stripe_key: "dsMeshtasticHeltec" },
@@ -34,6 +34,13 @@ window.HPL_PAYMENTS = {
     dsRaspberryPi5: { stripe_key: "dsRaspberryPi5" },
     dsHackberryZero: { stripe_key: "dsHackberryZero" },
     dsEsp32Cyd: { stripe_key: "dsEsp32Cyd" },
+    dsRtlSdrKit: { stripe_key: "dsRtlSdrKit" },
+    dsNesdrSmart: { stripe_key: "dsNesdrSmart" },
+    dsLanTap: { stripe_key: "dsLanTap" },
+    dsThrowingStarKit: { stripe_key: "dsThrowingStarKit" },
+    dsEsp32WifiLab: { stripe_key: "dsEsp32WifiLab" },
+    dsUsbRubberDucky: { stripe_key: "dsUsbRubberDucky" },
+    dsHak5WifiPineapple: { stripe_key: "dsHak5WifiPineapple" },
   },
 
   stripePaymentLinks: {

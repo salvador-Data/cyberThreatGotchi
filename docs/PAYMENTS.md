@@ -30,11 +30,14 @@ Use the shop **shipping & tax calculator** for estimates → [SHIPPING_AND_TAX.m
 
 ## 1. Stripe Payment Links (required for go-live)
 
+**Step-by-step runbook (all 42 SKUs):** [STRIPE_ADD_LINKS.md](STRIPE_ADD_LINKS.md)  
+**Empty-key checklist:** `python scripts/stripe_link_checklist.py`
+
 1. Create account at [stripe.com](https://stripe.com).
 2. **Enable Stripe Tax** → Settings → Tax → add Pennsylvania + states where registered.
 3. Create **Products** matching every `stripeKey` in `website/js/payments.config.js`.
 
-### Direct ship (you fulfill from Philadelphia)
+### Direct ship (I fulfill from Philadelphia)
 
 | Key | Product | Price |
 |-----|---------|-------|
@@ -77,6 +80,17 @@ For direct hardware: enable **Stripe Tax** on the Payment Link and optionally ad
 | `dsOrangePi5` | Orange Pi 5 Plus | $119 |
 | `dsBananaPiR3` | BPI-R3 Mini (ops spare; hidden from shop) | $119 |
 | `dsEsp32Cyd` | CYD lab bundle | $49 |
+| `dsWiringLab` | Breadboard wiring kit | $22 |
+| `dsKaliNetHunter` | Kali NetHunter lab phone | $399 |
+| `dsRtlSdrKit` | RTL-SDR Blog V3 starter | $99 |
+| `dsNesdrSmart` | NESDR SMArt v5 bundle | $65 |
+| `dsLanTap` | Throwing Star LAN Tap Pro | $59 |
+| `dsThrowingStarKit` | LAN Tap solder kit | $38 |
+| `dsEsp32WifiLab` | ESP32 WiFi lab board | $45 |
+| `dsUsbRubberDucky` | USB Rubber Ducky training | $129 |
+| `dsHak5WifiPineapple` | WiFi Pineapple Mark VII | $319 |
+
+Full table with exact amounts: [STRIPE_ADD_LINKS.md](STRIPE_ADD_LINKS.md).
 
 ### Subscriptions
 
