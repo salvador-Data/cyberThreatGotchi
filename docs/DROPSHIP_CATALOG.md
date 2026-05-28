@@ -50,7 +50,7 @@ Customer → shop.html checkout ($ retail)
 | Official Marauder Kit | $89 | ~$58 | `dsMarauderKoko` | [JustCallMeKoko Tindie](https://www.tindie.com/products/justcallmekoko/esp32-marauder-kit/) |
 | Raspberry Pi 5 starter kit | $159 | ~$105 | `dsRaspberryPi5` | [CanaKit](https://www.canakit.com/raspberry-pi-5.html) |
 | Orange Pi 5 Plus kit | $119 | ~$78 | `dsOrangePi5` | Orange Pi / vetted AliExpress |
-| Banana Pi BPI-R3 Mini | $119 | ~$72 | `dsBananaPiR3` | [banana-pi.org](https://www.banana-pi.org/) |
+| Banana Pi BPI-R3 Mini | $160 | ~$160 | `dsBananaPiR3` | [banana-pi.org](https://www.banana-pi.org/) |
 | ESP32 CYD lab bundle (×2) | $49 | ~$28 | `dsEsp32Cyd` | [CYD community guide](https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display) |
 | Breadboard + jumper kit | $22 | ~$14 | `dsWiringLab` | [SparkFun](https://www.sparkfun.com/jumper-wire-kit-140pcs.html) |
 | Kali NetHunter lab phone | $399 | ~$280 | `dsKaliNetHunter` | [kalinethunter.com](https://kalinethunter.com/products) |

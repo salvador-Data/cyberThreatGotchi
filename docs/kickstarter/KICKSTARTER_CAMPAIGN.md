@@ -304,7 +304,7 @@ If we exceed 300 Core units, assembly moves to a **second Philly print/flash shi
 
 - Open source: [github.com/salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi)
 - Release: v1.1.0 with audit chain + STLs
-- Core kit: BPI-R3 Mini + e-ink + ~$141 BOM
+- Core kit: BPI-R3 Mini + e-ink + ~$212 BOM
 - Ecosystem: Bjorn, Mr. CrackBot AI Nano, M5 Cardputer
 - Site: [hackerplanet.dev](https://hackerplanet.dev)
 - Contact: salvadorData@proton.me

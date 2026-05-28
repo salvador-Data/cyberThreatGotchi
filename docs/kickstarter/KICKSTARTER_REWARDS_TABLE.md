@@ -45,7 +45,7 @@ Assumes Kickstarter + payment fees ~**10%**, US ground shipping billed separatel
 | Tier | Pledge | Est. COGS + ship cost | Est. fees (10%) | Est. net before labor | Margin note |
 |------|--------|------------------------|-------------------|----------------------|-------------|
 | Digital Defender | $15 | ~$0 | $1.50 | ~$13.50 | ~90% · zero hardware risk |
-| Early Bird Core | $149 | ~$141 + $10 ship = $151 | $14.90 | **−$16** | **Loss leader** · cap 50 · Pro upsell |
+| Early Bird Core | $149 | ~$212 + $10 ship = $222 | $14.90 | **−$87** | **Loss leader** · cap 50 · Pro upsell |
 | Cipherhorn Core | $189 | ~$151 | $18.90 | ~$19.10 | ~10% · volume tier · labor not fully loaded |
 | Field Pack | $249 | ~$151 + $71 + $12 = $234 | $24.90 | ~$15 | Bundle discount · improved vs prior retail |
 | Pro Lab | $529 | ~$234 + $49 + $0 digital = $283 | $52.90 | ~$193 | ~36% loaded · best hardware bundle margin |

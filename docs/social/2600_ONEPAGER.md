@@ -19,7 +19,7 @@ Your mascot **Cipherhorn** (unicorn CISO + cat sentinels) reacts on e-ink, LCD, 
 | Problem | CTG answer |
 |---------|------------|
 | Flat logs nobody reads | Mood + sprite = instant “something’s wrong” |
-| Expensive SOHO gear | Runs on Banana Pi BPI-R3 Mini (~$89) |
+| Expensive SOHO gear | Runs on Banana Pi BPI-R3 Mini (~$160) |
 | No audit trail | SQLite + **tamper-evident hash chain export** |
 | SOC needs feed | Webhooks + CSV/JSON export + optional **Pro threat feed** |
 

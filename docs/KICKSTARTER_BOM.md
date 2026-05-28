@@ -11,7 +11,7 @@ Estimated retail kit for **Hacker Planet LLC** desk defender bundle (Cipherhorn 
 
 | Qty | Part | Supplier / SKU hint | Unit | Extended |
 |-----|------|---------------------|------|----------|
-| 1 | Banana Pi BPI-R3 Mini (2×2.5GbE) | BPI shop / AliExpress | $89 | $89 |
+| 1 | Banana Pi BPI-R3 Mini (2×2.5GbE) | BPI shop / AliExpress | $160 | $160 |
 | 1 | Waveshare 2.13" e-Paper HAT V4 (250×122) | Waveshare `250×122, V4` | $22 | $22 |
 | 1 | microSD 32 GB (SanDisk Industrial or A2) | Amazon / Digi-Key | $8 | $8 |
 | 1 | USB-C 5V/3A PSU (UL listed) | Anker / Cable Matters | $12 | $12 |
@@ -19,7 +19,7 @@ Estimated retail kit for **Hacker Planet LLC** desk defender bundle (Cipherhorn 
 | 1 | M2.5 screw kit + standoffs | McMaster / Amazon | $3 | $3 |
 | 1 | Quick-start card + QR to GitHub | Print house | $1 | $1 |
 
-**Core subtotal:** ~**$141**
+**Core subtotal:** ~**$212**
 
 ---
 

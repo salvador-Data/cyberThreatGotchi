@@ -75,7 +75,7 @@ For direct hardware: enable **Stripe Tax** on the Payment Link and optionally ad
 | `dsMarauderKoko` | Official Marauder Kit | $89 |
 | `dsRaspberryPi5` | Pi 5 kit | $139 |
 | `dsOrangePi5` | Orange Pi 5 Plus | $119 |
-| `dsBananaPiR3` | BPI-R3 Mini | $119 |
+| `dsBananaPiR3` | BPI-R3 Mini | $160 |
 | `dsEsp32Cyd` | CYD lab bundle | $49 |
 
 ### Subscriptions

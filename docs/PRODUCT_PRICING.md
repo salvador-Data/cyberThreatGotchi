@@ -70,10 +70,10 @@ Includes: pre-flashed CrackBot stack, wordlist pack scope at checkout, Philadelp
 
 | SKU | Stripe key | Retail | BOM ref |
 |-----|------------|--------|---------|
-| Cipherhorn core | `coreKit` | **$189** | [KICKSTARTER_BOM.md](KICKSTARTER_BOM.md) ~$141 |
+| Cipherhorn core | `coreKit` | **$189** | [KICKSTARTER_BOM.md](KICKSTARTER_BOM.md) ~$212 |
 | Field Pack (core + Cardputer) | `fieldPack` | **$249** | Core + M5 Cardputer bundle |
 
-Core kit COGS: BPI-R3 Mini ($89) + e-ink HAT ($22) + SD/PSU/enclosure (~$30) → **~$141** retail **$189** (~25% margin after assembly).
+Core kit COGS: BPI-R3 Mini ($160) + e-ink HAT ($22) + SD/PSU/enclosure (~$30) → **~$212** retail **$189** (assembly tier; partner drop-ship board-only **`dsBananaPiR3`** @ **$160**).
 
 ---
 

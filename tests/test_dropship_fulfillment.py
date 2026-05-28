@@ -58,6 +58,16 @@ def test_meshtastic_v3_fully_built_catalog(catalog_text):
     assert 'buildType: "fully_built"' in catalog_text
 
 
+def test_banana_pi_r3_dropship_pricing(catalog_text):
+    pay = _read("payments.js")
+    assert "Banana Pi BPI-R3 Mini router SBC" in catalog_text
+    assert "retailPrice: 160" in catalog_text
+    assert 'priceDisplay: "$160"' in catalog_text
+    assert 'stripeKey: "dsBananaPiR3"' in catalog_text
+    block = pay.split("dsBananaPiR3:")[1].split("},")[0]
+    assert "price: 160" in block
+
+
 def test_new_dropship_skus_in_payments():
     pay = _read("payments.js")
     cfg = _read("payments.config.js")
