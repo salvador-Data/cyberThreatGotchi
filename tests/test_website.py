@@ -98,6 +98,7 @@ def test_catalog_config_structure():
     text = (WEB / "js" / "catalog.config.js").read_text(encoding="utf-8")
     assert "HPL_CATALOG" in text
     assert "gotchi-pods" in text
+    assert "banner-gotchi-pods.png" in text
     assert "meshtastic" in text
     assert "hackberry" in text
     assert "dsPwnagotchi" in text
@@ -151,8 +152,9 @@ def test_shop_flows_avoid_mascot_og_assets():
     forbidden = (
         "docs/images/hero.png",
         "docs/images/og-cyberthreatgotchi.png",
+        "docs/images/og-ecosystem.png",
     )
-    for name in ("index.html", "shop.html"):
+    for name in ("index.html", "shop.html", "ecosystem.html", "about.html"):
         text = (WEB / name).read_text(encoding="utf-8")
         for token in forbidden:
             assert token not in text, f"{token!r} in website/{name}"
@@ -161,10 +163,24 @@ def test_shop_flows_avoid_mascot_og_assets():
         assert token not in shop_js
 
 
+def test_cybertech_imagery_assets():
+    for name in ("hero-cybertech.png", "og-cybertech.png", "banner-gotchi-pods.png"):
+        assert (WEB / "images" / name).is_file(), name
+    index = (WEB / "index.html").read_text(encoding="utf-8")
+    assert "images/hero-cybertech.png" in index
+    assert "og-cybertech.png" in index
+    ctg = (WEB / "cyberthreatgotchi.html").read_text(encoding="utf-8")
+    assert "images/products/cyphertek-rache-product.jpg" in ctg
+    catalog = (WEB / "js" / "catalog.config.js").read_text(encoding="utf-8")
+    assert "banner-gotchi-pods.png" in catalog
+    assert "Cyber wardrive pods" in catalog
+
+
 def test_shop_renderers_support_images():
     for name in ("catalog.js", "direct.js"):
         text = (WEB / "js" / name).read_text(encoding="utf-8")
         assert "shop-card-img" in text
+    assert "catalog-section-banner" in (WEB / "js" / "catalog.js").read_text(encoding="utf-8")
 
 
 def test_about_page_content():

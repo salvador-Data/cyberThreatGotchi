@@ -14,10 +14,11 @@ window.HPL_CATALOG = {
   sections: [
     {
       id: "gotchi-pods",
-      label: "Gotchi & wardrive pods",
+      label: "Cyber wardrive pods",
       title: "Pwnagotchi · Netgotchi · night-hunter field pods",
+      banner: "images/banner-gotchi-pods.png",
       intro:
-        "Tamagotchi-style WiFi lab devices — assembled builds drop-shipped from verified makers. Mid-range Kali-ready configs available on request.",
+        "Cyber wardrive pods — compact WiFi lab hardware drop-shipped from verified makers. Mid-range Kali-ready configs available on request.",
       products: [
         {
           id: "ds-pwnagotchi",
@@ -31,8 +32,8 @@ window.HPL_CATALOG = {
           supplier: "Etsy / community makers",
           source: "dropship",
           description:
-            "Community-assembled Pi Zero W or ESP32 wardrive pod with OLED Tamagotchi face — passive WiFi observation for authorized labs. Board, face theme, and enclosure vary by maker; tell us your preferences at checkout and we route to a matching Etsy build.",
-          includes: ["Flashed SD image", "OLED face", "Pi Zero W or ESP base", "USB power cable"],
+            "Community-assembled Pi Zero W or ESP32 wardrive pod with OLED telemetry panel — passive WiFi observation for authorized labs. Board, display theme, and enclosure vary by maker; tell us your preferences at checkout and we route to a matching Etsy build.",
+          includes: ["Flashed SD image", "OLED status panel", "Pi Zero W or ESP base", "USB power cable"],
           badge: "Wardrive",
         },
         {

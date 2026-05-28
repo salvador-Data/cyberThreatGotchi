@@ -144,11 +144,25 @@
     return card;
   }
 
+  function renderSectionBanner(section) {
+    if (!section.banner) return null;
+    var wrap = el("div", "hero-visual cybertech-frame catalog-section-banner");
+    var img = document.createElement("img");
+    img.src = section.banner;
+    img.alt = section.title || section.label || "Catalog section";
+    img.loading = "lazy";
+    img.decoding = "async";
+    wrap.appendChild(img);
+    return wrap;
+  }
+
   function renderSection(section) {
     var wrap = el("section", "reveal catalog-section");
     wrap.id = "catalog-" + section.id;
     wrap.appendChild(el("p", "section-label", section.label));
     wrap.appendChild(el("h2", "section-title", section.title));
+    var banner = renderSectionBanner(section);
+    if (banner) wrap.appendChild(banner);
     if (section.intro) {
       wrap.appendChild(el("p", "section-sub catalog-intro", section.intro));
     }
