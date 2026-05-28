@@ -22,7 +22,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pillow
 
       - name: Generate assets
         run: |
@@ -36,12 +35,15 @@ jobs:
         run: pytest tests/ -q
 
       - name: Package release zips
+        run: python scripts/package_release.py
+
+      - name: Verify release artifacts
         run: |
-          mkdir -p dist
-          (cd docs/images && zip -r ../../dist/marketing-graphics.zip .)
-          (cd assets/sprites/png && zip -r ../../dist/sprites.zip .)
-          (cd hardware/stl/eink && zip -r ../../../dist/enclosure-stl-eink.zip .)
-          (cd hardware/stl/lcd && zip -r ../../../dist/enclosure-stl-lcd.zip .)
+          test -f dist/marketing-graphics.zip
+          test -f dist/sprites.zip
+          test -f dist/enclosure-stl-eink.zip
+          test -f dist/enclosure-stl-lcd.zip
+          ls -la dist/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

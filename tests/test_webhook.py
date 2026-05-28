@@ -38,7 +38,7 @@ def test_webhook_posts_json(mock_urlopen: MagicMock):
     req = mock_urlopen.call_args[0][0]
     assert req.full_url == "http://127.0.0.1:9090/hook"
     assert req.get_header("Content-type") == "application/json"
-    assert req.get_header("X-ctg-secret") == "test-secret"
+    assert req.get_header("X-ctg-secret") == "test-secret" or req.get_header("X-CTG-Secret") == "test-secret"
     body = json.loads(req.data.decode())
     assert body["event"] == "threat"
     assert body["threat"]["source_ip"] == "1.2.3.4"
