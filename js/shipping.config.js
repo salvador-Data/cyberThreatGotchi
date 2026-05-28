@@ -23,7 +23,7 @@ window.HPL_SHIPPING = {
   disclaimer:
     "Shipping and tax shown are estimates. Final amounts are confirmed at checkout. " +
     "Hacker Planet LLC is registered in Pennsylvania.",
-  /** States where HPL collects sales tax (expand as you register elsewhere). */
+  /** States where HPL collects sales tax (expand as I register elsewhere). */
   nexusStates: ["PA"],
   /** PA state rate; Philadelphia +2% local on tangible goods (191xx ZIPs). */
   paStateRate: 0.06,
