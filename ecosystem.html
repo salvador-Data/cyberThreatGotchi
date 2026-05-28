@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+<meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+  <meta name="referrer" content="strict-origin-when-cross-origin"/>
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.paypal.com https://www.paypalobjects.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://www.paypal.com; frame-src https://www.paypal.com; base-uri 'self'; form-action 'self' https://www.paypal.com https://buy.stripe.com https://cash.app https://account.venmo.com;"/>
+<meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Hacker Planet LLC ecosystem — CyberThreatGotchi, Bjorn, CrackBot, M5 Cardputer. Philadelphia open-source security toolkit."/>
+  <meta property="og:image" content="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/docs/images/og-ecosystem.png"/>
+  <title>Ecosystem · Hacker Planet LLC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="logo" href="index.html">
+        <span class="logo-mark">🪐</span>
+        Hacker Planet <span>LLC</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Menu">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="cyberthreatgotchi.html">CyberThreatGotchi</a></li>
+        <li><a href="ecosystem.html" class="active">Ecosystem</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="github.html">On GitHub</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi" class="nav-cta" target="_blank" rel="noopener">Repo ↗</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <header class="page-hero reveal">
+      <p class="section-label">Ecosystem</p>
+      <h1>Desk & field toolkit</h1>
+      <p class="lead">
+        Four open-source repos from salvador-Data — clone independently, integrate when you want.
+        Edge defense, Pi assessment, lab wordlists, pocket launcher.
+      </p>
+    </header>
+
+    <div class="hero-visual reveal" style="margin-bottom:3rem">
+      <img
+        src="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/docs/images/og-ecosystem.png"
+        alt="Hacker Planet ecosystem overview graphic"
+      />
+    </div>
+
+    <section class="reveal">
+      <div class="card-grid">
+        <article class="card">
+          <div class="card-icon card-accent-ctg">🦄</div>
+          <h3>CyberThreatGotchi</h3>
+          <p><strong>Always-on defense.</strong> BPI-R3 Mini edge IPS, Cipherhorn on e-ink, webhooks, audit chain.</p>
+          <p style="margin-top:1rem"><a href="cyberthreatgotchi.html">Product page →</a></p>
+        </article>
+        <article class="card">
+          <div class="card-icon card-accent-bj">🍓</div>
+          <h3>Bjorn</h3>
+          <p><strong>Authorized assessment.</strong> Raspberry Pi network scanner with e-paper status. CTG webhook bridge available.</p>
+          <p style="margin-top:1rem"><a href="https://github.com/salvador-Data/Bjorn" target="_blank" rel="noopener">GitHub ↗</a></p>
+        </article>
+        <article class="card">
+          <div class="card-icon card-accent-cb">🤖</div>
+          <h3>Mr. CrackBot AI Nano</h3>
+          <p><strong>Lab wordlists.</strong> Password generation and cracking prep — keep it on the bench VLAN, not production.</p>
+          <p style="margin-top:1rem"><a href="https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano" target="_blank" rel="noopener">GitHub ↗</a></p>
+        </article>
+        <article class="card">
+          <div class="card-icon card-accent-m5">📱</div>
+          <h3>M5 OS Cardputer</h3>
+          <p><strong>Field shell.</strong> ESP32-S3 pocket launcher. Polls CTG <code>/api/status</code> for live mood tile.</p>
+          <p style="margin-top:1rem"><a href="https://github.com/salvador-Data/M5_OS-Cardputer" target="_blank" rel="noopener">GitHub ↗</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="reveal prose" style="max-width:var(--max-w);margin-top:3rem">
+      <h2>Recommended lab layout</h2>
+      <ul class="feature-list">
+        <li><strong>Network edge</strong> — BPI-R3 Mini running CyberThreatGotchi systemd service</li>
+        <li><strong>Assessment Pi</strong> — Raspberry Pi with Bjorn + bjorn_bridge.py for CTG webhooks</li>
+        <li><strong>Bench laptop</strong> — CTG simulation + CrackBot wordlist work</li>
+        <li><strong>Pocket</strong> — Cardputer with PlatformIO or MicroPython status client</li>
+      </ul>
+      <h2>Integration paths</h2>
+      <p>
+        CTG <strong>pushes</strong> via <code>CTG_WEBHOOK_URL</code> or gets <strong>polled</strong> at
+        <code>/api/status</code>. No hard dependency between repos — wire them when your lab is ready.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© <span id="year"></span> Hacker Planet LLC · Philadelphia, PA</p>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>
