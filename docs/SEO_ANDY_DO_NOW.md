@@ -4,8 +4,15 @@ One page, run in order from repo root (`c:\Users\Owner\Projects\cyberThreatGotch
 
 ## 1. Confirm live site (30 sec)
 
+Go to the repo root:
+
 ```powershell
-Set-Location c:\Users\Owner\Projects\cyberThreatGotchi
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Run the automated go-live checklist:
+
+```powershell
 .\scripts\seo_go_live_checklist.ps1
 ```
 
@@ -15,20 +22,47 @@ Expect: `PASS - all automated checks OK`.
 
 **Option A - interactive (opens dashboards; applies DNS only if token set):**
 
+Go to the repo root:
+
 ```powershell
-Set-Location c:\Users\Owner\Projects\cyberThreatGotchi
-# Optional for API DNS apply (never commit the token):
-# $env:CF_API_TOKEN = "your_cloudflare_edit_zone_dns_token"
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Optional — set Cloudflare token in this session only (never commit the token):
+
+```powershell
+$env:CF_API_TOKEN = "your_cloudflare_edit_zone_dns_token"
+```
+
+Run the all-engines go-live script:
+
+```powershell
 .\scripts\seo_all_engines_go_live.ps1
 ```
 
 **Option A2 - no DNS prompts (no CF_API_TOKEN):** runs checklist, opens dashboards, pings IndexNow:
+
+Go to the repo root:
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Skip DNS prompts and open dashboards + IndexNow:
 
 ```powershell
 .\scripts\seo_all_engines_go_live.ps1 -SkipDns
 ```
 
 **Option B - manual DNS (no token):** print exact record shapes:
+
+Go to the repo root:
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Print GSC/Bing DNS record shapes:
 
 ```powershell
 py scripts/seo_verification_dns.py --doc
@@ -38,8 +72,21 @@ Add GSC **TXT** on `@` and Bing **CNAME** (grey cloud / DNS only) in [Cloudflare
 
 **With token - paste values from GSC/Bing after step 2 UI:**
 
+Go to the repo root:
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Apply Google Search Console TXT via Cloudflare API:
+
 ```powershell
 py scripts/seo_verification_dns.py --google-txt "google-site-verification=PASTE_FROM_GSC"
+```
+
+Apply Bing Webmaster CNAME via Cloudflare API:
+
+```powershell
 py scripts/seo_verification_dns.py --bing-cname PASTE_HOST_LABEL verify.bing.com
 ```
 
@@ -48,6 +95,14 @@ py scripts/seo_verification_dns.py --bing-cname PASTE_HOST_LABEL verify.bing.com
 In [Google Search Console](https://search.google.com/search-console) and [Bing Webmaster](https://www.bing.com/webmasters): property `hackerplanet.dev` → Sitemaps → `https://hackerplanet.dev/sitemap.xml` → URL inspection / Request indexing for `/`, `/hacker-planet.html`, `/cybersecurity-philadelphia.html`.
 
 ## 4. Ping IndexNow (all sitemap URLs)
+
+Go to the repo root:
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Ping IndexNow for all sitemap URLs:
 
 ```powershell
 py scripts/ping_indexnow.py
@@ -61,6 +116,24 @@ Search: `site:hackerplanet.dev` then `hacker planet philadelphia`. Early signal:
 
 ---
 
-**Your next PowerShell command right now:** `.\scripts\seo_all_engines_go_live.ps1 -SkipDns` (set `$env:CF_API_TOKEN` and run without `-SkipDns` for API DNS apply).
+**Your next PowerShell commands right now:**
+
+Go to the repo root:
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Run go-live without DNS prompts (no token needed):
+
+```powershell
+.\scripts\seo_all_engines_go_live.ps1 -SkipDns
+```
+
+For API DNS apply, set `$env:CF_API_TOKEN` in a separate step first, then run without `-SkipDns`:
+
+```powershell
+.\scripts\seo_all_engines_go_live.ps1
+```
 
 Detail: `docs/SEO_INDEXING_NOW.md` · Ranking: `docs/SEO_GET_ON_TOP.md`

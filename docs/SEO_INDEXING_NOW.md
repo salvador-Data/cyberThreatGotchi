@@ -17,6 +17,18 @@
 - [ ] Confirm live: https://hackerplanet.dev/sitemap.xml (14 URLs)
 - [ ] Optional: `$env:CF_API_TOKEN` set (Zone DNS Edit for hackerplanet.dev) — **never commit this**
 
+Go to the repo root first:
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Run the automated checklist:
+
+```powershell
+.\scripts\seo_go_live_checklist.ps1
+```
+
 ---
 
 ## Engine matrix — what Andy must do
@@ -51,9 +63,19 @@
    - **Name:** `@` (apex)
    - **Content:** paste exact GSC value
    - Or run (with token in env only):
+
+     Go to the repo root:
+
      ```powershell
-     python scripts/seo_verification_dns.py --google-txt "google-site-verification=..."
+     cd c:\Users\Owner\Projects\cyberThreatGotchi
      ```
+
+     Apply GSC TXT via Cloudflare API:
+
+     ```powershell
+     py scripts/seo_verification_dns.py --google-txt "google-site-verification=..."
+     ```
+
 7. Wait **1–5 minutes** → click **Verify** in GSC
 
 ### Submit sitemap (GSC)
@@ -86,12 +108,22 @@
    - **Target:** exact Bing target
    - **Proxy status:** DNS only (grey cloud)
    - Or API:
+
+     Go to the repo root:
+
      ```powershell
-     python scripts/seo_verification_dns.py --bing-cname abc123def456 verify.bing.com
+     cd c:\Users\Owner\Projects\cyberThreatGotchi
      ```
+
+     Apply Bing CNAME via Cloudflare API:
+
+     ```powershell
+     py scripts/seo_verification_dns.py --bing-cname abc123def456 verify.bing.com
+     ```
+
 6. Wait **1–5 minutes** → **Verify** in Bing
 
-**Alternate:** Meta tag — set `bingSiteVerification` in `website/seo/site.json`, run `python scripts/sync_seo.py`, deploy.
+**Alternate:** Meta tag — set `bingSiteVerification` in `website/seo/site.json`, run `py scripts/sync_seo.py`, deploy.
 
 ### Submit sitemap (Bing)
 
@@ -103,11 +135,24 @@
 
 ## Step 3 — IndexNow ping (~1 min)
 
-Notifies Bing, Yandex, and IndexNow partners of all sitemap URLs:
+Notifies Bing, Yandex, and IndexNow partners of all sitemap URLs.
+
+Go to the repo root:
 
 ```powershell
-python scripts/ping_indexnow.py --dry-run   # preview
-python scripts/ping_indexnow.py             # POST (13–14 URLs)
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Preview URLs that will be pinged (dry run):
+
+```powershell
+py scripts/ping_indexnow.py --dry-run
+```
+
+POST to IndexNow (13–14 URLs):
+
+```powershell
+py scripts/ping_indexnow.py
 ```
 
 Key file (must return 200): https://hackerplanet.dev/hpl-hackerplanet-indexnow-key.txt

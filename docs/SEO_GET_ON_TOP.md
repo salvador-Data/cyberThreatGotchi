@@ -39,6 +39,14 @@ These three actions unlock **all major search engines** (Google, Bing, DuckDuckG
 
 ### 1. Verify Google Search Console (DNS TXT)
 
+Go to the repo root:
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Run the all-engines go-live script (opens GSC/Bing dashboards):
+
 ```powershell
 .\scripts\seo_all_engines_go_live.ps1
 ```
@@ -54,7 +62,18 @@ Same script — Step 3. Bing verification also feeds DuckDuckGo web results and 
 - GSC → Sitemaps → `sitemap.xml`
 - Bing → Sitemaps → `https://hackerplanet.dev/sitemap.xml`
 - GSC URL Inspection → request indexing for `/`, `/hacker-planet.html`, `/cybersecurity-philadelphia.html`
-- Run: `python scripts/ping_indexnow.py`
+
+Go to the repo root:
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Ping IndexNow after sitemap submission:
+
+```powershell
+py scripts/ping_indexnow.py
+```
 
 **Without steps 1–3, the site will not appear in search at all.**
 
@@ -137,12 +156,41 @@ https://hackerplanet.dev
 
 ## Maintenance rhythm
 
+After content changes, run each step separately from repo root.
+
+Go to the repo root:
+
 ```powershell
-# After content changes:
-python scripts/sync_seo.py
-python scripts/sync_website_to_docs.py
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Sync SEO meta, robots, and sitemap:
+
+```powershell
+py scripts/sync_seo.py
+```
+
+Sync website copy into docs:
+
+```powershell
+py scripts/sync_website_to_docs.py
+```
+
+Run SEO tests:
+
+```powershell
 pytest tests/test_seo.py -v
-python scripts/ping_indexnow.py
+```
+
+Ping IndexNow for updated URLs:
+
+```powershell
+py scripts/ping_indexnow.py
+```
+
+Verify live site checks:
+
+```powershell
 .\scripts\seo_go_live_checklist.ps1
 ```
 

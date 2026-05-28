@@ -170,9 +170,21 @@ if ($LASTEXITCODE -eq 0) {
 
 Write-Host ""
 Write-Host "Done. Without GSC/Bing verification, site:hackerplanet.dev stays EMPTY." -ForegroundColor Yellow
+Write-Host ""
+Write-Host "Next steps (one command per line - run from repo root):" -ForegroundColor Green
+Write-Host ""
+Write-Host "  cd c:\Users\Owner\Projects\cyberThreatGotchi" -ForegroundColor Gray
+Write-Host ""
+Write-Host "  Re-run automated checks:" -ForegroundColor Gray
+Write-Host "  .\scripts\seo_go_live_checklist.ps1" -ForegroundColor Gray
+Write-Host ""
+Write-Host "  Re-ping IndexNow after deploy:" -ForegroundColor Gray
+Write-Host "  py scripts/ping_indexnow.py" -ForegroundColor Gray
+Write-Host ""
+Write-Host "  Skip DNS next time (dashboards + IndexNow only):" -ForegroundColor Gray
+Write-Host "  .\scripts\seo_all_engines_go_live.ps1 -SkipDns" -ForegroundColor Gray
+Write-Host ""
 Write-Host "Test in 24-72h after verify:" -ForegroundColor Green
 Write-Host "  site:$Domain"
 Write-Host "  hacker planet philadelphia"
-Write-Host ""
-Write-Host "Re-run: .\scripts\seo_go_live_checklist.ps1" -ForegroundColor Gray
 Write-Host ""
