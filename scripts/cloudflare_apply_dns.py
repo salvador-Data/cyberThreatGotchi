@@ -79,12 +79,16 @@ def _print_manual_steps(pages: bool, email: bool) -> None:
     print(f"  DNS:        https://dash.cloudflare.com/{CF_ACCOUNT_ID}/{ZONE_NAME}/dns/records\n")
 
     if pages:
-        print("GitHub Pages (grey cloud / DNS only):")
-        print("  Import: scripts/cloudflare/dns-github-pages.bind")
+        dns_url = f"https://dash.cloudflare.com/{CF_ACCOUNT_ID}/{ZONE_NAME}/dns/records"
+        print("GitHub Pages (~60s in dashboard):")
+        print(f"  1. Open {dns_url}")
+        print("  2. Delete orange-cloud @ A/AAAA/CNAME that are NOT GitHub (104.x / 172.x = proxied wrong).")
+        print("  3. Add four A @ records (grey cloud / DNS only):")
         for ip in GITHUB_A:
-            print(f"    A     @   {ip}")
-        print(f"    CNAME www {WWW_CNAME}")
-        print("  Turn OFF proxy (orange -> grey) on every GitHub A/CNAME record.\n")
+            print(f"       {ip}")
+        print(f"  4. Add CNAME www -> {WWW_CNAME} (grey cloud).")
+        print("  5. On each GitHub row: click record -> Proxy status -> DNS only (grey cloud).")
+        print("  Or import scripts/cloudflare/dns-github-pages.bind then grey-cloud every A/CNAME.\n")
 
     if email:
         print("Email Routing:")
@@ -189,6 +193,24 @@ def apply_github_pages(records: list[dict]) -> int:
     if not r.get("success"):
         print(json.dumps(r, indent=2), file=sys.stderr)
         return 1
+
+    www_names = {f"www.{ZONE_NAME}", "www"}
+    github_cname = WWW_CNAME.rstrip(".").lower()
+    for r in records:
+        if r["type"] != "CNAME":
+            continue
+        if r["name"] not in www_names:
+            continue
+        if r.get("content", "").rstrip(".").lower() != github_cname:
+            continue
+        if not r.get("proxied"):
+            continue
+        patch = _api(
+            "PATCH",
+            f"/zones/{ZONE_ID}/dns_records/{r['id']}",
+            {"proxied": False},
+        )
+        print(f"Grey-cloud CNAME www -> {WWW_CNAME}: {patch.get('success')}")
 
     print("GitHub Pages DNS applied (DNS only / grey cloud).")
     return 0

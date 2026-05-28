@@ -4,14 +4,33 @@
 from __future__ import annotations
 
 import json
+import os
+import shutil
 import subprocess
 import sys
 
 
+def _gh_executable() -> str:
+    env = os.environ.get("GH_PATH", "").strip()
+    if env:
+        return env
+    found = shutil.which("gh")
+    if found:
+        return found
+    for candidate in (
+        r"C:\Program Files\GitHub CLI\gh.exe",
+        r"C:\Program Files (x86)\GitHub CLI\gh.exe",
+    ):
+        if os.path.isfile(candidate):
+            return candidate
+    return "gh"
+
+
 def main() -> int:
+    gh = _gh_executable()
     repo = "salvador-Data/cyberThreatGotchi"
     status = subprocess.run(
-        ["gh", "api", f"repos/{repo}/pages"],
+        [gh, "api", f"repos/{repo}/pages"],
         capture_output=True,
         text=True,
     )
@@ -27,7 +46,7 @@ def main() -> int:
         return 0
     put = subprocess.run(
         [
-            "gh",
+            gh,
             "api",
             "-X",
             "PUT",
