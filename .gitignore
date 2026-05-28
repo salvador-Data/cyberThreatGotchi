@@ -22,3 +22,5 @@ data/
 Thumbs.db
 .idea/
 .vscode/
+.cache/
+.tmp-crackbot-stl/

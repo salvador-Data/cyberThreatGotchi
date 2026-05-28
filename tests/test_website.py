@@ -242,6 +242,20 @@ def test_no_dr_eric_as_agent_on_public_html():
             assert token not in text, f"{token!r} in {html_file.name}"
 
 
+def test_hero_headline_descender_room():
+    """Gradient hero titles must not clip g/p/y descenders (e.g. glass on home)."""
+    css = (WEB / "css" / "style.css").read_text(encoding="utf-8")
+    hero_h1 = css.split(".hero h1 {", 1)[1].split("}", 1)[0]
+    page_h1 = css.split(".page-hero h1 {", 1)[1].split("}", 1)[0]
+    assert "line-height: 1.22" in hero_h1
+    assert "padding-bottom: 0.14em" in hero_h1
+    assert "overflow: visible" in hero_h1
+    assert "line-height: 1.22" in page_h1
+    assert "padding-bottom: 0.14em" in page_h1
+    assert "overflow: visible" in page_h1
+    assert "line-height: 1.1" not in hero_h1
+
+
 def test_index_has_philly_and_branding():
     html = (WEB / "index.html").read_text(encoding="utf-8")
     assert "Philadelphia" in html
@@ -310,7 +324,12 @@ def test_direct_product_images():
     assert 'image: "images/products/mr-pac-bot-product.png"' in text
     assert (WEB / "images" / "products" / "direct-cyd-standard.jpg").is_file()
     assert (WEB / "images" / "products" / "direct-core-kit.jpg").is_file()
-    assert (WEB / "images" / "products" / "mr-pac-bot-product.png").is_file()
+    pac_png = WEB / "images" / "products" / "mr-pac-bot-product.png"
+    assert pac_png.is_file()
+    assert pac_png.stat().st_size < 500 * 1024
+    crackbot_jpg = WEB / "images" / "products" / "direct-crackbot-cyd.jpg"
+    assert crackbot_jpg.is_file()
+    assert crackbot_jpg.stat().st_size < 500 * 1024
 
 
 def test_shop_flows_avoid_mascot_og_assets():
@@ -384,7 +403,7 @@ def test_contact_page_content():
     assert "services.html" in html
     assert "shop.html" in html
     assert "salvador-Data" in html
-    assert "Salvador_Data" in html
+    assert "SalvadorData" in html
     assert "email routing" in html.lower() or "mx records" in html.lower()
 
 
