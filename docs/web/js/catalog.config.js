@@ -1,0 +1,213 @@
+/**
+ * Hacker Planet LLC — drop-ship & affiliate catalog
+ * Edit buyUrl values with your Etsy / AliExpress / Tindie listings.
+ * Add affiliate tags in affiliate.* when you enroll in partner programs.
+ */
+window.HPL_CATALOG = {
+  affiliate: {
+    aliexpress: "",
+    etsy: "",
+    tindie: "",
+  },
+  sections: [
+    {
+      id: "hpl-stl",
+      label: "Printables",
+      title: "3D print files (COD & field enclosures)",
+      intro:
+        "Free and paid STL packs for Cardputer, Marauder CYD, and CyberThreatGotchi enclosures. Print at home or send to a local maker.",
+      products: [
+        {
+          id: "ctg-stl-pack",
+          name: "CyberThreatGotchi enclosure STLs",
+          priceDisplay: "Free",
+          source: "github",
+          buyUrl:
+            "https://github.com/salvador-Data/cyberThreatGotchi/tree/main/hardware/stl",
+          description: "Front shell, rear shell, clip — e-ink and IPS display variants.",
+          includes: ["ctg_front_shell.stl", "ctg_rear_shell.stl", "ctg_clip.stl"],
+          badge: "Open source",
+        },
+        {
+          id: "marauder-cyd-stl",
+          name: "Marauder CYD 2.8\" case STLs",
+          priceDisplay: "Free",
+          source: "printables",
+          buyUrl: "https://www.printables.com/model/1050109-esp32-marauder-cyd-cheap-yellow-display-28",
+          description: "BlushTTV Marauder housing with internal or external GPS antenna cutout.",
+          includes: ["Top/bottom shell", "GPS antenna slot", "Community remixes"],
+        },
+        {
+          id: "cod-stl-bundle",
+          name: "COD field case bundle (KSS-ready)",
+          priceDisplay: "$12",
+          source: "hpl",
+          buyUrl: "",
+          stripeKey: "codStlPack",
+          fulfillment: "stripe",
+          description:
+            "Printable STL + KSS slicer profile pack for Boost Formula COD and Cardputer pocket mounts.",
+          includes: ["COD pocket clip STL", "Wall dock STL", "Prusa/SuperSlicer profiles"],
+          badge: "Digital",
+        },
+      ],
+    },
+    {
+      id: "etsy-partners",
+      label: "Etsy drop-ship",
+      title: "Netgotchi, Marauder & custom maker builds",
+      intro:
+        "Curated Etsy listings — order ships direct from the maker. Replace buyUrl with your affiliate link when enrolled in Etsy's program.",
+      products: [
+        {
+          id: "netgotchi-etsy",
+          name: "Netgotchi — network guardian",
+          priceDisplay: "From $69",
+          source: "etsy",
+          buyUrl: "https://olleadventures.etsy.com/listing/1752764124",
+          description:
+            "Defensive Netgotchi scanner (Pwnagotchi's conscientious sibling). Honeypot, intrusion alerts, Tamagotchi-style UI.",
+          includes: ["Assembled unit", "Micro USB cable", "Open-source firmware"],
+          badge: "Defensive",
+        },
+        {
+          id: "netgotchi-pro-etsy",
+          name: "Netgotchi Pro — keypad + buzzer",
+          priceDisplay: "From $89",
+          source: "etsy",
+          buyUrl: "https://olleadventures.etsy.com/listing/1771783598",
+          description: "Portable Pro build with on-device settings, TEXTgotchi chat mode, sound alerts.",
+          includes: ["Keypad", "Buzzer", "Offline Tamagotchi mode"],
+        },
+        {
+          id: "marauder-etsy-kit",
+          name: "ESP32 Marauder CYD kit / case",
+          priceDisplay: "Market price",
+          source: "etsy",
+          buyUrl: "https://www.etsy.com/market/esp32_marauder_kit",
+          description: "Etsy marketplace — CYD boards, printed Marauder cases, Flipper WiFi dev board shells.",
+          includes: ["Cases", "Full kits", "Mustache & custom enclosures"],
+        },
+        {
+          id: "marauder-case-etsy",
+          name: "Custom 3D-printed Marauder cases",
+          priceDisplay: "From ~$25",
+          source: "etsy",
+          buyUrl: "https://www.etsy.com/market/esp32_marauder_case",
+          description: "Case-only and finished aesthetic builds from independent Etsy makers.",
+          includes: ["CYD fitment", "GPS antenna variants", "Flipper dev board cases"],
+        },
+        {
+          id: "marauder-moustache",
+          name: "Mustache / character custom builds",
+          priceDisplay: "Varies",
+          source: "etsy",
+          buyUrl: "https://www.etsy.com/search?q=esp32+marauder+custom+enclosure",
+          description:
+            "Search curated custom character enclosures (mustache themes, desk toys, field shells). Paste your favorite listing URL here.",
+          includes: ["Custom paint", "Unique enclosures", "Maker direct ship"],
+          badge: "Custom",
+        },
+      ],
+    },
+    {
+      id: "tindie-partners",
+      label: "Tindie drop-ship",
+      title: "Marauder GPS & battery mod kits",
+      intro: "Specialty maker stores — great for GPS wardrive and battery mods without soldering.",
+      products: [
+        {
+          id: "marauder-gps-tindie",
+          name: "Marauder pocket unit + GPS v2",
+          priceDisplay: "From $50",
+          source: "tindie",
+          buyUrl: "https://www.tindie.com/products/honeyhoneytrading/esp32-marauder-pocket-unit-with-gps-v2/",
+          description: "Compact Marauder with GPS wardrive, dual SMA antennas, touchscreen.",
+          includes: ["GPS module", "External antennas", "SD card slot"],
+        },
+        {
+          id: "marauder-battery-mod",
+          name: "CYD battery + GPS mod (no solder)",
+          priceDisplay: "From ~$35",
+          source: "tindie",
+          buyUrl: "https://biscuitshop.us/products/esp32-marauder-battery-mod-kit",
+          description: "Drop-in PCB for LiPo, I2C battery gauge, and GPS on Cheap Yellow Display boards.",
+          includes: ["GPS antenna", "Charge circuit", "Plug-in PCB"],
+        },
+        {
+          id: "marauder-kit-koko",
+          name: "Official ESP32 Marauder Kit",
+          priceDisplay: "Maker price",
+          source: "tindie",
+          buyUrl: "https://www.tindie.com/products/justcallmekoko/esp32-marauder-kit/",
+          description: "JustCallMeKoko kit PCB + enclosure — bring your own Huzzah32 + LiPo.",
+          includes: ["PCB", "3D printed case", "Assembly docs"],
+        },
+        {
+          id: "netgotchi-tindie",
+          name: "Netgotchi Alpha / Retro",
+          priceDisplay: "From $69",
+          source: "tindie",
+          buyUrl: "https://www.tindie.com/products/ollestore/negotchi-network-security-scanner/",
+          description: "OlleStore official Netgotchi builds — Alpha portable and Retro editions.",
+          includes: ["Tested firmware", "Open case", "USB cable"],
+        },
+      ],
+    },
+    {
+      id: "aliexpress-deals",
+      label: "AliExpress deals",
+      title: "SBCs & hacker hardware (value picks)",
+      intro:
+        "Bulk/value sourcing for Raspberry Pi alternatives, ESP32 boards, and lab SBCs. Add your AliExpress affiliate ID in catalog.config.js when ready.",
+      products: [
+        {
+          id: "ali-rpi",
+          name: "Raspberry Pi 4 / 5 boards",
+          priceDisplay: "Deal hunt",
+          source: "aliexpress",
+          buyUrl: "https://www.aliexpress.com/w/wholesale-raspberry-pi-5.html",
+          description: "Compare Pi 5, Pi 4, and CM4 carrier boards — verify seller ratings before bulk orders.",
+          includes: ["SBC boards", "Heat sinks", "Power supplies"],
+          badge: "Compare sellers",
+        },
+        {
+          id: "ali-orange-pi",
+          name: "Orange Pi 5 / 5 Plus",
+          priceDisplay: "From ~$60",
+          source: "aliexpress",
+          buyUrl: "https://www.aliexpress.com/w/wholesale-orange-pi-5.html",
+          description: "RK3588 SBCs popular for homelab IDS and lightweight SIEM edges.",
+          includes: ["8GB variants", "M.2 carriers", "Case bundles"],
+        },
+        {
+          id: "ali-esp32",
+          name: "ESP32-S3 / CYD display boards",
+          priceDisplay: "From ~$12",
+          source: "aliexpress",
+          buyUrl: "https://www.aliexpress.com/w/wholesale-esp32-2432s028.html",
+          description: "Cheap Yellow Display and ESP32-S3 modules for Marauder, Deauther, and Cardputer-adjacent builds.",
+          includes: ["CYD 2.8\"", "ESP32-S3-WROOM", "USB-C variants"],
+        },
+        {
+          id: "ali-banana-pi",
+          name: "Banana Pi BPI-R3 Mini",
+          priceDisplay: "Edge router SBC",
+          source: "aliexpress",
+          buyUrl: "https://www.aliexpress.com/w/wholesale-banana-pi-r3-mini.html",
+          description: "Same class of board as CyberThreatGotchi core kit — 2.5G router SBC.",
+          includes: ["Wi-Fi 6", "Dual 2.5G Ethernet", "Case options"],
+        },
+        {
+          id: "ali-wifi-lab",
+          name: "WiFi lab parts bundle",
+          priceDisplay: "Bundle deals",
+          source: "aliexpress",
+          buyUrl: "https://www.aliexpress.com/w/wholesale-wifi-devboard-esp8266.html",
+          description: "ESP8266/ESP32 dev boards, antennas, and SMA pigtails for authorized RF lab work.",
+          includes: ["Dev boards", "Antennas", "USB serial adapters"],
+        },
+      ],
+    },
+  ],
+};

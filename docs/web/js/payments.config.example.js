@@ -18,6 +18,9 @@ window.HPL_PAYMENTS = {
     proYearly: "",
     coreKit: "",
     fieldPack: "",
+    boostFormulaCod: "",
+    marauderCustom175: "",
+    codStlPack: "",
   },
 
   /**

@@ -24,6 +24,8 @@ def test_website_structure():
         "js/main.js",
         "js/payments.js",
         "js/payments.config.js",
+        "js/catalog.js",
+        "js/catalog.config.js",
         "README.md",
     ):
         assert (WEB / name).is_file(), name
@@ -33,9 +35,23 @@ def test_shop_page_payments():
     html = (WEB / "shop.html").read_text(encoding="utf-8")
     assert "product-checkout" in html
     assert "payments.config.js" in html
+    assert "catalog.config.js" in html
+    assert "dropship-catalog" in html
+    assert "boostFormulaCod" in html
+    assert "marauderCustom175" in html
     assert "Apple Pay" in html
     assert "Venmo" in html
     assert "Cash App" in html
+    assert "AliExpress" in html
+    assert "Netgotchi" in html
+
+
+def test_catalog_config_structure():
+    text = (WEB / "js" / "catalog.config.js").read_text(encoding="utf-8")
+    assert "HPL_CATALOG" in text
+    assert "etsy-partners" in text
+    assert "aliexpress-deals" in text
+    assert "netgotchi-etsy" in text
 
 
 def test_github_repo_page():

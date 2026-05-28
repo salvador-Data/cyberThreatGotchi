@@ -796,3 +796,74 @@ section {
   font-family: ui-monospace, monospace;
 }
 
+/* Drop-ship catalog */
+.catalog-host {
+  padding-top: 1rem;
+}
+
+.catalog-section {
+  margin-bottom: 3rem;
+}
+
+.catalog-intro {
+  margin-bottom: 1.5rem;
+}
+
+.catalog-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog-source {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+  width: fit-content;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+}
+
+.source-etsy { color: #f56400; background: rgba(245, 100, 0, 0.12); }
+.source-ali { color: #ff4747; background: rgba(255, 71, 71, 0.12); }
+.source-tindie { color: #4fc3f7; background: rgba(79, 195, 247, 0.12); }
+.source-github { color: var(--ink); }
+.source-printables { color: var(--magenta); background: rgba(210, 168, 255, 0.12); }
+.source-hpl { color: var(--accent); background: rgba(0, 180, 140, 0.15); }
+
+.catalog-price {
+  font-size: 1.65rem;
+}
+
+.catalog-checkout {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.catalog-ship-note {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0.75rem 0 0;
+  font-style: italic;
+}
+
+.pay-btn-external {
+  background: var(--bg-elevated);
+  color: var(--ink) !important;
+  border: 1px solid var(--panel-border);
+}
+
+.pay-btn-external:hover {
+  border-color: var(--accent);
+  color: var(--accent) !important;
+}
+
+.legal-shop {
+  border-top: 1px solid var(--panel-border);
+  padding-top: 2rem;
+}
+

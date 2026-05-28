@@ -45,6 +45,30 @@
       desc: "Core kit + M5 Cardputer + quick-start guide",
       stripeKey: "fieldPack",
     },
+    boostFormulaCod: {
+      id: "boostFormulaCod",
+      name: "Boost Formula COD Field Kit",
+      price: 85.99,
+      period: "one-time",
+      desc: "ESP32-S3 + WiFi Deauther-ready + antenna + Scratch-friendly profile",
+      stripeKey: "boostFormulaCod",
+    },
+    marauderCustom175: {
+      id: "marauderCustom175",
+      name: "Marauder Custom Build — GPS Field",
+      price: 175,
+      period: "one-time",
+      desc: "CYD Marauder + GPS + SMA antenna + LiPo + printed enclosure + STL",
+      stripeKey: "marauderCustom175",
+    },
+    codStlPack: {
+      id: "codStlPack",
+      name: "COD STL + KSS print pack",
+      price: 12,
+      period: "one-time",
+      desc: "Printable COD case, dock, Prusa/SuperSlicer profiles",
+      stripeKey: "codStlPack",
+    },
   };
 
   function cfg() {
@@ -99,6 +123,10 @@
   }
 
   function renderProductPayments(container, product) {
+    return renderCheckout(container, product);
+  }
+
+  function renderCheckout(container, product) {
     container.innerHTML = "";
     var c = cfg();
     var demo = c.demoMode !== false;
@@ -248,6 +276,7 @@
   }
 
   window.HPL_PRODUCTS = PRODUCTS;
+  window.HPL_renderCheckout = renderCheckout;
   window.HPL_initShop = initShop;
 
   if (document.readyState === "loading") {
