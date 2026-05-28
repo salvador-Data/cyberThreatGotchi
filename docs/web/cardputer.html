@@ -133,14 +133,33 @@
             Shows mood tile and threat pressure on the ST7789 display while you walk the rack.
           </p>
           <ul class="feature-list">
-            <li>MicroPython <code>ctg_status.py</code> and PlatformIO remote status builds</li>
-            <li>Configure <code>CTG_HOST</code> for your edge node IP or hostname</li>
+            <li>MicroPython <code>ctg_status.py</code> and PlatformIO env <code>m5stack-cardputer</code> (<code>M5Cardputer</code> + <code>ArduinoJson</code>)</li>
+            <li>Configure CTG URL on-device: settings menu, USB serial <code>SET HOST</code> / <code>SET PORT</code>, or optional SD <code>/config/remote_possibility.cfg</code></li>
+            <li>Wi-Fi credentials in NVS; HTTP timeout, reconnect, and <code>r</code> manual refresh</li>
             <li>M5 OS manifest package: <code>remote_possibility.bin</code></li>
             <li>GitHub: <a href="https://github.com/salvador-Data/Remote-Possibility" target="_blank" rel="noopener">Remote-Possibility -></a></li>
           </ul>
           <p style="margin-top:1rem"><a class="btn btn-primary" href="shop.html#remote-possibility">Shop Remote Possibility | $99.99 -></a></p>
         </div>
         <div class="prose">
+          <h3>Keyboard map (status + settings)</h3>
+          <table class="spec-table" style="width:100%;font-size:0.9rem">
+            <thead>
+              <tr><th>Key</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>r</code></td><td>Poll <code>/api/status</code> now</td></tr>
+              <tr><td><code>e</code></td><td>Open settings (host, port, Wi-Fi, poll ms)</td></tr>
+              <tr><td><code>;</code> / <code>w</code></td><td>Move selection up (settings)</td></tr>
+              <tr><td><code>.</code> / <code>s</code></td><td>Move selection down (settings)</td></tr>
+              <tr><td>Enter</td><td>Edit field · save</td></tr>
+              <tr><td><code>`</code></td><td>Back / cancel edit</td></tr>
+            </tbody>
+          </table>
+          <p style="margin-top:1rem">
+            USB serial at 115200: <code>HELP</code>, <code>SET SSID</code>, <code>SET HOST</code>, <code>WIFI</code>.
+            See <a href="https://github.com/salvador-Data/Remote-Possibility/blob/main/docs/CARDPUTER.md" target="_blank" rel="noopener">CARDPUTER.md -></a>.
+          </p>
           <h3>Separate from BLE Bot</h3>
           <p>
             Remote Possibility is a <strong>Wi-Fi HTTP poll client</strong> for CTG edge status - it does not run BLE scans.
@@ -285,7 +304,7 @@
         </li>
         <li>
           <a href="https://github.com/salvador-Data/Remote-Possibility/blob/main/docs/CARDPUTER.md" target="_blank" rel="noopener">CARDPUTER.md -></a>
-          - poll <code>/api/status</code>, configure <code>CTG_HOST</code>
+          - poll <code>/api/status</code>, keyboard settings, serial <code>SET</code>, optional SD config
         </li>
         <li>
           <a href="https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/docs/CARDPUTER_PRODUCTS.md" target="_blank" rel="noopener">CARDPUTER_PRODUCTS.md -></a>
