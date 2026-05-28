@@ -105,7 +105,7 @@ Path: **Email → Email Routing**
 1. Select zone **`hackerplanet.dev`** → **Email Routing** → **Get started**
 2. **Routing rules** → **Create address**
    - Custom address: **`hello`**
-   - Destination: **your personal Gmail** (or Google Workspace inbox)
+   - Destination: **`salvadorData@proton.me`**
 3. Cloudflare adds **MX** (and SPF **TXT**) automatically — confirm under **DNS → Records**
 4. Send test mail to `hello@hackerplanet.dev`; reply-from testing optional
 5. Update Stripe/PayPal business profiles with `hello@hackerplanet.dev`

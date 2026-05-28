@@ -331,6 +331,7 @@ def test_contact_page_content():
     assert "Salvador Data" in html
     assert "Hacker Planet LLC" in html
     assert "Philadelphia" in html
+    assert "salvadorData@proton.me" in html
     assert "hello@hackerplanet.dev" in html
     assert "MSP" in html
     assert "tel:+12158398738" in html

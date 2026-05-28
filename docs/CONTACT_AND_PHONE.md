@@ -4,7 +4,8 @@ Primary contact: **Salvador Data** (Andy Klwal) · **Hacker Planet LLC** · Phil
 
 | Channel | Value | Status |
 |---------|-------|--------|
-| **Email** | `hello@hackerplanet.dev` | Placeholder until domain registered |
+| **Email (active)** | [salvadorData@proton.me](mailto:salvadorData@proton.me) | Primary inbox now |
+| **Email (brand)** | `hello@hackerplanet.dev` | After Cloudflare Email Routing → forwards to Proton |
 | **GitHub** | [salvador-Data](https://github.com/salvador-Data) | Active |
 | **Reddit** | [u/Salvador_Data](https://www.reddit.com/user/Salvador_Data/) | Active |
 | **Phone** | [(215) 839-8738](tel:+12158398738) (Google Voice) | Active |
@@ -26,7 +27,7 @@ Use subject lines that route quickly:
 | MSP retainers / Pro feed | `MSP retainer inquiry` | [services.html#blue-team](../website/services.html#blue-team) |
 | Kits / shop / hardware | `Shop inquiry` | [shop.html](../website/shop.html) |
 
-Until `hello@hackerplanet.dev` resolves, use GitHub Issues or Reddit DMs for time-sensitive outreach.
+Until `hello@hackerplanet.dev` resolves, use **salvadorData@proton.me** or GitHub Issues for time-sensitive outreach.
 
 ---
 

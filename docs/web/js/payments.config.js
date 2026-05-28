@@ -37,5 +37,5 @@ window.HPL_PAYMENTS = {
   paypalMe: { username: "" },
   cashapp: { cashtag: "" },
   venmo: { username: "" },
-  supportEmail: "hello@hackerplanet.dev",
+  supportEmail: "salvadorData@proton.me",
 };

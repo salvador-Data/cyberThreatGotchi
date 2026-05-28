@@ -70,5 +70,5 @@ window.HPL_PAYMENTS = {
     username: "",
   },
 
-  supportEmail: "hello@hackerplanet.dev",
+  supportEmail: "salvadorData@proton.me",
 };

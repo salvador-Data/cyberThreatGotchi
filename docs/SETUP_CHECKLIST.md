@@ -36,7 +36,8 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 | Changed | Unchanged |
 |---------|-----------|
 | Site branding **HackerPlanet** everywhere | Browser URL still **`salvador-Data.github.io/cyberThreatGotchi/`** until DNS live |
-| Email **`hello@hackerplanet.dev`** on contact | Custom domain DNS pending — mail after Email Routing |
+| Email **`hello@hackerplanet.dev`** on contact | Routes to **salvadorData@proton.me** after Email Routing |
+| Active inquiry email | ✅ **salvadorData@proton.me** on contact, shop, services |
 | Docs target **`hackerplanet.dev`** | **`website/CNAME`** added — register domain + DNS next |
 
 Custom domain steps: **Section C** below, [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md), and [HOSTING_OPTIONS.md](HOSTING_OPTIONS.md).
@@ -166,7 +167,7 @@ Checks `salvador-Data.github.io` always; checks `https://hackerplanet.dev/` when
 ## D. Email `hello@hackerplanet.dev` — after domain (free)
 
 1. Cloudflare dashboard → select **`hackerplanet.dev`** → **Email** → **Email Routing** → **Get started** / enable for the zone.
-2. **Routing rules** → **Create address** → custom address **`hello`** → destination **your personal Gmail** (or Workspace inbox) → **Save**.
+2. **Routing rules** → **Create address** → custom address **`hello`** → destination **`salvadorData@proton.me`** → **Save**.
 3. Cloudflare adds required **MX** (and optional **TXT** SPF) records automatically — confirm under **DNS → Records**.
 4. Send a test from another account; confirm receipt.
 5. Update **Stripe** and **PayPal** business profiles with `hello@hackerplanet.dev`.
@@ -204,6 +205,7 @@ Customer-facing copy: **Philadelphia, PA** only (`origin.publicLabel`).
 | # | Task | Status |
 |---|------|--------|
 | 1 | **Google Voice** (215 → cell) | ✅ **(215) 839-8738** on contact page |
+| 1b | **Active email** | ✅ **salvadorData@proton.me** on contact / shop / services |
 | 2 | **Cloudflare account** | ✅ Done |
 | 3 | **Register `hackerplanet.dev`** | ⏳ ~$10 at Cloudflare Registrar |
 | 4 | **DNS + GitHub custom domain** | ⏳ After step 3 (`CNAME` in repo ✅) |
