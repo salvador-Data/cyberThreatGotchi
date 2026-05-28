@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Enable GitHub Pages with build_type=workflow (requires gh CLI + auth)."""
+"""Enable GitHub Pages from the gh-pages branch (requires gh CLI + auth)."""
 
 from __future__ import annotations
 
@@ -9,6 +9,8 @@ import subprocess
 import sys
 
 REPO = "salvador-Data/cyberThreatGotchi"
+BRANCH = "gh-pages"
+PATH = "/"
 
 
 def main() -> int:
@@ -17,27 +19,35 @@ def main() -> int:
         print("Then: gh auth login", file=sys.stderr)
         return 1
 
-    # Create or update Pages site to use Actions
+    payload = [
+        "-f",
+        f"build_type=legacy",
+        "-f",
+        f"source[branch]={BRANCH}",
+        "-f",
+        f"source[path]={PATH}",
+    ]
+
     for method, args in (
-        ("POST", ["api", f"repos/{REPO}/pages", "-f", "build_type=workflow"]),
-        ("PUT", ["api", f"repos/{REPO}/pages", "-f", "build_type=workflow"]),
+        ("POST", ["api", f"repos/{REPO}/pages", *payload]),
+        ("PUT", ["api", f"repos/{REPO}/pages", *payload]),
     ):
         r = subprocess.run(["gh", *args], capture_output=True, text=True)
         if r.returncode == 0:
-            print(f"GitHub Pages enabled (build_type=workflow) via {method}")
+            print(f"GitHub Pages enabled from {BRANCH}{PATH} via {method}")
             try:
                 print(json.dumps(json.loads(r.stdout or "{}"), indent=2))
             except json.JSONDecodeError:
                 print(r.stdout)
+            print(f"\nSite: https://salvador-Data.github.io/cyberThreatGotchi/")
             return 0
-        if "already exists" in (r.stderr or "").lower() or r.returncode == 0:
-            break
 
     print("gh error:", r.stderr or r.stdout, file=sys.stderr)
     print(
-        f"\nManual fix: https://github.com/{REPO}/settings/pages → Source: GitHub Actions",
+        f"\nManual fix: https://github.com/{REPO}/settings/pages",
         file=sys.stderr,
     )
+    print(f"  Branch: {BRANCH} · Folder: (root)", file=sys.stderr)
     return r.returncode or 1
 
 

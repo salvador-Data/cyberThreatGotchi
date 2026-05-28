@@ -108,7 +108,7 @@ Marketing graphics live in **`docs/images/`** (regenerate: `python assets/market
 | **Facebook** | Andy Klwal · Philadelphia | [docs/social/FACEBOOK.md](docs/social/FACEBOOK.md) |
 | **2600 / meetups** | Local chapter | [docs/social/2600_ONEPAGER.md](docs/social/2600_ONEPAGER.md) |
 | **Kickstarter BOM** | Kit planning | [docs/KICKSTARTER_BOM.md](docs/KICKSTARTER_BOM.md) |
-| **Website** | Hacker Planet LLC · Philly | [salvador-Data.github.io/cyberThreatGotchi](https://salvador-Data.github.io/cyberThreatGotchi/) · [docs/web/](docs/web/) in repo |
+| **Website** | Hacker Planet LLC · Philly | [salvador-Data.github.io/cyberThreatGotchi](https://salvador-Data.github.io/cyberThreatGotchi/) · enable once: [GITHUB_PAGES_SETUP.md](docs/GITHUB_PAGES_SETUP.md) |
 | **Shop** | Kits · Pro feed · payments | [shop.html](https://salvador-Data.github.io/cyberThreatGotchi/shop.html) · [docs/PAYMENTS.md](docs/PAYMENTS.md) |
 
 ## Tests
