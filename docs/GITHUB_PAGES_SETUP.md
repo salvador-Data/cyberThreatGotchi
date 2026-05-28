@@ -13,7 +13,10 @@ Live URL: **https://salvador-Data.github.io/cyberThreatGotchi/**
 ## Option B — Script (requires `gh auth login`)
 
 ```powershell
-gh api repos/salvador-Data/cyberThreatGotchi/pages -X POST -f build_type=workflow
+gh auth login
+python scripts/enable_github_pages.py
 ```
 
-Or run: `python scripts/enable_github_pages.py` (uses `gh` if available).
+## Option C — Automatic (already in workflow)
+
+The **Deploy website** workflow runs `actions/github-script` to create/update the Pages site with `build_type: workflow` before deploy. If deploy still fails, use Option A once, then re-run the workflow.
