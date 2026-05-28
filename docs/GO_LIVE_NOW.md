@@ -52,6 +52,12 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 .\.venv\Scripts\python scripts\cloudflare_apply_dns.py
 ```
 
+**Interactive DNS apply (recommended)** — run `scripts/apply_dns_interactive.ps1` from the repo root instead of pasting the token on the command line.
+Hidden prompt sets `CF_API_TOKEN` for the current PowerShell session only, then runs `cloudflare_apply_dns.py --all`.
+Do not paste API tokens in chat; revoke at [API tokens](https://dash.cloudflare.com/profile/api-tokens) if leaked.
+On Cloudflare error **9109**, the script prints the [DNS records](https://dash.cloudflare.com/a819200afa7f246ea8bdb770f634ab84/hackerplanet.dev/dns/records) import and grey-cloud steps.
+
+
 ---
 
 ## Step 3 — GitHub Pages HTTPS
