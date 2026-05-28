@@ -79,6 +79,9 @@ Order of operations:
 1. Grey-cloud DNS → GitHub verifies → GitHub **Enforce HTTPS** on
 2. Optionally orange-cloud later with **Full (strict)** and origin understood (GitHub Pages)
 
+**Browser error ERR_CERT_COMMON_NAME_INVALID:** GitHub is still serving the default *.github.io certificate (not your domain). Keep Cloudflare **DNS only** (grey cloud) on all GitHub A/CNAME records, wait for GitHub **Pages** to show the custom-domain cert as approved, then enable **Enforce HTTPS**. Re-run py scripts/github_pages_https.py after DNS is grey.
+
+
 ---
 
 ## 3. Security / WAF (free tier)
