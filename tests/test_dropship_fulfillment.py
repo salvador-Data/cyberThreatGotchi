@@ -58,14 +58,16 @@ def test_meshtastic_v3_fully_built_catalog(catalog_text):
     assert 'buildType: "fully_built"' in catalog_text
 
 
-def test_banana_pi_r3_dropship_pricing(catalog_text):
+def test_banana_pi_r3_hidden_from_shop_catalog(catalog_text):
     pay = _read("payments.js")
+    bpi_block = catalog_text.split('id: "ds-bpi-r3"')[1].split("},")[0]
     assert "Banana Pi BPI-R3 Mini router SBC" in catalog_text
-    assert "retailPrice: 160" in catalog_text
-    assert 'priceDisplay: "$160"' in catalog_text
-    assert 'stripeKey: "dsBananaPiR3"' in catalog_text
-    block = pay.split("dsBananaPiR3:")[1].split("},")[0]
-    assert "price: 160" in block
+    assert "catalogHidden: true" in bpi_block
+    assert "retailPrice: 160" not in bpi_block
+    assert "CTG component" in bpi_block
+    pay_block = pay.split("dsBananaPiR3:")[1].split("},")[0]
+    assert "price: 119" in pay_block
+    assert "not standalone retail" in pay_block
 
 
 def test_new_dropship_skus_in_payments():

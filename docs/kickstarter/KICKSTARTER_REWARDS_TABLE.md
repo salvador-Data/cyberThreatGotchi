@@ -14,8 +14,8 @@
 |---------|-------------|--------|-------|---------------|--------------|
 | `KS-DIG` | Digital Defender | $15 | ∞ | Jul 2026 (+7 days post-campaign) | Worldwide (email) |
 | `KS-EB` | Early Bird Core | $149 | 50 | Oct 2026 | US, CA, EU, UK |
-| `KS-CORE` | Cipherhorn Core | $189 | 300 | Oct–Nov 2026 | US, CA, EU, UK |
-| `KS-FIELD` | Field Pack | $249 | 150 | Nov 2026 | US, CA, EU, UK |
+| `KS-CORE` | Cipherhorn Core | $219 | 300 | Oct–Nov 2026 | US, CA, EU, UK |
+| `KS-FIELD` | Field Pack | $279 | 150 | Nov 2026 | US, CA, EU, UK |
 | `KS-PROLAB` | Pro Lab | $529 | 40 | Nov–Dec 2026 | US, CA |
 | `KS-BENCH` | Bench Lab (CrackBot) | $499 | 25 | Nov–Dec 2026 | US, CA |
 | `KS-MESH` | Meshtastic Relay | $159 | 75 | Dec 2026 – Jan 2027 | US, CA, EU, UK |
@@ -28,9 +28,9 @@
 | Tier | Hardware / digital contents | Retail value (ref) | Stripe / shop key |
 |------|----------------------------|--------------------|-------------------|
 | Digital Defender | Digital Pack — STLs, sprites, wallpapers | $15 | `digital` |
-| Early Bird Core | Core kit + 3 mo Pro ($27 value) | $216 | `coreKit` + promo |
-| Cipherhorn Core | Core kit | $189 | `coreKit` |
-| Field Pack | Core + Remote Possibility Cardputer | $288.99 | `fieldPack` |
+| Early Bird Core | Core kit + 3 mo Pro ($27 value) | $246 | `coreKit` + promo |
+| Cipherhorn Core | Core kit | $219 | `coreKit` |
+| Field Pack | Core + Remote Possibility Cardputer | $318.99 | `fieldPack` |
 | Pro Lab | Field Pack + CYD Standard + 1 yr Pro | $437.98 + $99 | bundle |
 | Bench Lab | CrackBot Jetson bench only | $499 | `crackbotBench` |
 | Meshtastic Relay | Heltec V3 built + field case + guide PDF | $163 | `dsMeshtasticHeltec` + case |
@@ -46,8 +46,8 @@ Assumes Kickstarter + payment fees ~**10%**, US ground shipping billed separatel
 |------|--------|------------------------|-------------------|----------------------|-------------|
 | Digital Defender | $15 | ~$0 | $1.50 | ~$13.50 | ~90% · zero hardware risk |
 | Early Bird Core | $149 | ~$212 + $10 ship = $222 | $14.90 | **−$87** | **Loss leader** · cap 50 · Pro upsell |
-| Cipherhorn Core | $189 | ~$151 | $18.90 | ~$19.10 | ~10% · volume tier · labor not fully loaded |
-| Field Pack | $249 | ~$151 + $71 + $12 = $234 | $24.90 | ~$15 | Bundle discount · improved vs prior retail |
+| Cipherhorn Core | $219 | ~$212 parts + $35 assembly = $247 | $21.90 | **−$49** | BPI $160 floor · Philly assembly subsidized |
+| Field Pack | $279 | ~$247 + $71 + $12 = $330 | $27.90 | **−$78** | Bundle discount · marketing CAC |
 | Pro Lab | $529 | ~$234 + $49 + $0 digital = $283 | $52.90 | ~$193 | ~36% loaded · best hardware bundle margin |
 | Bench Lab | $499 | ~$341 + $15 ship | $49.90 | ~$93 | ~19% · matches retail intent |
 | Meshtastic Relay | $159 | ~$90 + $18 + ship incl. $12 | $15.90 | ~$23 | ~14% · partner variance |
@@ -55,7 +55,7 @@ Assumes Kickstarter + payment fees ~**10%**, US ground shipping billed separatel
 
 **Labor not fully allocated** in Core/Field at retail-aligned pledges — treat Early Bird + Field as **marketing CAC** if Pro feed converts.
 
-**Break-even rough count (Core-only scenario):** ~200× `$189` units cover $35K goal after fees if COGS+ship ~$151 (excludes fixed tooling).
+**Break-even rough count (Core-only scenario):** ~160× `$219` units cover $35K goal after fees if loaded COGS+ship ~$257 (excludes fixed tooling).
 
 ---
 

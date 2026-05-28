@@ -70,10 +70,39 @@ Includes: pre-flashed CrackBot stack, wordlist pack scope at checkout, Philadelp
 
 | SKU | Stripe key | Retail | BOM ref |
 |-----|------------|--------|---------|
-| Cipherhorn core | `coreKit` | **$189** | [KICKSTARTER_BOM.md](KICKSTARTER_BOM.md) ~$212 |
-| Field Pack (core + Cardputer) | `fieldPack` | **$249** | Core + M5 Cardputer bundle |
+| Cipherhorn core (complete build) | `coreKit` | **$219** | [KICKSTARTER_BOM.md](KICKSTARTER_BOM.md) ~$212 parts |
+| Field Pack (core + Cardputer) | `fieldPack` | **$279** | Core + M5 Cardputer bundle |
 
-Core kit COGS: BPI-R3 Mini ($160) + e-ink HAT ($22) + SD/PSU/enclosure (~$30) → **~$212** retail **$189** (assembly tier; partner drop-ship board-only **`dsBananaPiR3`** @ **$160**).
+**Banana Pi BPI-R3 Mini (~$160 supplier floor, May 2026)** is a **component inside `coreKit`**, not a standalone shop product. The ops Stripe key `dsBananaPiR3` stays for spare-board fulfillment tracking but is **hidden from the drop-ship catalog** (`catalogHidden: true`).
+
+### Cipherhorn core — $219 (`coreKit`)
+
+| Qty | Part | Est. supplier / cost |
+|-----|------|----------------------|
+| 1 | Banana Pi BPI-R3 Mini (2×2.5GbE) | **$160** |
+| 1 | Waveshare 2.13" e-Paper HAT V4 | $22 |
+| 1 | microSD 32 GB (A2 / industrial) | $8 |
+| 1 | USB-C 5V/3A PSU (UL listed) | $12 |
+| 1 | 3D printed enclosure (e-ink variant) | $6 |
+| 1 | M2.5 screw kit + standoffs | $3 |
+| 1 | Quick-start card + QR | $1 |
+| **Parts subtotal** | | **~$212** |
+| 1 | Philly SD flash + burn-in + assembly | $35 |
+| **Loaded COGS** | | **~$247** |
+
+| Pricing line | Amount | Notes |
+|--------------|--------|-------|
+| Parts-only COGS | ~$212 | BPI floor dominates (~75% of parts) |
+| Loaded COGS (parts + assembly) | ~$247 | Flash, burn-in, enclosure QC |
+| Prior retail (May 2026 pre-BPI floor) | $189 | Below parts-only once BPI hit $160 |
+| **Shop retail (`coreKit`)** | **$219** | +$30 vs prior tier; ~$7 over parts-only, assembly partially subsidized |
+| Break-even on loaded COGS (ex fees) | ~$249 | Target if BPI stays at $160 and assembly stays in-house |
+
+Retail math: **$219 − $212 parts ≈ $7** gross before payment fees — enough to keep the Philadelphia intro tier live while the complete Cipherhorn build remains the only customer-facing BPI SKU.
+
+### Field Pack — $279 (`fieldPack`)
+
+Core kit ($219) + M5 Cardputer bundle (~$71 COGS) with ~$11 bundle discount vs buying Remote Possibility separately.
 
 ---
 

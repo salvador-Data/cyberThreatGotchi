@@ -44,8 +44,8 @@ Use the shop **shipping & tax calculator** for estimates → [SHIPPING_AND_TAX.m
 | `remotePossibility` | Remote Possibility (M5 Cardputer) | $99.99 |
 | `bleBot` | BLE Bot (M5 Cardputer) | $89.99 |
 | `boostFormulaCod` | Boost Formula COD kit | $99 |
-| `coreKit` | CyberThreatGotchi core | $189 |
-| `fieldPack` | Field Pack (core + Cardputer) | $249 |
+| `coreKit` | CyberThreatGotchi core (complete build) | $219 |
+| `fieldPack` | Field Pack (core + Cardputer) | $279 |
 | `digital` | Digital Pack | $15 |
 | `codStlPack` | COD STL + KSS pack | $19 |
 
@@ -75,7 +75,7 @@ For direct hardware: enable **Stripe Tax** on the Payment Link and optionally ad
 | `dsMarauderKoko` | Official Marauder Kit | $89 |
 | `dsRaspberryPi5` | Pi 5 kit | $139 |
 | `dsOrangePi5` | Orange Pi 5 Plus | $119 |
-| `dsBananaPiR3` | BPI-R3 Mini | $160 |
+| `dsBananaPiR3` | BPI-R3 Mini (ops spare; hidden from shop) | $119 |
 | `dsEsp32Cyd` | CYD lab bundle | $49 |
 
 ### Subscriptions

@@ -67,7 +67,7 @@
     coreKit: {
       id: "coreKit",
       name: "CyberThreatGotchi",
-      price: 189,
+      price: 219,
       period: "one-time",
       desc: "HPL direct ship | BPI-R3 Mini + e-ink + enclosure",
       stripeKey: "coreKit",
@@ -75,7 +75,7 @@
     fieldPack: {
       id: "fieldPack",
       name: "Field Pack",
-      price: 249,
+      price: 279,
       period: "one-time",
       desc: "HPL direct ship | core kit + M5 Cardputer",
       stripeKey: "fieldPack",
@@ -267,9 +267,9 @@
     dsBananaPiR3: {
       id: "dsBananaPiR3",
       name: "Banana Pi BPI-R3 Mini",
-      price: 160,
+      price: 119,
       period: "one-time",
-      desc: "Partner fulfillment - edge router SBC",
+      desc: "Ops spare-board SKU - board ships inside coreKit; not standalone retail",
       stripeKey: "dsBananaPiR3",
     },
     dsEsp32Cyd: {

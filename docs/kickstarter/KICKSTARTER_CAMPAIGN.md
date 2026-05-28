@@ -101,7 +101,7 @@ We are a **small Philly shop**, not a VC-backed appliance vendor. That means tra
 
 Each reward maps to a **real SKU** from [PRODUCT_PRICING.md](../PRODUCT_PRICING.md). No mystery boxes.
 
-### CyberThreatGotchi Cipherhorn Core (`coreKit` — $189 retail)
+### CyberThreatGotchi Cipherhorn Core (`coreKit` — $219 retail)
 
 - Banana Pi BPI-R3 Mini (2× 2.5GbE)
 - Waveshare 2.13″ e-Paper HAT (Cipherhorn face)
@@ -111,7 +111,7 @@ Each reward maps to a **real SKU** from [PRODUCT_PRICING.md](../PRODUCT_PRICING.
 - Quick-start card + QR to docs
 - **Philadelphia assembly** · ~30 min burn-in before pack-out
 
-### Field Pack (`fieldPack` — $249 retail)
+### Field Pack (`fieldPack` — $279 retail)
 
 - Everything in Core +
 - M5Stack Cardputer with **Remote Possibility** firmware (polls CTG `/api/status` over Wi‑Fi)
@@ -166,9 +166,9 @@ Shipping charged at pledge manager post-campaign (US zones per [SHIPPING_AND_TAX
 | Tier | Pledge | Limit | Includes | Ship from |
 |------|--------|-------|----------|-----------|
 | **Digital Defender** | **$15** | ∞ | Digital Pack — STLs, sprites, backer badge | Email |
-| **Early Bird Core** | **$149** | 50 | Cipherhorn Core kit ($189 value) + 3 mo Pro feed | Philadelphia |
-| **Cipherhorn Core** | **$189** | 300 | Core kit + quick-start | Philadelphia |
-| **Field Pack** | **$249** | 150 | Core + Remote Possibility Cardputer | Philadelphia |
+| **Early Bird Core** | **$149** | 50 | Cipherhorn Core kit ($219 value) + 3 mo Pro feed | Philadelphia |
+| **Cipherhorn Core** | **$219** | 300 | Core kit + quick-start | Philadelphia |
+| **Field Pack** | **$279** | 150 | Core + Remote Possibility Cardputer | Philadelphia |
 | **Pro Lab** | **$529** | 40 | Field Pack + CYD Standard ($89.99) + 1 yr Pro feed | Philadelphia |
 | **Bench Lab** | **$499** | 25 | Mr. CrackBot Jetson bench (standalone SKU) | Philadelphia |
 | **Meshtastic Relay** | **$159** | 75 | Heltec V3 node + field case + CTG webhook guide | Partner |

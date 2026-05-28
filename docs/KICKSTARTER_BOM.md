@@ -2,7 +2,7 @@
 
 Estimated retail kit for **Hacker Planet LLC** desk defender bundle (Cipherhorn e-ink face + BPI-R3 Mini edge sensor). Prices are **USD MSRP-ish** for planning; bulk/OEM quotes will differ.
 
-**Target kit price:** $149–$179 retail  
+**Target kit price:** $219 retail (complete Cipherhorn build)  
 **Target margin:** ~35% after fulfillment (Kickstarter fees + shipping)
 
 ---
@@ -50,8 +50,8 @@ Estimated retail kit for **Hacker Planet LLC** desk defender bundle (Cipherhorn 
 | Tier | Includes | Backer price | Notes |
 |------|----------|--------------|-------|
 | **Digital** | Repo + STL zip + sprites | $15 | No hardware |
-| **Cipherhorn Core** | BPI-R3 Mini + e-ink + enclosure + SD + PSU | $189 | Early bird $149 (limit 50) |
-| **Field Pack** | Core + Cardputer + printed quick guide | $249 | Polls CTG over Wi-Fi |
+| **Cipherhorn Core** | BPI-R3 Mini + e-ink + enclosure + SD + PSU | $219 | Early bird $149 (limit 50) |
+| **Field Pack** | Core + Cardputer + printed quick guide | $279 | Polls CTG over Wi-Fi |
 | **Lab Duo** | Core + Pi 4 Bjorn bundle (no CTG on Pi) | $289 | Two-device story |
 
 ---

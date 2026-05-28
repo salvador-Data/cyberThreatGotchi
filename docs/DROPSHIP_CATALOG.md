@@ -50,7 +50,7 @@ Customer → shop.html checkout ($ retail)
 | Official Marauder Kit | $89 | ~$58 | `dsMarauderKoko` | [JustCallMeKoko Tindie](https://www.tindie.com/products/justcallmekoko/esp32-marauder-kit/) |
 | Raspberry Pi 5 starter kit | $159 | ~$105 | `dsRaspberryPi5` | [CanaKit](https://www.canakit.com/raspberry-pi-5.html) |
 | Orange Pi 5 Plus kit | $119 | ~$78 | `dsOrangePi5` | Orange Pi / vetted AliExpress |
-| Banana Pi BPI-R3 Mini | $160 | ~$160 | `dsBananaPiR3` | [banana-pi.org](https://www.banana-pi.org/) |
+| Banana Pi BPI-R3 Mini | — (hidden) | ~$160 | `dsBananaPiR3` | [banana-pi.org](https://www.banana-pi.org/) — **CTG component**; board ships inside `coreKit`. Ops spare-board key only (`catalogHidden`). |
 | ESP32 CYD lab bundle (×2) | $49 | ~$28 | `dsEsp32Cyd` | [CYD community guide](https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display) |
 | Breadboard + jumper kit | $22 | ~$14 | `dsWiringLab` | [SparkFun](https://www.sparkfun.com/jumper-wire-kit-140pcs.html) |
 | Kali NetHunter lab phone | $399 | ~$280 | `dsKaliNetHunter` | [kalinethunter.com](https://kalinethunter.com/products) |
@@ -64,8 +64,8 @@ Customer → shop.html checkout ($ retail)
 | Mr. CrackBot bench lab (Jetson) | $499 | `crackbotBench` |
 | Remote Possibility (Cardputer) | $99.99 | `remotePossibility` |
 | BLE Bot (Cardputer) | $89.99 | `bleBot` |
-| CyberThreatGotchi core | $189 | `coreKit` |
-| Field Pack | $249 | `fieldPack` |
+| CyberThreatGotchi core (complete build) | $219 | `coreKit` |
+| Field Pack | $279 | `fieldPack` |
 
 Free STLs (GitHub / Printables) stay as direct download links — no checkout.
 

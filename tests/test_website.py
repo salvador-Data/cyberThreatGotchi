@@ -117,6 +117,14 @@ def test_catalog_config_structure():
     assert "dsHackberryZero" in text
 
 
+def test_catalog_hides_ops_only_products():
+    catalog_text = (WEB / "js" / "catalog.config.js").read_text(encoding="utf-8")
+    js = (WEB / "js" / "catalog.js").read_text(encoding="utf-8")
+    assert "catalogHidden" in js
+    assert "if (product.catalogHidden) return;" in js
+    assert "catalogHidden: true" in catalog_text.split('id: "ds-bpi-r3"')[1]
+
+
 def test_github_repo_page():
     html = (WEB / "github.html").read_text(encoding="utf-8")
     assert "docs/web" in html
@@ -353,6 +361,7 @@ def test_direct_config_pricing_separation():
     assert "marauderCustom175" not in text
     assert 'retailPrice: 89.99' in text
     assert 'retailPrice: 189.99' in text
+    assert 'retailPrice: 219' in text
     assert 'retailPrice: 499' in text
     assert 'remotePossibility' in text
     assert 'bleBot' in text
@@ -497,7 +506,8 @@ def test_kickstarter_preview_page():
     html = (WEB / "kickstarter.html").read_text(encoding="utf-8")
     assert "Kickstarter preview" in html
     assert "$149" in html
-    assert "$249" in html
+    assert "$219" in html
+    assert "$279" in html
     assert "$35,000" in html
     assert "partner fulfillment" in html.lower() or "Partner fulfillment" in html
     assert "Authorized networks only" in html
