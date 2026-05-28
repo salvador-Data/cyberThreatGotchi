@@ -245,17 +245,30 @@ def test_no_dr_eric_as_agent_on_public_html():
 
 
 def test_hero_headline_descender_room():
-    """Gradient hero titles must not clip g/p/y descenders (e.g. glass on home)."""
+    """Layered title-stack heroes must not clip g/p/y descenders (e.g. glass on home)."""
     css = (WEB / "css" / "style.css").read_text(encoding="utf-8")
-    hero_h1 = css.split(".hero h1 {", 1)[1].split("}", 1)[0]
-    page_h1 = css.split(".page-hero h1 {", 1)[1].split("}", 1)[0]
+    hero_h1 = css.split(".hero h1.title-stack,", 1)[1].split("}", 1)[0]
+    page_h1 = css.split(".page-hero h1.title-stack {", 1)[1].split("}", 1)[0]
     assert "line-height: 1.22" in hero_h1
     assert "padding-bottom: 0.14em" in hero_h1
     assert "overflow: visible" in hero_h1
-    assert "line-height: 1.22" in page_h1
-    assert "padding-bottom: 0.14em" in page_h1
-    assert "overflow: visible" in page_h1
-    assert "line-height: 1.1" not in hero_h1
+    assert "background-clip" not in hero_h1
+    assert "line-height: 1.22" in page_h1 or "letter-spacing" in page_h1
+    layer = css.split(".title-stack-layer {", 1)[1].split("}", 1)[0]
+    assert "padding-bottom: 0.08em" in layer
+    index = (WEB / "index.html").read_text(encoding="utf-8")
+    assert "title-stack-main" in index
+    assert "title-stack-layer" in index
+    assert "doesn't hide behind glass" in index
+    assert "logo-tagline" in index
+    assert "logo-mark" not in index
+
+
+def test_public_html_avoids_repo_jargon():
+    for html_file in sorted(WEB.glob("*.html")):
+        text = html_file.read_text(encoding="utf-8")
+        assert ">Repo" not in text, html_file.name
+        assert "public repo" not in text.lower(), html_file.name
 
 
 def test_index_has_philly_and_branding():
