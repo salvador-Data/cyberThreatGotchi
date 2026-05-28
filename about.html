@@ -1,134 +1,180 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-  
-<meta http-equiv="X-Content-Type-Options" content="nosniff"/>
-  <meta name="referrer" content="strict-origin-when-cross-origin"/>
-  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()"/>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.paypal.com https://www.paypalobjects.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://www.paypal.com; frame-src https://www.paypal.com; base-uri 'self'; form-action 'self' https://www.paypal.com https://buy.stripe.com https://cash.app https://account.venmo.com;"/>
-<meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="description" content="About Hacker Planet LLC — Philadelphia defensive security company. Open source, field hardware, human UX."/>
-  <meta property="og:title" content="About · HackerPlanet"/>
-  <meta property="og:image" content="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/docs/images/og-ecosystem.png"/>
-  <title>HackerPlanet · About</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/style.css"/>
-</head>
-<body>
-  <div class="grid-bg" aria-hidden="true"></div>
-
-  <nav class="site-nav">
-    <div class="nav-inner">
-      <a class="logo" href="index.html">
-        <span class="logo-mark">🪐</span>
-        HackerPlanet
-      </a>
-      <button class="nav-toggle" type="button" aria-label="Menu">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html" class="active">About</a></li>
-        <li><a href="cyberthreatgotchi.html">CyberThreatGotchi</a></li>
-        <li><a href="ecosystem.html">Ecosystem</a></li>
-        <li><a href="shop.html">Shop</a></li>
-        <li><a href="github.html">On GitHub</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi" class="nav-cta" target="_blank" rel="noopener">Repo ↗</a></li>
-      </ul>
-    </div>
-  </nav>
-
-  <main class="wrap">
-    <header class="page-hero reveal">
-      <p class="section-label">About us</p>
-      <h1>We make defense<br/>feel human again</h1>
-      <p class="lead">
-        Hacker Planet LLC is a Philadelphia-based security practice building open-source tools
-        for homelabs, MSPs, and builders who refuse to choose between serious telemetry and a desk worth showing off.
-      </p>
-    </header>
-
-    <div class="feature-row reveal">
-      <div class="prose">
-        <h2>Our story</h2>
-        <p>
-          Most SOCs drown in dashboards. Executives glaze over Grafana. Homelabbers wonder if their sensor is even running.
-          We started Hacker Planet LLC to fix the <strong>signal-to-noise ratio</strong> — not by hiding complexity,
-          but by giving it a face.
-        </p>
-        <p>
-          <strong>Cipherhorn</strong>, our unicorn CISO, reacts to real network events on e-ink while SQLite and hash-chain
-          exports satisfy auditors. Same box. Two audiences. Zero bullshit about “AI-powered” when signatures would do.
-        </p>
-        <p>
-          We're headquartered in <strong>Philadelphia, Pennsylvania</strong> — East Coast directness, 2600 meeting energy,
-          and a bias toward shipping STLs you can print tonight.
-        </p>
-      </div>
-      <div>
-        <img
-          src="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/docs/images/og-ecosystem.png"
-          alt="Hacker Planet LLC ecosystem — CyberThreatGotchi, Bjorn, CrackBot, M5 Cardputer"
-          style="border-radius:var(--radius);border:1px solid var(--panel-border)"
-        />
-      </div>
-    </div>
-
-    <section class="reveal">
-      <p class="section-label">Principles</p>
-      <h2 class="section-title">What we won't compromise on</h2>
-      <div class="card-grid">
-        <article class="card">
-          <div class="card-icon card-accent-ctg">🔐</div>
-          <h3>Authorization first</h3>
-          <p>Our tools defend and assess networks you own or are explicitly permitted to test. Full stop.</p>
-        </article>
-        <article class="card">
-          <div class="card-icon card-accent-bj">📂</div>
-          <h3>Open by default</h3>
-          <p>Core projects are MIT. Rule packs, STLs, and export formats ship in the repo — not a black box appliance.</p>
-        </article>
-        <article class="card">
-          <div class="card-icon card-accent-cb">📊</div>
-          <h3>Evidence matters</h3>
-          <p>Threat logs, CSV export, executive JSON, and tamper-evident audit chains for when legal asks questions.</p>
-        </article>
-        <article class="card">
-          <div class="card-icon card-accent-m5">✨</div>
-          <h3>UX is security</h3>
-          <p>If nobody watches the panel, you don't have visibility. Cipherhorn's mood is a KPI you can't ignore.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="reveal prose" style="max-width:var(--max-w)">
-      <h2>Business model</h2>
-      <p>
-        Hacker Planet LLC monetizes through <strong>hardware kits</strong> (Kickstarter / direct),
-        <strong>Pro threat-feed subscriptions</strong> (Stripe-ready API in CyberThreatGotchi v1.1+),
-        and <strong>MSP install retainers</strong>. See our
-        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/CISO_PLAYBOOK.md" target="_blank" rel="noopener">CISO playbook</a>
-        for the 90-day plan and Year 1 revenue target.
-      </p>
-      <h2>Founder</h2>
-      <p>
-        <strong>Andy Klwal</strong> · GitHub
-        <a href="https://github.com/salvador-Data" target="_blank" rel="noopener">salvador-Data</a>
-        · Reddit u/Salvador_Data · Philadelphia, PA
-      </p>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <ul class="footer-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="cyberthreatgotchi.html">CyberThreatGotchi</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-    <p>© <span id="year"></span> Hacker Planet LLC · Philadelphia, PA</p>
-  </footer>
-  <script src="js/main.js"></script>
-</body>
-</html>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+<meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+  <meta name="referrer" content="strict-origin-when-cross-origin"/>
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.paypal.com https://www.paypalobjects.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://www.paypal.com; frame-src https://www.paypal.com; base-uri 'self'; form-action 'self' https://www.paypal.com https://buy.stripe.com https://cash.app https://account.venmo.com;"/>
+<meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="About Hacker Planet LLC — Philadelphia defensive security company. Andy Klwal and Pat build open-source edge tools and field hardware."/>
+  <meta property="og:title" content="About · HackerPlanet"/>
+  <meta property="og:image" content="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/docs/images/og-ecosystem.png"/>
+  <title>HackerPlanet · About</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="logo" href="index.html">
+        <span class="logo-mark">🪐</span>
+        HackerPlanet
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Menu">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html" class="active">About</a></li>
+        <li><a href="cyberthreatgotchi.html">CyberThreatGotchi</a></li>
+        <li><a href="ecosystem.html">Ecosystem</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="github.html">On GitHub</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi" class="nav-cta" target="_blank" rel="noopener">Repo ↗</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <header class="page-hero reveal">
+      <p class="section-label">About Hacker Planet LLC</p>
+      <h1>Defensive security with a human face</h1>
+      <p class="lead">
+        <strong>Hacker Planet LLC</strong> is a Philadelphia security practice — open-source edge tools,
+        field hardware, and audit-ready telemetry for homelabs, MSPs, and builders who refuse to choose
+        between serious defense and a desk worth showing off.
+      </p>
+    </header>
+
+    <div class="feature-row reveal">
+      <div class="prose prose-tight">
+        <h2>Our story</h2>
+        <p>
+          <strong>Andy Klwal</strong> and <strong>Pat</strong> co-founded Hacker Planet LLC in
+          <strong>Philadelphia, Pennsylvania</strong> to close a gap they kept seeing in the field:
+          SOCs drowning in dashboards, executives glazing over Grafana, and homelabbers wondering if
+          their sensor was even alive. We build defensive tools that people actually watch — with
+          evidence auditors can trust.
+        </p>
+        <p>
+          Andy leads product, firmware, and open-source releases (GitHub
+          <a href="https://github.com/salvador-Data" target="_blank" rel="noopener">salvador-Data</a>,
+          Reddit u/Salvador_Data). Pat runs Philadelphia operations — field builds, shop fulfillment,
+          and customer support. Together we ship from Philly, document everything in the repo, and keep
+          the mission squarely on <strong>authorized defense</strong>.
+        </p>
+        <p>
+          Core projects ship under <strong>MIT</strong>. Rule packs, STLs, and export formats live in
+          GitHub — not a black-box appliance. Every tool is for networks and systems you
+          <strong>own or are explicitly permitted to test</strong>.
+        </p>
+      </div>
+      <div>
+        <img
+          src="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/docs/images/og-ecosystem.png"
+          alt="Hacker Planet LLC ecosystem — CyberThreatGotchi, Bjorn, CrackBot, M5 Cardputer"
+          style="border-radius:var(--radius);border:1px solid var(--panel-border)"
+        />
+      </div>
+    </div>
+
+    <section class="reveal section-compact">
+      <p class="section-label">Flagship builds</p>
+      <h2 class="section-title">Two desks, one mission</h2>
+      <div class="card-grid card-grid-tight">
+        <article class="card card-compact">
+          <div class="card-icon card-accent-ctg">🦄</div>
+          <h3>CypherTek Rache · CyberThreatGotchi</h3>
+          <p>
+            Our edge IPS in a Tamagotchi shell — the <strong>CypherTek Rache</strong> enclosure houses a
+            Banana Pi BPI-R3 Mini running signatures, YARA, ClamAV, and IPS blocks. On e-ink,
+            <strong>Cipherhorn</strong> (unicorn CISO) reacts to live threat pressure while SQLite logs
+            and a tamper-evident audit chain satisfy auditors.
+          </p>
+          <p><a href="cyberthreatgotchi.html">Product story →</a> · <a href="shop.html">Shop kits →</a></p>
+        </article>
+        <article class="card card-compact">
+          <div class="card-icon card-accent-cb">🤖</div>
+          <h3>Mr. CrackBot AI Nano</h3>
+          <p>
+            Pocket lab assistant on Jetson Nano — authorized Wi‑Fi research, handshake capture,
+            heuristic wordlists, and GPU hashcat cracking. Stays in the <strong>lab VLAN</strong> while
+            CypherTek Rache guards the edge. Separate repo, same defensive philosophy.
+          </p>
+          <p><a href="https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano" target="_blank" rel="noopener">CrackBot repo ↗</a></p>
+        </article>
+      </div>
+      <p class="section-cta muted-inline">
+        Lab companions (Bjorn, M5 Cardputer) and partner drop-ship catalog →
+        <a href="ecosystem.html">Ecosystem map</a>
+      </p>
+    </section>
+
+    <section class="reveal section-compact">
+      <p class="section-label">Principles</p>
+      <h2 class="section-title">What we won't compromise on</h2>
+      <div class="card-grid card-grid-tight card-grid-4">
+        <article class="card card-compact">
+          <div class="card-icon card-accent-ctg">🔐</div>
+          <h3>Authorization first</h3>
+          <p>Defend and assess networks you own or are explicitly permitted to test.</p>
+        </article>
+        <article class="card card-compact">
+          <div class="card-icon card-accent-bj">📂</div>
+          <h3>Open by default</h3>
+          <p>Core projects are MIT. Rule packs, STLs, and exports ship in the repo.</p>
+        </article>
+        <article class="card card-compact">
+          <div class="card-icon card-accent-cb">📊</div>
+          <h3>Evidence matters</h3>
+          <p>Threat logs, CSV export, executive JSON, and tamper-evident audit chains.</p>
+        </article>
+        <article class="card card-compact">
+          <div class="card-icon card-accent-m5">✨</div>
+          <h3>UX is security</h3>
+          <p>If nobody watches the panel, you don't have visibility. Cipherhorn's mood is a KPI.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="reveal prose prose-tight section-compact" style="max-width:var(--max-w)">
+      <h2>Business model</h2>
+      <p>
+        Hacker Planet LLC monetizes through <strong>hardware kits</strong> (Kickstarter / direct from Philadelphia),
+        <strong>Pro threat-feed subscriptions</strong> (Stripe-ready API in CyberThreatGotchi v1.1+),
+        and <strong>MSP install retainers</strong>. See our
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/CISO_PLAYBOOK.md" target="_blank" rel="noopener">CISO playbook</a>
+        for the 90-day plan.
+      </p>
+      <h2>Team</h2>
+      <p>
+        <strong>Andy Klwal</strong> — Co-founder · GitHub
+        <a href="https://github.com/salvador-Data" target="_blank" rel="noopener">salvador-Data</a>
+        · product, firmware, open-source releases.
+      </p>
+      <p>
+        <strong>Pat</strong> — Co-founder &amp; partner · Philadelphia operations, field builds,
+        shop fulfillment, and customer support.
+      </p>
+      <p class="muted-inline">Headquarters: Philadelphia, PA · <a href="contact.html">Contact us →</a></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <ul class="footer-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="cyberthreatgotchi.html">CyberThreatGotchi</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <p>© <span id="year"></span> Hacker Planet LLC · Philadelphia, PA</p>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>
+
