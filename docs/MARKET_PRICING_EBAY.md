@@ -19,6 +19,7 @@ Snapshot for **Hacker Planet LLC** partner-fulfillment sourcing and retail sanit
 | CYD Marauder GPS + battery + case | New | — | ~$90 | ~$90 | `cydFieldCustom` **$189.99**; `dsNightHunter` **$189** |
 | M5Stack Cardputer (board / kit only) | New | ~$47 | ~$50 | ~$74 | BOM ~$58 in Cardputer SKUs |
 | M5 Cardputer + custom security firmware | New | — | scarce | ~$166 | `remotePossibility` **$99.99** · `bleBot` **$89.99** |
+| Remote Possibility IR + RF + CC1101 module kit (DIY BOM) | New | ~$12 | ~$18–28 | ~$35 | IR ~$5 + 433 RF ~$6 + CC1101 ~$8 + wire; see [Remote-Possibility HARDWARE.md](https://github.com/salvador-Data/Remote-Possibility/blob/main/docs/HARDWARE.md) |
 | Meshtastic Heltec V3 fully built (case + battery) | New | ~$47² | ~$70–85 | ~$166 | `dsMeshtasticHeltec` **$129** (Etsy-primary; eBay fallback search) |
 | Raspberry Pi 5 8 GB (board only) | New / used | ~$60 / ~$46 | ~$80 MSRP | ~$120 | Reference |
 | Raspberry Pi 5 8 GB starter / PRO kit | New | ~$130 | ~$190 | ~$280–294 | `dsRaspberryPi5` **$159** |

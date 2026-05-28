@@ -65,7 +65,7 @@
         <li><a href="shop.html">Shop</a></li>
         <li><a href="github.html">On GitHub</a></li>
         <li><a href="contact.html">Contact</a></li>
-        <li><a href="https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano" class="nav-cta" target="_blank" rel="noopener">GitHub -></a></li>
+        <li><a href="https://github.com/salvador-Data/Mr.-CrackBot-AI-CYD" class="nav-cta" target="_blank" rel="noopener">CYD GitHub -></a></li>
       </ul>
     </div>
   </nav>
@@ -101,12 +101,11 @@
         <p class="section-label">What it does</p>
         <h2 class="section-title">Wordlist lab,<br/>not production edge.</h2>
         <ul class="feature-list">
-          <li>Heuristic + optional AI wordlist generation (<code>MR_CRACKBOT_USE_AI=1</code>)</li>
-          <li>WPA handshake capture workflow (airodump-ng / aireplay-ng on Linux)</li>
-          <li>Hashcat integration for GPU cracking on Jetson Nano 4GB</li>
-          <li>Simulation mode - no Wi-Fi hardware required for dev and CI</li>
-          <li>Pygame intro + Tk control UI</li>
-          <li>RockYou2024 merge via optional <code>setup.py</code> download</li>
+          <li><strong>Jetson bench (Nano repo):</strong> heuristic + optional AI wordlists (<code>MR_CRACKBOT_USE_AI=1</code>), hashcat, airodump handshake path, simulation + Tk UI</li>
+          <li><strong>CYD field firmware:</strong> <a href="https://github.com/salvador-Data/Mr.-CrackBot-AI-CYD" target="_blank" rel="noopener">Mr.-CrackBot-AI-CYD</a> — Wi-Fi scan/deauth, handshake capture, RockYou + on-device guesses, BLE recon/MitM/jam/spoof, lab portal, JSON export, OTA</li>
+          <li><strong>M5 Cardputer:</strong> QWERTY menu parity in <code>Mr.-CrackBot-AI-Nano/cardputer/</code> — same lab surface where ESP32-S3 allows</li>
+          <li>RockYou2024 merge via optional <code>setup.py</code> (bench)</li>
+          <li>Mr. Pac-Bot pocket STLs: <code>hardware/stl/pocket/</code></li>
         </ul>
       </div>
       <div class="prose">
@@ -203,8 +202,12 @@
       </p>
       <ul class="feature-list" style="max-width:42rem;margin-top:1rem">
         <li>
+          <a href="https://github.com/salvador-Data/Mr.-CrackBot-AI-CYD" target="_blank" rel="noopener">Mr.-CrackBot-AI-CYD -></a>
+          - ESP32-2432S028 touch firmware (PlatformIO <code>cyd-2432s028</code>)
+        </li>
+        <li>
           <a href="https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano" target="_blank" rel="noopener">Mr.-CrackBot-AI-Nano on GitHub -></a>
-          - source, <code>pytest</code>, simulation, wordlist tools
+          - Jetson/laptop Python lab, <code>cardputer/</code> M5 firmware, <code>pytest</code>
         </li>
         <li>
           <a href="https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano/releases" target="_blank" rel="noopener">GitHub releases -></a>

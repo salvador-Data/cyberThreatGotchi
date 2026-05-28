@@ -63,7 +63,7 @@ window.HPL_DIRECT = {
       id: "remotePossibility",
       section: "cardputer",
       name: "Remote Possibility",
-      tagline: "M5 Cardputer | CTG field remote",
+      tagline: "M5 Cardputer | universal IR remote",
       image: "images/products/direct-field-pack.png",
       retailPrice: 99.99,
       priceDisplay: "$99.99",
@@ -71,8 +71,8 @@ window.HPL_DIRECT = {
       stripeKey: "remotePossibility",
       source: "direct",
       description:
-        "M5Stack Cardputer pre-flashed with Remote Possibility - poll CyberThreatGotchi mood and status from the field over Wi-Fi. Authorized lab networks only.",
-      includes: ["M5 Cardputer", "Remote Possibility firmware", "SD card", "Quick-start guide"],
+        "M5Stack Cardputer pre-flashed with Remote Possibility — IR + RF 433 OOK + CC1101 sub-GHz profile library. Learn, scan TV/fan/AC, save remotes on SD. Module BOM in HARDWARE.md. Home and lab gear you own only.",
+      includes: ["M5 Cardputer", "Remote Possibility firmware", "SD card", "IR/RF/CC1101 wiring guide"],
       badge: "Cardputer",
     },
     {

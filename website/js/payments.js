@@ -109,7 +109,7 @@
       name: "Remote Possibility",
       price: 99.99,
       period: "one-time",
-      desc: "M5 Cardputer | CTG remote status client",
+      desc: "M5 Cardputer | universal IR remote firmware",
       stripeKey: "remotePossibility",
     },
     bleBot: {
