@@ -45,6 +45,29 @@ EMAIL_DMARC = "v=DMARC1; p=none; rua=mailto:salvadorData@proton.me"
 EMAIL_DKIM_SELECTOR = "cf2024-1._domainkey"
 
 
+def _name_apex(name: str) -> bool:
+    n = name.rstrip(".").lower()
+    return n in ("@", ZONE_NAME.lower())
+
+
+def _name_www(name: str) -> bool:
+    n = name.rstrip(".").lower()
+    return n in ("www", f"www.{ZONE_NAME}".lower())
+
+
+def _lookup_name(name: str) -> str:
+    """Cloudflare returns apex as FQDN; API accepts @ on write."""
+    return ZONE_NAME if _name_apex(name) else name
+
+
+def _record_key(rtype: str, name: str, content: str) -> tuple[str, str, str]:
+    return (rtype, _lookup_name(name), content)
+
+
+def _records_by_key(records: list[dict]) -> dict[tuple[str, str, str], dict]:
+    return {_record_key(r["type"], r["name"], r["content"]): r for r in records}
+
+
 def _api(method: str, path: str, body: dict | None = None) -> dict:
     token = os.environ.get("CF_API_TOKEN", "").strip()
     if not token:
@@ -116,15 +139,16 @@ def _upsert_record(
     content: str,
     extra: dict | None = None,
 ) -> tuple[bool, dict]:
-    by_key = {(r["type"], r["name"], r["content"]): r for r in records}
-    key = (rtype, name, content)
+    by_key = _records_by_key(records)
+    key = _record_key(rtype, name, content)
     body: dict = {
         "type": rtype,
-        "name": name if name != "@" else "@",
+        "name": "@" if _name_apex(name) or name == "@" else name,
         "content": content,
-        "proxied": False,
         "ttl": 1,
     }
+    if rtype in ("A", "AAAA", "CNAME"):
+        body["proxied"] = False
     if extra:
         body.update(extra)
 
@@ -149,10 +173,10 @@ def _find_txt(records: list[dict], name: str, prefix: str) -> list[dict]:
 
 
 def apply_github_pages(records: list[dict]) -> int:
-    by_key = {(r["type"], r["name"], r["content"]): r for r in records}
+    by_key = _records_by_key(records)
 
     for ip in GITHUB_A:
-        key = ("A", ZONE_NAME, ip)
+        key = _record_key("A", "@", ip)
         body = {"type": "A", "name": "@", "content": ip, "proxied": False, "ttl": 1}
         if key in by_key:
             rid = by_key[key]["id"]
@@ -166,7 +190,7 @@ def apply_github_pages(records: list[dict]) -> int:
             return 1
 
     for r in records:
-        if r["type"] == "A" and r["name"] == ZONE_NAME and r.get("proxied"):
+        if r["type"] == "A" and _name_apex(r["name"]) and r.get("proxied"):
             if r["content"] not in GITHUB_A:
                 continue
             patch = _api(
@@ -176,7 +200,16 @@ def apply_github_pages(records: list[dict]) -> int:
             )
             print(f"Grey-cloud A {r['content']}: {patch.get('success')}")
 
-    www_key = ("CNAME", f"www.{ZONE_NAME}", WWW_CNAME)
+    for r in records:
+        if r["type"] == "AAAA" and _name_apex(r["name"]) and r.get("proxied"):
+            patch = _api(
+                "PATCH",
+                f"/zones/{ZONE_ID}/dns_records/{r['id']}",
+                {"proxied": False},
+            )
+            print(f"Grey-cloud AAAA apex {r['content']}: {patch.get('success')}")
+
+    www_key = _record_key("CNAME", "www", WWW_CNAME)
     www_body = {
         "type": "CNAME",
         "name": "www",
@@ -194,12 +227,11 @@ def apply_github_pages(records: list[dict]) -> int:
         print(json.dumps(r, indent=2), file=sys.stderr)
         return 1
 
-    www_names = {f"www.{ZONE_NAME}", "www"}
     github_cname = WWW_CNAME.rstrip(".").lower()
     for r in records:
         if r["type"] != "CNAME":
             continue
-        if r["name"] not in www_names:
+        if not _name_www(r["name"]):
             continue
         if r.get("content", "").rstrip(".").lower() != github_cname:
             continue
