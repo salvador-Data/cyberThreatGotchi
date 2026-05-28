@@ -157,4 +157,59 @@ Authorized BLE lab workflows on the Cardputer keyboard UI — separate from CYD 
 
 ---
 
+## Market reference (eBay May 2026)
+
+Snapshot of US eBay (and adjacent maker marketplaces where eBay had no listings) for pricing sanity checks. **Not** a mandate to change shop prices — use with BOM and loaded COGS in this doc.
+
+**Method:** eBay shop/category searches and representative fixed-price listings, May 2026. Gray-market board-only listings excluded from “typical” where they undercut authorized supply (especially BPI-R3 Mini).
+
+### eBay price ranges
+
+| Category | Condition | Low | Typical | High | HPL SKU / retail |
+|----------|-----------|-----|---------|------|------------------|
+| Banana Pi BPI-R3 **Mini** (2 GB / 8 GB eMMC, board only) | New | ~$90¹ | ~$108–110 | ~$217–222 | Component in `coreKit` (~$160 supplier floor); **`dsBananaPiR3` ops spare only — not standalone retail** |
+| BPI-R3 Mini + case / PSU bundle | New | ~$108 | ~$150 | ~$300 | — |
+| BPI-R3 Mini 1 GB vs 2 GB | — | N/A | **2 GB only** for Mini SKU | — | Full-size BPI-R3 also 2 GB; no separate 1 GB Mini variant in production |
+| Complete CTG-like edge IPS (BPI + e-ink + enclosure + flash) | New | — | **No direct eBay comps** | — | `coreKit` **$219** |
+| Bjorn / “CyberViking” tamagotchi pentest (Pi Zero + 2.13″ e-ink) | New | — | ~$180 | ~$180 | Offensive/autonomous scan; different stack than CTG defensive IPS |
+| Homelab SOC / turnkey IPS gadget | New | — | **Rare on eBay** (DIY Pi + e-ink monitors) | — | CTG fills a gap vs DIY homelab status displays |
+| ESP32 CYD 2.8″ (board only) | New | ~$9 | ~$14–16 | ~$23 | Raw BOM ~$14 in `cydStandard` |
+| CYD Marauder / Launcher flashed (basic, no GPS) | New | ~$34–40 | ~$65–80 | ~$90 | `cydStandard` **$89.99** |
+| CYD Marauder GPS + battery + case (field build) | New | — | ~$90 | ~$90 | `cydFieldCustom` **$189.99**; `dsNightHunter` **$189** |
+| M5Stack Cardputer (board / kit only) | New | ~$47 | ~$50 | ~$74 | BOM ~$58 in Cardputer SKUs |
+| M5 Cardputer + custom security firmware | New | — | scarce | ~$166 | `remotePossibility` **$99.99** · `bleBot` **$89.99** |
+| Meshtastic Heltec V3 fully built (case + battery) | New | ~$47² | ~$70–85 | ~$166 | `dsMeshtasticHeltec` **$129** |
+| Raspberry Pi 5 8 GB (board only) | New / used | ~$60 / ~$46 | ~$80 MSRP | ~$120 | Reference only |
+| Raspberry Pi 5 8 GB starter / PRO kit | New | ~$130 | ~$190 | ~$280–294 | Reference only |
+| Kali NetHunter phone (pre-rooted) | Used / new-other | ~$110 | ~$189–220 | ~$800–1,800 | Reference only — not HPL hardware |
+| Pwnagotchi assembled (basic e-ink) | New | ~$108 | ~$112–115 | ~$115 | `dsPwnagotchi` **$169** |
+| Fancygotchi / premium pwnagotchi (battery, color) | New | ~$150 | ~$185–235 | ~$255 | Tindie-heavy; eBay thin |
+| Netgotchi / defensive tamagotchi | New | ~$39–44³ | ~$52–59 | ~$157³ | `dsNetgotchi` **$99** · `dsNetgotchiPro` **$129** (partner; OlleStore direct lower) |
+| NVIDIA Jetson Nano 4 GB dev kit | New / pre-owned | ~$100 | ~$180–285 | ~$300 | BOM ref in `crackbotBench`; **`crackbotBench` $499** full lab |
+| Jetson Orin Nano Super 8 GB dev kit | New | — | ~$489–499 | ~$500 | Reference for bench-lab tier |
+
+¹ Gray-market imports; unreliable for Philly COGS — treat **~$160** as planning floor per supplier (May 2026).
+
+² Bare Heltec V3 LoRa boards; built nodes cluster ~$70–85.
+
+³ Netgotchi sold primarily on Tindie/Etsy (OlleStore); few eBay listings.
+
+### Pricing posture vs market (May 2026)
+
+| SKU | Verdict | Notes |
+|-----|---------|-------|
+| `coreKit` **$219** | **Appropriate** (was under water at $189) | No turnkey CTG comp on eBay. Parts ~$212 at BPI floor; $219 leaves minimal margin before fees — consider **$229–249** if BPI stays ≥$160 and assembly stays in-house |
+| `cydStandard` **$89.99** | **At market** | Aligns with eBay GPS/battery Marauder builds (~$90) and premium Launcher+case listings (~$65–80); HPL adds Philly flash + HPL field profile |
+| `cydFieldCustom` **$189.99** | **Fair** | Matches `dsNightHunter` tier; above basic Marauder comps, below custom multi-radio labor |
+| `crackbotBench` **$499** | **Fair / defensible** | Jetson alone ~$180–300 on eBay; full Jetson + CYD UI + assembly + hashcat path is a niche assembled lab |
+| `fieldPack` **$279** | **Good bundle** | Core + Cardputer under separate purchase |
+| `remotePossibility` / `bleBot` | **Premium over bare Cardputer** | ~$50 board + ~$40–50 firmware/assembly/QC — reasonable for turnkey M5 tools |
+| `dsMeshtasticHeltec` **$129** | **Slightly high** vs eBay ~$70–85 built nodes | OK if partner/Etsy-quality positioning; **$109–119** if tightening drop-ship competitiveness |
+| `dsPwnagotchi` **$169** | **Mid-market** | Above eBay basic (~$115), below premium Fancygotchi (~$185+) |
+| `dsNetgotchi` / Pro | **High vs maker direct** | OlleStore ~$44–59; drop-ship margin — catalog/positioning choice, not eBay comp |
+
+**Do not** list BPI-R3 Mini as standalone **$160** retail — it is a **`coreKit` component**; `dsBananaPiR3` remains ops-only (`catalogHidden: true`).
+
+---
+
 *Hacker Planet LLC · Philadelphia, PA · Authorized use only*
