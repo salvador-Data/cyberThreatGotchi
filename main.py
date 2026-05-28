@@ -31,6 +31,7 @@ from core.state_bus import GotchiSnapshot, StateBus
 from core.webhook import WebhookDispatcher
 from dashboard.cli import CyberThreatDashboard
 from dashboard.web_server import WebDashboard
+from db.audit_chain import AuditChain
 from db.logger import GotchiRecord, ThreatLogger, ThreatRecord
 from display.factory import create_display
 
@@ -48,6 +49,7 @@ class CyberThreatGotchiApp:
         self.settings.interface = iface
 
         self.logger = ThreatLogger(self.settings.db_path)
+        self.audit = AuditChain(self.settings.audit_db_path, secret=self.settings.audit_secret)
         self.gotchi = CyberGotchi(name=args.name or self.settings.gotchi_name)
         self.ips = IntrusionPreventionSystem(enabled=not args.no_ips)
         self.detector = ThreatDetector(settings=self.settings, on_threat=self._on_threat)
@@ -69,6 +71,7 @@ class CyberThreatGotchiApp:
                 self.bus,
                 self.gotchi,
                 logger=self.logger,
+                audit=self.audit,
                 host=getattr(args, "web_host", self.settings.web_host),
                 port=getattr(args, "web_port", self.settings.web_port),
             )
@@ -80,9 +83,10 @@ class CyberThreatGotchiApp:
     def _on_threat(self, event: ThreatEvent) -> None:
         action = self.ips.process_threat(event)
         self.gotchi.on_threat(event, action)
+        ts = ThreatLogger.utc_now()
         self.logger.log_threat(
             ThreatRecord(
-                timestamp=ThreatLogger.utc_now(),
+                timestamp=ts,
                 severity=event.severity,
                 category=event.category,
                 source_ip=event.source_ip,
@@ -92,6 +96,19 @@ class CyberThreatGotchiApp:
                 action_taken=action,
                 metadata=event.metadata,
             )
+        )
+        self.audit.append(
+            "threat",
+            {
+                "severity": event.severity,
+                "category": event.category,
+                "source_ip": event.source_ip,
+                "dest_ip": event.dest_ip,
+                "description": event.description,
+                "score": event.score,
+                "action_taken": action,
+            },
+            ts,
         )
         row = {
             "severity": event.severity,

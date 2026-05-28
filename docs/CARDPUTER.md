@@ -39,6 +39,17 @@ You should see mood, level, blocked count, and the last threat source IP updatin
 
 Requires `urequests` (or `requests` on CPython test builds) and your M5 LCD library (`M5.LCD` or LovyanGFX wrapper).
 
+## PlatformIO firmware (native C++)
+
+For lower latency and M5Unified graphics, use the PlatformIO project:
+
+```bash
+cd scripts/cardputer/platformio
+pio run -t upload
+```
+
+Configure `CTG_HOST` in `platformio.ini` and Wi-Fi credentials in `src/main.cpp`. See [platformio/README.md](../scripts/cardputer/platformio/README.md).
+
 ## JSON fields used
 
 | Path | Cardputer display |

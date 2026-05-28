@@ -59,6 +59,11 @@ WEBHOOK_URL = os.environ.get("CTG_WEBHOOK_URL", "").strip()
 WEBHOOK_SECRET = os.environ.get("CTG_WEBHOOK_SECRET", "").strip()
 WEBHOOK_TIMEOUT_SEC = float(os.environ.get("CTG_WEBHOOK_TIMEOUT", "5"))
 
+# Pro feed & audit chain
+PRO_API_KEY = os.environ.get("CTG_PRO_API_KEY", "").strip()
+AUDIT_SECRET = os.environ.get("CTG_AUDIT_SECRET", "").strip()
+AUDIT_DB_PATH = Path(os.environ.get("CTG_AUDIT_DB", DATA_DIR / "audit_chain.db"))
+
 
 @dataclass
 class ThreatWeights:
@@ -87,6 +92,9 @@ class Settings:
     gotchi_name: str = "Cipherhorn"
     web_host: str = field(default_factory=lambda: WEB_HOST)
     web_port: int = field(default_factory=lambda: WEB_PORT)
+    pro_api_key: str = field(default_factory=lambda: PRO_API_KEY)
+    audit_secret: str = field(default_factory=lambda: AUDIT_SECRET)
+    audit_db_path: Path = field(default_factory=lambda: AUDIT_DB_PATH)
 
     def ensure_dirs(self) -> None:
         self.data_dir.mkdir(parents=True, exist_ok=True)

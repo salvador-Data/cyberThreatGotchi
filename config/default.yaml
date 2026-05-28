@@ -28,6 +28,10 @@ webhook:
   secret: ""
   timeout_sec: 5
 
+pro:
+  api_key: ""        # CTG_PRO_API_KEY — Stripe-provisioned in production
+  audit_secret: ""   # CTG_AUDIT_SECRET — HMAC on audit export
+
 clamav:
   host: 127.0.0.1
   port: 3310

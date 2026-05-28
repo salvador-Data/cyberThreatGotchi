@@ -80,6 +80,8 @@ sudo systemctl start cyberthreatgotchi
 | `CTG_DATA_DIR` | `./data` | SQLite + hash DB |
 | `CTG_WEBHOOK_URL` | *(empty)* | POST JSON on each threat |
 | `CTG_WEBHOOK_SECRET` | *(empty)* | Optional `X-CTG-Secret` header |
+| `CTG_PRO_API_KEY` | *(empty)* | Pro feed auth; unset = demo key `demo` |
+| `CTG_AUDIT_SECRET` | *(empty)* | HMAC on `/api/export/audit.json` |
 | `CTG_CONFIG` | `config/default.yaml` | YAML settings file |
 | `CTG_EINK_REFRESH_SEC` | `8` | Min seconds between idle e-ink updates |
 
@@ -99,10 +101,11 @@ Marketing graphics live in **`docs/images/`** (regenerate: `python assets/market
 
 | Platform | You | Copy-paste guide |
 |----------|-----|------------------|
-| **GitHub** | [salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) | Tag `v1.0.0` → auto-release ([docs/RELEASE.md](docs/RELEASE.md)) |
+| **GitHub** | [salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) | [v1.1.0 release](https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0) · [docs/RELEASE.md](docs/RELEASE.md) |
 | **Reddit** | u/Salvador_Data | [docs/social/REDDIT.md](docs/social/REDDIT.md) |
 | **Facebook** | Andy Klwal · Philadelphia | [docs/social/FACEBOOK.md](docs/social/FACEBOOK.md) |
-| **2600 / meetups** | Local chapter | [docs/social/LAUNCH.md](docs/social/LAUNCH.md) |
+| **2600 / meetups** | Local chapter | [docs/social/2600_ONEPAGER.md](docs/social/2600_ONEPAGER.md) |
+| **Kickstarter BOM** | Kit planning | [docs/KICKSTARTER_BOM.md](docs/KICKSTARTER_BOM.md) |
 
 ## Tests
 

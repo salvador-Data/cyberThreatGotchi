@@ -100,6 +100,29 @@ curl -s http://<ctg-ip>:8765/api/status | jq '.gotchi.mood, .threats[0]'
 
 Future work: a Bjorn `actions/` module that ingests CTG webhooks into the e-Paper status line.
 
+### Bjorn bridge (shipped v1.1+)
+
+On the Raspberry Pi:
+
+```bash
+python scripts/bjorn_bridge.py --port 9090 --out data/bjorn_inbox.jsonl
+```
+
+On CTG (BPI-R3 Mini):
+
+```bash
+export CTG_WEBHOOK_URL=http://<bjorn-pi-ip>:9090/ctg
+python main.py --web
+```
+
+| Endpoint | Purpose |
+|----------|---------|
+| `POST /ctg` | Ingest CTG webhook JSON |
+| `GET /status` | One-line e-paper footer (plain text) |
+| `GET /health` | Liveness |
+
+Events append to `bjorn_inbox.jsonl`; latest line written to `bjorn_status.txt` for Bjorn UI hooks.
+
 ## M5Stack Cardputer
 
 The Cardputer can show CTG mood as a **remote status tile** by polling `/api/status` over Wi-Fi (no CTG firmware change required).
@@ -117,7 +140,7 @@ Example fields:
 | `threats[0].source_ip` | Last attacker |
 | `runtime.mode` | `LIVE` vs `SIMULATION` |
 
-M5 OS firmware remote-status screen: **`scripts/cardputer/ctg_status.py`** + [CARDPUTER.md](CARDPUTER.md).
+M5 OS firmware remote-status screen: **`scripts/cardputer/ctg_status.py`** (MicroPython) or **`scripts/cardputer/platformio/`** (native C++) + [CARDPUTER.md](CARDPUTER.md).
 
 ## Defensive use
 

@@ -1,0 +1,29 @@
+[
+  {
+    "sid": "PRO-001",
+    "name": "CEO Fraud Wire Transfer",
+    "category": "phishing",
+    "severity": "high",
+    "score": 9,
+    "description": "Business email compromise wire-transfer lure",
+    "pattern": "(urgent wire transfer|CEO request|payroll change)"
+  },
+  {
+    "sid": "PRO-002",
+    "name": "VPN Credential Harvest",
+    "category": "credential_theft",
+    "severity": "high",
+    "score": 8,
+    "description": "Fake VPN portal login capture",
+    "pattern": "(vpn\\.login|portal\\.secure-access|verify your vpn)"
+  },
+  {
+    "sid": "PRO-003",
+    "name": "QR Phish Landing",
+    "category": "phishing",
+    "severity": "medium",
+    "score": 6,
+    "description": "Malicious QR redirect patterns",
+    "pattern": "(qr\\.redirect|scan-to-verify|mfa-reset)"
+  }
+]

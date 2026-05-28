@@ -11,7 +11,14 @@ from typing import TYPE_CHECKING, Callable, Optional
 from flask import Flask, Response, jsonify, request, send_from_directory
 
 from assets.sprites.png_loader import sprite_path
+from core.pro_feed import (
+    build_hashes_payload,
+    build_signatures_payload,
+    build_yara_payload,
+    validate_pro_key,
+)
 from core.state_bus import GotchiSnapshot, StateBus
+from db.audit_chain import AuditChain
 from db.logger import ThreatLogger
 
 if TYPE_CHECKING:
@@ -23,6 +30,7 @@ STATIC = Path(__file__).resolve().parent / "static"
 def create_web_app(
     bus: StateBus,
     logger: Optional[ThreatLogger] = None,
+    audit: Optional[AuditChain] = None,
     on_feed: Optional[Callable[[], None]] = None,
     on_pet: Optional[Callable[[], None]] = None,
 ) -> Flask:
@@ -84,6 +92,44 @@ def create_web_app(
         }
         return jsonify(report)
 
+    @app.get("/api/export/audit.json")
+    def api_export_audit() -> Response:
+        if audit is None:
+            return jsonify({"error": "audit chain disabled"}), 503
+        limit = min(int(request.args.get("limit", 500)), 5000)
+        body = audit.export_chain(limit=limit)
+        ok, msg = audit.verify_chain()
+        body["verified"] = ok
+        body["verify_message"] = msg
+        return jsonify(body)
+
+    def _pro_auth() -> Optional[Response]:
+        key = request.headers.get("X-CTG-Pro-Key", "")
+        if not validate_pro_key(key):
+            return jsonify({"error": "invalid or missing X-CTG-Pro-Key"}), 401
+        return None
+
+    @app.get("/api/pro/feed/signatures")
+    def api_pro_signatures() -> Response:
+        denied = _pro_auth()
+        if denied:
+            return denied
+        return jsonify(build_signatures_payload())
+
+    @app.get("/api/pro/feed/yara")
+    def api_pro_yara() -> Response:
+        denied = _pro_auth()
+        if denied:
+            return denied
+        return jsonify(build_yara_payload())
+
+    @app.get("/api/pro/feed/hashes")
+    def api_pro_hashes() -> Response:
+        denied = _pro_auth()
+        if denied:
+            return denied
+        return jsonify(build_hashes_payload())
+
     @app.post("/api/feed")
     def api_feed() -> Response:
         if on_feed:
@@ -115,18 +161,21 @@ class WebDashboard:
         bus: StateBus,
         gotchi: "CyberGotchi",
         logger: Optional[ThreatLogger] = None,
+        audit: Optional[AuditChain] = None,
         host: str = "0.0.0.0",
         port: int = 8765,
     ) -> None:
         self.bus = bus
         self.gotchi = gotchi
         self.logger = logger
+        self.audit = audit
         self.host = host
         self.port = port
         self._thread: Optional[threading.Thread] = None
         self.app = create_web_app(
             bus,
             logger=logger,
+            audit=audit,
             on_feed=self.gotchi.feed,
             on_pet=self.gotchi.pet,
         )

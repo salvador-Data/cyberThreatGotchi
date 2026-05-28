@@ -1,0 +1,5 @@
+# Pro-tier demo hash deny-list entries (SHA256)
+# Extend via CTG Pro subscription feed
+
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  # PRO-DEMO-1
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb  # PRO-DEMO-2

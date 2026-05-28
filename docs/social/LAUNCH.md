@@ -2,6 +2,7 @@
 
 Graphics, copy-paste posts, and where to publish.  
 **GitHub org:** [salvador-Data](https://github.com/salvador-Data)  
+**Latest release:** [v1.1.0](https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0) · [v1.0.1](https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.0.1)  
 **Reddit:** u/Salvador_Data (underscore — not SalvadorData11)  
 **Facebook:** Andy Klwal — Philadelphia, PA (your public profile)
 
@@ -45,6 +46,7 @@ CyberThreatGotchi turns live network threats into a Tamagotchi-style guardian na
 Not a toy firewall — a real edge sensor with personality.
 
 🔗 Main repo: https://github.com/salvador-Data/cyberThreatGotchi
+📦 Release v1.1.0: https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0
 📦 Also building: Bjorn (Pi assessment), CrackBot (lab wordlists), M5 Cardputer field tools
 
 Defensive use on networks you own or are authorized to monitor.
@@ -83,6 +85,7 @@ I built a portable defensive sensor that reacts to real threats with a Tamagotch
 Runs in simulation on Windows for dev; production target is Banana Pi BPI-R3 Mini with 2.5GbE.
 
 GitHub: https://github.com/salvador-Data/cyberThreatGotchi
+Release (STLs + sprites + graphics): https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0
 
 Part of a larger desk/field toolkit (Bjorn Pi scanner, CrackBot lab assistant, M5 Cardputer status client). Defensive / authorized networks only.
 
@@ -103,6 +106,7 @@ Happy to answer setup questions — install.sh for the Pi, Docker for local demo
 OSS edge appliance: packet capture → scoring → IPS block → SQLite audit trail. Web dashboard + webhook export for SOC. Positioned for SOHO/MSP/homelab, not enterprise replacement.
 
 Repo: https://github.com/salvador-Data/cyberThreatGotchi
+Release: https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0
 
 Built for visibility and incident evidence; mood/state UI helps non-technical stakeholders grasp “something is happening” without another flat Grafana panel.
 ```
@@ -149,9 +153,11 @@ Same as homelab post; emphasize Docker `docker compose up` and `--simulation --w
 Push a version tag to trigger GitHub Release with assets:
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.1.0
+git push origin v1.1.0
 ```
+
+Previous stable: [v1.0.1](https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.0.1)
 
 Workflow `.github/workflows/release.yml` attaches:
 
@@ -165,10 +171,10 @@ See [RELEASE.md](../RELEASE.md).
 
 ## Suggested rollout order
 
-1. **GitHub** — push repo, verify CI green, tag `v1.0.0` for auto-release  
-2. **Reddit** — r/homelab first (most receptive)  
+1. **GitHub** — push repo, verify CI green, tag `v1.1.0` for auto-release  
+2. **Reddit** — r/homelab first (most receptive) — link release URL  
 3. **Facebook** — personal profile + 1–2 groups  
-4. **2600** — next local meeting  
+4. **2600** — print [2600_ONEPAGER.md](2600_ONEPAGER.md) for next local meeting  
 5. **Cross-post** other subs spaced 48h apart (avoid spam flags)
 
 ---

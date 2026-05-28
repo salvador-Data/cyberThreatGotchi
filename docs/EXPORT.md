@@ -20,6 +20,32 @@ Single snapshot combining gotchi state, runtime, blocks, and aggregated stats:
 curl -s http://127.0.0.1:8765/api/export/report.json | jq .
 ```
 
+## Tamper-evident audit chain (v1.1+)
+
+Every detected threat appends to a **hash-linked audit log** (`data/audit_chain.db`). Export for compliance or incident response:
+
+```bash
+curl -s http://127.0.0.1:8765/api/export/audit.json | jq .
+```
+
+Set `CTG_AUDIT_SECRET` before starting CTG to include an **HMAC-SHA256** signature on the export bundle:
+
+```powershell
+$env:CTG_AUDIT_SECRET = "your-long-random-secret"
+python main.py --simulation --web
+```
+
+Response fields:
+
+| Field | Meaning |
+|-------|---------|
+| `genesis` | Chain anchor constant |
+| `chain[]` | Ordered records with `prev_hash` + `record_hash` |
+| `verified` | Server-side integrity check |
+| `hmac_sha256` | Present when secret configured |
+
+Verify offline: recompute each `record_hash` from `prev_hash` + sorted JSON payload.
+
 Example `statistics` block:
 
 ```json

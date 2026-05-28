@@ -24,7 +24,8 @@ Hey homelab — I open-sourced a defensive edge box I've been building for Hacke
 **Hardware target:** Banana Pi BPI-R3 Mini + Waveshare 2.13" e-ink  
 **Dev mode:** `python main.py --simulation --web` → http://127.0.0.1:8765/
 
-**Repo:** https://github.com/salvador-Data/cyberThreatGotchi
+**Repo:** https://github.com/salvador-Data/cyberThreatGotchi  
+**Release (STLs, sprites, graphics):** https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0
 
 Also in the ecosystem (separate repos):
 - Bjorn — Pi network assessment (authorized use)

@@ -11,7 +11,8 @@ I just released **CyberThreatGotchi**: a portable network guardian that looks li
 
 Your mascot **Cipherhorn** (unicorn CISO in a suit + mask, with cat sentinels) reacts when traffic gets nasty. Runs on a **Banana Pi BPI-R3 Mini** with e-ink, or in simulation on your laptop.
 
-**Main repo:** https://github.com/salvador-Data/cyberThreatGotchi
+**Main repo:** https://github.com/salvador-Data/cyberThreatGotchi  
+**Release v1.1.0:** https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0
 
 Also part of my toolkit:
 • **Bjorn** — Pi assessment (authorized targets only)  
