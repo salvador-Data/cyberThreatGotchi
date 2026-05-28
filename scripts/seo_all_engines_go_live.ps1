@@ -1,5 +1,8 @@
-# Interactive all-engines SEO indexing go-live for hackerplanet.dev
+﻿# Interactive all-engines SEO indexing go-live for hackerplanet.dev
 # Usage: .\scripts\seo_all_engines_go_live.ps1
+#   .\scripts\seo_all_engines_go_live.ps1 -SkipDns
+#
+# -SkipDns: checklist + dashboards + IndexNow; skip GSC/Bing DNS (no CF_API_TOKEN).
 #
 # Cloudflare zone hackerplanet.dev:
 #   Zone ID:    c81e69edbf957423a22392798309fc35  (override with $env:CF_ZONE_ID)
@@ -8,6 +11,10 @@
 # Requires CF_API_TOKEN in environment for automated DNS apply (never commit or echo tokens).
 # Manual fallback: python scripts/seo_verification_dns.py --doc
 # Full checklist: docs/SEO_INDEXING_NOW.md · Ranking playbook: docs/SEO_GET_ON_TOP.md
+
+param(
+    [switch]$SkipDns
+)
 
 $ErrorActionPreference = "Stop"
 $Root = Split-Path $PSScriptRoot -Parent
@@ -38,7 +45,7 @@ function Open-Browser([string]$url, [string]$label) {
     try {
         Start-Process $url | Out-Null
     } catch {
-        Write-Host "  (Could not launch browser — open the URL manually.)" -ForegroundColor Yellow
+        Write-Host "  (Could not launch browser - open the URL manually.)" -ForegroundColor Yellow
     }
 }
 
@@ -49,40 +56,46 @@ function Invoke-VerificationDns {
 }
 
 Write-Host ""
-Write-Host "All-engines SEO indexing go-live — $Domain" -ForegroundColor Green
+Write-Host "All-engines SEO indexing go-live - $Domain" -ForegroundColor Green
 Write-Host "10-min UI checklist: docs/SEO_INDEXING_NOW.md" -ForegroundColor Gray
 Write-Host "Ranking playbook:    docs/SEO_GET_ON_TOP.md" -ForegroundColor Gray
 Write-Host "Automated status:  .\scripts\seo_go_live_checklist.ps1" -ForegroundColor Gray
+if ($SkipDns) {
+    Write-Host "SkipDns: skipping GSC/Bing DNS prompts (no CF_API_TOKEN required)." -ForegroundColor Yellow
+    Write-Step "0" "Automated go-live checklist"
+    & (Join-Path $PSScriptRoot "seo_go_live_checklist.ps1")
+}
 
 Write-Step "1" "Open webmaster dashboards (verify + submit sitemap)"
 Write-Host "  REQUIRED this week: Google Search Console + Bing Webmaster Tools"
 Write-Host "  OPTIONAL: Yandex Webmaster, Baidu Ziyuan (international)"
-Write-Host "  DuckDuckGo / Yahoo / Ecosia / Apple / Brave: no separate verify — see docs"
+Write-Host "  DuckDuckGo / Yahoo / Ecosia / Apple / Brave: no separate verify - see docs"
 foreach ($entry in $Engines.GetEnumerator()) {
     Open-Browser $entry.Value $entry.Key
     Start-Sleep -Milliseconds 800
 }
 
-Write-Step "2" "Google Search Console — DNS TXT verification"
+if (-not $SkipDns) {
+Write-Step "2" "Google Search Console - DNS TXT verification"
 Write-Host "  Add property -> Domain -> $Domain -> copy TXT (google-site-verification=...)"
 Write-Host ""
 $googleTxt = Read-Host "Paste GSC TXT value (or press Enter to skip)"
 if ($googleTxt -and $googleTxt.Trim()) {
     $googleTxt = $googleTxt.Trim().Trim('"')
     if ($env:CF_API_TOKEN) {
-        Write-Host "  Applying Google TXT via Cloudflare API (token from env — not logged)..." -ForegroundColor Yellow
+        Write-Host "  Applying Google TXT via Cloudflare API (token from env - not logged)..." -ForegroundColor Yellow
         $rc = Invoke-VerificationDns @(
             "scripts/seo_verification_dns.py",
             "--google-txt", $googleTxt
         )
         if ($rc -eq 0) {
-            Write-Host "  OK — TXT record applied. Wait 1-5 min, then click Verify in GSC." -ForegroundColor Green
+            Write-Host "  OK - TXT record applied. Wait 1-5 min, then click Verify in GSC." -ForegroundColor Green
         } else {
-            Write-Host "  FAIL — API apply failed. Add manually at:" -ForegroundColor Red
+            Write-Host "  FAIL - API apply failed. Add manually at:" -ForegroundColor Red
             Write-Host "  $CfDnsUrl" -ForegroundColor DarkGray
         }
     } else {
-        Write-Host "  CF_API_TOKEN not set — add TXT manually in Cloudflare:" -ForegroundColor Yellow
+        Write-Host "  CF_API_TOKEN not set - add TXT manually in Cloudflare:" -ForegroundColor Yellow
         Write-Host "    Type: TXT | Name: @ | Content: $googleTxt" -ForegroundColor Gray
         Write-Host "  Dashboard: $CfDnsUrl" -ForegroundColor DarkGray
     }
@@ -90,7 +103,7 @@ if ($googleTxt -and $googleTxt.Trim()) {
     Write-Host "  Skipped Google TXT." -ForegroundColor Gray
 }
 
-Write-Step "3" "Bing Webmaster Tools — DNS CNAME verification"
+Write-Step "3" "Bing Webmaster Tools - DNS CNAME verification"
 Write-Host "  Bing powers Bing, Yahoo (Slurp), DuckDuckGo web results, and Ecosia."
 Write-Host ""
 $bingHost = Read-Host "Paste Bing CNAME Host label (or Enter to skip)"
@@ -109,25 +122,30 @@ if ($bingHost -and $bingHost.Trim()) {
                 "--bing-cname", $bingHost, $bingTarget
             )
             if ($rc -eq 0) {
-                Write-Host "  OK — CNAME applied (DNS only). Wait 1-5 min, then Verify in Bing." -ForegroundColor Green
+                Write-Host "  OK - CNAME applied (DNS only). Wait 1-5 min, then Verify in Bing." -ForegroundColor Green
             } else {
-                Write-Host "  FAIL — add CNAME manually (grey cloud / DNS only)." -ForegroundColor Red
+                Write-Host "  FAIL - add CNAME manually (grey cloud / DNS only)." -ForegroundColor Red
             }
         } else {
-            Write-Host "  CF_API_TOKEN not set — add CNAME manually (DNS only / grey cloud)." -ForegroundColor Yellow
+            Write-Host "  CF_API_TOKEN not set - add CNAME manually (DNS only / grey cloud)." -ForegroundColor Yellow
         }
     }
 } else {
     Write-Host "  Skipped Bing CNAME." -ForegroundColor Gray
 }
-
+} else {
+    Write-Host ""
+    Write-Host "Skipped steps 2-3 (DNS). Manual records:" -ForegroundColor Gray
+    Write-Host "  py scripts/seo_verification_dns.py --doc" -ForegroundColor DarkGray
+    Write-Host "  Dashboard: " -ForegroundColor DarkGray
+}
 Write-Step "4" "Submit sitemap to Google + Bing (same URL)"
 Write-Host "  GSC:  Sitemaps -> Add -> sitemap.xml -> Submit"
 Write-Host "  Bing: Sitemaps -> Submit -> $Sitemap"
 Write-Host ""
 Write-Host "  Sitemap URL: $Sitemap" -ForegroundColor Green
 
-Write-Step "5" "Request indexing — priority URLs (GSC URL Inspection)"
+Write-Step "5" "Request indexing - priority URLs (GSC URL Inspection)"
 Write-Host "    https://$Domain/"
 Write-Host "    https://$Domain/hacker-planet.html"
 Write-Host "    https://$Domain/cybersecurity-philadelphia.html"
@@ -141,13 +159,13 @@ Write-Host "  Brave:      Brave crawler + IndexNow (step 7)"
 Write-Host "  Yandex:     Optional webmaster.yandex.com verify"
 Write-Host "  Baidu:      Optional ziyuan.baidu.com verify (China market)"
 
-Write-Step "7" "Ping IndexNow (Bing, Yandex, and partners — all sitemap URLs)"
+Write-Step "7" "Ping IndexNow (Bing, Yandex, and partners - all sitemap URLs)"
 Write-Host "  Running: python scripts/ping_indexnow.py"
 $idx = & $py scripts\ping_indexnow.py 2>&1
 if ($LASTEXITCODE -eq 0) {
     Write-Host "  $idx" -ForegroundColor Green
 } else {
-    Write-Host "  IndexNow failed — run manually after deploy." -ForegroundColor Yellow
+    Write-Host "  IndexNow failed - run manually after deploy." -ForegroundColor Yellow
 }
 
 Write-Host ""
