@@ -50,6 +50,18 @@ pio run -t upload
 
 Configure `CTG_HOST` in `platformio.ini` and Wi-Fi credentials in `src/main.cpp`. See [platformio/README.md](../scripts/cardputer/platformio/README.md).
 
+## M5 OS launcher (firmware catalog)
+
+Field apps ship through **[M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer)** — SD layout, manifest download, and flash-from-SD workflow. Security details (HTTPS-only manifest URLs, SHA-256 verify before flash, Wi-Fi password handling): [M5 OS SECURITY.md](https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/SECURITY.md).
+
+Host-side manifest validation:
+
+```bash
+python scripts/validate_manifest.py data/manifest.example.json
+```
+
+(Run from the M5_OS-Cardputer repo root.)
+
 ## JSON fields used
 
 | Path | Cardputer display |

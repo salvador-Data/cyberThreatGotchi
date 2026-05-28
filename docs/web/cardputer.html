@@ -124,6 +124,8 @@
       <p class="section-sub" style="max-width:42rem">
         Flash the <strong>M5 OS</strong> launcher first, then install Remote Possibility or BLE Bot packages from the manifest or SD
         <code>/firmware/</code> folder. Philadelphia SKUs ship pre-flashed.
+        Verify each package <strong>SHA-256</strong> digest in the manifest before OTA download or flash — see
+        <a href="https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/SECURITY.md" target="_blank" rel="noopener">M5 OS SECURITY.md ↗</a>.
       </p>
       <h3 class="section-title" style="font-size:1.15rem;margin:1.5rem 0 0.75rem">M5 OS (Cardputer base)</h3>
       <ul class="feature-list" style="max-width:42rem">
@@ -137,7 +139,11 @@
         </li>
         <li>
           <a href="https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/data/manifest.example.json" target="_blank" rel="noopener">manifest.example.json ↗</a>
-          — Wi‑Fi firmware catalog template
+          — Wi‑Fi firmware catalog template (<code>sha256</code> per entry)
+        </li>
+        <li>
+          <a href="https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/SECURITY.md" target="_blank" rel="noopener">SECURITY.md ↗</a>
+          — HTTPS URL whitelist, SD path sanitization, checksum verify before flash
         </li>
       </ul>
       <h3 class="section-title" style="font-size:1.15rem;margin:1.5rem 0 0.75rem">Remote Possibility</h3>

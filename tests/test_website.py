@@ -186,6 +186,8 @@ def test_cardputer_page_content():
     assert "CARDPUTER_PRODUCTS.md" in html
     assert "BLE-Bot-Cardputer/releases" in html
     assert "m5stack-cardputer" in html
+    assert "SHA-256" in html or "sha256" in html
+    assert "SECURITY.md" in html
 
 
 def test_cyd_page_content():
