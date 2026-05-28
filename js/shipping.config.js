@@ -3,18 +3,17 @@
  * Estimates only — enable Stripe Tax at checkout for live compliance.
  */
 window.HPL_SHIPPING = {
-  /** Internal fulfillment only — never render line1 on public HTML. */
+  /** Internal fulfillment only — never render shipFrom.street on public HTML. */
   shipFrom: {
     company: "Hacker Planet LLC",
-    line1: "664 Walker Street",
+    street: "664 Walker Street",
     city: "Philadelphia",
     state: "PA",
     zip: "11135",
     country: "US",
   },
-  /** Origin for calculator zones; publicLabel is the only field shown on-site. */
+  /** Customer-facing origin (calculator labels, zone text). */
   origin: {
-    line1: "664 Walker Street",
     city: "Philadelphia",
     state: "PA",
     zip: "11135",

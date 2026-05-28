@@ -22,7 +22,7 @@ window.HPL_DIRECT = {
     {
       id: "crackbotCyd",
       name: "Mr. CrackBot AI Nano on CYD",
-      image: "images/products/mr-pac-bot-product.png",
+      image: "images/products/direct-crackbot-cyd.jpg",
       retailPrice: 149,
       priceDisplay: "$149",
       fulfillment: "direct",
@@ -63,7 +63,7 @@ window.HPL_DIRECT = {
     {
       id: "coreKit",
       name: "Cipherhorn Core Kit",
-      image: "images/products/cyphertek-rache-product.png",
+      image: "images/products/direct-core-kit.jpg",
       retailPrice: 169,
       priceDisplay: "$169",
       fulfillment: "direct",
