@@ -70,8 +70,11 @@ $env:CTG_STRIPE_WEBHOOK_SECRET = "whsec_..."
 python scripts/stripe_provision.py --port 9091
 ```
 
-Stripe Dashboard → Webhooks → `checkout.session.completed`, `customer.subscription.deleted`  
+Stripe Dashboard → Webhooks → `checkout.session.completed`, `customer.subscription.deleted`,  
+`customer.subscription.updated`, `invoice.payment_failed`  
 → `http://your-host:9091/stripe/webhook`
+
+See [PAYMENTS_RECURRING.md](PAYMENTS_RECURRING.md) for Customer Portal, MSP subscriptions, and localStorage prefill (no PAN on server).
 
 Keys stored in `data/pro_keys.db`; validated by `validate_pro_key()` alongside `CTG_PRO_API_KEY`.
 
@@ -98,7 +101,9 @@ python scripts/bjorn_bridge.py --secret shared-secret
 
 ## Website (GitHub Pages)
 
-- Payment card data never hits our static site — Stripe/PayPal hosted checkout only
+- Payment card data never hits our static site — Stripe/PayPal hosted checkout only (PCI SAQ-A)
+- Returning customer ship-to/email stored in browser `localStorage` only (`customer-prefill.js`) — never PAN or tokens
+- Stripe Customer Portal URL is publishable; secret keys stay in env vars
 - Configure `website/js/payments.config.js`; validate with `python scripts/check_payments.py`
 - Security meta tags injected on sync (`X-Content-Type-Options`, CSP, referrer policy)
 

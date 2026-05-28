@@ -164,6 +164,7 @@ def build_order(
     customer_email: str = "",
     stripe_session_id: str = "",
     stripe_payment_intent: str = "",
+    stripe_customer_id: str = "",
     notes: str = "",
     supplier_order_id: str = "",
     tracking_number: str = "",
@@ -188,6 +189,7 @@ def build_order(
         "stripe_key": stripe_key,
         "stripe_session_id": stripe_session_id,
         "stripe_payment_intent": stripe_payment_intent,
+        "stripe_customer_id": (stripe_customer_id or "").strip(),
         "customer_email": customer_email,
         "product_id": meta.get("product_id") or "",
         "product_name": meta.get("product_name") or "",
@@ -336,6 +338,7 @@ def order_from_stripe_session(session: dict[str, Any]) -> dict[str, Any]:
         customer_email=email,
         stripe_session_id=str(session.get("id") or ""),
         stripe_payment_intent=str(session.get("payment_intent") or ""),
+        stripe_customer_id=str(session.get("customer") or ""),
         notes=str((session.get("metadata") or {}).get("notes") or ""),
     )
 

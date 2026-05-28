@@ -162,6 +162,30 @@
     row1.appendChild(prodSelect);
 
     var row2 = el("div", "ship-calc-row");
+    var emailLabel = el("label", "Email (saved locally for checkout prefill)");
+    emailLabel.setAttribute("for", "ship-calc-email");
+    var emailInput = el("input", "ship-calc-input");
+    emailInput.type = "email";
+    emailInput.id = "ship-calc-email";
+    emailInput.placeholder = "you@example.com";
+    emailInput.autocomplete = "email";
+    emailInput.maxLength = 254;
+
+    var nameLabel = el("label", "Name (optional)");
+    nameLabel.setAttribute("for", "ship-calc-name");
+    var nameInput = el("input", "ship-calc-input");
+    nameInput.type = "text";
+    nameInput.id = "ship-calc-name";
+    nameInput.placeholder = "Ship-to name";
+    nameInput.autocomplete = "name";
+    nameInput.maxLength = 120;
+
+    row2.appendChild(emailLabel);
+    row2.appendChild(emailInput);
+    row2.appendChild(nameLabel);
+    row2.appendChild(nameInput);
+
+    var row3 = el("div", "ship-calc-row");
     var stateLabel = el("label", "Ship-to state");
     stateLabel.setAttribute("for", "ship-calc-state");
     var stateSelect = el("select", "ship-calc-input");
@@ -185,14 +209,56 @@
     zipInput.placeholder = "19107";
     zipInput.maxLength = 10;
     zipInput.inputMode = "numeric";
+    zipInput.autocomplete = "postal-code";
 
-    row2.appendChild(stateLabel);
-    row2.appendChild(stateSelect);
-    row2.appendChild(zipLabel);
-    row2.appendChild(zipInput);
+    var cityLabel = el("label", "City (optional, saved for next visit)");
+    cityLabel.setAttribute("for", "ship-calc-city");
+    var cityInput = el("input", "ship-calc-input");
+    cityInput.type = "text";
+    cityInput.id = "ship-calc-city";
+    cityInput.placeholder = "Philadelphia";
+    cityInput.maxLength = 80;
+    cityInput.autocomplete = "address-level2";
+
+    row3.appendChild(stateLabel);
+    row3.appendChild(stateSelect);
+    row3.appendChild(zipLabel);
+    row3.appendChild(zipInput);
+    row3.appendChild(cityLabel);
+    row3.appendChild(cityInput);
 
     form.appendChild(row1);
     form.appendChild(row2);
+    form.appendChild(row3);
+
+    function applyPrefill() {
+      if (!window.HPL_customerPrefill) return;
+      var saved = window.HPL_customerPrefill.load();
+      if (saved.email) emailInput.value = saved.email;
+      if (saved.name) nameInput.value = saved.name;
+      if (saved.shipTo) {
+        if (saved.shipTo.state) stateSelect.value = saved.shipTo.state;
+        if (saved.shipTo.zip) zipInput.value = saved.shipTo.zip;
+        if (saved.shipTo.city) cityInput.value = saved.shipTo.city;
+      }
+    }
+
+    function persistPrefill() {
+      if (!window.HPL_customerPrefill) return;
+      window.HPL_customerPrefill.save({
+        email: emailInput.value,
+        name: nameInput.value,
+        shipTo: {
+          city: cityInput.value,
+          state: stateSelect.value,
+          zip: zipInput.value,
+        },
+      });
+      if (window.HPL_renderReturningCustomer) window.HPL_renderReturningCustomer();
+    }
+
+    applyPrefill();
+    window.HPL_reloadShippingPrefill = applyPrefill;
 
     var btn = el("button", "btn btn-primary ship-calc-btn", "Calculate total");
     btn.type = "button";
@@ -203,6 +269,7 @@
       var id = prodSelect.value;
       var state = stateSelect.value;
       var zip = zipInput.value;
+      persistPrefill();
       if (!state) {
         result.innerHTML = '<p class="ship-calc-error">Select a ship-to state.</p>';
         return;

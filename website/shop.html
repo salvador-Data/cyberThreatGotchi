@@ -93,6 +93,8 @@
       </p>
     </div>
 
+    <div id="returning-customer-host" class="wrap"></div>
+
     <div id="shipping-calculator" class="wrap"></div>
 
     <section class="reveal section-compact" id="crackbot-build">
@@ -130,9 +132,23 @@
 
     <div id="direct-catalog" class="wrap catalog-host"></div>
 
-    <div class="pay-trust-bar reveal pay-trust-bar--muted" aria-label="Payment methods coming at go-live">
+    <div id="returning-customer-bar" class="wrap reveal" aria-live="polite"></div>
+
+    <div id="pay-trust-bar" class="pay-trust-bar reveal pay-trust-bar--muted" aria-label="Payment methods">
       <span>Checkout coming soon</span>
       <span>Stripe | PayPal | Venmo | Cash App</span>
+    </div>
+
+    <section class="reveal section-compact" id="checkout-privacy">
+      <p class="section-label">Returning customers</p>
+      <h2 class="section-title">Ship-to prefill &amp; saved payment methods</h2>
+      <div id="ship-to-save-form" class="wrap"></div>
+    </section>
+
+    <div class="pay-trust-bar reveal pay-trust-bar--live" hidden aria-label="Secure hosted checkout">
+      <span>PCI SAQ-A</span>
+      <span>Cards on Stripe / PayPal hosted checkout only</span>
+      <span>No card data stored on hackerplanet.dev</span>
     </div>
 
     <section class="reveal section-compact" id="pro-feed">
@@ -168,6 +184,51 @@
       </div>
     </section>
 
+    <section class="reveal section-compact" id="msp-retainers">
+      <p class="section-label">Managed services</p>
+      <h2 class="section-title">Blue Team MSP retainers</h2>
+      <p class="section-sub">
+        Stripe-managed monthly subscriptions for Monitor, Defend, and Harden tiers.
+        Custom scoping after intake — see <a href="services.html#blue-team">services pricing</a>.
+      </p>
+      <div class="shop-grid">
+        <article class="shop-card" data-product="mspMonitor">
+          <div class="shop-price">$1,500<span>/mo</span></div>
+          <h3>Monitor</h3>
+          <p>Log review cadence, CTG edge health checks, patch advisory, quarterly business review.</p>
+          <ul class="shop-features">
+            <li>Stripe subscription billing</li>
+            <li>Customer Portal for invoices</li>
+            <li>12-month typical term</li>
+          </ul>
+          <div class="product-checkout"></div>
+        </article>
+        <article class="shop-card shop-card-featured" data-product="mspDefend">
+          <div class="shop-badge">Popular</div>
+          <div class="shop-price">$2,750<span>/mo</span></div>
+          <h3>Defend</h3>
+          <p>Monitor + UTM policy management, signature/YARA update cadence, business-hours incident triage.</p>
+          <ul class="shop-features">
+            <li>All Monitor features</li>
+            <li>Policy change windows</li>
+            <li>MSP-friendly billing</li>
+          </ul>
+          <div class="product-checkout"></div>
+        </article>
+        <article class="shop-card" data-product="mspHarden">
+          <div class="shop-price">$4,500<span>/mo</span></div>
+          <h3>Harden</h3>
+          <p>Defend + DDoS edge hardening, scrubbing liaison, rate-limit runbooks, on-call escalation.</p>
+          <ul class="shop-features">
+            <li>All Defend features</li>
+            <li>DDoS playbooks</li>
+            <li>Priority escalation</li>
+          </ul>
+          <div class="product-checkout"></div>
+        </article>
+      </div>
+    </section>
+
     <div id="dropship-catalog" class="wrap catalog-host"></div>
 
     <section class="reveal prose legal-shop section-compact" style="max-width:var(--max-w)">
@@ -179,8 +240,9 @@
         in the listed price - typical lead time <strong>5-14 business days</strong>.
       </p>
       <p>
-        At go-live: <strong>Stripe</strong> (cards, Apple Pay, Google Pay) | <strong>PayPal / Venmo</strong>  | 
-        <strong>Cash App</strong>. Until then, email <a href="mailto:salvadorData@proton.me">salvadorData@proton.me</a>.
+        At go-live: <strong>Stripe</strong> (cards, Apple Pay, Google Pay, subscriptions) | <strong>PayPal / Venmo</strong>  | 
+        <strong>Cash App</strong>. Returning customers: saved ship-to in browser localStorage + Stripe Customer Portal for billing.
+        Until links are configured, email <a href="mailto:salvadorData@proton.me">salvadorData@proton.me</a>.
         Open-source software stays <strong>free on GitHub</strong> - purchases support
         hardware fulfillment, Pro rule curation, and Hacker Planet LLC operations.
         WiFi tools are for <strong>authorized testing and education only</strong>.
@@ -191,6 +253,8 @@
         <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/ORDER_FULFILLMENT.md" target="_blank" rel="noopener">Fulfillment -></a>
          | 
         <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/PAYMENTS.md" target="_blank" rel="noopener">Payments -></a>
+         | 
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/PAYMENTS_RECURRING.md" target="_blank" rel="noopener">Recurring -></a>
          | 
         <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/SHOP_GO_LIVE.md" target="_blank" rel="noopener">Go-live checklist -></a>
       </p>
@@ -204,6 +268,7 @@
     <p>Pre-launch catalog | &copy; <span id="year"></span> Hacker Planet LLC | Philadelphia, PA</p>
   </footer>
 
+  <script src="js/customer-prefill.js"></script>
   <script src="js/payments.config.js"></script>
   <script src="js/payments.js"></script>
   <script src="js/shipping.config.js"></script>

@@ -1,10 +1,14 @@
 /** Live config - edit with your Stripe / PayPal / Cash App / Venmo details. */
 window.HPL_PAYMENTS = {
   demoMode: true,
+  stripeCustomerPortal: "",
   stripePaymentLinks: {
     digital: "",
     proMonthly: "",
     proYearly: "",
+    mspMonitor: "",
+    mspDefend: "",
+    mspHarden: "",
     coreKit: "",
     fieldPack: "",
     boostFormulaCod: "",
@@ -36,6 +40,13 @@ window.HPL_PAYMENTS = {
     dsKaliNetHunter: "",
   },
   paypal: { clientId: "", currency: "USD" },
+  paypalSubscriptions: {
+    proMonthly: { planId: "" },
+    proYearly: { planId: "" },
+    mspMonitor: { planId: "" },
+    mspDefend: { planId: "" },
+    mspHarden: { planId: "" },
+  },
   paypalMe: { username: "" },
   cashapp: { cashtag: "" },
   venmo: { username: "" },

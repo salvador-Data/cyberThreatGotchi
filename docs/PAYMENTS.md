@@ -84,18 +84,22 @@ For direct hardware: enable **Stripe Tax** on the Payment Link and optionally ad
 |-----|---------|-------|
 | `proMonthly` | CTG Pro feed | $9/mo |
 | `proYearly` | CTG Pro feed | $99/yr |
+| `mspMonitor` | Blue Team Monitor retainer | $1,500/mo |
+| `mspDefend` | Blue Team Defend retainer | $2,750/mo |
+| `mspHarden` | Blue Team Harden retainer | $4,500/mo |
+
+Recurring setup, Customer Portal, webhooks, and returning-customer prefill: **[PAYMENTS_RECURRING.md](PAYMENTS_RECURRING.md)**.
 
 4. Paste each link into `website/js/payments.config.js`:
 
 ```javascript
 window.HPL_PAYMENTS = {
   demoMode: false,
+  stripeCustomerPortal: "https://billing.stripe.com/p/login/...",
   stripePaymentLinks: {
     cydStandard: "https://buy.stripe.com/...",
-    cydFieldCustom: "https://buy.stripe.com/...",
-    crackbotBench: "https://buy.stripe.com/...",
-    remotePossibility: "https://buy.stripe.com/...",
-    bleBot: "https://buy.stripe.com/...",
+    proMonthly: "https://buy.stripe.com/...",
+    mspMonitor: "https://buy.stripe.com/...",
     // ... every key above
   },
 };
@@ -157,10 +161,13 @@ cashapp: { cashtag: "HackerPlanetLLC" },
 ## Test checklist
 
 - [ ] Every `stripePaymentLinks` key has a URL (`check_payments.py` exit 0)
+- [ ] `stripeCustomerPortal` set for returning subscribers
 - [ ] Stripe Tax enabled for PA
 - [ ] Direct product: calculator total ≈ Stripe Checkout
 - [ ] Apple Pay on Safari/iOS
 - [ ] `demoMode: false` hides placeholder text
+- [ ] Returning customer email prefill on Stripe links (localStorage only)
+- [ ] Pro subscription webhook provisions API key; cancel revokes
 - [ ] Partner drop-ship order workflow documented in [DROPSHIP_CATALOG.md](DROPSHIP_CATALOG.md)
 
 ---

@@ -286,6 +286,8 @@ def create_web_app(
         except json.JSONDecodeError:
             return jsonify({"error": "invalid json"}), 400
         etype = str(event.get("type") or "")
+        if etype.startswith("customer.subscription."):
+            return jsonify({"ok": True, "skipped": etype})
         if etype not in ("checkout.session.completed", "payment_intent.succeeded"):
             return jsonify({"ok": True, "skipped": etype})
         try:
@@ -294,7 +296,10 @@ def create_web_app(
             notify_fulfillment_event("fulfillment.queued", saved, fulfillment_webhook_url)
             return jsonify({"ok": True, "order_id": saved.get("id")})
         except ValueError as exc:
-            return jsonify({"error": str(exc)}), 400
+            msg = str(exc)
+            if "stripe_key" in msg or "dropship" in msg:
+                return jsonify({"ok": True, "skipped": msg})
+            return jsonify({"error": msg}), 400
 
     @app.patch("/api/fulfillment/queue/<order_id>")
     @operator_guard
