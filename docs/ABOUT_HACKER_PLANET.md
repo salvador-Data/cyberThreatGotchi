@@ -58,7 +58,7 @@ Full map → [ECOSYSTEM.md](ECOSYSTEM.md)
 
 Hacker Planet LLC is structured for **kit sales**, **Pro threat-feed subscriptions**, and **MSP install retainers** — see [CISO_PLAYBOOK.md](CISO_PLAYBOOK.md) for the 90-day plan and Year 1 revenue model (~$84K target).
 
-Kickstarter BOM and tier pricing → [KICKSTARTER_BOM.md](KICKSTARTER_BOM.md)
+*Kickstarter BOM and tier pricing → [KICKSTARTER_BOM.md](KICKSTARTER_BOM.md) · Full campaign package → [kickstarter/KICKSTARTER_CAMPAIGN.md](kickstarter/KICKSTARTER_CAMPAIGN.md)*
 
 ---
 

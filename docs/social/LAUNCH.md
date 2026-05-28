@@ -8,6 +8,24 @@ Graphics, copy-paste posts, and where to publish.
 
 ---
 
+## Kickstarter campaign (when ready)
+
+Full package in **[docs/kickstarter/](../kickstarter/)**:
+
+| Doc | Purpose |
+|-----|---------|
+| [KICKSTARTER_CAMPAIGN.md](../kickstarter/KICKSTARTER_CAMPAIGN.md) | Full campaign draft — story, tiers, FAQ, press kit |
+| [KICKSTARTER_REWARDS_TABLE.md](../kickstarter/KICKSTARTER_REWARDS_TABLE.md) | Tier matrix + internal margin notes |
+| [KICKSTARTER_SOCIAL_LAUNCH.md](../kickstarter/KICKSTARTER_SOCIAL_LAUNCH.md) | 2-week pre-launch + launch day calendar |
+| [KICKSTARTER_VISUAL_BRIEF.md](../kickstarter/KICKSTARTER_VISUAL_BRIEF.md) | Thumbnail, banner 1200×675, video specs |
+
+**Public preview:** [hackerplanet.dev/kickstarter.html](https://hackerplanet.dev/kickstarter.html) (source: `website/kickstarter.html`)  
+**Email template:** [assets/marketing/kickstarter/](../../assets/marketing/kickstarter/)
+
+After `website/kickstarter.html` edits: `python scripts/sync_website_to_docs.py`
+
+---
+
 ## Graphics inventory (commit to GitHub)
 
 | File | Use |

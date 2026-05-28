@@ -449,6 +449,18 @@ def test_product_pricing_doc_exists():
     assert "crackbotCyd" in text  # deprecated table
 
 
+def test_kickstarter_preview_page():
+    html = (WEB / "kickstarter.html").read_text(encoding="utf-8")
+    assert "Kickstarter preview" in html
+    assert "$149" in html
+    assert "$219" in html
+    assert "$35,000" in html
+    assert "partner fulfillment" in html.lower() or "Partner fulfillment" in html
+    assert "Authorized networks only" in html
+    assert "direct-core-kit.jpg" in html
+    assert "dropship" not in html.lower().replace('id="dropship-catalog"', "")
+
+
 def test_sync_website_to_docs():
     subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "sync_website_to_docs.py")],
