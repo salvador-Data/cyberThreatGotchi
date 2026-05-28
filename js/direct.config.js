@@ -71,7 +71,7 @@ window.HPL_DIRECT = {
       stripeKey: "remotePossibility",
       source: "direct",
       description:
-        "M5Stack Cardputer pre-flashed with Remote Possibility — IR + RF 433 OOK + CC1101 sub-GHz profile library. Learn, scan TV/fan/AC, save remotes on SD. Module BOM in HARDWARE.md. Home and lab gear you own only.",
+        "M5Stack Cardputer pre-flashed with Remote Possibility  - IR + RF 433 OOK + CC1101 sub-GHz profile library. Learn, scan TV/fan/AC, save remotes on SD. Module BOM in HARDWARE.md. Home and lab gear you own only.",
       includes: ["M5 Cardputer", "Remote Possibility firmware", "SD card", "IR/RF/CC1101 wiring guide"],
       badge: "Cardputer",
     },
