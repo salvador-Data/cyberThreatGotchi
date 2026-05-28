@@ -46,7 +46,7 @@ Public contact: salvadorData@proton.me · [hackerplanet.dev](https://hackerplane
 | 0:18–0:30 | "Signatures, YARA, optional ClamAV, hash deny-lists. Repeat offenders get blocked on Linux. Everything lands in SQLite — plus a tamper-evident audit chain in v1.1." | Terminal: `iptables` block log (sanitized IPs). SQLite browser row scroll. Audit chain hash line. |
 | 0:30–0:42 | "This isn't cosplay security. It's the same defensive stack I'd deploy for a SOHO or MSP edge — with a UI that helps non-technical stakeholders *feel* pressure without another flat Grafana panel." | Cardputer polling status over Wi‑Fi. Executive glance at e-ink mood. |
 | 0:42–0:55 | "We're **Hacker Planet LLC** — Philadelphia. We assemble the Cipherhorn core kit, flash SD images, burn-in every unit, and ship the enclosure STLs open on GitHub." | Timelapse: PETG print → assembly → burn-in sticker. Quick cut: M5 Cardputer, CYD field build (separate SKUs — label on screen). |
-| 0:55–1:05 | "Kickstarter backs the first production run: core kits, field packs, Meshtastic bundles for off-grid status, and an MSP pilot tier for shops rolling CTG to clients." | Reward tier cards animate in. Map: US + EU ship regions. |
+| 0:55–1:05 | "Kickstarter backs the first production run: core kits, field packs, Cardputer lab bundles — Remote Possibility plus BLE Bot on M5 OS — Meshtastic relays, and an MSP pilot tier for shops rolling CTG to clients." | Reward tier cards animate in. Map: US + EU ship regions. |
 | 1:05–1:15 | "Defensive use on networks you own or are authorized to monitor. Back us to put Cipherhorn on your edge — and help open defense stay weird in the best way." | Hero product shot. End card: logo, URL, "Back this project" + authorized-use disclaimer. |
 
 **B-roll library to shoot:** e-ink refresh slow-mo, Cardputer keyboard poll, shop bench assembly, GitHub release page, simulation mode on laptop.
@@ -142,6 +142,15 @@ Each reward maps to a **real SKU** from [PRODUCT_PRICING.md](../PRODUCT_PRICING.
 | Remote Possibility | $99.99 | CTG remote status + field HTTP client |
 | BLE Bot | $89.99 | Authorized BLE scout / proximity lab tool |
 
+Both Cardputer SKUs ship with **M5 OS** launcher on SD, then app firmware (Remote Possibility or BLE Bot) installed at our Philadelphia bench.
+
+### Cardputer Field Duo (Kickstarter bundle)
+
+- Two M5Stack Cardputers — one **Remote Possibility**, one **BLE Bot**
+- Both pre-flashed with **M5 OS** + respective app firmware
+- Retail if bought separately: **$189.98** · Kickstarter bundle **$169**
+- Pairs with Core or Field Pack tiers; also available standalone for lab builders
+
 ### Meshtastic bundle (partner fulfillment)
 
 - Heltec V3 fully built Meshtastic node ($129 retail) + field case ($34)
@@ -168,7 +177,8 @@ Shipping charged at pledge manager post-campaign (US zones per [SHIPPING_AND_TAX
 | **Digital Defender** | **$15** | ∞ | Digital Pack — STLs, sprites, backer badge | Email |
 | **Early Bird Core** | **$149** | 50 | Cipherhorn Core kit ($219 value) + 3 mo Pro feed | Philadelphia |
 | **Cipherhorn Core** | **$219** | 300 | Core kit + quick-start | Philadelphia |
-| **Field Pack** | **$279** | 150 | Core + Remote Possibility Cardputer | Philadelphia |
+| **Field Pack** | **$279** | 150 | Core + Remote Possibility Cardputer (M5 OS) | Philadelphia |
+| **Cardputer Field Duo** | **$169** | 75 | Remote Possibility + BLE Bot (2× M5 OS Cardputer) | Philadelphia |
 | **Pro Lab** | **$529** | 40 | Field Pack + CYD Standard ($89.99) + 1 yr Pro feed | Philadelphia |
 | **Bench Lab** | **$499** | 25 | Mr. CrackBot Jetson bench (standalone SKU) | Philadelphia |
 | **Meshtastic Relay** | **$159** | 75 | Heltec V3 node + field case + CTG webhook guide | Partner |

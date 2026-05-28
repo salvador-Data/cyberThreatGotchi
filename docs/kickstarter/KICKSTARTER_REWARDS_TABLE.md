@@ -16,6 +16,7 @@
 | `KS-EB` | Early Bird Core | $149 | 50 | Oct 2026 | US, CA, EU, UK |
 | `KS-CORE` | Cipherhorn Core | $219 | 300 | Oct–Nov 2026 | US, CA, EU, UK |
 | `KS-FIELD` | Field Pack | $279 | 150 | Nov 2026 | US, CA, EU, UK |
+| `KS-CARDUO` | Cardputer Field Duo | $169 | 75 | Nov 2026 | US, CA, EU, UK |
 | `KS-PROLAB` | Pro Lab | $529 | 40 | Nov–Dec 2026 | US, CA |
 | `KS-BENCH` | Bench Lab (CrackBot) | $499 | 25 | Nov–Dec 2026 | US, CA |
 | `KS-MESH` | Meshtastic Relay | $159 | 75 | Dec 2026 – Jan 2027 | US, CA, EU, UK |
@@ -30,7 +31,8 @@
 | Digital Defender | Digital Pack — STLs, sprites, wallpapers | $15 | `digital` |
 | Early Bird Core | Core kit + 3 mo Pro ($27 value) | $246 | `coreKit` + promo |
 | Cipherhorn Core | Core kit | $219 | `coreKit` |
-| Field Pack | Core + Remote Possibility Cardputer | $318.99 | `fieldPack` |
+| Field Pack | Core + Remote Possibility Cardputer (M5 OS) | $318.99 | `fieldPack` |
+| Cardputer Field Duo | Remote Possibility + BLE Bot (2× M5 OS Cardputer) | $189.98 | `remotePossibility` + `bleBot` |
 | Pro Lab | Field Pack + CYD Standard + 1 yr Pro | $437.98 + $99 | bundle |
 | Bench Lab | CrackBot Jetson bench only | $499 | `crackbotBench` |
 | Meshtastic Relay | Heltec V3 built + field case + guide PDF | $163 | `dsMeshtasticHeltec` + case |
@@ -48,7 +50,8 @@ Assumes Kickstarter + payment fees ~**10%**, US ground shipping billed separatel
 | Early Bird Core | $149 | ~$212 + $10 ship = $222 | $14.90 | **−$87** | **Loss leader** · cap 50 · Pro upsell |
 | Cipherhorn Core | $219 | ~$212 parts + $35 assembly = $247 | $21.90 | **−$49** | BPI $160 floor · Philly assembly subsidized |
 | Field Pack | $279 | ~$247 + $71 + $12 = $330 | $27.90 | **−$78** | Bundle discount · marketing CAC |
-| Pro Lab | $529 | ~$234 + $49 + $0 digital = $283 | $52.90 | ~$193 | ~36% loaded · best hardware bundle margin |
+| Cardputer Field Duo | $169 | ~$64 + $71 + $12 = $147 | $16.90 | **~$5** | ~3% · ecosystem attach · M5 OS on both units |
+| Pro Lab | $529 | ~$330 + $59 + $0 Pro = $389 | $52.90 | **~$87** | ~16% · Pro yr + CYD attach |
 | Bench Lab | $499 | ~$341 + $15 ship | $49.90 | ~$93 | ~19% · matches retail intent |
 | Meshtastic Relay | $159 | ~$90 + $18 + ship incl. $12 | $15.90 | ~$23 | ~14% · partner variance |
 | MSP Pilot | $2,499 | ~$702 hardware + $15 ship ×3 + $200 labor | $249.90 | ~$1,332 | ~53% · service value drives margin |
