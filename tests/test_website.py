@@ -26,6 +26,10 @@ def test_website_structure():
         "js/payments.config.js",
         "js/catalog.js",
         "js/catalog.config.js",
+        "js/direct.js",
+        "js/direct.config.js",
+        "js/shipping.js",
+        "js/shipping.config.js",
         "README.md",
     ):
         assert (WEB / name).is_file(), name
@@ -37,14 +41,32 @@ def test_shop_page_payments():
     assert "payments.config.js" in html
     assert "catalog.config.js" in html
     assert "dropship-catalog" in html
-    assert "boostFormulaCod" in html
-    assert "marauderCustom175" in html
+    assert "direct-catalog" in html
+    assert "shipping-calculator" in html
+    assert "shipping.config.js" in html
+    assert "direct-catalog" in html
     assert "Apple Pay" in html
     assert "Venmo" in html
     assert "Cash App" in html
     assert "AliExpress" in html or "Meshtastic" in html
     assert "Netgotchi" in html
     assert "Pwnagotchi" in html or "dropship-catalog" in html
+
+
+def test_shipping_config_structure():
+    text = (WEB / "js" / "shipping.config.js").read_text(encoding="utf-8")
+    assert "HPL_SHIPPING" in text
+    assert "sabretoAkachi" in text
+    assert "fulfillment: \"direct\"" in text or '"direct"' in text
+    assert "nexusStates" in text
+
+
+def test_direct_config_structure():
+    text = (WEB / "js" / "direct.config.js").read_text(encoding="utf-8")
+    assert "HPL_DIRECT" in text
+    assert "Sabreto Akachi" in text
+    assert "CrackBot" in text
+    assert 'fulfillment: "direct"' in text
 
 
 def test_catalog_config_structure():

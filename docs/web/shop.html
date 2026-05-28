@@ -45,11 +45,16 @@
       <p class="section-label">Shop · Philadelphia PA</p>
       <h1>Support open defense</h1>
       <p class="lead">
-        Kits, Pro threat feeds, and a full <strong>drop-ship catalog</strong> —
-        Pwnagotchi, Netgotchi, <strong>Meshtastic</strong>, <strong>Hackberry Pi</strong>, Marauder builds, Pi/SBC kits.
-        Pay Hacker Planet → we source from makers → ships to you.
+        <strong>Your builds ship from Philadelphia</strong> — Sabreto Akachi, Mr. CrackBot AI Nano on CYD,
+        CyberThreatGotchi kits, and custom field hardware.
+        <strong>Partner catalog drop-ships</strong> — Pwnagotchi, Meshtastic, Hackberry Pi, Marauder, SBC kits.
+        Use the shipping &amp; tax calculator before checkout.
       </p>
     </header>
+
+    <div id="shipping-calculator" class="wrap"></div>
+
+    <div id="direct-catalog" class="wrap catalog-host"></div>
 
     <div class="pay-trust-bar reveal">
       <span>💳 Cards &amp; debit</span>
@@ -89,85 +94,23 @@
       </div>
     </section>
 
-    <section class="reveal">
-      <p class="section-label">Featured drop-ship</p>
-      <h2 class="section-title">Hacker Planet field kits</h2>
-      <p class="section-sub">Retail pricing includes sourcing, test, and drop-ship handling — checkout here, we fulfill from verified suppliers.</p>
-      <div class="shop-grid">
-        <article class="shop-card shop-card-featured" data-product="boostFormulaCod">
-          <div class="shop-badge">Drop-ship</div>
-          <div class="shop-price">$99</div>
-          <h3>Boost Formula COD Field Kit</h3>
-          <p>ESP32-S3 board, WiFi Deauther-ready firmware profile, 2.4 GHz antenna, USB-C — Scratch-friendly quick start for lab learners.</p>
-          <ul class="shop-features">
-            <li>ESP32-S3-WROOM module</li>
-            <li>Pre-flashed authorized-lab profile</li>
-            <li>External antenna + USB-C cable</li>
-            <li>Works with Boost Formula COD workflow</li>
-          </ul>
-          <div class="product-checkout"></div>
-        </article>
-        <article class="shop-card shop-card-featured" data-product="marauderCustom175">
-          <div class="shop-badge">Custom build</div>
-          <div class="shop-price">$199</div>
-          <h3>Marauder GPS Field Build</h3>
-          <p>Full CYD Marauder with GPS wardrive, SMA antenna, LiPo battery, printed enclosure — includes matching STL pack.</p>
-          <ul class="shop-features">
-            <li>CYD 2.8&quot; + Marauder firmware</li>
-            <li>GPS module + external antenna</li>
-            <li>LiPo + charge board</li>
-            <li>3D printed case + STL files</li>
-          </ul>
-          <div class="product-checkout"></div>
-        </article>
-        <article class="shop-card" data-product="codStlPack">
-          <div class="shop-price">$19</div>
-          <h3>COD STL + KSS print pack</h3>
-          <p>Digital download — pocket clip, wall dock, SuperSlicer/Prusa profiles for Cardputer &amp; COD mounts.</p>
-          <div class="product-checkout"></div>
-        </article>
-      </div>
-    </section>
-
-    <section class="reveal">
-      <p class="section-label">CyberThreatGotchi</p>
-      <h2 class="section-title">Kits &amp; digital</h2>
-      <div class="shop-grid">
-        <article class="shop-card" data-product="digital">
-          <div class="shop-price">$15</div>
-          <h3>Digital Pack</h3>
-          <p>Full repo, STL zips, sprites, marketing graphics — instant delivery link.</p>
-          <div class="product-checkout"></div>
-        </article>
-        <article class="shop-card shop-card-featured" data-product="coreKit">
-          <div class="shop-badge">Popular</div>
-          <div class="shop-price">$169</div>
-          <h3>Cipherhorn Core Kit</h3>
-          <p>BPI-R3 Mini + e-ink HAT + 3D enclosure + flashed SD + PSU. Ships from Philly area.</p>
-          <div class="product-checkout"></div>
-        </article>
-        <article class="shop-card" data-product="fieldPack">
-          <div class="shop-price">$219</div>
-          <h3>Field Pack</h3>
-          <p>Core kit + M5Stack Cardputer + printed quick-start — desk + pocket.</p>
-          <div class="product-checkout"></div>
-        </article>
-      </div>
-    </section>
-
     <div id="dropship-catalog" class="wrap catalog-host"></div>
 
     <section class="reveal prose legal-shop" style="max-width:var(--max-w);margin-top:2rem">
-      <h2>Drop-ship model</h2>
+      <h2>Fulfillment, tax &amp; authorized use</h2>
       <p>
-        Every catalog item with a checkout button is <strong>Hacker Planet drop-ship</strong>: you pay retail price here
-        (Stripe / PayPal / Venmo / Cash App), we order from the listed maker or distributor
-        (<code>supplierUrl</code> in <code>catalog.config.js</code>), and it ships to your address.
-        Typical lead time: <strong>5–14 business days</strong>.
+        <strong>Made in Philadelphia</strong> (Sabreto Akachi, CrackBot CYD, CTG kits, custom builds) ship from
+        Hacker Planet LLC with zone-based shipping — use the calculator above. Pennsylvania sales tax applies to
+        PA addresses (8% in Philadelphia ZIPs: 6% state + 2% local). See
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/SHIPPING_AND_TAX.md" target="_blank" rel="noopener">Shipping &amp; tax guide ↗</a>.
       </p>
       <p>
-        WiFi and wardrive tools (Pwnagotchi, Marauder, Night Hunter pods) are for
-        <strong>authorized testing and education only</strong>. Netgotchi and CyberThreatGotchi are defensive.
+        <strong>Partner drop-ship</strong> items (Pwnagotchi, Meshtastic, Hackberry Pi, etc.) include supplier shipping
+        in the listed price — we order from the maker after your checkout. Typical lead time: <strong>5–14 business days</strong>.
+      </p>
+      <p>
+        WiFi and wardrive tools are for <strong>authorized testing and education only</strong>.
+        Enable <strong>Stripe Tax</strong> at checkout for live compliance.
       </p>
     </section>
 
@@ -185,7 +128,9 @@
       <p>
         <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/PAYMENTS.md" target="_blank" rel="noopener">Merchant setup guide (Stripe / PayPal / Cash App / Venmo) ↗</a>
         ·
-        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/DROPSHIP_CATALOG.md" target="_blank" rel="noopener">Drop-ship catalog guide ↗</a>
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/DROPSHIP_CATALOG.md" target="_blank" rel="noopener">Partner drop-ship guide ↗</a>
+        ·
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/SHIPPING_AND_TAX.md" target="_blank" rel="noopener">Shipping &amp; tax ↗</a>
         ·
         <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/HOSTING_OPTIONS.md" target="_blank" rel="noopener">Hosting options (free &amp; cheap) ↗</a>
       </p>
@@ -198,6 +143,10 @@
 
   <script src="js/payments.config.js"></script>
   <script src="js/payments.js"></script>
+  <script src="js/shipping.config.js"></script>
+  <script src="js/shipping.js"></script>
+  <script src="js/direct.config.js"></script>
+  <script src="js/direct.js"></script>
   <script src="js/catalog.config.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/main.js"></script>

@@ -835,6 +835,7 @@ section {
 .source-printables { color: var(--magenta); background: rgba(210, 168, 255, 0.12); }
 .source-hpl { color: var(--accent); background: rgba(0, 180, 140, 0.15); }
 .source-dropship { color: var(--philly-gold); background: rgba(201, 162, 39, 0.15); }
+.source-direct { color: var(--accent); background: rgba(0, 180, 140, 0.18); }
 
 .catalog-price {
   font-size: 1.65rem;
@@ -866,5 +867,93 @@ section {
 .legal-shop {
   border-top: 1px solid var(--panel-border);
   padding-top: 2rem;
+}
+
+/* Shipping & tax calculator */
+.ship-calc-panel {
+  margin-bottom: 2.5rem;
+  padding: 1.75rem;
+  background: var(--panel);
+  border: 1px solid rgba(0, 180, 140, 0.35);
+  border-radius: var(--radius);
+}
+
+.ship-calc-form {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ship-calc-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem 1rem;
+  align-items: end;
+}
+
+.ship-calc-row label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.ship-calc-input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--panel-border);
+  background: var(--bg-elevated);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+}
+
+.ship-calc-btn {
+  margin-bottom: 1rem;
+}
+
+.ship-calc-breakdown {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 1.25rem;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.ship-calc-breakdown dt {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.ship-calc-breakdown dd {
+  margin: 0;
+}
+
+.ship-calc-breakdown .muted {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.ship-calc-total {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 1.1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--panel-border);
+  margin-top: 0.35rem;
+}
+
+.ship-calc-disclaimer,
+.ship-calc-error {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0.75rem 0 0;
+}
+
+.ship-calc-error {
+  color: var(--warn);
 }
 

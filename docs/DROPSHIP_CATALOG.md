@@ -1,6 +1,8 @@
 # Drop-ship catalog — merchant guide
 
-Hacker Planet LLC operates **retail drop-ship**: customer pays you at **retail price** → you order from **supplierUrl** → supplier ships to customer.
+**Hacker Planet direct-ship** (Sabreto Akachi, CrackBot CYD, CTG kits) → see [SHIPPING_AND_TAX.md](SHIPPING_AND_TAX.md).
+
+**Partner drop-ship** (below): customer pays HPL at retail → you order from `supplierUrl` → partner ships to customer.
 
 No affiliate “buy on Etsy” buttons on the live shop — everything with a price checks out through **Stripe** (plus PayPal/Venmo/Cash App when configured).
 
@@ -38,8 +40,12 @@ Customer → shop.html checkout ($ retail)
 | Hackberry Pi CM5 | $499 | `dsHackberryCM5` | ZitaoTech |
 | Marauder GPS pocket v2 | $219 | `dsMarauderGps` | HoneyHoneyTrading |
 | CYD battery + GPS mod | $59 | `dsMarauderBatteryMod` | Biscuit Shop |
-| HPL Marauder custom GPS | $199 | `marauderCustom175` | HPL assembly |
-| Boost Formula COD kit | $99 | `boostFormulaCod` | HPL assembly |
+| HPL Marauder custom GPS | $199 | `marauderCustom175` | **Direct — Philly** |
+| Boost Formula COD kit | $99 | `boostFormulaCod` | **Direct — Philly** |
+| Sabreto Akachi | $189 | `sabretoAkachi` | **Direct — Philly** |
+| Mr. CrackBot AI Nano CYD | $149 | `crackbotCyd` | **Direct — Philly** |
+| Cipherhorn Core Kit | $169 | `coreKit` | **Direct — Philly** |
+| Field Pack | $219 | `fieldPack` | **Direct — Philly** |
 | Official Marauder Kit | $89 | `dsMarauderKoko` | JustCallMeKoko |
 | Raspberry Pi 5 kit | $139 | `dsRaspberryPi5` | AliExpress vetted |
 | Orange Pi 5 Plus kit | $119 | `dsOrangePi5` | AliExpress / Orange Pi |
