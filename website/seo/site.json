@@ -7,100 +7,120 @@
   "locale": "en_US",
   "language": "en",
   "region": "US-PA",
+  "geoPlacename": "Philadelphia",
   "author": "Salvador Data",
   "email": "salvadorData@proton.me",
   "phone": "+12158398738",
   "addressLocality": "Philadelphia",
   "addressRegion": "PA",
   "addressCountry": "US",
+  "serviceAreaLocal": [
+    "Philadelphia",
+    "Greater Philadelphia",
+    "Delaware Valley",
+    "Pennsylvania"
+  ],
+  "serviceAreaRemote": ["United States"],
+  "bingSiteVerification": "",
+  "indexNowKey": "hpl-hackerplanet-indexnow-key",
   "sameAs": [
     "https://github.com/salvador-Data",
     "https://www.reddit.com/user/SalvadorData/"
   ],
   "pages": {
     "index.html": {
-      "title": "HackerPlanet · Philadelphia PA | Defensive Security & Field Hardware",
-      "description": "Hacker Planet LLC — Blue Team, Red Team, and OSINT services plus open-source edge tools. Philadelphia field hardware shop, CyberThreatGotchi IPS, and authorized security research kits.",
-      "keywords": "HackerPlanet, Hacker Planet LLC, Philadelphia cybersecurity, Blue Team, Red Team, OSINT, CyberThreatGotchi, defensive security, field hardware",
+      "title": "HackerPlanet · Philadelphia PA | Cybersecurity Firm & Ethical Hacking Lab",
+      "description": "Hacker Planet LLC — Philadelphia cybersecurity firm for Blue Team, Red Team, and OSINT. Remote US consulting, ethical hacking lab hardware, CyberThreatGotchi IPS, and authorized penetration testing training gear.",
+      "keywords": "cybersecurity Philadelphia, ethical hacking lab Philadelphia, Philadelphia cybersecurity firm, remote cybersecurity consulting, computer hacking authorized lab, Hacker Planet LLC, CyberThreatGotchi",
       "ogType": "website",
       "ogImage": "/images/og-cybertech.png",
-      "jsonLd": ["organization", "website", "professionalService"]
+      "jsonLd": ["localBusiness", "website", "professionalService"],
+      "sitemapPriority": "1.0"
     },
     "about.html": {
-      "title": "About Hacker Planet LLC · HackerPlanet Philadelphia",
-      "description": "About Hacker Planet LLC — Salvador Data and Pat build open-source defensive security tools and Philadelphia-assembled field hardware. Contact: salvadorData@proton.me. Authorized networks only.",
-      "keywords": "Hacker Planet LLC, Salvador Data, Philadelphia cybersecurity, CyberThreatGotchi, open source security",
+      "title": "About Hacker Planet LLC · Cybersecurity Philadelphia PA",
+      "description": "About Hacker Planet LLC — Salvador Data and Pat build open-source defensive security tools and Philadelphia-assembled field hardware. Cybersecurity firm serving Philly metro and remote US clients. Authorized networks only.",
+      "keywords": "Hacker Planet LLC, Salvador Data, cybersecurity Philadelphia, ethical hacking lab Philadelphia, Philadelphia cybersecurity firm, open source security",
       "ogType": "website",
-      "jsonLd": ["organization", "breadcrumb"]
+      "jsonLd": ["localBusiness", "breadcrumb"]
     },
     "services.html": {
-      "title": "Blue Team, Red Team & OSINT Services · HackerPlanet",
-      "description": "Managed Blue Team UTM and DDoS hardening, authorized Red Team assessments, and OSINT investigations. Philadelphia boutique pricing from Hacker Planet LLC.",
-      "keywords": "Blue Team Philadelphia, Red Team assessment, OSINT investigation, UTM management, DDoS hardening, MSP security",
+      "title": "Cybersecurity Services Philadelphia · Remote Consulting · HackerPlanet",
+      "description": "Managed Blue Team UTM and DDoS hardening, authorized Red Team assessments, OSINT investigations, and remote cybersecurity consulting for US clients relocating or scaling. Philadelphia boutique pricing from Hacker Planet LLC.",
+      "keywords": "cybersecurity services Philadelphia, remote cybersecurity consulting, Blue Team Philadelphia, Red Team assessment, ethical hacking authorized, OSINT investigation, MSP security, relocate cybersecurity",
       "ogType": "website",
-      "jsonLd": ["organization", "professionalService", "breadcrumb"]
+      "jsonLd": ["localBusiness", "professionalService", "breadcrumb"]
     },
     "contact.html": {
-      "title": "Contact Salvador Data · HackerPlanet Philadelphia",
-      "description": "Contact Hacker Planet LLC — Salvador Data, Philadelphia PA. Email salvadorData@proton.me, phone (215) 839-8738. Blue Team, Red Team, OSINT, MSP, and shop inquiries.",
-      "keywords": "contact Hacker Planet, Salvador Data, Philadelphia cybersecurity contact, MSP inquiry",
+      "title": "Contact Salvador Data · Cybersecurity Philadelphia · HackerPlanet",
+      "description": "Contact Hacker Planet LLC — Salvador Data, Philadelphia PA cybersecurity firm. Email salvadorData@proton.me, phone (215) 839-8738. Local Philly metro and remote US: Blue Team, Red Team, OSINT, MSP, ethical hacking lab inquiries.",
+      "keywords": "contact Hacker Planet, Salvador Data, cybersecurity Philadelphia contact, ethical hacking lab Philadelphia, MSP inquiry, remote cybersecurity consulting",
       "ogType": "website",
-      "jsonLd": ["organization", "contactPage", "breadcrumb"]
+      "jsonLd": ["localBusiness", "contactPage", "breadcrumb"]
+    },
+    "cybersecurity-philadelphia.html": {
+      "title": "Cybersecurity Philadelphia · Ethical Hacking Lab · Hacker Planet LLC",
+      "description": "Philadelphia cybersecurity firm — local Blue Team retainers, remote US consulting for relocators and MSPs, and authorized ethical hacking lab hardware. Hacker Planet LLC: CyberThreatGotchi IPS, pentest training gear, homelab sensors.",
+      "keywords": "cybersecurity Philadelphia, ethical hacking lab Philadelphia, Philadelphia cybersecurity firm, remote cybersecurity consulting, authorized penetration testing lab, computer hacking training authorized, MSP Philadelphia, homelab security Philadelphia",
+      "ogType": "website",
+      "ogImage": "/images/hero-cybertech.png",
+      "jsonLd": ["localBusiness", "professionalService", "breadcrumb"],
+      "sitemapPriority": "0.9"
     },
     "shop.html": {
       "title": "Shop Field Hardware · CYD, CrackBot, CTG · HackerPlanet",
       "description": "Shop HackerPlanet — CYD field builds from $79.99, CrackBot Jetson bench $449, CyberThreatGotchi kits, M5 Cardputer tools, Meshtastic, and curated partner hardware. Philadelphia direct ship.",
-      "keywords": "cybersecurity hardware shop, CYD field build, CyberThreatGotchi kit, CrackBot, M5 Cardputer, Philadelphia tech shop",
+      "keywords": "cybersecurity hardware shop, ethical hacking lab gear, CYD field build, CyberThreatGotchi kit, CrackBot, M5 Cardputer, Philadelphia tech shop",
       "ogType": "website",
       "ogImage": "/images/hero-cybertech.png",
-      "jsonLd": ["organization", "breadcrumb"]
+      "jsonLd": ["localBusiness", "breadcrumb"]
     },
     "cyberthreatgotchi.html": {
       "title": "CyberThreatGotchi Edge IPS · Cipherhorn · HackerPlanet",
       "description": "CyberThreatGotchi — Banana Pi edge IPS with e-ink status, tamper-evident audit chain, web dashboard, and Pro threat feed. Philadelphia-assembled Cipherhorn core kit $169.",
-      "keywords": "CyberThreatGotchi, edge IPS, BPI-R3 Mini, e-ink security sensor, Cipherhorn, network guardian",
+      "keywords": "CyberThreatGotchi, edge IPS, BPI-R3 Mini, e-ink security sensor, Cipherhorn, network guardian, Philadelphia cybersecurity hardware",
       "ogType": "product",
       "ogImage": "/images/products/cyphertek-rache-product.jpg",
-      "jsonLd": ["organization", "product", "breadcrumb"]
+      "jsonLd": ["localBusiness", "product", "breadcrumb"]
     },
     "crackbot.html": {
-      "title": "Mr. CrackBot AI Nano · Jetson Bench Lab · HackerPlanet",
-      "description": "Mr. CrackBot AI Nano — authorized Wi-Fi lab wordlist assistant. Free simulation on GitHub; Philadelphia Jetson bench lab $449. CYD hardware sold separately.",
-      "keywords": "CrackBot AI Nano, Jetson hashcat lab, authorized WiFi research, wordlist security tool, Philadelphia",
+      "title": "Mr. CrackBot AI Nano · Authorized Ethical Hacking Lab · HackerPlanet",
+      "description": "Mr. CrackBot AI Nano — authorized Wi-Fi lab wordlist assistant for ethical hacking training in isolated VLANs. Free simulation on GitHub; Philadelphia Jetson bench lab $449.",
+      "keywords": "ethical hacking lab, authorized penetration testing lab, CrackBot AI Nano, Jetson hashcat lab, authorized WiFi research, computer hacking training authorized, Philadelphia",
       "ogType": "product",
       "ogImage": "/images/products/mr-pac-bot-product.png",
-      "jsonLd": ["organization", "product", "breadcrumb"]
+      "jsonLd": ["localBusiness", "product", "breadcrumb"]
     },
     "cardputer.html": {
       "title": "M5 Cardputer · Remote Possibility & BLE Bot · HackerPlanet",
       "description": "M5Stack Cardputer field tools from Hacker Planet LLC — Remote Possibility CTG remote client $89.99 and BLE Bot authorized scout $79.99. Philadelphia assembled.",
-      "keywords": "M5 Cardputer, Remote Possibility, BLE Bot, CyberThreatGotchi remote, field security tool",
+      "keywords": "M5 Cardputer, Remote Possibility, BLE Bot, CyberThreatGotchi remote, field security tool, remote cybersecurity hardware",
       "ogType": "product",
       "ogImage": "/images/products/direct-field-pack.png",
-      "jsonLd": ["organization", "product", "breadcrumb"]
+      "jsonLd": ["localBusiness", "product", "breadcrumb"]
     },
     "cyd.html": {
-      "title": "CYD Field Build · HackerPlanet",
-      "description": "Cheap Yellow Display pocket field build from Hacker Planet LLC. HPL signature Wi-Fi lab profile $79.99; custom CYD $174.99. Philadelphia assembled.",
-      "keywords": "CYD field build, ESP32-2432S028, authorized WiFi lab, Philadelphia security hardware",
+      "title": "CYD Field Build · Authorized Wi-Fi Lab · HackerPlanet",
+      "description": "Cheap Yellow Display pocket field build from Hacker Planet LLC. HPL signature Wi-Fi lab profile $79.99; custom CYD $174.99. Philadelphia assembled ethical hacking lab hardware.",
+      "keywords": "CYD field build, ESP32-2432S028, authorized WiFi lab, ethical hacking hardware, Philadelphia security hardware",
       "ogType": "product",
       "ogImage": "/images/products/direct-cyd-standard.jpg",
-      "jsonLd": ["organization", "product", "breadcrumb"]
+      "jsonLd": ["localBusiness", "product", "breadcrumb"]
     },
     "ecosystem.html": {
       "title": "Open-Source Security Ecosystem · HackerPlanet",
       "description": "Hacker Planet LLC ecosystem — CyberThreatGotchi edge defense, Bjorn Pi assessment, Mr. CrackBot lab VLAN, and M5 OS Cardputer field clients. Philadelphia open source.",
-      "keywords": "CyberThreatGotchi ecosystem, Bjorn scanner, CrackBot, M5 Cardputer, open source security tools",
+      "keywords": "CyberThreatGotchi ecosystem, Bjorn scanner, CrackBot, M5 Cardputer, open source security tools, ethical hacking lab stack",
       "ogType": "website",
-      "jsonLd": ["organization", "breadcrumb"]
+      "jsonLd": ["localBusiness", "breadcrumb"]
     },
     "github.html": {
       "title": "On GitHub · Releases, CI & Source · HackerPlanet",
       "description": "CyberThreatGotchi and Hacker Planet LLC on GitHub — clone, star, download releases, STLs, and follow CI for Philadelphia defensive security projects.",
-      "keywords": "CyberThreatGotchi GitHub, salvador-Data, open source releases, security STLs",
+      "keywords": "CyberThreatGotchi GitHub, salvador-Data, open source releases, security STLs, ethical hacking open source",
       "ogType": "website",
       "ogImage": "/images/hero-cybertech.png",
-      "jsonLd": ["organization", "breadcrumb"]
+      "jsonLd": ["localBusiness", "breadcrumb"]
     }
   }
 }

@@ -27,7 +27,7 @@ python scripts/sync_website_to_docs.py
 | `website/robots.txt` | `/robots.txt` |
 | `website/sitemap.xml` | `/sitemap.xml` |
 
-Submit sitemap in [Google Search Console](https://search.google.com/search-console) after `hackerplanet.dev` DNS is live.
+Submit sitemap in [Google Search Console](https://search.google.com/search-console) and [Bing Webmaster Tools](https://www.bing.com/webmasters) after `hackerplanet.dev` DNS is live. Full checklists: **[SEO_SEARCH_ENGINES.md](./SEO_SEARCH_ENGINES.md)**.
 
 ## Editing
 

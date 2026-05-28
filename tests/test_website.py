@@ -22,6 +22,7 @@ def test_website_structure():
         "cyd.html",
         "ecosystem.html",
         "contact.html",
+        "cybersecurity-philadelphia.html",
         "shop.html",
         "github.html",
         "css/style.css",
@@ -136,6 +137,7 @@ def test_services_page_content():
     assert "$1,500" in html
     assert "Dr. Eric" not in html
     assert "services.html" in (WEB / "index.html").read_text(encoding="utf-8")
+    assert "cybersecurity-philadelphia.html" in (WEB / "index.html").read_text(encoding="utf-8")
 
 
 def test_nav_includes_services_on_all_pages():

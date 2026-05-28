@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -12,24 +13,35 @@ WEB = ROOT / "website"
 SEO_JSON = WEB / "seo" / "site.json"
 
 
+def _load_pages() -> dict:
+    return json.loads(SEO_JSON.read_text(encoding="utf-8"))["pages"]
+
+
 def test_seo_config_valid():
     data = json.loads(SEO_JSON.read_text(encoding="utf-8"))
     assert data["canonicalBase"] == "https://hackerplanet.dev"
     assert "salvadorData@proton.me" in data["email"]
-    assert len(data["pages"]) >= 10
+    assert len(data["pages"]) >= 11
+    assert "cybersecurity-philadelphia.html" in data["pages"]
+    assert data.get("indexNowKey")
 
 
 def test_robots_and_sitemap():
     robots = (WEB / "robots.txt").read_text(encoding="utf-8")
     assert "Sitemap: https://hackerplanet.dev/sitemap.xml" in robots
+    for bot in ("Googlebot", "Bingbot", "DuckDuckBot", "Slurp", "facebot", "Yandex"):
+        assert f"User-agent: {bot}" in robots, bot
+        assert "Allow: /" in robots
+    assert "Disallow: /js/payments.config.js" in robots
     sitemap = (WEB / "sitemap.xml").read_text(encoding="utf-8")
     assert "https://hackerplanet.dev/shop.html" in sitemap
     assert "https://hackerplanet.dev/cardputer.html" in sitemap
     assert "https://hackerplanet.dev/cyd.html" in sitemap
+    assert "https://hackerplanet.dev/cybersecurity-philadelphia.html" in sitemap
 
 
 def test_all_pages_have_seo_markers():
-    pages = json.loads(SEO_JSON.read_text(encoding="utf-8"))["pages"]
+    pages = _load_pages()
     for name in pages:
         html = (WEB / name).read_text(encoding="utf-8")
         assert "<!-- hpl-seo:start -->" in html, name
@@ -38,6 +50,55 @@ def test_all_pages_have_seo_markers():
         assert "application/ld+json" in html, name
         assert 'name="twitter:card"' in html, name
         assert 'property="og:image"' in html, name
+        assert 'name="geo.placename"' in html, name
+
+
+def test_no_duplicate_titles():
+    pages = _load_pages()
+    titles = [meta["title"] for meta in pages.values()]
+    assert len(titles) == len(set(titles)), "duplicate titles in site.json"
+
+
+def test_json_ld_valid_on_all_pages():
+    pages = _load_pages()
+    pattern = re.compile(
+        r'<script type="application/ld\+json">(.*?)</script>',
+        re.S,
+    )
+    for name in pages:
+        html = (WEB / name).read_text(encoding="utf-8")
+        blocks = pattern.findall(html)
+        assert blocks, f"no JSON-LD in {name}"
+        for raw in blocks:
+            parsed = json.loads(raw.strip())
+            assert parsed.get("@context") == "https://schema.org"
+            assert "@type" in parsed
+
+
+def test_local_business_schema_city_only():
+    html = (WEB / "cybersecurity-philadelphia.html").read_text(encoding="utf-8")
+    assert "LocalBusiness" in html or "localBusiness" in (WEB / "seo" / "site.json").read_text()
+    assert "664 Walker" not in html
+    assert "addressLocality" in html or '"Philadelphia"' in html
+
+
+def test_indexnow_key_file():
+    cfg = json.loads(SEO_JSON.read_text(encoding="utf-8"))
+    key = cfg["indexNowKey"]
+    key_path = WEB / f"{key}.txt"
+    assert key_path.is_file(), key_path.name
+    assert key_path.read_text(encoding="utf-8").strip() == key
+
+
+def test_cybersecurity_philadelphia_page_content():
+    html = (WEB / "cybersecurity-philadelphia.html").read_text(encoding="utf-8")
+    assert "<h1>" in html
+    assert "ethical hacking" in html.lower()
+    assert "authorized" in html.lower()
+    assert "remote" in html.lower()
+    assert "Philadelphia" in html
+    assert "salvadorData@proton.me" in html
+    assert "cybersecurity-philadelphia.html" in (WEB / "index.html").read_text(encoding="utf-8")
 
 
 def test_sync_seo_script():
@@ -48,3 +109,14 @@ def test_sync_seo_script():
         text=True,
     )
     assert r.returncode == 0, r.stderr
+
+
+def test_ping_indexnow_dry_run():
+    r = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "ping_indexnow.py"), "--dry-run"],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+    )
+    assert r.returncode == 0, r.stderr + r.stdout
+    assert "hackerplanet.dev" in r.stdout

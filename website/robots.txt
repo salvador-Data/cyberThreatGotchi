@@ -1,4 +1,23 @@
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: facebot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
 User-agent: *
 Allow: /
 Disallow: /js/payments.config.js
+
 Sitemap: https://hackerplanet.dev/sitemap.xml

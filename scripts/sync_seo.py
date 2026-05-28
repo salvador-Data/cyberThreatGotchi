@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inject SEO meta tags, JSON-LD, robots.txt, and sitemap.xml into website/."""
+"""Inject SEO meta tags, JSON-LD, robots.txt, sitemap.xml, and IndexNow key into website/."""
 
 from __future__ import annotations
 
@@ -17,6 +17,15 @@ SEO_JSON = WEB / "seo" / "site.json"
 MARKER_START = "<!-- hpl-seo:start -->"
 MARKER_END = "<!-- hpl-seo:end -->"
 
+SEARCH_BOTS = (
+    "Googlebot",
+    "Bingbot",
+    "DuckDuckBot",
+    "Slurp",
+    "facebot",
+    "Yandex",
+)
+
 
 def _load_config() -> dict[str, Any]:
     return json.loads(SEO_JSON.read_text(encoding="utf-8"))
@@ -30,6 +39,36 @@ def _abs(base: str, path: str) -> str:
 
 def _page_label(filename: str) -> str:
     return Path(filename).stem.replace("-", " ").title()
+
+
+def _city_address(cfg: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "@type": "PostalAddress",
+        "addressLocality": cfg["addressLocality"],
+        "addressRegion": cfg["addressRegion"],
+        "addressCountry": cfg["addressCountry"],
+    }
+
+
+def _area_served(cfg: dict[str, Any]) -> list[dict[str, Any]]:
+    areas: list[dict[str, Any]] = [
+        {
+            "@type": "City",
+            "name": cfg["addressLocality"],
+            "containedInPlace": {
+                "@type": "State",
+                "name": cfg["addressRegion"],
+                "containedInPlace": {"@type": "Country", "name": "United States"},
+            },
+        }
+    ]
+    for name in cfg.get("serviceAreaLocal", []):
+        if name == cfg["addressLocality"]:
+            continue
+        areas.append({"@type": "AdministrativeArea", "name": name})
+    for name in cfg.get("serviceAreaRemote", []):
+        areas.append({"@type": "Country" if name == "United States" else "AdministrativeArea", "name": name})
+    return areas
 
 
 def _breadcrumb_ld(base: str, filename: str, site_name: str) -> dict[str, Any]:
@@ -59,24 +98,28 @@ def _breadcrumb_ld(base: str, filename: str, site_name: str) -> dict[str, Any]:
     }
 
 
-def _organization_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
+def _local_business_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
     return {
         "@context": "https://schema.org",
-        "@type": "Organization",
+        "@type": ["LocalBusiness", "Organization"],
         "name": cfg["legalName"],
         "alternateName": cfg["siteName"],
         "url": base.rstrip("/") + "/",
         "logo": _abs(base, cfg["defaultOgImage"]),
         "email": cfg["email"],
         "telephone": cfg["phone"],
-        "address": {
-            "@type": "PostalAddress",
-            "addressLocality": cfg["addressLocality"],
-            "addressRegion": cfg["addressRegion"],
-            "addressCountry": cfg["addressCountry"],
-        },
+        "address": _city_address(cfg),
+        "areaServed": _area_served(cfg),
         "sameAs": cfg.get("sameAs", []),
+        "description": (
+            "Philadelphia cybersecurity firm — Blue Team, Red Team, OSINT, remote US consulting, "
+            "and authorized ethical hacking lab hardware. City-only public address; no walk-in retail."
+        ),
     }
+
+
+def _organization_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
+    return _local_business_ld(cfg, base)
 
 
 def _website_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
@@ -97,13 +140,16 @@ def _professional_service_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
         "url": base.rstrip("/") + "/",
         "email": cfg["email"],
         "telephone": cfg["phone"],
-        "areaServed": cfg["addressLocality"],
-        "address": {
-            "@type": "PostalAddress",
-            "addressLocality": cfg["addressLocality"],
-            "addressRegion": cfg["addressRegion"],
-            "addressCountry": cfg["addressCountry"],
-        },
+        "areaServed": _area_served(cfg),
+        "address": _city_address(cfg),
+        "serviceType": [
+            "Cybersecurity consulting",
+            "Managed Blue Team",
+            "Authorized Red Team assessment",
+            "OSINT investigation",
+            "Ethical hacking lab hardware",
+            "Remote cybersecurity consulting",
+        ],
     }
 
 
@@ -132,8 +178,8 @@ def _json_ld_blocks(
 ) -> list[dict[str, Any]]:
     blocks: list[dict[str, Any]] = []
     for kind in page.get("jsonLd", []):
-        if kind == "organization":
-            blocks.append(_organization_ld(cfg, base))
+        if kind in ("organization", "localBusiness"):
+            blocks.append(_local_business_ld(cfg, base))
         elif kind == "website":
             blocks.append(_website_ld(cfg, base))
         elif kind == "professionalService":
@@ -166,6 +212,7 @@ def _seo_block(cfg: dict[str, Any], page: dict[str, Any], filename: str) -> str:
         f'  <meta name="author" content="{escape(cfg["author"])}"/>',
         '  <meta name="robots" content="index, follow, max-image-preview:large"/>',
         f'  <meta name="geo.region" content="{escape(cfg["region"])}"/>',
+        f'  <meta name="geo.placename" content="{escape(cfg.get("geoPlacename", cfg["addressLocality"]))}"/>',
         f'  <link rel="canonical" href="{escape(canonical)}"/>',
         f'  <link rel="alternate" hreflang="en-us" href="{escape(canonical)}"/>',
         f'  <link rel="alternate" href="{escape(gh_alt)}"/>',
@@ -181,6 +228,10 @@ def _seo_block(cfg: dict[str, Any], page: dict[str, Any], filename: str) -> str:
         f'  <meta name="twitter:description" content="{escape(desc)}"/>',
         f'  <meta name="twitter:image" content="{escape(og_image)}"/>',
     ]
+
+    bing_code = (cfg.get("bingSiteVerification") or "").strip()
+    if bing_code:
+        lines.append(f'  <meta name="msvalidate.01" content="{escape(bing_code)}"/>')
 
     for block in _json_ld_blocks(cfg, page, base, filename):
         payload = json.dumps(block, ensure_ascii=False, separators=(",", ":"))
@@ -253,13 +304,20 @@ def _inject_page(html_path: Path, block: str) -> None:
 
 
 def _write_robots(base: str) -> None:
-    content = (
-        "User-agent: *\n"
-        "Allow: /\n"
-        "Disallow: /js/payments.config.js\n"
-        f"Sitemap: {base.rstrip('/')}/sitemap.xml\n"
+    lines: list[str] = []
+    for bot in SEARCH_BOTS:
+        lines.extend([f"User-agent: {bot}", "Allow: /", ""])
+    lines.extend(
+        [
+            "User-agent: *",
+            "Allow: /",
+            "Disallow: /js/payments.config.js",
+            "",
+            f"Sitemap: {base.rstrip('/')}/sitemap.xml",
+            "",
+        ]
     )
-    (WEB / "robots.txt").write_text(content, encoding="utf-8")
+    (WEB / "robots.txt").write_text("\n".join(lines), encoding="utf-8")
 
 
 def _write_sitemap(cfg: dict[str, Any]) -> None:
@@ -268,16 +326,24 @@ def _write_sitemap(cfg: dict[str, Any]) -> None:
         "urlset",
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9",
     )
-    for filename in cfg["pages"]:
+    for filename, page in cfg["pages"].items():
         loc = base + "/" if filename == "index.html" else f"{base}/{filename}"
         url = ET.SubElement(urlset, "url")
         ET.SubElement(url, "loc").text = loc
         ET.SubElement(url, "changefreq").text = "weekly"
-        priority = "1.0" if filename == "index.html" else "0.8"
+        priority = page.get("sitemapPriority", "0.8")
         ET.SubElement(url, "priority").text = priority
     tree = ET.ElementTree(urlset)
     ET.indent(tree, space="  ")
     tree.write(WEB / "sitemap.xml", encoding="utf-8", xml_declaration=True)
+
+
+def _write_indexnow_key(cfg: dict[str, Any]) -> None:
+    key = (cfg.get("indexNowKey") or "").strip()
+    if not key:
+        return
+    key_path = WEB / f"{key}.txt"
+    key_path.write_text(key + "\n", encoding="utf-8")
 
 
 def sync() -> int:
@@ -295,6 +361,7 @@ def sync() -> int:
         _inject_page(html_path, block)
     _write_robots(cfg["canonicalBase"])
     _write_sitemap(cfg)
+    _write_indexnow_key(cfg)
     print(f"SEO synced for {len(pages)} pages + robots.txt + sitemap.xml")
     return 0
 
