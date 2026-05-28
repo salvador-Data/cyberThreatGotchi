@@ -54,6 +54,18 @@ def test_shop_page_payments():
     assert "Pwnagotchi" in html or "dropship-catalog" in html
 
 
+def test_shop_config_alignment():
+    import subprocess
+
+    r = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "check_shop.py")],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+    )
+    assert r.returncode == 0, r.stdout + r.stderr
+
+
 def test_shipping_config_structure():
     text = (WEB / "js" / "shipping.config.js").read_text(encoding="utf-8")
     assert "HPL_SHIPPING" in text

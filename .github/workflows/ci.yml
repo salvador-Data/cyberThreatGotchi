@@ -23,6 +23,8 @@ jobs:
         run: python assets/sprites/generate_sprites.py
       - name: Generate marketing graphics
         run: python assets/marketing/generate_graphics.py
+      - name: Validate shop configs
+        run: python scripts/check_shop.py
       - name: Run tests
         env:
           CTG_SIMULATION: "1"
