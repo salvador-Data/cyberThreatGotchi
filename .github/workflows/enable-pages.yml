@@ -1,0 +1,65 @@
+name: Enable GitHub Pages (one-time)
+
+# Run manually once: Actions → Enable GitHub Pages (one-time) → Run workflow
+# Enables branch deploy from gh-pages / (root) — no custom domain required.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: enable-pages
+  cancel-in-progress: false
+
+jobs:
+  enable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enable Pages from gh-pages branch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const payload = {
+              build_type: "legacy",
+              source: { branch: "gh-pages", path: "/" },
+            };
+            try {
+              const res = await github.rest.repos.createPagesSite({
+                owner,
+                repo,
+                ...payload,
+              });
+              core.info("Created Pages site: " + (res.data.html_url || ""));
+            } catch (err) {
+              if (err.status === 409) {
+                const res = await github.rest.repos.updateInformationAboutPagesSite({
+                  owner,
+                  repo,
+                  ...payload,
+                });
+                core.info("Updated Pages site: " + (res.data.html_url || ""));
+              } else {
+                core.setFailed(err.message);
+                throw err;
+              }
+            }
+
+      - name: Wait for Pages propagation
+        run: sleep 45
+
+      - name: Verify site responds
+        run: |
+          URL="https://salvador-Data.github.io/cyberThreatGotchi/"
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" "$URL" || true)
+          echo "HTTP $CODE for $URL"
+          if [ "$CODE" != "200" ]; then
+            echo "::warning::Site not 200 yet — if still 404, set Settings → Pages → gh-pages / (root) manually."
+            exit 0
+          fi
+          echo "Site is live."
