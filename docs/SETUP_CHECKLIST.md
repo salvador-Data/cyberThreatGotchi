@@ -77,25 +77,11 @@ gh api repos/salvador-Data/cyberThreatGotchi/pages
 | Item | Status |
 |------|--------|
 | Voice account + 215 number + forward to cell | ✅ **Completed** (2026-05-28) |
-| Public number on contact page | ⏳ **Paste your Voice number** — see below |
+| Public number on contact page | ✅ **(215) 839-8738** · `tel:+12158398738` |
 
-### Paste your number (≈2 min)
+Live on [contact.html](../website/contact.html). Google Voice forwards to your cell — do not publish personal cell on the site.
 
-1. Format for display: `(215) XXX-XXXX` (or your chosen area code).
-2. Edit **[website/contact.html](../website/contact.html)** — **Business phone** card:
-   - Replace `tel:+1XXXXXXXXXX` and `(215) XXX-XXXX` with your real number  
-     (E.164 in `href`, e.g. `<a href="tel:+12155551234">(215) 555-1234</a>` — no spaces in `href`).
-   - Keep **no street address** on any public HTML (warehouse stays in `shipping.config.js` only).
-3. Run sync and push:
-
-```powershell
-.\.venv\Scripts\python scripts\sync_website_to_docs.py
-git add website/contact.html docs/web/contact.html
-git commit -m "Add business phone to contact page"
-git push origin main
-```
-
-Original setup clicks (for reference): [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md)
+Original setup: [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md)
 
 ---
 
@@ -217,7 +203,7 @@ Customer-facing copy: **Philadelphia, PA** only (`origin.publicLabel`).
 
 | # | Task | Status |
 |---|------|--------|
-| 1 | **Google Voice** (215 → cell) | ✅ Done — paste number on contact |
+| 1 | **Google Voice** (215 → cell) | ✅ **(215) 839-8738** on contact page |
 | 2 | **Cloudflare account** | ✅ Done |
 | 3 | **Register `hackerplanet.dev`** | ⏳ ~$10 at Cloudflare Registrar |
 | 4 | **DNS + GitHub custom domain** | ⏳ After step 3 (`CNAME` in repo ✅) |

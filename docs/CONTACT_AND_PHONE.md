@@ -7,7 +7,7 @@ Primary contact: **Salvador Data** (Andy Klwal) · **Hacker Planet LLC** · Phil
 | **Email** | `hello@hackerplanet.dev` | Placeholder until domain registered |
 | **GitHub** | [salvador-Data](https://github.com/salvador-Data) | Active |
 | **Reddit** | [u/Salvador_Data](https://www.reddit.com/user/Salvador_Data/) | Active |
-| **Phone** | TBD (Google Voice) | Setup in progress |
+| **Phone** | [(215) 839-8738](tel:+12158398738) (Google Voice) | Active |
 | **Website** | https://salvador-Data.github.io/cyberThreatGotchi/contact.html | Live |
 
 Public HTML does **not** include warehouse street addresses. Fulfillment origin stays in internal config only.

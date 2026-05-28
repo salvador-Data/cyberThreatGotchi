@@ -333,8 +333,8 @@ def test_contact_page_content():
     assert "Philadelphia" in html
     assert "hello@hackerplanet.dev" in html
     assert "MSP" in html
-    assert "tel:+1" in html
-    assert "XXXXXXXXXX" in html
+    assert "tel:+12158398738" in html
+    assert "(215) 839-8738" in html
     assert "CONTACT_AND_PHONE.md" in html
     assert "services.html" in html
     assert "shop.html" in html
