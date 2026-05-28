@@ -204,6 +204,8 @@ def test_product_firmware_sections():
         assert 'id="firmware"' in html, name
     crackbot = (WEB / "crackbot.html").read_text(encoding="utf-8")
     assert "Mr.-CrackBot-AI-Nano/releases" in crackbot
+    assert "scripts/mr_crackbot/password_generator.py" in crackbot
+    assert "Authorized lab use only" in crackbot
     ctg = (WEB / "cyberthreatgotchi.html").read_text(encoding="utf-8")
     assert "releases/tag/v1.1.0" in ctg
 

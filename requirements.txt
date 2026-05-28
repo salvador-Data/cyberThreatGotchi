@@ -21,6 +21,10 @@ pyclamd>=0.4.0
 # RPi.GPIO>=0.7.1; platform_system == "Linux"
 # waveshare-epd>=1.0.0; platform_system == "Linux"
 
+# Mr. CrackBot wordlist AI path (optional — heuristic mode needs no extra deps)
+# transformers>=4.40.0
+# torch>=2.0.0
+
 # Dev / test
 pytest>=8.0.0
 pytest-cov>=4.1.0
