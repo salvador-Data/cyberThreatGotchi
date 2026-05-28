@@ -46,6 +46,8 @@ python assets/sprites/generate_sprites.py || true
 pip install waveshare-epd 2>/dev/null || echo "waveshare-epd optional — use CTG_DISPLAY=terminal if missing"
 
 mkdir -p /etc/cyberthreatgotchi
+mkdir -p /var/lib/cyberthreatgotchi
+chmod 755 /var/lib/cyberthreatgotchi
 cat >/etc/cyberthreatgotchi/env <<EOF
 CTG_PLATFORM=bpi-r3-mini
 CTG_DISPLAY=eink

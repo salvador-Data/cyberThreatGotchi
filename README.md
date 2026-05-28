@@ -26,7 +26,7 @@
 
 Built for the **Banana Pi BPI-R3 Mini** (2× 2.5GbE, Wi-Fi 6) and dev machines. Your mascot **Cipherhorn** is a unicorn CISO in a business suit and mask, orbited by **cat sentinels** (business, mass-market, and SOC personas).
 
-Full story → **[docs/ABOUT.md](docs/ABOUT.md)**
+Full story → **[docs/ABOUT.md](docs/ABOUT.md)** · Web UI → **[docs/WEB.md](docs/WEB.md)** · Ecosystem → **[docs/ECOSYSTEM.md](docs/ECOSYSTEM.md)**
 
 ## Features
 
