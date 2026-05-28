@@ -6,6 +6,15 @@
     direct: { label: "Philly ship", icon: "📍", class: "source-direct" },
   };
 
+  var SECTIONS = {
+    cyd: { label: "Cheap Yellow Display", title: "CYD field builds — hardware only" },
+    crackbot: { label: "Lab VLAN", title: "Mr. CrackBot AI Nano — bench lab" },
+    cardputer: { label: "M5 Cardputer", title: "Remote Possibility & BLE Bot" },
+    ctg: { label: "Edge IPS", title: "CyberThreatGotchi kits" },
+    other: { label: "Field kits", title: "Other Philadelphia builds" },
+    digital: { label: "Digital", title: "Instant delivery" },
+  };
+
   function cfg() {
     return window.HPL_DIRECT || { products: [] };
   }
@@ -43,10 +52,20 @@
     return wrap;
   }
 
+  function anchorId(product) {
+    if (product.id === "crackbotBench") return "crackbot-bench";
+    if (product.id === "cydFieldCustom") return "cyd-custom";
+    if (product.id === "sabretoAkachi") return "cyd-standard";
+    if (product.id === "remotePossibility") return "remote-possibility";
+    if (product.id === "bleBot") return "ble-bot";
+    return product.id || "";
+  }
+
   function renderProductCard(product) {
     var card = el("article", "shop-card catalog-card shop-card-featured");
     card.setAttribute("data-fulfillment", product.fulfillment || "direct");
-    if (product.id) card.id = product.id === "crackbotCyd" ? "crackbot-cyd" : product.id;
+    var aid = anchorId(product);
+    if (aid) card.id = aid;
     var imgWrap = renderProductImage(product);
     if (imgWrap) card.appendChild(imgWrap);
     if (product.badge) card.appendChild(el("div", "shop-badge", product.badge));
@@ -87,6 +106,23 @@
     return card;
   }
 
+  function groupProducts(products) {
+    var order = ["cyd", "crackbot", "cardputer", "ctg", "other", "digital"];
+    var groups = {};
+    products.forEach(function (p) {
+      var key = p.section || "other";
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(p);
+    });
+    return order
+      .filter(function (k) {
+        return groups[k] && groups[k].length;
+      })
+      .map(function (k) {
+        return { key: k, meta: SECTIONS[k] || { title: k, label: k }, products: groups[k] };
+      });
+  }
+
   function initDirect() {
     var host = document.getElementById("direct-catalog");
     if (!host) return;
@@ -99,16 +135,23 @@
       el(
         "p",
         "section-sub catalog-intro",
-        "Sabreto Akachi, Mr. CrackBot AI Nano on CYD, CyberThreatGotchi kits, and custom field builds — " +
-          "assembled in Philadelphia. Customization is the only rendezvous option on these SKUs. Use the calculator above for shipping & tax."
+        "CYD pocket hardware, Mr. CrackBot Jetson bench labs, M5 Cardputer tools, and CyberThreatGotchi kits — " +
+          "assembled in Philadelphia. <strong>CYD prices exclude tax & shipping.</strong> Use the calculator above."
       )
     );
 
-    var grid = el("div", "shop-grid catalog-grid");
-    (cfg().products || []).forEach(function (product) {
-      grid.appendChild(renderProductCard(product));
+    groupProducts(cfg().products || []).forEach(function (group) {
+      var block = el("div", "catalog-subsection");
+      block.appendChild(el("p", "section-label", group.meta.label));
+      block.appendChild(el("h3", "catalog-subtitle", group.meta.title));
+      var grid = el("div", "shop-grid catalog-grid");
+      group.products.forEach(function (product) {
+        grid.appendChild(renderProductCard(product));
+      });
+      block.appendChild(grid);
+      wrap.appendChild(block);
     });
-    wrap.appendChild(grid);
+
     host.appendChild(wrap);
   }
 

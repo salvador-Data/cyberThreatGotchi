@@ -10,6 +10,8 @@ Static marketing site for **Hacker Planet LLC** (Philadelphia, PA) and the **Cyb
 | `about.html` | `/about.html` | Company story, principles, founder |
 | `services.html` | `/services.html` | Blue / Red / OSINT pricing and scope |
 | `cyberthreatgotchi.html` | `/cyberthreatgotchi.html` | Product deep-dive |
+| `crackbot.html` | `/crackbot.html` | Mr. CrackBot AI Nano bench lab |
+| `cardputer.html` | `/cardputer.html` | Remote Possibility & BLE Bot |
 | `ecosystem.html` | `/ecosystem.html` | All four repos |
 | `contact.html` | `/contact.html` | Social links, Philly, 2600 |
 
@@ -37,7 +39,7 @@ Or open `index.html` directly in a browser (images load from GitHub raw URLs).
 
 ## Shop & payments
 
-**[shop.html](shop.html)** — CTG kits, $85.99 COD / $175 Marauder custom builds, Etsy·AliExpress drop-ship, Pro feed.
+**[shop.html](shop.html)** — CYD from $79.99, CrackBot bench $449, Cardputer tools, CTG kits, partner drop-ship, Pro feed. See [PRODUCT_PRICING.md](../docs/PRODUCT_PRICING.md).
 
 | Method | How |
 |--------|-----|
