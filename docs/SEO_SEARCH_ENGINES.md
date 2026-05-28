@@ -29,6 +29,10 @@ All crawlers above are **explicitly allowed** in `website/robots.txt` (generated
 
 **Quick status check:** `.\scripts\seo_go_live_checklist.ps1`
 
+**10-min all-engines indexing:** [SEO_INDEXING_NOW.md](./SEO_INDEXING_NOW.md) · `.\scripts\seo_all_engines_go_live.ps1`
+
+**Get on top (honest ranking playbook):** [SEO_GET_ON_TOP.md](./SEO_GET_ON_TOP.md)
+
 **DNS verification (GSC + Bing):** `python scripts/seo_verification_dns.py --doc`
 
 **Google Business Profile:** [SEO_GOOGLE_BUSINESS_PROFILE.md](./SEO_GOOGLE_BUSINESS_PROFILE.md)

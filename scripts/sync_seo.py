@@ -135,6 +135,24 @@ def _website_ld(cfg: dict[str, Any], base: str) -> dict[str, Any]:
     return block
 
 
+def _faq_ld(page: dict[str, Any]) -> dict[str, Any] | None:
+    faqs = page.get("faqs") or []
+    if not faqs:
+        return None
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": item["question"],
+                "acceptedAnswer": {"@type": "Answer", "text": item["answer"]},
+            }
+            for item in faqs
+        ],
+    }
+
+
 def _breadcrumb_ld(base: str, filename: str, site_name: str) -> dict[str, Any]:
     path = "" if filename == "index.html" else filename
     url = _abs(base, path)
@@ -175,6 +193,10 @@ def _json_ld_blocks(
             blocks.append(_website_ld(cfg, base))
         elif kind == "breadcrumb":
             blocks.append(_breadcrumb_ld(base, filename, cfg["siteName"]))
+        elif kind == "faq":
+            faq = _faq_ld(page)
+            if faq:
+                blocks.append(faq)
     return blocks
 
 
@@ -200,6 +222,8 @@ def _seo_block(cfg: dict[str, Any], page: dict[str, Any], filename: str) -> str:
         f'  <meta name="geo.region" content="{escape(cfg["region"])}"/>',
         f'  <meta name="geo.placename" content="{escape(cfg.get("geoPlacename", cfg["addressLocality"]))}"/>',
         f'  <link rel="canonical" href="{escape(canonical)}"/>',
+        '  <link rel="preconnect" href="https://fonts.googleapis.com"/>',
+        '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>',
         f'  <link rel="alternate" hreflang="en-us" href="{escape(canonical)}"/>',
         f'  <link rel="alternate" href="{escape(gh_alt)}"/>',
         f'  <meta name="apple-mobile-web-app-title" content="{escape(brand)}"/>',

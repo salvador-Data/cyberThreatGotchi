@@ -17,9 +17,12 @@ def test_go_live_scripts_exist():
         "scripts/github_pages_https.py",
         "scripts/seo_verification_dns.py",
         "scripts/seo_go_live_checklist.ps1",
+        "scripts/seo_all_engines_go_live.ps1",
         "scripts/cloudflare/dns-github-pages.bind",
         "scripts/cloudflare/dns-email-routing.bind",
         "docs/GO_LIVE_NOW.md",
+        "docs/SEO_INDEXING_NOW.md",
+        "docs/SEO_GET_ON_TOP.md",
         "docs/SEO_GOOGLE_BUSINESS_PROFILE.md",
     ):
         assert (ROOT / name).is_file(), name

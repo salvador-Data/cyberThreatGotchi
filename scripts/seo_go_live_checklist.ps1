@@ -30,10 +30,14 @@ $LocalFiles = @(
     "website/sitemap.xml",
     "website/seo/site.json",
     "website/hpl-hackerplanet-indexnow-key.txt",
+    "website/hacker-planet.html",
     "docs/SEO_SEARCH_ENGINES.md",
+    "docs/SEO_INDEXING_NOW.md",
+    "docs/SEO_GET_ON_TOP.md",
     "docs/SEO_GOOGLE_BUSINESS_PROFILE.md",
     "scripts/ping_indexnow.py",
-    "scripts/seo_verification_dns.py"
+    "scripts/seo_verification_dns.py",
+    "scripts/seo_all_engines_go_live.ps1"
 )
 
 Write-Host ""
@@ -164,13 +168,12 @@ try {
 }
 
 Write-Host ""
-Write-Host "Andy - manual steps remaining" -ForegroundColor Yellow
-Write-Host "  - GSC: verify domain TXT - python scripts/seo_verification_dns.py --doc"
-Write-Host "  - Bing: verify CNAME or meta tag in site.json bingSiteVerification"
-Write-Host "  - Submit sitemap in GSC + Bing Webmaster Tools"
-Write-Host "  - Request indexing for https://hackerplanet.dev/ and cybersecurity-philadelphia.html"
-Write-Host "  - Test brand query: site:hackerplanet.dev then search hacker planet philadelphia"
-Write-Host "  - After deploy: python scripts/ping_indexnow.py"
+Write-Host "Andy - manual steps remaining (all engines)" -ForegroundColor Yellow
+Write-Host "  - Run: .\scripts\seo_all_engines_go_live.ps1  (GSC + Bing verify + IndexNow)"
+Write-Host "  - Checklist: docs/SEO_INDEXING_NOW.md  |  Ranking: docs/SEO_GET_ON_TOP.md"
+Write-Host "  - GSC + Bing: verify domain, submit sitemap.xml, request indexing for / and key pages"
+Write-Host "  - DuckDuckGo/Yahoo/Ecosia: covered by Bing; Apple/Brave: robots + IndexNow"
+Write-Host "  - Test: site:hackerplanet.dev then hacker planet philadelphia"
 Write-Host ""
 
 if ($fail -eq 0) {

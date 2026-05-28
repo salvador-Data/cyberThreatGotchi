@@ -24,8 +24,9 @@ def test_seo_config_valid():
     assert "Hacker Planet LLC" in data.get("alternateNames", [])
     assert "https://hackerplanet.dev" in data.get("sameAs", [])
     assert "salvadorData@proton.me" in data["email"]
-    assert len(data["pages"]) >= 11
+    assert len(data["pages"]) >= 12
     assert "cybersecurity-philadelphia.html" in data["pages"]
+    assert "hacker-planet.html" in data["pages"]
     assert data.get("indexNowKey")
 
 
@@ -52,6 +53,33 @@ def test_robots_and_sitemap():
     assert "https://hackerplanet.dev/cyd.html" in sitemap
     assert "https://hackerplanet.dev/cybersecurity-philadelphia.html" in sitemap
     assert "https://hackerplanet.dev/kickstarter.html" in sitemap
+    assert "https://hackerplanet.dev/hacker-planet.html" in sitemap
+
+
+def test_faq_schema_on_key_pages():
+    for name in ("index.html", "cybersecurity-philadelphia.html"):
+        html = (WEB / name).read_text(encoding="utf-8")
+        assert "FAQPage" in html, name
+        assert "Question" in html, name
+
+
+def test_brand_page_and_home_links():
+    brand = (WEB / "hacker-planet.html").read_text(encoding="utf-8")
+    assert "<h1>" in brand
+    assert "Hacker Planet" in brand
+    assert "official" in brand.lower()
+    for name in _load_pages():
+        if name == "hacker-planet.html":
+            continue
+        html = (WEB / name).read_text(encoding="utf-8")
+        assert 'href="index.html">Hacker Planet</a>' in html, name
+
+
+def test_index_brand_in_h1_and_lead():
+    html = (WEB / "index.html").read_text(encoding="utf-8")
+    assert "<h1" in html
+    assert "Hacker Planet" in html
+    assert "official site" in html.lower() or "Official site" in html
 
 
 def test_all_pages_have_seo_markers():
