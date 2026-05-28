@@ -112,6 +112,9 @@ def test_github_repo_page():
     html = (WEB / "github.html").read_text(encoding="utf-8")
     assert "docs/web" in html
     assert "salvador-Data/cyberThreatGotchi" in html
+    assert "Verify domain" in html or "verify domain" in html.lower()
+    assert "/cyberThreatGotchi/" in html
+    assert "github.io/services.html" in html
 
 
 def test_services_page_content():
