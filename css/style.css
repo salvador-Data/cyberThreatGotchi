@@ -643,6 +643,25 @@ section {
   backdrop-filter: blur(8px);
 }
 
+.shop-card-img-wrap {
+  margin: -1.75rem -1.75rem 1rem;
+  border-radius: var(--radius) var(--radius) 0 0;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  line-height: 0;
+}
+
+.shop-card-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.featured-shop-grid .shop-card-img {
+  height: 180px;
+}
+
 .shop-card-featured {
   border-color: rgba(0, 180, 140, 0.45);
   box-shadow: 0 0 40px var(--accent-glow);
