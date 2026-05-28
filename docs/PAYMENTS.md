@@ -6,7 +6,7 @@ Configure checkout on the static GitHub Pages site (`website/` and mirrored `doc
 
 | Type | Checkout | Shipping at Stripe |
 |------|----------|-------------------|
-| **Direct (Philly)** | Sabreto Akachi, CrackBot CYD, CTG kits, custom builds | Add shipping line or Stripe Shipping Rates |
+| **Direct (Philly)** | CYD builds, CrackBot bench, Cardputer tools, CTG kits | Add shipping line or Stripe Shipping Rates |
 | **Partner drop-ship** | Pwnagotchi, Meshtastic, Hackberry, etc. | Shipping baked into price |
 | **Digital** | STL pack, repo bundle | None |
 | **Subscription** | Pro feed | None |
@@ -38,12 +38,14 @@ Use the shop **shipping & tax calculator** for estimates → [SHIPPING_AND_TAX.m
 
 | Key | Product | Price |
 |-----|---------|-------|
-| `sabretoAkachi` | Sabreto Akachi | $189 |
-| `crackbotCyd` | Mr. CrackBot AI Nano on CYD | $149 |
+| `sabretoAkachi` | CYD Field Build — Standard (Sabreto Akachi) | $79.99 + ship/tax |
+| `cydFieldCustom` | CYD Field Build — Custom (GPS, ext radio, battery) | $174.99 + ship/tax |
+| `crackbotBench` | Mr. CrackBot AI Nano — Bench Lab (Jetson) | $449 |
+| `remotePossibility` | Remote Possibility (M5 Cardputer) | $89.99 |
+| `bleBot` | BLE Bot (M5 Cardputer) | $79.99 |
 | `boostFormulaCod` | Boost Formula COD kit | $99 |
-| `marauderCustom175` | Marauder GPS custom build | $199 |
-| `coreKit` | Cipherhorn Core Kit | $169 |
-| `fieldPack` | Field Pack | $219 |
+| `coreKit` | CyberThreatGotchi core | $169 |
+| `fieldPack` | Field Pack (core + Cardputer) | $219 |
 | `digital` | Digital Pack | $15 |
 | `codStlPack` | COD STL + KSS pack | $19 |
 
@@ -86,7 +88,10 @@ window.HPL_PAYMENTS = {
   demoMode: false,
   stripePaymentLinks: {
     sabretoAkachi: "https://buy.stripe.com/...",
-    crackbotCyd: "https://buy.stripe.com/...",
+    cydFieldCustom: "https://buy.stripe.com/...",
+    crackbotBench: "https://buy.stripe.com/...",
+    remotePossibility: "https://buy.stripe.com/...",
+    bleBot: "https://buy.stripe.com/...",
     // ... every key above
   },
 };

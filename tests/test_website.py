@@ -18,6 +18,7 @@ def test_website_structure():
         "services.html",
         "cyberthreatgotchi.html",
         "crackbot.html",
+        "cardputer.html",
         "ecosystem.html",
         "contact.html",
         "shop.html",
@@ -93,8 +94,8 @@ def test_direct_config_structure():
     assert "HPL_DIRECT" in text
     assert "Sabreto Akachi" in text
     assert "tagline:" in text
-    assert "HackerPlanet signature CYD field build" in text
-    assert "CrackBot" in text
+    assert "HPL signature profile" in text
+    assert "crackbotBench" in text
     assert 'fulfillment: "direct"' in text
 
 
@@ -145,31 +146,53 @@ def test_nav_includes_crackbot_on_all_pages():
         assert 'href="crackbot.html"' in text, html_file.name
 
 
+def test_nav_includes_cardputer_on_all_pages():
+    for html_file in sorted(WEB.glob("*.html")):
+        text = html_file.read_text(encoding="utf-8")
+        assert 'href="cardputer.html"' in text, html_file.name
+
+
 def test_crackbot_page_content():
     html = (WEB / "crackbot.html").read_text(encoding="utf-8")
     assert "Mr. CrackBot AI Nano" in html
-    assert "$149" in html
+    assert "$449" in html
+    assert "$149" not in html
     assert "simulation" in html.lower()
     assert "vlan" in html.lower() and "authorized" in html.lower()
     assert "Mr.-CrackBot-AI-Nano" in html
     assert "hardware/stl" in html
-    assert "direct-crackbot-cyd.jpg" in html
-    assert "shop.html#crackbot-cyd" in html
+    assert "shop.html#crackbot-bench" in html
     assert "$0" in html
+    assert "CYD" in html
+    assert "Not a CYD product" in html or "not a CYD" in html.lower()
 
 
-def test_shop_crackbot_intro():
+def test_cardputer_page_content():
+    html = (WEB / "cardputer.html").read_text(encoding="utf-8")
+    assert "Remote Possibility" in html
+    assert "BLE Bot" in html
+    assert "$89.99" in html
+    assert "$79.99" in html
+    assert "M5_OS-Cardputer" in html
+    assert "shop.html#remote-possibility" in html
+
+
+def test_shop_product_lines_intro():
     html = (WEB / "shop.html").read_text(encoding="utf-8")
     assert "crackbot-build" in html
-    assert "$149" in html
+    assert "$449" in html
+    assert "$79.99" in html
+    assert "$174.99" in html
     assert "crackbot.html" in html
-    assert "direct-crackbot-cyd.jpg" in html
+    assert "cardputer.html" in html
 
 
 def test_ecosystem_crackbot_pricing():
     html = (WEB / "ecosystem.html").read_text(encoding="utf-8")
-    assert "$149" in html
+    assert "$449" in html
+    assert "$79.99" in html
     assert "crackbot.html" in html
+    assert "Remote Possibility" in html
 
 
 def test_no_dr_eric_as_agent_on_public_html():
@@ -194,7 +217,9 @@ def test_index_has_philly_and_branding():
     assert "shop.html" in html
     assert "featured-shop" in html
     assert "images/products/ds-netgotchi.jpg" in html
-    assert "images/products/direct-core-kit.jpg" in html
+    assert "images/products/direct-sabreto-akachi.jpg" in html
+    assert "$79.99" in html
+    assert "$189" not in html
     assert "ThreatGachi" not in html
     assert ">ThreatGotchi" not in html
     assert "ThreatGotchi ·" not in html
@@ -223,14 +248,30 @@ def test_direct_core_kit_product_name():
     assert "Cipherhorn Core Kit" not in pay
 
 
+def test_direct_config_pricing_separation():
+    text = (WEB / "js" / "direct.config.js").read_text(encoding="utf-8")
+    assert 'id: "crackbotBench"' in text
+    assert 'id: "cydFieldCustom"' in text
+    assert "crackbotCyd" not in text
+    assert "marauderCustom175" not in text
+    assert 'retailPrice: 79.99' in text
+    assert 'retailPrice: 174.99' in text
+    assert 'retailPrice: 449' in text
+    assert 'remotePossibility' in text
+    assert 'bleBot' in text
+    pay = (WEB / "js" / "payments.js").read_text(encoding="utf-8")
+    assert "crackbotCyd" not in pay
+    assert "crackbotBench" in pay
+
+
 def test_direct_product_images():
     text = (WEB / "js" / "direct.config.js").read_text(encoding="utf-8")
     assert 'image: "images/products/direct-sabreto-akachi.jpg"' in text
     assert 'image: "images/products/direct-core-kit.jpg"' in text
-    assert 'image: "images/products/direct-crackbot-cyd.jpg"' in text
+    assert 'image: "images/products/mr-pac-bot-product.png"' in text
     assert (WEB / "images" / "products" / "direct-sabreto-akachi.jpg").is_file()
     assert (WEB / "images" / "products" / "direct-core-kit.jpg").is_file()
-    assert (WEB / "images" / "products" / "direct-crackbot-cyd.jpg").is_file()
+    assert (WEB / "images" / "products" / "mr-pac-bot-product.png").is_file()
 
 
 def test_shop_flows_avoid_mascot_og_assets():
@@ -269,7 +310,8 @@ def test_shop_renderers_support_images():
         assert "shop-tagline" in text
     assert "catalog-section-banner" in (WEB / "js" / "catalog.js").read_text(encoding="utf-8")
     direct = (WEB / "js" / "direct.js").read_text(encoding="utf-8")
-    assert "crackbot-cyd" in direct
+    assert "crackbot-bench" in direct
+    assert "cyd-standard" in direct
 
 
 def test_about_page_content():
@@ -318,6 +360,18 @@ def test_shipping_config_has_internal_warehouse():
     assert "publicLabel" in text
     origin_block = text.split("origin:")[1].split("disclaimer:")[0]
     assert "664 Walker" not in origin_block
+
+
+def test_product_pricing_doc_exists():
+    doc = ROOT / "docs" / "PRODUCT_PRICING.md"
+    assert doc.is_file()
+    text = doc.read_text(encoding="utf-8")
+    assert "$79.99" in text
+    assert "$174.99" in text
+    assert "$449" in text
+    assert "Remote Possibility" in text
+    assert "BLE Bot" in text
+    assert "crackbotCyd" in text  # deprecated table
 
 
 def test_sync_website_to_docs():

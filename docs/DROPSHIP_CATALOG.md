@@ -1,6 +1,6 @@
 # Drop-ship catalog — merchant guide
 
-**Hacker Planet direct-ship** (Sabreto Akachi, CrackBot CYD, CTG kits) → see [SHIPPING_AND_TAX.md](SHIPPING_AND_TAX.md).
+**Hacker Planet direct-ship** (CYD, CrackBot bench, Cardputer, CTG kits) → [PRODUCT_PRICING.md](PRODUCT_PRICING.md) and [SHIPPING_AND_TAX.md](SHIPPING_AND_TAX.md).
 
 **Partner drop-ship** (below): customer pays HPL at retail → you order from `supplierUrl` → partner ships to customer.
 
@@ -20,8 +20,10 @@ Customer → shop.html checkout ($ retail)
 | File | Purpose |
 |------|---------|
 | `website/js/catalog.config.js` | Products, retail prices, `supplierUrl`, `stripeKey` |
+| `website/js/direct.config.js` | Philadelphia direct-ship SKUs |
 | `website/js/payments.config.js` | Stripe Payment Links (one per `stripeKey`) |
 | `docs/DROPSHIP_CATALOG.md` | This guide + supplier table |
+| `docs/PRODUCT_PRICING.md` | Direct-ship BOM and retail prices |
 
 ## Retail catalog (current)
 
@@ -40,11 +42,13 @@ Customer → shop.html checkout ($ retail)
 | Hackberry Pi CM5 | $499 | `dsHackberryCM5` | ZitaoTech |
 | Marauder GPS pocket v2 | $219 | `dsMarauderGps` | HoneyHoneyTrading |
 | CYD battery + GPS mod | $59 | `dsMarauderBatteryMod` | Biscuit Shop |
-| HPL Marauder custom GPS | $199 | `marauderCustom175` | **Direct — Philly** |
+| **CYD standard (Sabreto Akachi)** | **$79.99** + ship/tax | `sabretoAkachi` | **Direct — Philly** |
+| **CYD custom (GPS, ext radio, battery)** | **$174.99** + ship/tax | `cydFieldCustom` | **Direct — Philly** |
+| **Mr. CrackBot bench lab (Jetson)** | **$449** | `crackbotBench` | **Direct — Philly** |
+| **Remote Possibility (Cardputer)** | **$89.99** | `remotePossibility` | **Direct — Philly** |
+| **BLE Bot (Cardputer)** | **$79.99** | `bleBot` | **Direct — Philly** |
 | Boost Formula COD kit | $99 | `boostFormulaCod` | **Direct — Philly** |
-| Sabreto Akachi | $189 | `sabretoAkachi` | **Direct — Philly** |
-| Mr. CrackBot AI Nano CYD | $149 | `crackbotCyd` | **Direct — Philly** |
-| Cipherhorn Core Kit | $169 | `coreKit` | **Direct — Philly** |
+| CyberThreatGotchi core | $169 | `coreKit` | **Direct — Philly** |
 | Field Pack | $219 | `fieldPack` | **Direct — Philly** |
 | Official Marauder Kit | $89 | `dsMarauderKoko` | JustCallMeKoko |
 | Raspberry Pi 5 kit | $139 | `dsRaspberryPi5` | AliExpress vetted |
@@ -57,15 +61,4 @@ Free STLs (GitHub / Printables) stay as direct download links — no checkout.
 
 ## Margin tip
 
-Target **~30–45%** over supplier cost to cover payment fees, shipping variance, and handling. Adjust `retailPrice` in `catalog.config.js` and matching `price` in `payments.js`.
-
-## Go-live
-
-1. Create Stripe Payment Links for every `stripeKey` in `payments.config.js`
-2. Set `demoMode: false`
-3. `python scripts/check_payments.py`
-4. `python scripts/sync_website_to_docs.py` → push to `main`
-
-## Legal
-
-Authorized lab / education use only for offensive-capable RF tools. Meshtastic complies with local LoRa regulations — customer responsible for band plan.
+Target **~30–45%** over supplier cost to cover payment fees, shipping variance, and handling. Adjust `retailPrice` in `direct.config.js` / `catalog.config.js` and matching `price` in `payments.js`.

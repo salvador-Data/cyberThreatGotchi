@@ -80,6 +80,26 @@ EOF
 systemctl daemon-reload
 systemctl enable "${USER_SERVICE}"
 
+FW_SCRIPT="$(dirname "$0")/firewall-baseline.sh"
+apply_firewall_baseline() {
+  if [[ -x "$FW_SCRIPT" ]]; then
+    CTG_WEB_PORT="${CTG_WEB_PORT:-8765}" "$FW_SCRIPT"
+  else
+    echo "Firewall script not found: $FW_SCRIPT"
+    exit 1
+  fi
+}
+
+if [[ "${CTG_FIREWALL_BASELINE:-}" == "1" ]]; then
+  echo "==> Applying default-deny firewall baseline (CTG_FIREWALL_BASELINE=1)"
+  apply_firewall_baseline
+elif [[ -t 0 ]] && [[ "${CTG_FIREWALL_BASELINE:-}" != "0" ]]; then
+  read -r -p "Apply default-deny firewall baseline now? [y/N] " fw_ans
+  if [[ "${fw_ans,,}" == "y" || "${fw_ans,,}" == "yes" ]]; then
+    apply_firewall_baseline
+  fi
+fi
+
 echo ""
 echo "Installed to ${INSTALL_DIR}"
 echo "  systemctl start ${USER_SERVICE}"
@@ -87,3 +107,4 @@ echo "  journalctl -u ${USER_SERVICE} -f"
 echo ""
 echo "Hardware: wire 2.13\" SPI e-paper to SPI0; 12V USB-C PD battery pack for portable mode."
 echo "Set CTG_DISPLAY=lcd for ILI9341 color panel instead of e-ink."
+echo "Optional: CTG_FIREWALL_BASELINE=1 $0  — or run scripts/firewall-baseline.sh (see docs/FIREWALL_BASELINE.md)"

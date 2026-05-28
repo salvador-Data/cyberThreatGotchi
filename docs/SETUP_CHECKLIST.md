@@ -6,6 +6,8 @@
 |-----|---------|
 | This file | **Today's go-live steps** (Voice → domain → email → payments) |
 | [HOSTING_OPTIONS.md](HOSTING_OPTIONS.md) | DNS table, `CNAME`, brand vs URL |
+| [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md) | **Expanded** Cloudflare DNS, TLS, WAF, Email Routing |
+| [FIREWALL_BASELINE.md](FIREWALL_BASELINE.md) | BPI-R3 default-deny iptables + CTG IPS interaction |
 | [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md) | Google Voice detail |
 | [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md) | Stripe, tax, fulfillment |
 | [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) | Pages enable / troubleshoot |
@@ -37,7 +39,7 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 | Email **`hello@hackerplanet.dev`** on contact | Custom domain DNS pending — mail after Email Routing |
 | Docs target **`hackerplanet.dev`** | **`website/CNAME`** added — register domain + DNS next |
 
-Custom domain steps: **Section C** below and [HOSTING_OPTIONS.md](HOSTING_OPTIONS.md).
+Custom domain steps: **Section C** below, [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md), and [HOSTING_OPTIONS.md](HOSTING_OPTIONS.md).
 
 ### Automated verification (2026-05-28)
 
@@ -98,13 +100,15 @@ Original setup clicks (for reference): [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.
 
 ## C. Domain `hackerplanet.dev` — IN PROGRESS
 
+**Full checklist:** [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md) (DNS, SSL/TLS, Bot Fight Mode, Email Routing).
+
 | Item | Status |
 |------|--------|
 | Cloudflare account | ✅ **Created** (2026-05-28) |
 | Register `hackerplanet.dev` at Cloudflare Registrar | ⏳ **Your action** (~$10/yr) |
 | `website/CNAME` in repo | ✅ **Added** (`hackerplanet.dev`) |
 | Cloudflare DNS → GitHub Pages | ⏳ After registration |
-| GitHub Pages custom domain | ⏳ After DNS propagates |
+| GitHub Pages custom domain | ✅ **`hackerplanet.dev` set** in repo Settings (via API) — enable HTTPS after DNS |
 
 **Agent will not purchase the domain for you.** As of 2026-05-28, `hackerplanet.dev` does not resolve in public DNS — register it in Cloudflare if you have not already.
 
@@ -142,13 +146,17 @@ gh api repos/salvador-Data/cyberThreatGotchi/pages
 
 ### Cloudflare DNS (DNS only / grey cloud for GitHub Pages)
 
+**From your Add Record dialog:** Type **A**, Name **`@`**, paste **one** IPv4 below, click the **orange cloud** so it turns **grey** (“DNS only”), then **Save**. Repeat for all four A records.
+
 | Type | Name | Content | Proxy |
 |------|------|---------|-------|
-| `A` | `@` | `185.199.108.153` | DNS only |
+| `A` | `@` | `185.199.108.153` | **DNS only** (grey — not Proxied) |
 | `A` | `@` | `185.199.109.153` | DNS only |
 | `A` | `@` | `185.199.110.153` | DNS only |
 | `A` | `@` | `185.199.111.153` | DNS only |
 | `CNAME` | `www` | `salvador-Data.github.io` | DNS only |
+
+**Ignore** GitHub **Profile → Settings → Pages → Verified domains** — that is optional account security, not where you connect the site. Use **[repo Settings → Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages)** instead (custom domain already set to `hackerplanet.dev`).
 
 **Alternative apex:** single `CNAME` `@` → `salvador-Data.github.io` (Cloudflare CNAME flattening) instead of four A records — pick one method, not both.
 

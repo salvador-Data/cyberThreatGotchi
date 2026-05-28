@@ -12,6 +12,23 @@ Defensive coding and deployment practices for Hacker Planet LLC projects.
 | `CTG_AUDIT_SECRET` | HMAC on audit chain export |
 | `CTG_STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification |
 | `CTG_PRO_KEYS_DB` | SQLite path for provisioned Pro keys |
+| `CTG_WEB_PORT` | Web dashboard port for firewall baseline (default `8765`) |
+| `CTG_EXTRA_TCP_PORTS` | Comma-separated extra TCP ports for `scripts/firewall-baseline.sh` |
+| `CTG_ALLOW_ICMP` | Set `0` to omit inbound ICMP from firewall baseline |
+| `CTG_SSH_LAN_ONLY` | Set `1` to restrict SSH to RFC1918/link-local in firewall baseline |
+| `CTG_FIREWALL_BASELINE` | Set `1` on `scripts/install.sh` to apply default-deny iptables after install |
+
+## Firewall baseline (BPI-R3 / Linux)
+
+Static default-deny **iptables** allow-list: `scripts/firewall-baseline.sh`. CTG **IPS** (`core/ips.py`) inserts dynamic `iptables -I INPUT -s <ip> -j DROP` rules **above** this baseline.
+
+```bash
+sudo ./scripts/firewall-baseline.sh --dry-run
+sudo CTG_WEB_PORT=8765 CTG_SSH_LAN_ONLY=1 ./scripts/firewall-baseline.sh
+sudo ./scripts/firewall-baseline-save.sh
+```
+
+Full port table, OpenWrt notes, and IPS interaction: [FIREWALL_BASELINE.md](FIREWALL_BASELINE.md).
 
 ## Web API protections (v1.2+)
 
