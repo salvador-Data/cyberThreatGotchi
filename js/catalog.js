@@ -171,6 +171,7 @@
     }
     var grid = el("div", "shop-grid catalog-grid");
     (section.products || []).forEach(function (product) {
+      if (product.catalogHidden) return;
       grid.appendChild(renderProductCard(product));
     });
     wrap.appendChild(grid);
