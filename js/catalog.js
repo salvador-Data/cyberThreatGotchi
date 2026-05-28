@@ -1,18 +1,18 @@
 /**
- * Hacker Planet LLC — drop-ship catalog renderer
+ * Hacker Planet LLC - drop-ship catalog renderer
  * External links (Etsy, AliExpress, Tindie) + Stripe digital packs from catalog.config.js
  */
 
 (function () {
   var SOURCE_LABELS = {
-    etsy: { label: "Etsy", icon: "🛍️", class: "source-etsy" },
-    aliexpress: { label: "AliExpress", icon: "📦", class: "source-ali" },
-    tindie: { label: "Tindie", icon: "🔧", class: "source-tindie" },
-    github: { label: "GitHub", icon: "⌨️", class: "source-github" },
-    printables: { label: "Printables", icon: "🖨️", class: "source-printables" },
-    hpl: { label: "Hacker Planet", icon: "🪐", class: "source-hpl" },
-    direct: { label: "Philly ship", icon: "📍", class: "source-direct" },
-    dropship: { label: "Partner fulfillment", icon: "📬", class: "source-dropship" },
+    etsy: { label: "Etsy", icon: "Shop", class: "source-etsy" },
+    aliexpress: { label: "AliExpress", icon: "Box", class: "source-ali" },
+    tindie: { label: "Tindie", icon: "Kit", class: "source-tindie" },
+    github: { label: "GitHub", icon: "Code", class: "source-github" },
+    printables: { label: "Printables", icon: "Print", class: "source-printables" },
+    hpl: { label: "Hacker Planet", icon: "HPL", class: "source-hpl" },
+    direct: { label: "Philly ship", icon: "Ship", class: "source-direct" },
+    dropship: { label: "Partner fulfillment", icon: "Partner", class: "source-dropship" },
   };
 
   function cfg() {
@@ -43,7 +43,7 @@
   }
 
   function sourceBadge(source) {
-    var meta = SOURCE_LABELS[source] || { label: source || "Partner", icon: "↗", class: "source-default" };
+    var meta = SOURCE_LABELS[source] || { label: source || "Partner", icon: "->", class: "source-default" };
     return el("span", "catalog-source " + meta.class, meta.icon + " " + meta.label);
   }
 
@@ -73,7 +73,7 @@
       return el("span", "pay-placeholder", "Add buyUrl in catalog.config.js");
     }
     var meta = SOURCE_LABELS[product.source] || { label: "Shop" };
-    var a = el("a", "pay-btn pay-btn-external", "Buy on " + meta.label + " ↗");
+    var a = el("a", "pay-btn pay-btn-external", "Buy on " + meta.label + " ->");
     a.href = url;
     a.target = "_blank";
     a.rel = "noopener noreferrer sponsored";
@@ -101,17 +101,17 @@
       card.appendChild(el("div", "shop-badge", product.badge));
     }
     card.appendChild(sourceBadge(product.source));
-    card.appendChild(el("h3", "", product.name));
+    card.appendChild(el("h3", product.name));
     if (product.tagline) {
       card.appendChild(el("p", "shop-tagline", product.tagline));
     }
     card.appendChild(el("div", "shop-price catalog-price", product.priceDisplay || ""));
-    card.appendChild(el("p", "", product.description || ""));
+    card.appendChild(el("p", product.description || ""));
 
     if (product.includes && product.includes.length) {
       var ul = el("ul", "shop-features");
       product.includes.forEach(function (item) {
-        ul.appendChild(el("li", "", item));
+        ul.appendChild(el("li", item));
       });
       card.appendChild(ul);
     }
@@ -134,13 +134,13 @@
       card.appendChild(estBtn);
     }
 
-    var note = el("p", "catalog-ship-note", cfg().dropshipNote || "Partner fulfillment · 5–14 business days");
+    var note = el("p", "catalog-ship-note", cfg().dropshipNote || "Partner fulfillment | 5-14 business days");
     if (product.source === "github" || product.source === "printables") {
-      note.textContent = "Instant download · remix allowed where license permits";
+      note.textContent = "Instant download | remix allowed where license permits";
     } else if (product.fulfillment === "dropship") {
       note.textContent =
-        (cfg().dropshipNote || "Partner fulfillment · 5–14 business days") +
-        (product.supplier ? " · via " + product.supplier : "");
+        (cfg().dropshipNote || "Partner fulfillment | 5-14 business days") +
+        (product.supplier ? " | via " + product.supplier : "");
     }
     card.appendChild(note);
 

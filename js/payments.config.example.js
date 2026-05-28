@@ -1,5 +1,5 @@
 /**
- * Hacker Planet LLC — payment configuration
+ * Hacker Planet LLC - payment configuration
  *
  * Copy to payments.config.js and fill in your live links from Stripe / PayPal dashboards.
  * See docs/PAYMENTS.md for setup steps.
@@ -11,9 +11,9 @@ window.HPL_PAYMENTS = {
   /** Set false when links below are configured */
   demoMode: true,
 
-  /** Stripe Payment Links — cards, debit, Apple Pay, Google Pay, Link */
+  /** Stripe Payment Links - cards, debit, Apple Pay, Google Pay, Link */
   /**
-   * Stripe Payment Link metadata (Dashboard → Payment link → Metadata).
+   * Stripe Payment Link metadata (Dashboard -> Payment link -> Metadata).
    * Required for auto-fulfillment via checkout.session.completed:
    *   Key: stripe_key   Value: same as the property name below (e.g. dsMeshtasticHeltec).
    * See docs/STRIPE_FULFILLMENT_METADATA.md for Andy's Dashboard checklist.
@@ -80,12 +80,12 @@ window.HPL_PAYMENTS = {
     username: "",
   },
 
-  /** Cash App $Cashtag (no $ prefix) — opens Cash App pay flow */
+  /** Cash App $Cashtag (no $ prefix) - opens Cash App pay flow */
   cashapp: {
     cashtag: "",
   },
 
-  /** Venmo username (no @) — direct pay links + PayPal Venmo funding */
+  /** Venmo username (no @) - direct pay links + PayPal Venmo funding */
   venmo: {
     username: "",
   },

@@ -1,4 +1,4 @@
-/** Live config — edit with your Stripe / PayPal / Cash App / Venmo details. */
+/** Live config - edit with your Stripe / PayPal / Cash App / Venmo details. */
 window.HPL_PAYMENTS = {
   demoMode: true,
   stripePaymentLinks: {

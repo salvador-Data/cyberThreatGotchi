@@ -1,5 +1,5 @@
 /**
- * Hacker Planet LLC — shipping & tax estimator
+ * Hacker Planet LLC - shipping & tax estimator
  */
 (function () {
   var US_STATES = [
@@ -59,7 +59,7 @@
     var surcharge = extra * (cfg().weightSurchargePer8Oz || 2.5);
     return {
       amount: base + surcharge,
-      label: "Direct ship · " + (zone.label || "US") + (surcharge > 0 ? " · weight adj." : ""),
+      label: "Direct ship | " + (zone.label || "US") + (surcharge > 0 ? " | weight adj." : ""),
     };
   }
 
@@ -84,7 +84,7 @@
       shipping = ship.amount;
       var originLabel =
         (cfg().origin && cfg().origin.publicLabel) || "Philadelphia, PA";
-      shippingLabel = ship.label + " · from " + originLabel;
+      shippingLabel = ship.label + " | from " + originLabel;
     }
 
     var rate = taxRate(state, zip);
@@ -133,14 +133,14 @@
         "p",
         "section-sub",
         "Separate logic for <strong>Philadelphia direct ship</strong> (your builds) vs " +
-          "<strong>partner fulfillment</strong> (shipping included). Not legal advice — see tax guide."
+          "<strong>partner fulfillment</strong> (shipping included). Not legal advice - see tax guide."
       )
     );
 
     var form = el("div", "ship-calc-form");
     var row1 = el("div", "ship-calc-row");
 
-    var prodLabel = el("label", "", "Product");
+    var prodLabel = el("label", "Product");
     prodLabel.setAttribute("for", "ship-calc-product");
     var prodSelect = el("select", "ship-calc-input");
     prodSelect.id = "ship-calc-product";
@@ -154,7 +154,7 @@
           : meta.fulfillment === "digital"
             ? " [digital]"
             : " [partner]";
-      opt.textContent = products[k].name + tag + " — " + money(products[k].price);
+      opt.textContent = products[k].name + tag + " - " + money(products[k].price);
       prodSelect.appendChild(opt);
     });
 
@@ -162,13 +162,13 @@
     row1.appendChild(prodSelect);
 
     var row2 = el("div", "ship-calc-row");
-    var stateLabel = el("label", "", "Ship-to state");
+    var stateLabel = el("label", "Ship-to state");
     stateLabel.setAttribute("for", "ship-calc-state");
     var stateSelect = el("select", "ship-calc-input");
     stateSelect.id = "ship-calc-state";
     var empty = document.createElement("option");
     empty.value = "";
-    empty.textContent = "Select state…";
+    empty.textContent = "Select state...";
     stateSelect.appendChild(empty);
     US_STATES.forEach(function (s) {
       var opt = document.createElement("option");
@@ -177,7 +177,7 @@
       stateSelect.appendChild(opt);
     });
 
-    var zipLabel = el("label", "", "ZIP (optional, Philly local tax)");
+    var zipLabel = el("label", "ZIP (optional, Philly local tax)");
     zipLabel.setAttribute("for", "ship-calc-zip");
     var zipInput = el("input", "ship-calc-input");
     zipInput.type = "text";
@@ -235,7 +235,7 @@
         "</span></dd>" +
         "<dt>Est. sales tax (" +
         (r.state || "") +
-        (r.taxRate ? " · " + (r.taxRate * 100).toFixed(2) + "%" : "") +
+        (r.taxRate ? " | " + (r.taxRate * 100).toFixed(2) + "%" : "") +
         ")</dt><dd>" +
         money(r.tax) +
         "</dd>" +
