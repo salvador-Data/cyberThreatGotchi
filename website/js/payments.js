@@ -1,7 +1,7 @@
 /**
  * Hacker Planet LLC - checkout buttons
  * Stripe (hosted Payment Links + Customer Portal) | PayPal hosted | Venmo | Cash App
- * Never collects PAN/CVV on this site — cards vault on Stripe/PayPal only.
+ * Never collects PAN/CVV on this site - cards vault on Stripe/PayPal only.
  */
 
 (function () {
@@ -36,7 +36,7 @@
     },
     mspMonitor: {
       id: "mspMonitor",
-      name: "Blue Team MSP — Monitor",
+      name: "Blue Team MSP - Monitor",
       price: 1500,
       period: "/month",
       recurring: true,
@@ -46,7 +46,7 @@
     },
     mspDefend: {
       id: "mspDefend",
-      name: "Blue Team MSP — Defend",
+      name: "Blue Team MSP - Defend",
       price: 2750,
       period: "/month",
       recurring: true,
@@ -56,7 +56,7 @@
     },
     mspHarden: {
       id: "mspHarden",
-      name: "Blue Team MSP — Harden",
+      name: "Blue Team MSP - Harden",
       price: 4500,
       period: "/month",
       recurring: true,
@@ -391,7 +391,7 @@
           "p",
           "returning-customer-greeting",
           "<strong>Welcome back.</strong> Checkout can prefill your email" +
-            (preview ? " — last ship-to: " + escapeHtml(preview) : "") +
+            (preview ? " - last ship-to: " + escapeHtml(preview) : "") +
             ". Saved cards are managed in Stripe (not on this site)."
         )
       );
@@ -571,7 +571,7 @@
 
     if (recurring) {
       container.appendChild(
-        el("p", "pay-recurring-badge", "Recurring subscription — cancel anytime via billing portal")
+        el("p", "pay-recurring-badge", "Recurring subscription - cancel anytime via billing portal")
       );
     }
 

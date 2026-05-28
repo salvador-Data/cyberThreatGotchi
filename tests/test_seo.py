@@ -65,7 +65,7 @@ def test_faq_schema_on_key_pages():
 
 def test_brand_page_and_home_links():
     brand = (WEB / "hacker-planet.html").read_text(encoding="utf-8")
-    assert "<h1>" in brand
+    assert "<h1" in brand
     assert "Hacker Planet" in brand
     assert "official" in brand.lower()
     for name in _load_pages():
@@ -157,7 +157,7 @@ def test_indexnow_key_file():
 
 def test_cybersecurity_philadelphia_page_content():
     html = (WEB / "cybersecurity-philadelphia.html").read_text(encoding="utf-8")
-    assert "<h1>" in html
+    assert "<h1" in html
     assert "ethical hacking" in html.lower()
     assert "authorized" in html.lower()
     assert "remote" in html.lower()
