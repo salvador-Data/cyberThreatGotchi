@@ -184,6 +184,17 @@ Checks `salvador-Data.github.io` always; checks `https://hackerplanet.dev/` when
 
 Shop is live in **demo mode** (`demoMode: true` in `payments.config.js`).
 
+**Fast path (automated — recommended):**
+
+```powershell
+$env:CTG_STRIPE_SECRET_KEY = "sk_test_..."   # or sk_live_ when ready
+.\.venv\Scripts\python scripts\stripe_bootstrap_payment_links.py --dry-run
+.\.venv\Scripts\python scripts\stripe_bootstrap_payment_links.py --write-config --go-live
+.\.venv\Scripts\python scripts\check_payments.py
+```
+
+**Manual path (Dashboard):**
+
 1. [Stripe Dashboard](https://dashboard.stripe.com) → enable **Tax** (PA minimum).
 2. Create **Payment Links** for every key in `website/js/payments.config.js`.
 3. Paste URLs into config → set **`demoMode: false`**.
@@ -193,7 +204,7 @@ Shop is live in **demo mode** (`demoMode: true` in `payments.config.js`).
 .\.venv\Scripts\python scripts\check_payments.py
 ```
 
-5. Full playbook: [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md) · key table: [PAYMENTS.md](PAYMENTS.md)
+5. Full playbook: [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md) · key table: [PAYMENTS.md](PAYMENTS.md) · [STRIPE_ADD_LINKS.md](STRIPE_ADD_LINKS.md)
 
 ---
 

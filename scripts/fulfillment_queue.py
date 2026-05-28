@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CLI for HPL drop-ship fulfillment queue (local JSON at data/fulfillment_queue.json).
+CLI for HPL partner fulfillment queue (local JSON at data/fulfillment_queue.json).
 
 PCI / ToS safe — queues orders for operator dashboard; never automates marketplace checkout.
 """
@@ -99,8 +99,24 @@ def _cmd_show(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_import(args: argparse.Namespace) -> int:
+    import subprocess
+
+    cmd = [sys.executable, str(ROOT / "scripts" / "stripe_fulfillment_import.py")]
+    if args.path.is_dir():
+        cmd.extend(["--batch", str(args.path)])
+    else:
+        cmd.append(str(args.path))
+    if args.dry_run:
+        cmd.append("--dry-run")
+    if args.stripe_key:
+        cmd.extend(["--stripe-key", args.stripe_key])
+    r = subprocess.run(cmd, cwd=str(ROOT))
+    return r.returncode
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser(description="HPL drop-ship fulfillment queue CLI")
+    ap = argparse.ArgumentParser(description="HPL partner fulfillment queue CLI")
     ap.add_argument("--queue", type=Path, default=QUEUE_PATH, help="Queue JSON path")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
@@ -110,8 +126,8 @@ def main() -> int:
     p_list.add_argument("--json", action="store_true")
     p_list.set_defaults(func=_cmd_list)
 
-    p_add = sub.add_parser("add", help="Enqueue a dropship order")
-    p_add.add_argument("--stripe-key", help="dropship stripeKey (e.g. dsMeshtasticHeltec)")
+    p_add = sub.add_parser("add", help="Enqueue a partner fulfillment order")
+    p_add.add_argument("--stripe-key", help="partner SKU stripeKey (e.g. dsMeshtasticHeltec)")
     p_add.add_argument("--ship-to", default="", help='Ship-to one-liner or JSON object string')
     p_add.add_argument("--email", default="")
     p_add.add_argument("--session-id", default="", help="Stripe checkout session id")
@@ -129,6 +145,12 @@ def main() -> int:
 
     p_show = sub.add_parser("show", help="Dump full queue file")
     p_show.set_defaults(func=_cmd_show)
+
+    p_import = sub.add_parser("import", help="Import Stripe JSON file or directory")
+    p_import.add_argument("path", type=Path, help="Stripe event/session JSON or directory")
+    p_import.add_argument("--dry-run", action="store_true")
+    p_import.add_argument("--stripe-key", help="Override stripe_key when metadata missing")
+    p_import.set_defaults(func=_cmd_import)
 
     args = ap.parse_args()
     return args.func(args)

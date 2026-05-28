@@ -58,9 +58,28 @@ python scripts/fulfillment_queue.py add --stripe-key dsMeshtasticHeltec --ship-t
 stripe events retrieve evt_xxx --stripe-key sk_test_... > data/stripe_event.json
 python scripts/stripe_fulfillment_import.py data/stripe_event.json
 # or pipe: type event.json | python scripts/stripe_fulfillment_import.py --stdin
+# batch folder: python scripts/stripe_fulfillment_import.py --batch data/stripe_exports/
 ```
 
-### D — Manual API (automation / scripts)
+### C2 — Stripe API sync (no paste — pulls recent checkouts)
+
+```powershell
+$env:CTG_STRIPE_SECRET_KEY = "sk_test_..."
+python scripts/stripe_fulfillment_sync.py --hours 72
+python scripts/stripe_fulfillment_sync.py --dry-run   # preview only
+```
+
+Or launch operator + sync in one step:
+
+```powershell
+.\scripts\partner_fulfillment_operator.ps1 -SyncStripe
+```
+
+### D — Operator dashboard paste import
+
+Open [http://127.0.0.1:8765/operator/fulfillment](http://127.0.0.1:8765/operator/fulfillment) → paste Stripe checkout JSON → **Import into queue**.
+
+### E — Manual API (automation / scripts)
 
 ```powershell
 curl -X POST http://127.0.0.1:8765/api/fulfillment/queue `

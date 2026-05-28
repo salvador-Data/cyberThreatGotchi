@@ -32,6 +32,9 @@
     .update-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.5rem; margin-top: 0.75rem; align-items: end; }
     .update-row input, .update-row select { width: 100%; padding: 0.45rem 0.6rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.35); color: inherit; }
     .empty-state { opacity: 0.7; padding: 2rem; text-align: center; }
+    .import-bar { margin-bottom: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; }
+    .import-bar label { display: block; font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.35rem; }
+    .import-bar textarea { width: 100%; min-height: 88px; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.35); color: inherit; font-family: ui-monospace, monospace; font-size: 0.8rem; resize: vertical; }
     .disclaimer { font-size: 0.8rem; opacity: 0.75; margin-top: 1.5rem; padding: 0.75rem; border-left: 3px solid var(--philly-gold, #c9a227); }
     @media (max-width: 720px) { .update-row { grid-template-columns: 1fr; } }
   </style>
@@ -55,6 +58,15 @@
         <input id="api-token" type="password" autocomplete="off" placeholder="CTG_OPERATOR_TOKEN"/>
       </div>
       <button type="button" id="btn-refresh" class="primary">Refresh queue</button>
+    </section>
+
+    <section class="import-bar" aria-label="Import Stripe checkout">
+      <label for="stripe-import">Paste Stripe checkout JSON (event or session from Dashboard / CLI)</label>
+      <textarea id="stripe-import" placeholder='{"type":"checkout.session.completed","data":{"object":{...}}}'></textarea>
+      <div class="btn-row" style="margin-top:0.5rem">
+        <button type="button" id="btn-import" class="primary">Import into queue</button>
+        <button type="button" id="btn-sync-hint">Sync from Stripe API</button>
+      </div>
     </section>
 
     <div id="status-msg" role="status" aria-live="polite"></div>

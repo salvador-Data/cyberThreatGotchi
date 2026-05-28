@@ -53,10 +53,37 @@ def _normalize_event(data: dict) -> dict:
     raise ValueError("unrecognized Stripe JSON — need event or checkout.session object")
 
 
+def _import_payload(payload: dict, *, stripe_key: str | None, dry_run: bool) -> dict:
+    if stripe_key and payload.get("object") == "checkout.session":
+        payload.setdefault("metadata", {})["stripe_key"] = stripe_key
+        order = order_from_stripe_session(payload)
+    else:
+        event = _normalize_event(payload)
+        if stripe_key:
+            obj = event.setdefault("data", {}).setdefault("object", {})
+            obj.setdefault("metadata", {})["stripe_key"] = stripe_key
+        order = order_from_stripe_event(event)
+
+    if dry_run:
+        return {"dry_run": True, "order": order}
+
+    saved = add_order(order)
+    webhook = os.environ.get("CTG_FULFILLMENT_WEBHOOK_URL", "").strip()
+    notify_fulfillment_event("fulfillment.queued", saved, webhook)
+    return {"ok": True, "order": saved}
+
+
+def _iter_input_files(path: Path) -> list[Path]:
+    if path.is_dir():
+        return sorted(p for p in path.glob("*.json") if p.is_file())
+    return [path]
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Import Stripe payment into fulfillment queue")
-    ap.add_argument("input", nargs="?", type=Path, help="Stripe event or session JSON file")
+    ap.add_argument("input", nargs="?", type=Path, help="Stripe event or session JSON file (or directory of .json)")
     ap.add_argument("--stdin", action="store_true", help="Read JSON from stdin")
+    ap.add_argument("--batch", type=Path, help="Import every .json file in directory")
     ap.add_argument("--dry-run", action="store_true", help="Parse only; do not write queue")
     ap.add_argument(
         "--stripe-key",
@@ -64,29 +91,31 @@ def main() -> int:
     )
     args = ap.parse_args()
 
+    if args.batch:
+        files = _iter_input_files(args.batch)
+        if not files:
+            print(f"error: no .json files in {args.batch}", file=sys.stderr)
+            return 1
+        results = []
+        errors = 0
+        for fp in files:
+            try:
+                payload = _load_payload(fp, use_stdin=False)
+                results.append({"file": str(fp.name), **_import_payload(payload, stripe_key=args.stripe_key, dry_run=args.dry_run)})
+            except (ValueError, json.JSONDecodeError) as exc:
+                errors += 1
+                results.append({"file": str(fp.name), "error": str(exc)})
+        print(json.dumps({"batch": True, "count": len(results), "errors": errors, "results": results}, indent=2))
+        return 1 if errors else 0
+
     try:
         payload = _load_payload(args.input, args.stdin)
-        if args.stripe_key and payload.get("object") == "checkout.session":
-            payload.setdefault("metadata", {})["stripe_key"] = args.stripe_key
-            order = order_from_stripe_session(payload)
-        else:
-            event = _normalize_event(payload)
-            if args.stripe_key:
-                obj = event.setdefault("data", {}).setdefault("object", {})
-                obj.setdefault("metadata", {})["stripe_key"] = args.stripe_key
-            order = order_from_stripe_event(event)
+        result = _import_payload(payload, stripe_key=args.stripe_key, dry_run=args.dry_run)
     except (ValueError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
 
-    if args.dry_run:
-        print(json.dumps({"dry_run": True, "order": order}, indent=2))
-        return 0
-
-    saved = add_order(order)
-    webhook = os.environ.get("CTG_FULFILLMENT_WEBHOOK_URL", "").strip()
-    notify_fulfillment_event("fulfillment.queued", saved, webhook)
-    print(json.dumps({"ok": True, "order": saved}, indent=2))
+    print(json.dumps(result, indent=2))
     return 0
 
 

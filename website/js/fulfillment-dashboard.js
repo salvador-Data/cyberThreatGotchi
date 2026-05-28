@@ -173,6 +173,23 @@
     });
   }
 
+  function enqueueStripePayload(apiBase, token, payload) {
+    return fetch(apiBase.replace(/\/$/) + "/api/fulfillment/queue", {
+      method: "POST",
+      headers: Object.assign({ "Content-Type": "application/json" }, authHeaders(token)),
+      body: JSON.stringify(payload),
+    }).then(function (resp) {
+      if (!resp.ok) {
+        return resp.json().catch(function () {
+          return {};
+        }).then(function (body) {
+          throw new Error(body.error || "Import failed " + resp.status);
+        });
+      }
+      return resp.json();
+    });
+  }
+
   function patchOrder(apiBase, token, orderId, body) {
     return fetch(apiBase.replace(/\/$/) + "/api/fulfillment/queue/" + encodeURIComponent(orderId), {
       method: "PATCH",
@@ -190,6 +207,9 @@
     var listEl = document.getElementById("order-list");
     var statusEl = document.getElementById("status-msg");
     var refreshBtn = document.getElementById("btn-refresh");
+    var importBtn = document.getElementById("btn-import");
+    var syncHintBtn = document.getElementById("btn-sync-hint");
+    var importEl = document.getElementById("stripe-import");
 
     if (!apiBaseEl || !listEl) return;
 
@@ -245,7 +265,7 @@
         var trk = global.HPLShippingTracker;
         var packet = trk
           ? trk.formatFulfillmentPacket({
-              sku: orderId,
+              sku: card.querySelector("code") ? card.querySelector("code").textContent : "",
               productName: title ? title.textContent : "",
               stripeKey: card.querySelector("code") ? card.querySelector("code").textContent : "",
               shipTo: shipBlock ? shipBlock.textContent : "",
@@ -283,6 +303,42 @@
     });
 
     refreshBtn.addEventListener("click", loadQueue);
+
+    if (importBtn && importEl) {
+      importBtn.addEventListener("click", function () {
+        var raw = importEl.value.trim();
+        if (!raw) {
+          setStatus("Paste Stripe JSON first.", true);
+          return;
+        }
+        var payload;
+        try {
+          payload = JSON.parse(raw);
+        } catch (err) {
+          setStatus("Invalid JSON — check paste from Stripe Dashboard.", true);
+          return;
+        }
+        setStatus("Importing...");
+        enqueueStripePayload(apiBaseEl.value, tokenEl.value, payload)
+          .then(function (data) {
+            importEl.value = "";
+            setStatus("Imported order " + (data.order && data.order.id ? data.order.id : "") + ".");
+            loadQueue();
+          })
+          .catch(function (err) {
+            setStatus(err.message || "Import failed", true);
+          });
+      });
+    }
+
+    if (syncHintBtn) {
+      syncHintBtn.addEventListener("click", function () {
+        setStatus(
+          "CLI: python scripts/stripe_fulfillment_sync.py --hours 72  (requires CTG_STRIPE_SECRET_KEY)"
+        );
+      });
+    }
+
     loadQueue();
   }
 
@@ -294,6 +350,7 @@
     buildTrackingUrl: buildTrackingUrl,
     renderOrderCard: renderOrderCard,
     fetchQueue: fetchQueue,
+    enqueueStripePayload: enqueueStripePayload,
     patchOrder: patchOrder,
     STATUS_LABELS: STATUS_LABELS,
   };
