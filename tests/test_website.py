@@ -291,14 +291,14 @@ def test_contact_page_content():
     assert "Philadelphia" in html
     assert "hello@hackerplanet.dev" in html
     assert "MSP" in html
-    assert "Call forwarding setup in progress" in html
-    assert "SETUP_CHECKLIST.md" in html
+    assert "tel:+1" in html
+    assert "XXXXXXXXXX" in html
     assert "CONTACT_AND_PHONE.md" in html
     assert "services.html" in html
     assert "shop.html" in html
     assert "salvador-Data" in html
     assert "Salvador_Data" in html
-    assert "not registered yet" in html.lower() or "not registered" in html.lower()
+    assert "email routing" in html.lower() or "mx records" in html.lower()
 
 
 def test_no_warehouse_address_in_public_html():

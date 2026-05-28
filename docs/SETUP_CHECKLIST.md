@@ -4,7 +4,7 @@
 
 | Doc | Purpose |
 |-----|---------|
-| This file | **Today’s go-live steps** (Voice → domain → email → payments) |
+| This file | **Today's go-live steps** (Voice → domain → email → payments) |
 | [HOSTING_OPTIONS.md](HOSTING_OPTIONS.md) | DNS table, `CNAME`, brand vs URL |
 | [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md) | Google Voice detail |
 | [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md) | Stripe, tax, fulfillment |
@@ -33,9 +33,9 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 
 | Changed | Unchanged |
 |---------|-----------|
-| Site branding **HackerPlanet** everywhere | Browser URL still **`salvador-Data.github.io/cyberThreatGotchi/`** |
-| Email placeholder **`hello@hackerplanet.dev`** on contact | Domain **not purchased** — mail does not deliver yet |
-| Docs target **`hackerplanet.dev`** | No `website/CNAME` until you register the domain |
+| Site branding **HackerPlanet** everywhere | Browser URL still **`salvador-Data.github.io/cyberThreatGotchi/`** until DNS live |
+| Email **`hello@hackerplanet.dev`** on contact | Custom domain DNS pending — mail after Email Routing |
+| Docs target **`hackerplanet.dev`** | **`website/CNAME`** added — register domain + DNS next |
 
 Custom domain steps: **Section C** below and [HOSTING_OPTIONS.md](HOSTING_OPTIONS.md).
 
@@ -67,28 +67,21 @@ gh api repos/salvador-Data/cyberThreatGotchi/pages
 
 ---
 
-## B. Google Voice — YOUR ACTION (≈15 min)
+## B. Google Voice — ✅ DONE (paste number on contact page)
 
 **Goal:** Free US business line (215 area) that forwards to your cell. **Do not** put your personal cell on the public site.
 
-### Exact clicks
+| Item | Status |
+|------|--------|
+| Voice account + 215 number + forward to cell | ✅ **Completed** (2026-05-28) |
+| Public number on contact page | ⏳ **Paste your Voice number** — see below |
 
-1. Open **[voice.google.com](https://voice.google.com)** in Chrome (signed in as Andy).
-2. Choose **For personal use** (free tier).
-3. **Get a number** → search area code **`215`** (fallback: **267** or **445** for Philadelphia).
-4. Complete number selection and confirm terms.
-5. **Settings** (gear) → **Account** → **Linked numbers** → **New linked number** → enter your cell → verify via SMS or call.
-6. **Settings → Calls** → confirm **Forward calls to linked numbers** is **ON**.
-7. **Settings → Voicemail** → record greeting, e.g.:  
-   *“You’ve reached Hacker Planet LLC in Philadelphia. Leave a message and we’ll respond during business hours.”*
-8. Install **Google Voice** app on phone (optional) for outbound caller-ID as the business line.
-
-### After you have the number
+### Paste your number (≈2 min)
 
 1. Format for display: `(215) XXX-XXXX` (or your chosen area code).
 2. Edit **[website/contact.html](../website/contact.html)** — **Business phone** card:
-   - Replace *Call forwarding setup in progress* with  
-     `<a href="tel:+1215XXXXXXX">(215) XXX-XXXX</a>` (E.164 in `href`, no spaces).
+   - Replace `tel:+1XXXXXXXXXX` and `(215) XXX-XXXX` with your real number  
+     (E.164 in `href`, e.g. `<a href="tel:+12155551234">(215) 555-1234</a>` — no spaces in `href`).
    - Keep **no street address** on any public HTML (warehouse stays in `shipping.config.js` only).
 3. Run sync and push:
 
@@ -99,46 +92,90 @@ git commit -m "Add business phone to contact page"
 git push origin main
 ```
 
-Detail: [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md)
+Original setup clicks (for reference): [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md)
 
 ---
 
-## C. Domain `hackerplanet.dev` — YOUR ACTION (~$10/yr)
+## C. Domain `hackerplanet.dev` — IN PROGRESS
 
-**Agent will not purchase this for you.**
+| Item | Status |
+|------|--------|
+| Cloudflare account | ✅ **Created** (2026-05-28) |
+| Register `hackerplanet.dev` at Cloudflare Registrar | ⏳ **Your action** (~$10/yr) |
+| `website/CNAME` in repo | ✅ **Added** (`hackerplanet.dev`) |
+| Cloudflare DNS → GitHub Pages | ⏳ After registration |
+| GitHub Pages custom domain | ⏳ After DNS propagates |
 
-1. **[Cloudflare Registrar](https://domains.cloudflare.com/)** → search **`hackerplanet.dev`** → register (~$10–12/yr, at-cost).
-2. In repo, create **`website/CNAME`** (one line, no `https://`):
+**Agent will not purchase the domain for you.** As of 2026-05-28, `hackerplanet.dev` does not resolve in public DNS — register it in Cloudflare if you have not already.
 
-   ```
-   hackerplanet.dev
-   ```
+### Cloudflare Registrar (if not done)
 
-3. Push to `main` (Pages workflow deploys `CNAME` to `gh-pages`).
-4. **[GitHub → Settings → Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages)** → **Custom domain** → `hackerplanet.dev` → wait for DNS check → **Enforce HTTPS**.
-5. **Cloudflare DNS** (DNS only / grey cloud for GitHub Pages):
+1. Log in → **[Cloudflare Dashboard](https://dash.cloudflare.com/)** → left sidebar **Domain registration** (or **[domains.cloudflare.com](https://domains.cloudflare.com/)**).
+2. Search **`hackerplanet.dev`** → **Purchase** (~$10–12/yr, at-cost).
+3. Confirm the zone **`hackerplanet.dev`** appears under **Websites**.
 
-   | Type | Name | Content |
-   |------|------|---------|
-   | `A` | `@` | `185.199.108.153` |
-   | `A` | `@` | `185.199.109.153` |
-   | `A` | `@` | `185.199.110.153` |
-   | `A` | `@` | `185.199.111.153` |
-   | `CNAME` | `www` | `salvador-Data.github.io` |
+### Repo (done — deploys via Pages workflow)
 
-   Full table: [HOSTING_OPTIONS.md § Connect custom domain](HOSTING_OPTIONS.md#connect-custom-domain-to-github-pages-after-purchase)
+**`website/CNAME`** contains exactly:
 
-6. Verify: https://hackerplanet.dev/ (old GitHub URL still works).
+```
+hackerplanet.dev
+```
+
+Push to `main` triggers [.github/workflows/pages.yml](../.github/workflows/pages.yml) → publishes `CNAME` to **`gh-pages`**.
+
+### GitHub Pages custom domain
+
+**Option A — Dashboard (recommended; `gh` not on PATH on this machine):**
+
+1. **[Settings → Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages)**.
+2. Under **Custom domain**, enter **`hackerplanet.dev`** → **Save**.
+3. Wait for **DNS check** (can take up to 24h after Cloudflare records).
+4. Enable **Enforce HTTPS** once the certificate provisions.
+
+**Option B — GitHub CLI** (after `winget install GitHub.cli` and `gh auth login`):
+
+```powershell
+gh api -X PUT repos/salvador-Data/cyberThreatGotchi/pages -f cname=hackerplanet.dev
+gh api repos/salvador-Data/cyberThreatGotchi/pages
+```
+
+### Cloudflare DNS (DNS only / grey cloud for GitHub Pages)
+
+| Type | Name | Content | Proxy |
+|------|------|---------|-------|
+| `A` | `@` | `185.199.108.153` | DNS only |
+| `A` | `@` | `185.199.109.153` | DNS only |
+| `A` | `@` | `185.199.110.153` | DNS only |
+| `A` | `@` | `185.199.111.153` | DNS only |
+| `CNAME` | `www` | `salvador-Data.github.io` | DNS only |
+
+**Alternative apex:** single `CNAME` `@` → `salvador-Data.github.io` (Cloudflare CNAME flattening) instead of four A records — pick one method, not both.
+
+Full table: [HOSTING_OPTIONS.md § Connect custom domain](HOSTING_OPTIONS.md#connect-custom-domain-to-github-pages-after-purchase)
+
+### SSL/TLS (after GitHub verifies domain)
+
+**Cloudflare → SSL/TLS → Overview** → set encryption mode to **Full (strict)** once GitHub Pages shows the custom domain as verified and HTTPS is available.
+
+### Verify
+
+```powershell
+.\.venv\Scripts\python scripts\verify_live_site.py
+```
+
+Checks `salvador-Data.github.io` always; checks `https://hackerplanet.dev/` when DNS resolves.
 
 ---
 
 ## D. Email `hello@hackerplanet.dev` — after domain (free)
 
-1. Cloudflare dashboard → **Email** → **Email Routing** → enable for `hackerplanet.dev`.
-2. Create route: **`hello@hackerplanet.dev`** → forward to your personal Gmail (or Workspace).
-3. Send a test from another account; confirm receipt.
-4. Update **Stripe** and **PayPal** business profiles with `hello@hackerplanet.dev`.
-5. Contact page already shows the address; remove “not registered yet” copy in `contact.html` once mail works.
+1. Cloudflare dashboard → select **`hackerplanet.dev`** → **Email** → **Email Routing** → **Get started** / enable for the zone.
+2. **Routing rules** → **Create address** → custom address **`hello`** → destination **your personal Gmail** (or Workspace inbox) → **Save**.
+3. Cloudflare adds required **MX** (and optional **TXT** SPF) records automatically — confirm under **DNS → Records**.
+4. Send a test from another account; confirm receipt.
+5. Update **Stripe** and **PayPal** business profiles with `hello@hackerplanet.dev`.
+6. Contact page already shows the address; email copy notes delivery once MX routing is live.
 
 ---
 
@@ -169,15 +206,16 @@ Customer-facing copy: **Philadelphia, PA** only (`origin.publicLabel`).
 
 ## Manual order summary (Andy)
 
-| # | Task | Blocks |
+| # | Task | Status |
 |---|------|--------|
-| 1 | **Google Voice** (215 → cell) | Public phone on contact |
-| 2 | **Register `hackerplanet.dev`** | Custom URL + email routing |
-| 3 | **DNS + `CNAME` + GitHub custom domain** | `https://hackerplanet.dev` |
-| 4 | **Cloudflare Email Routing** for `hello@` | Working business email |
-| 5 | **Stripe links + `demoMode: false`** | Live checkout |
+| 1 | **Google Voice** (215 → cell) | ✅ Done — paste number on contact |
+| 2 | **Cloudflare account** | ✅ Done |
+| 3 | **Register `hackerplanet.dev`** | ⏳ ~$10 at Cloudflare Registrar |
+| 4 | **DNS + GitHub custom domain** | ⏳ After step 3 (`CNAME` in repo ✅) |
+| 5 | **Cloudflare Email Routing** for `hello@` | ⏳ After step 3 |
+| 6 | **Stripe links + `demoMode: false`** | When ready (not blocking launch) |
 
-Website hosting is **already live** on GitHub Pages — steps 1–4 are branding and contact; step 5 is revenue.
+Website hosting is **already live** on GitHub Pages — steps 3–5 are custom domain and contact; step 6 is revenue.
 
 ---
 
