@@ -8,7 +8,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.paypal.com https://www.paypalobjects.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://www.paypal.com; frame-src https://www.paypal.com; base-uri 'self'; form-action 'self' https://www.paypal.com https://buy.stripe.com https://cash.app https://account.venmo.com;"/>
 <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="description" content="Shop Hacker Planet LLC — CyberThreatGotchi kits, Pro feed, digital packs. Pay with card, Apple Pay, PayPal, Venmo, Cash App."/>
+  <meta name="description" content="Shop Hacker Planet LLC — CyberThreatGotchi kits, Marauder custom builds, Netgotchi, Etsy & AliExpress drop-ship, Pro feed. Cards, Apple Pay, PayPal, Venmo, Cash App."/>
   <meta property="og:title" content="Shop · Hacker Planet LLC"/>
   <meta property="og:image" content="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/docs/images/og-cyberthreatgotchi.png"/>
   <title>Shop · Hacker Planet LLC · Philadelphia PA</title>
@@ -45,7 +45,8 @@
       <p class="section-label">Shop · Philadelphia PA</p>
       <h1>Support open defense</h1>
       <p class="lead">
-        Kits, Pro threat feeds, and digital packs for CyberThreatGotchi.
+        Kits, Pro threat feeds, <strong>custom Marauder &amp; COD field builds</strong>, and curated
+        <strong>Etsy · Tindie · AliExpress</strong> drop-ship — plus free STL print files.
         Checkout accepts <strong>credit &amp; debit cards</strong>, <strong>Apple Pay</strong>,
         <strong>PayPal</strong>, <strong>Venmo</strong>, and <strong>Cash App</strong> (US).
       </p>
@@ -90,7 +91,47 @@
     </section>
 
     <section class="reveal">
-      <p class="section-label">One-time</p>
+      <p class="section-label">Hacker Planet builds</p>
+      <h2 class="section-title">Custom field kits · Philly fulfillment</h2>
+      <p class="section-sub">Boost Formula COD bundles and GPS Marauder builds — assembled, tested, shipped from the Hacker Planet lab.</p>
+      <div class="shop-grid">
+        <article class="shop-card shop-card-featured" data-product="boostFormulaCod">
+          <div class="shop-badge">New deal</div>
+          <div class="shop-price">$85<span>.99</span></div>
+          <h3>Boost Formula COD Field Kit</h3>
+          <p>ESP32-S3 board, WiFi Deauther-ready firmware profile, 2.4 GHz antenna, USB-C — Scratch-friendly quick start for lab learners.</p>
+          <ul class="shop-features">
+            <li>ESP32-S3-WROOM module</li>
+            <li>Pre-flashed authorized-lab profile</li>
+            <li>External antenna + USB-C cable</li>
+            <li>Works with Boost Formula COD workflow</li>
+          </ul>
+          <div class="product-checkout"></div>
+        </article>
+        <article class="shop-card shop-card-featured" data-product="marauderCustom175">
+          <div class="shop-badge">Custom build</div>
+          <div class="shop-price">$175</div>
+          <h3>Marauder GPS Field Build</h3>
+          <p>Full CYD Marauder with GPS wardrive, SMA antenna, LiPo battery, printed enclosure — includes matching STL pack.</p>
+          <ul class="shop-features">
+            <li>CYD 2.8&quot; + Marauder firmware</li>
+            <li>GPS module + external antenna</li>
+            <li>LiPo + charge board</li>
+            <li>3D printed case + STL files</li>
+          </ul>
+          <div class="product-checkout"></div>
+        </article>
+        <article class="shop-card" data-product="codStlPack">
+          <div class="shop-price">$12</div>
+          <h3>COD STL + KSS print pack</h3>
+          <p>Digital download — pocket clip, wall dock, SuperSlicer/Prusa profiles for Cardputer &amp; COD mounts.</p>
+          <div class="product-checkout"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <p class="section-label">CyberThreatGotchi</p>
       <h2 class="section-title">Kits &amp; digital</h2>
       <div class="shop-grid">
         <article class="shop-card" data-product="digital">
@@ -115,6 +156,21 @@
       </div>
     </section>
 
+    <div id="dropship-catalog" class="wrap catalog-host"></div>
+
+    <section class="reveal prose legal-shop" style="max-width:var(--max-w);margin-top:2rem">
+      <h2>Drop-ship &amp; authorized use</h2>
+      <p>
+        <strong>Etsy, Tindie, and AliExpress</strong> listings ship directly from partner makers — Hacker Planet curates links;
+        add your affiliate IDs in <code>website/js/catalog.config.js</code> when enrolled.
+        <strong>Hacker Planet custom builds</strong> ($85.99 COD kit, $175 Marauder GPS) ship from Philadelphia after Stripe checkout.
+      </p>
+      <p>
+        WiFi tools (Marauder, Deauther, wardrive) are for <strong>authorized testing and education only</strong>.
+        Defensive tools like Netgotchi and CyberThreatGotchi are designed to protect networks you own or have written permission to test.
+      </p>
+    </section>
+
     <section class="reveal prose" style="max-width:var(--max-w);margin-top:2rem">
       <h2>Payment methods</h2>
       <p>
@@ -128,6 +184,10 @@
       </p>
       <p>
         <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/PAYMENTS.md" target="_blank" rel="noopener">Merchant setup guide (Stripe / PayPal / Cash App / Venmo) ↗</a>
+        ·
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/DROPSHIP_CATALOG.md" target="_blank" rel="noopener">Drop-ship catalog guide ↗</a>
+        ·
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/HOSTING_OPTIONS.md" target="_blank" rel="noopener">Hosting options (free &amp; cheap) ↗</a>
       </p>
     </section>
   </main>
@@ -138,6 +198,8 @@
 
   <script src="js/payments.config.js"></script>
   <script src="js/payments.js"></script>
+  <script src="js/catalog.config.js"></script>
+  <script src="js/catalog.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

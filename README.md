@@ -36,7 +36,7 @@ Or open `index.html` directly in a browser (images load from GitHub raw URLs).
 
 ## Shop & payments
 
-**[shop.html](shop.html)** — kits, Pro subscriptions, digital packs.
+**[shop.html](shop.html)** — CTG kits, $85.99 COD / $175 Marauder custom builds, Etsy·AliExpress drop-ship, Pro feed.
 
 | Method | How |
 |--------|-----|
