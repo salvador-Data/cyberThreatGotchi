@@ -1,0 +1,129 @@
+:root {
+  --bg: #0d1117;
+  --panel: #161b22;
+  --ink: #e6edf3;
+  --accent: #00b48a;
+  --warn: #f85149;
+  --magenta: #d2a8ff;
+  --border: #30363d;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(90deg, #161b22 0%, #1a2332 100%);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+.tagline { margin: 0.25rem 0 0; opacity: 0.75; font-size: 0.9rem; }
+
+.grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: auto auto;
+  gap: 1rem;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.gotchi-panel {
+  grid-row: span 2;
+  text-align: center;
+}
+
+#sprite {
+  image-rendering: pixelated;
+  border: 2px solid var(--magenta);
+  border-radius: 8px;
+  background: #f5f5fa;
+}
+
+.status { font-size: 0.85rem; color: var(--magenta); min-height: 2.5em; }
+
+.bars label {
+  display: block;
+  text-align: left;
+  font-size: 0.8rem;
+  margin: 0.4rem 0;
+}
+
+meter {
+  width: 100%;
+  height: 8px;
+}
+
+meter::-webkit-meter-optimum-value { background: var(--accent); }
+meter::-webkit-meter-suboptimum-value { background: #d29922; }
+meter::-webkit-meter-even-less-good-value { background: var(--warn); }
+
+.meta { font-size: 0.8rem; opacity: 0.85; }
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+button {
+  background: var(--accent);
+  color: #0d1117;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover { filter: brightness(1.1); }
+
+threats-panel { grid-column: 2; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+
+th, td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+}
+
+th { color: var(--accent); }
+
+.sev-critical, .sev-high { color: var(--warn); font-weight: 600; }
+.sev-medium { color: #d29922; }
+
+.runtime-panel {
+  grid-column: 2;
+  font-size: 0.85rem;
+}
+
+.runtime-panel ul { margin: 0.25rem 0; padding-left: 1.2rem; }
+
+@media (max-width: 720px) {
+  .grid { grid-template-columns: 1fr; }
+  .gotchi-panel { grid-row: auto; }
+  .runtime-panel, .threats-panel { grid-column: 1; }
+}

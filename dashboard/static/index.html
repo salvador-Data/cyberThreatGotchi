@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CyberThreatGotchi — Hacker Planet LLC</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <h1>CyberThreatGotchi</h1>
+    <p class="tagline">Unicorn CISO &amp; Cat Sentinels — Hacker Planet LLC</p>
+  </header>
+
+  <main class="grid">
+    <section class="panel gotchi-panel">
+      <img id="sprite" src="/api/sprite/idle.png" alt="Cipherhorn" width="128" height="128" />
+      <h2 id="g-name">Cipherhorn</h2>
+      <p id="g-status" class="status">—</p>
+      <div class="bars">
+        <label>Hunger <meter id="m-hunger" min="0" max="100" value="80"></meter></label>
+        <label>Happy <meter id="m-happy" min="0" max="100" value="80"></meter></label>
+      </div>
+      <p class="meta">
+        Lv.<span id="g-level">1</span> · XP <span id="g-xp">0</span> ·
+        Blocked <span id="g-blocked">0</span> · Seen <span id="g-seen">0</span>
+      </p>
+      <div class="actions">
+        <button type="button" id="btn-feed">Feed PCAP</button>
+        <button type="button" id="btn-pet">Pet CISO</button>
+      </div>
+    </section>
+
+    <section class="panel threats-panel">
+      <h2>Threat Feed</h2>
+      <table>
+        <thead>
+          <tr><th>Severity</th><th>Source</th><th>Category</th><th>Action</th><th>Detail</th></tr>
+        </thead>
+        <tbody id="threat-rows"></tbody>
+      </table>
+    </section>
+
+    <section class="panel runtime-panel">
+      <h2>Runtime</h2>
+      <ul id="runtime-info"></ul>
+      <h3>IPS Blocks</h3>
+      <ul id="block-list"></ul>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
