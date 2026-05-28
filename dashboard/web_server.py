@@ -17,12 +17,19 @@ from core.pro_feed import (
     build_yara_payload,
     validate_pro_key,
 )
+from core.security import (
+    RateLimiter,
+    apply_security_headers,
+    require_api_token,
+    sanitize_mood,
+)
 from core.state_bus import GotchiSnapshot, StateBus
 from db.audit_chain import AuditChain
 from db.logger import ThreatLogger
 
 if TYPE_CHECKING:
     from core.gotchi import CyberGotchi
+    from db.pro_keys import ProKeyStore
 
 STATIC = Path(__file__).resolve().parent / "static"
 
@@ -31,10 +38,30 @@ def create_web_app(
     bus: StateBus,
     logger: Optional[ThreatLogger] = None,
     audit: Optional[AuditChain] = None,
+    pro_keys: Optional["ProKeyStore"] = None,
+    api_token: str = "",
     on_feed: Optional[Callable[[], None]] = None,
     on_pet: Optional[Callable[[], None]] = None,
 ) -> Flask:
     app = Flask(__name__, static_folder=str(STATIC), static_url_path="/static")
+    limiter = RateLimiter(max_calls=120, window_sec=60.0)
+    write_limiter = RateLimiter(max_calls=30, window_sec=60.0)
+    token_guard = require_api_token(api_token)
+    app.config["JSON_SORT_KEYS"] = False
+
+    @app.after_request
+    def _secure_headers(response: Response) -> Response:
+        return apply_security_headers(response)
+
+    @app.errorhandler(429)
+    def _rate_limited(_exc: Exception) -> tuple[Response, int]:
+        return jsonify({"error": "rate limit exceeded"}), 429
+
+    @app.before_request
+    def _global_rate_limit() -> Optional[tuple[Response, int]]:
+        if request.path.startswith("/api/") and not limiter.allow():
+            return jsonify({"error": "rate limit exceeded"}), 429
+        return None
 
     @app.route("/")
     def index() -> Response:
@@ -50,8 +77,11 @@ def create_web_app(
 
     @app.get("/api/sprite/<mood>.png")
     def api_sprite(mood: str) -> Response:
-        frame = int(request.args.get("frame", 0))
-        path = sprite_path(mood, frame)
+        safe_mood = sanitize_mood(mood)
+        if safe_mood is None:
+            return Response(status=400)
+        frame = min(max(int(request.args.get("frame", 0)), 0), 1)
+        path = sprite_path(safe_mood, frame)
         if path is None:
             path = sprite_path("idle", frame)
         if path is None:
@@ -60,7 +90,7 @@ def create_web_app(
 
     @app.get("/api/threats")
     def api_threats() -> Response:
-        limit = min(int(request.args.get("limit", 50)), 200)
+        limit = min(max(int(request.args.get("limit", 50)), 1), 200)
         if logger is None:
             return jsonify({"threats": [], "count": 0})
         rows = logger.recent_threats(limit)
@@ -70,7 +100,7 @@ def create_web_app(
     def api_export_csv() -> Response:
         if logger is None:
             return Response("no data\n", mimetype="text/csv")
-        limit = min(int(request.args.get("limit", 500)), 5000)
+        limit = min(max(int(request.args.get("limit", 500)), 1), 5000)
         body = logger.export_csv(limit)
         return Response(
             body,
@@ -96,7 +126,7 @@ def create_web_app(
     def api_export_audit() -> Response:
         if audit is None:
             return jsonify({"error": "audit chain disabled"}), 503
-        limit = min(int(request.args.get("limit", 500)), 5000)
+        limit = min(max(int(request.args.get("limit", 500)), 1), 5000)
         body = audit.export_chain(limit=limit)
         ok, msg = audit.verify_chain()
         body["verified"] = ok
@@ -105,7 +135,7 @@ def create_web_app(
 
     def _pro_auth() -> Optional[Response]:
         key = request.headers.get("X-CTG-Pro-Key", "")
-        if not validate_pro_key(key):
+        if not validate_pro_key(key, store=pro_keys):
             return jsonify({"error": "invalid or missing X-CTG-Pro-Key"}), 401
         return None
 
@@ -131,13 +161,19 @@ def create_web_app(
         return jsonify(build_hashes_payload())
 
     @app.post("/api/feed")
+    @token_guard
     def api_feed() -> Response:
+        if not write_limiter.allow():
+            return jsonify({"error": "rate limit exceeded"}), 429
         if on_feed:
             on_feed()
         return jsonify({"ok": True})
 
     @app.post("/api/pet")
+    @token_guard
     def api_pet() -> Response:
+        if not write_limiter.allow():
+            return jsonify({"error": "rate limit exceeded"}), 429
         if on_pet:
             on_pet()
         return jsonify({"ok": True})
@@ -162,6 +198,8 @@ class WebDashboard:
         gotchi: "CyberGotchi",
         logger: Optional[ThreatLogger] = None,
         audit: Optional[AuditChain] = None,
+        pro_keys: Optional["ProKeyStore"] = None,
+        api_token: str = "",
         host: str = "0.0.0.0",
         port: int = 8765,
     ) -> None:
@@ -176,6 +214,8 @@ class WebDashboard:
             bus,
             logger=logger,
             audit=audit,
+            pro_keys=pro_keys,
+            api_token=api_token,
             on_feed=self.gotchi.feed,
             on_pet=self.gotchi.pet,
         )

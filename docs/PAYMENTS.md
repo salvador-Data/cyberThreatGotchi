@@ -44,6 +44,8 @@ window.HPL_PAYMENTS = {
 python scripts/sync_website_to_docs.py
 ```
 
+**Auto Pro keys:** run `python scripts/stripe_provision.py` with `CTG_STRIPE_WEBHOOK_SECRET` — see [SECURITY_HARDENING.md](SECURITY_HARDENING.md).
+
 **Subscriptions (Pro feed):** Create recurring prices on Stripe products. After payment, provision `CTG_PRO_API_KEY` manually or via Stripe webhook → your backend (future: `scripts/stripe_provision.py`).
 
 ---

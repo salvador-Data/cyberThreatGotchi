@@ -33,6 +33,7 @@ from dashboard.cli import CyberThreatDashboard
 from dashboard.web_server import WebDashboard
 from db.audit_chain import AuditChain
 from db.logger import GotchiRecord, ThreatLogger, ThreatRecord
+from db.pro_keys import ProKeyStore
 from display.factory import create_display
 
 
@@ -50,6 +51,7 @@ class CyberThreatGotchiApp:
 
         self.logger = ThreatLogger(self.settings.db_path)
         self.audit = AuditChain(self.settings.audit_db_path, secret=self.settings.audit_secret)
+        self.pro_keys = ProKeyStore(self.settings.pro_keys_db_path)
         self.gotchi = CyberGotchi(name=args.name or self.settings.gotchi_name)
         self.ips = IntrusionPreventionSystem(enabled=not args.no_ips)
         self.detector = ThreatDetector(settings=self.settings, on_threat=self._on_threat)
@@ -72,6 +74,8 @@ class CyberThreatGotchiApp:
                 self.gotchi,
                 logger=self.logger,
                 audit=self.audit,
+                pro_keys=self.pro_keys,
+                api_token=self.settings.web_api_token,
                 host=getattr(args, "web_host", self.settings.web_host),
                 port=getattr(args, "web_port", self.settings.web_port),
             )

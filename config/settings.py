@@ -63,6 +63,9 @@ WEBHOOK_TIMEOUT_SEC = float(os.environ.get("CTG_WEBHOOK_TIMEOUT", "5"))
 PRO_API_KEY = os.environ.get("CTG_PRO_API_KEY", "").strip()
 AUDIT_SECRET = os.environ.get("CTG_AUDIT_SECRET", "").strip()
 AUDIT_DB_PATH = Path(os.environ.get("CTG_AUDIT_DB", DATA_DIR / "audit_chain.db"))
+PRO_KEYS_DB_PATH = Path(os.environ.get("CTG_PRO_KEYS_DB", DATA_DIR / "pro_keys.db"))
+WEB_API_TOKEN = os.environ.get("CTG_WEB_API_TOKEN", "").strip()
+STRIPE_WEBHOOK_SECRET = os.environ.get("CTG_STRIPE_WEBHOOK_SECRET", "").strip()
 
 
 @dataclass
@@ -95,6 +98,9 @@ class Settings:
     pro_api_key: str = field(default_factory=lambda: PRO_API_KEY)
     audit_secret: str = field(default_factory=lambda: AUDIT_SECRET)
     audit_db_path: Path = field(default_factory=lambda: AUDIT_DB_PATH)
+    pro_keys_db_path: Path = field(default_factory=lambda: PRO_KEYS_DB_PATH)
+    web_api_token: str = field(default_factory=lambda: WEB_API_TOKEN)
+    stripe_webhook_secret: str = field(default_factory=lambda: STRIPE_WEBHOOK_SECRET)
 
     def ensure_dirs(self) -> None:
         self.data_dir.mkdir(parents=True, exist_ok=True)
@@ -129,6 +135,13 @@ def _apply_yaml(settings: Settings, data: dict) -> None:
         settings.web_host = str(web["host"])
     if web.get("port"):
         settings.web_port = int(web["port"])
+    if web.get("api_token"):
+        settings.web_api_token = str(web["api_token"])
+    pro = data.get("pro") or {}
+    if pro.get("api_key"):
+        settings.pro_api_key = str(pro["api_key"])
+    if pro.get("audit_secret"):
+        settings.audit_secret = str(pro["audit_secret"])
 
 
 def load_settings(config_path: Path | None = None) -> Settings:

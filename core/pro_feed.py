@@ -86,9 +86,15 @@ def build_hashes_payload() -> dict:
     }
 
 
-def validate_pro_key(provided: str) -> bool:
+def validate_pro_key(provided: str, store: object | None = None) -> bool:
+    provided = (provided or "").strip()
+    if not provided:
+        return False
     expected = os.environ.get("CTG_PRO_API_KEY", "").strip()
+    if expected and provided == expected:
+        return True
+    if store is not None and hasattr(store, "is_active") and store.is_active(provided):
+        return True
     if not expected:
-        # Demo mode — accept key "demo" when no key configured
         return provided == "demo"
-    return provided == expected
+    return False

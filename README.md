@@ -82,6 +82,8 @@ sudo systemctl start cyberthreatgotchi
 | `CTG_WEBHOOK_SECRET` | *(empty)* | Optional `X-CTG-Secret` header |
 | `CTG_PRO_API_KEY` | *(empty)* | Pro feed auth; unset = demo key `demo` |
 | `CTG_AUDIT_SECRET` | *(empty)* | HMAC on `/api/export/audit.json` |
+| `CTG_WEB_API_TOKEN` | *(empty)* | Protect `POST /api/feed` and `/api/pet` |
+| `CTG_STRIPE_WEBHOOK_SECRET` | *(empty)* | Stripe provisioner signature verify |
 | `CTG_CONFIG` | `config/default.yaml` | YAML settings file |
 | `CTG_EINK_REFRESH_SEC` | `8` | Min seconds between idle e-ink updates |
 
