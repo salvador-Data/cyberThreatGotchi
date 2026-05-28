@@ -78,7 +78,7 @@
       shippingLabel = (cfg().digital && cfg().digital.label) || "Digital delivery";
     } else if (fulfillment === "dropship") {
       shippingLabel =
-        (cfg().dropship && cfg().dropship.label) || "Shipping included in partner drop-ship price";
+        (cfg().dropship && cfg().dropship.label) || "Shipping included in partner catalog price";
     } else if (fulfillment === "direct") {
       var ship = directShipping(state, meta.weightOz);
       shipping = ship.amount;
@@ -133,7 +133,7 @@
         "p",
         "section-sub",
         "Separate logic for <strong>Philadelphia direct ship</strong> (your builds) vs " +
-          "<strong>partner drop-ship</strong> (shipping included). Not legal advice — see tax guide."
+          "<strong>partner fulfillment</strong> (shipping included). Not legal advice — see tax guide."
       )
     );
 
@@ -153,7 +153,7 @@
           ? " [Philly ship]"
           : meta.fulfillment === "digital"
             ? " [digital]"
-            : " [drop-ship]";
+            : " [partner]";
       opt.textContent = products[k].name + tag + " — " + money(products[k].price);
       prodSelect.appendChild(opt);
     });
@@ -218,7 +218,7 @@
             ((cfg().origin && cfg().origin.publicLabel) || "Philadelphia, PA")
           : r.fulfillment === "digital"
             ? "Digital / no shipping"
-            : "Partner drop-ship (shipping included)";
+            : "Partner fulfillment (shipping included)";
 
       result.innerHTML =
         '<dl class="ship-calc-breakdown">' +

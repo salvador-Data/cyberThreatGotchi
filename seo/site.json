@@ -28,8 +28,8 @@
     },
     "about.html": {
       "title": "About Hacker Planet LLC · HackerPlanet Philadelphia",
-      "description": "About Hacker Planet LLC — Andy Klwal and Pat build open-source defensive security tools and Philadelphia-assembled field hardware. Authorized networks only.",
-      "keywords": "Hacker Planet LLC, Andy Klwal, Philadelphia security company, open source cybersecurity",
+      "description": "About Hacker Planet LLC — Salvador Data and Pat build open-source defensive security tools and Philadelphia-assembled field hardware. Contact: salvadorData@proton.me. Authorized networks only.",
+      "keywords": "Hacker Planet LLC, Salvador Data, Philadelphia cybersecurity, CyberThreatGotchi, open source security",
       "ogType": "website",
       "jsonLd": ["organization", "breadcrumb"]
     },
@@ -49,7 +49,7 @@
     },
     "shop.html": {
       "title": "Shop Field Hardware · CYD, CrackBot, CTG · HackerPlanet",
-      "description": "Shop HackerPlanet — CYD field builds from $79.99, CrackBot Jetson bench $449, CyberThreatGotchi kits, M5 Cardputer tools, Meshtastic, and partner drop-ship. Philadelphia direct ship.",
+      "description": "Shop HackerPlanet — CYD field builds from $79.99, CrackBot Jetson bench $449, CyberThreatGotchi kits, M5 Cardputer tools, Meshtastic, and curated partner hardware. Philadelphia direct ship.",
       "keywords": "cybersecurity hardware shop, CYD field build, CyberThreatGotchi kit, CrackBot, M5 Cardputer, Philadelphia tech shop",
       "ogType": "website",
       "ogImage": "/images/hero-cybertech.png",

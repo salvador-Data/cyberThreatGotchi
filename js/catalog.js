@@ -12,7 +12,7 @@
     printables: { label: "Printables", icon: "🖨️", class: "source-printables" },
     hpl: { label: "Hacker Planet", icon: "🪐", class: "source-hpl" },
     direct: { label: "Philly ship", icon: "📍", class: "source-direct" },
-    dropship: { label: "Drop-ship", icon: "📬", class: "source-dropship" },
+    dropship: { label: "Partner fulfillment", icon: "📬", class: "source-dropship" },
   };
 
   function cfg() {
@@ -134,12 +134,12 @@
       card.appendChild(estBtn);
     }
 
-    var note = el("p", "catalog-ship-note", cfg().dropshipNote || "Drop-ship · 5–14 business days");
+    var note = el("p", "catalog-ship-note", cfg().dropshipNote || "Partner fulfillment · 5–14 business days");
     if (product.source === "github" || product.source === "printables") {
       note.textContent = "Instant download · remix allowed where license permits";
     } else if (product.fulfillment === "dropship") {
       note.textContent =
-        (cfg().dropshipNote || "Drop-ship · 5–14 business days") +
+        (cfg().dropshipNote || "Partner fulfillment · 5–14 business days") +
         (product.supplier ? " · via " + product.supplier : "");
     }
     card.appendChild(note);

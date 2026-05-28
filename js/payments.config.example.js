@@ -12,6 +12,24 @@ window.HPL_PAYMENTS = {
   demoMode: true,
 
   /** Stripe Payment Links — cards, debit, Apple Pay, Google Pay, Link */
+  /**
+   * Stripe Payment Link metadata (Dashboard → Payment link → Metadata).
+   * Required for auto-fulfillment via checkout.session.completed:
+   *   Key: stripe_key   Value: same as the property name below (e.g. dsMeshtasticHeltec).
+   * See docs/STRIPE_FULFILLMENT_METADATA.md for Andy's Dashboard checklist.
+   */
+  stripePaymentLinkMetadataExamples: {
+    dsMeshtasticHeltec: { stripe_key: "dsMeshtasticHeltec" },
+    dsMeshtasticTBeam: { stripe_key: "dsMeshtasticTBeam" },
+    dsMeshtasticRAK: { stripe_key: "dsMeshtasticRAK" },
+    dsMeshtasticCase: { stripe_key: "dsMeshtasticCase" },
+    dsKaliNetHunter: { stripe_key: "dsKaliNetHunter" },
+    dsWiringLab: { stripe_key: "dsWiringLab" },
+    dsRaspberryPi5: { stripe_key: "dsRaspberryPi5" },
+    dsHackberryZero: { stripe_key: "dsHackberryZero" },
+    dsEsp32Cyd: { stripe_key: "dsEsp32Cyd" },
+  },
+
   stripePaymentLinks: {
     digital: "",
     proMonthly: "",
@@ -43,6 +61,8 @@ window.HPL_PAYMENTS = {
     dsOrangePi5: "",
     dsBananaPiR3: "",
     dsEsp32Cyd: "",
+    dsWiringLab: "",
+    dsKaliNetHunter: "",
   },
 
   /**

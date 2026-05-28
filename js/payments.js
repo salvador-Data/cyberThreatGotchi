@@ -106,7 +106,7 @@
       name: "Pwnagotchi wardrive pod",
       price: 169,
       period: "one-time",
-      desc: "Drop-ship assembled Pwnagotchi build",
+      desc: "Partner fulfillment — assembled Pwnagotchi build",
       stripeKey: "dsPwnagotchi",
     },
     dsNetgotchi: {
@@ -114,7 +114,7 @@
       name: "Netgotchi defensive guardian",
       price: 99,
       period: "one-time",
-      desc: "Drop-ship from OlleAdventures",
+      desc: "Partner fulfillment — from OlleAdventures",
       stripeKey: "dsNetgotchi",
     },
     dsNetgotchiPro: {
@@ -122,7 +122,7 @@
       name: "Netgotchi Pro",
       price: 129,
       period: "one-time",
-      desc: "Drop-ship Pro with keypad + buzzer",
+      desc: "Partner fulfillment — Pro with keypad + buzzer",
       stripeKey: "dsNetgotchiPro",
     },
     dsNightHunter: {
@@ -130,7 +130,7 @@
       name: "Night Hunter Kali-ready pod",
       price: 189,
       period: "one-time",
-      desc: "Drop-ship GPS wardrive field pod",
+      desc: "Partner fulfillment — GPS wardrive field pod",
       stripeKey: "dsNightHunter",
     },
     dsMeshtasticTBeam: {
@@ -138,15 +138,15 @@
       name: "LilyGO T-Beam Meshtastic kit",
       price: 89,
       period: "one-time",
-      desc: "Drop-ship LoRa mesh node",
+      desc: "Partner fulfillment — LoRa mesh node",
       stripeKey: "dsMeshtasticTBeam",
     },
     dsMeshtasticHeltec: {
       id: "dsMeshtasticHeltec",
-      name: "Heltec V3 Meshtastic node",
-      price: 79,
+      name: "Heltec V3 fully built Meshtastic",
+      price: 129,
       period: "one-time",
-      desc: "Drop-ship compact mesh radio",
+      desc: "Partner fulfillment — Etsy turnkey mesh radio",
       stripeKey: "dsMeshtasticHeltec",
     },
     dsMeshtasticRAK: {
@@ -154,7 +154,7 @@
       name: "RAK4631 Meshtastic starter",
       price: 119,
       period: "one-time",
-      desc: "Drop-ship WisBlock mesh kit",
+      desc: "Partner fulfillment — WisBlock mesh kit",
       stripeKey: "dsMeshtasticRAK",
     },
     dsMeshtasticCase: {
@@ -162,7 +162,7 @@
       name: "Meshtastic field case",
       price: 34,
       period: "one-time",
-      desc: "Drop-ship 3D printed enclosure",
+      desc: "Partner fulfillment — 3D printed enclosure",
       stripeKey: "dsMeshtasticCase",
     },
     dsHackberryZero: {
@@ -170,7 +170,7 @@
       name: "Hackberry Pi Zero cyberdeck",
       price: 279,
       period: "one-time",
-      desc: "Drop-ship ZitaoTech pocket terminal",
+      desc: "Partner fulfillment — ZitaoTech pocket terminal",
       stripeKey: "dsHackberryZero",
     },
     dsHackberryPi5: {
@@ -178,7 +178,7 @@
       name: "Hackberry Pi 5 cyberdeck",
       price: 449,
       period: "one-time",
-      desc: "Drop-ship full Pi 5 handheld",
+      desc: "Partner fulfillment — full Pi 5 handheld",
       stripeKey: "dsHackberryPi5",
     },
     dsHackberryCM5: {
@@ -186,7 +186,7 @@
       name: "Hackberry Pi CM5",
       price: 499,
       period: "one-time",
-      desc: "Drop-ship CM5 ultra portable",
+      desc: "Partner fulfillment — CM5 ultra portable",
       stripeKey: "dsHackberryCM5",
     },
     dsMarauderGps: {
@@ -194,7 +194,7 @@
       name: "Marauder pocket + GPS v2",
       price: 219,
       period: "one-time",
-      desc: "Drop-ship HoneyHoneyTrading build",
+      desc: "Partner fulfillment — HoneyHoneyTrading build",
       stripeKey: "dsMarauderGps",
     },
     dsMarauderBatteryMod: {
@@ -202,7 +202,7 @@
       name: "CYD battery + GPS mod",
       price: 59,
       period: "one-time",
-      desc: "Drop-ship Biscuit Shop mod kit",
+      desc: "Partner fulfillment — Biscuit Shop mod kit",
       stripeKey: "dsMarauderBatteryMod",
     },
     dsMarauderKoko: {
@@ -210,15 +210,15 @@
       name: "Official Marauder Kit",
       price: 89,
       period: "one-time",
-      desc: "Drop-ship Koko PCB kit",
+      desc: "Partner fulfillment — Koko PCB kit",
       stripeKey: "dsMarauderKoko",
     },
     dsRaspberryPi5: {
       id: "dsRaspberryPi5",
       name: "Raspberry Pi 5 starter kit",
-      price: 139,
+      price: 159,
       period: "one-time",
-      desc: "Drop-ship Pi 5 homelab kit",
+      desc: "Partner fulfillment — authorized Pi 5 kit",
       stripeKey: "dsRaspberryPi5",
     },
     dsOrangePi5: {
@@ -226,7 +226,7 @@
       name: "Orange Pi 5 Plus kit",
       price: 119,
       period: "one-time",
-      desc: "Drop-ship RK3588 SBC kit",
+      desc: "Partner fulfillment — RK3588 SBC kit",
       stripeKey: "dsOrangePi5",
     },
     dsBananaPiR3: {
@@ -234,7 +234,7 @@
       name: "Banana Pi BPI-R3 Mini",
       price: 109,
       period: "one-time",
-      desc: "Drop-ship edge router SBC",
+      desc: "Partner fulfillment — edge router SBC",
       stripeKey: "dsBananaPiR3",
     },
     dsEsp32Cyd: {
@@ -242,8 +242,24 @@
       name: "ESP32 CYD lab bundle",
       price: 49,
       period: "one-time",
-      desc: "Drop-ship 2× CYD boards",
+      desc: "Partner fulfillment — 2× CYD boards",
       stripeKey: "dsEsp32Cyd",
+    },
+    dsWiringLab: {
+      id: "dsWiringLab",
+      name: "Breadboard + jumper wiring kit",
+      price: 22,
+      period: "one-time",
+      desc: "Partner fulfillment — prototyping wire bundle",
+      stripeKey: "dsWiringLab",
+    },
+    dsKaliNetHunter: {
+      id: "dsKaliNetHunter",
+      name: "Kali NetHunter lab phone",
+      price: 399,
+      period: "one-time",
+      desc: "Partner fulfillment — pre-flashed lab handset",
+      stripeKey: "dsKaliNetHunter",
     },
   };
 
