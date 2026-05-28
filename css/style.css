@@ -915,6 +915,47 @@ section {
   border: none;
 }
 
+.pay-btn-portal {
+  background: linear-gradient(135deg, #0a2540, #1a365d);
+  color: #fff !important;
+  border: none;
+}
+
+.returning-customer-panel {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 1.35rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+}
+
+.returning-customer-summary {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin: 0 0 1rem;
+}
+
+.returning-customer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.returning-clear-btn {
+  margin-top: 0.25rem;
+}
+
+.paypal-subscription-host {
+  margin-top: 0.35rem;
+  min-height: 45px;
+}
+
+.pay-trust-bar--live {
+  border-color: rgba(0, 180, 140, 0.35);
+  color: var(--text);
+}
+
 .pay-placeholder {
   font-size: 0.82rem;
   color: var(--muted);
@@ -944,6 +985,81 @@ section {
 .pay-trust-bar--muted {
   opacity: 0.85;
   font-size: 0.88rem;
+}
+
+.returning-customer-panel {
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  background: var(--panel);
+  border: 1px solid rgba(0, 180, 140, 0.35);
+  border-radius: var(--radius);
+}
+
+.returning-customer-greeting {
+  margin: 0 0 0.75rem;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.returning-customer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.returning-clear-btn {
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  color: var(--muted);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.returning-clear-btn:hover {
+  color: var(--text);
+}
+
+.pay-btn-portal {
+  background: var(--panel);
+  color: var(--accent) !important;
+  border: 1px solid rgba(0, 180, 140, 0.45);
+}
+
+.pay-recurring-badge {
+  font-size: 0.82rem;
+  color: var(--accent);
+  margin: 0 0 0.5rem;
+}
+
+.pay-privacy-note {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.ship-to-save-form {
+  display: grid;
+  gap: 0.65rem;
+  max-width: 28rem;
+}
+
+.ship-to-save-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.ship-to-save-form input {
+  padding: 0.5rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--panel-border);
+  background: var(--bg-elevated);
+  color: var(--text);
 }
 
 .pay-demo-note code {
