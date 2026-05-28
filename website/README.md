@@ -1,0 +1,51 @@
+# Hacker Planet LLC — website
+
+Static marketing site for **Hacker Planet LLC** (Philadelphia, PA) and the **CyberThreatGotchi** ecosystem.
+
+## Pages
+
+| File | URL path | Content |
+|------|----------|---------|
+| `index.html` | `/` | Company home, hero, ecosystem preview |
+| `about.html` | `/about.html` | Company story, principles, founder |
+| `cyberthreatgotchi.html` | `/cyberthreatgotchi.html` | Product deep-dive |
+| `ecosystem.html` | `/ecosystem.html` | All four repos |
+| `contact.html` | `/contact.html` | Social links, Philly, 2600 |
+
+## Local preview
+
+```powershell
+cd website
+python -m http.server 8080
+# Open http://127.0.0.1:8080/
+```
+
+Or open `index.html` directly in a browser (images load from GitHub raw URLs).
+
+## GitHub Pages deploy
+
+1. Push to `main` — the **Pages** workflow deploys the `website/` folder automatically.
+2. Enable Pages in repo **Settings → Pages → Source: GitHub Actions**.
+3. Site URL (project site):
+
+   **https://salvador-Data.github.io/cyberThreatGotchi/**
+
+### Custom domain (optional)
+
+Add a `CNAME` file with your domain (e.g. `hackerplanet.dev`) and configure DNS:
+
+```
+www  CNAME  salvador-Data.github.io
+```
+
+## Design
+
+- Fonts: [Syne](https://fonts.google.com/specimen/Syne) + [DM Sans](https://fonts.google.com/specimen/DM+Sans)
+- Palette matches `assets/marketing/generate_graphics.py` (teal accent `#00b48c`, dark `#0a0e14`)
+- OG images pulled from `docs/images/` via raw.githubusercontent.com
+
+## Related docs
+
+- [docs/ABOUT_HACKER_PLANET.md](../docs/ABOUT_HACKER_PLANET.md) — markdown company about
+- [docs/ABOUT.md](../docs/ABOUT.md) — CyberThreatGotchi about
+- [docs/social/LAUNCH.md](../docs/social/LAUNCH.md) — social launch kit

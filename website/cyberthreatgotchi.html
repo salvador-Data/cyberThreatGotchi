@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="CyberThreatGotchi — edge IPS Tamagotchi by Hacker Planet LLC. Cipherhorn unicorn CISO, e-ink, audit chain, Pro feed."/>
+  <meta property="og:title" content="CyberThreatGotchi · Hacker Planet LLC"/>
+  <meta property="og:image" content="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/docs/images/og-cyberthreatgotchi.png"/>
+  <title>CyberThreatGotchi · Hacker Planet LLC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="logo" href="index.html">
+        <span class="logo-mark">🦄</span>
+        Hacker Planet <span>LLC</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Menu">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="cyberthreatgotchi.html" class="active">CyberThreatGotchi</a></li>
+        <li><a href="ecosystem.html">Ecosystem</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi" class="nav-cta" target="_blank" rel="noopener">GitHub ↗</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <header class="page-hero reveal">
+      <p class="section-label">Flagship product</p>
+      <h1>CyberThreatGotchi</h1>
+      <p class="lead">
+        Your network's Tamagotchi guardian. Real threats in · mood out · evidence saved.
+        Open source · MIT · v1.1.0
+      </p>
+      <div class="hero-actions" style="justify-content:flex-start;margin-top:1.5rem">
+        <a class="btn btn-primary" href="https://github.com/salvador-Data/cyberThreatGotchi" target="_blank" rel="noopener">View repo ↗</a>
+        <a class="btn btn-ghost" href="https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0" target="_blank" rel="noopener">Download v1.1.0 ↗</a>
+      </div>
+    </header>
+
+    <div class="hero-visual reveal" style="margin-bottom:3rem">
+      <img
+        src="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/docs/images/og-cyberthreatgotchi.png"
+        alt="CyberThreatGotchi — Cipherhorn on Banana Pi with threat feed"
+      />
+    </div>
+
+    <div class="feature-row reveal">
+      <div>
+        <p class="section-label">The pitch</p>
+        <h2 class="section-title">Not a toy firewall.<br/>A field sensor with soul.</h2>
+        <ul class="feature-list">
+          <li>Live packet capture or simulation mode for dev</li>
+          <li>Signatures, YARA, ClamAV, SHA256 deny-list scoring</li>
+          <li>IPS auto-block on Linux (iptables)</li>
+          <li>SQLite threat log + tamper-evident audit chain</li>
+          <li>Flask web UI with Feed / Pet controls</li>
+          <li>Webhooks to SOC, Bjorn bridge, or custom receivers</li>
+          <li>Pro threat-feed API (Stripe-ready subscriptions)</li>
+        </ul>
+      </div>
+      <div class="prose">
+        <h2>Meet Cipherhorn</h2>
+        <p>
+          <strong>Cipherhorn</strong> is your unicorn CISO — business suit, mask, and a mood that tracks
+          threat pressure in real time. Idle when calm. Alert on scans. Attack mode when IPS fires.
+        </p>
+        <p>
+          Three <strong>cat sentinels</strong> back the personas: business risk, mass-market alerts, and SOC analyst mode.
+          Sprites animate on the web; e-ink gets the retro Tamagotchi treatment.
+        </p>
+      </div>
+    </div>
+
+    <section class="reveal">
+      <p class="section-label">Stack</p>
+      <h2 class="section-title">Under the hood</h2>
+      <div class="card-grid">
+        <article class="card">
+          <h3>Sniffer</h3>
+          <p>Scapy live capture on BPI-R3 Mini · auto-simulation on Windows dev.</p>
+        </article>
+        <article class="card">
+          <h3>Detector</h3>
+          <p>Port scan heuristics + signature engine + AV pipeline.</p>
+        </article>
+        <article class="card">
+          <h3>Gotchi FSM</h3>
+          <p>Hunger, happiness, security XP, level-ups on handled threats.</p>
+        </article>
+        <article class="card">
+          <h3>Displays</h3>
+          <p>Terminal · Flask web · Waveshare e-ink · SPI LCD arcade shell.</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="feature-row reverse reveal">
+      <div>
+        <p class="section-label">Hardware</p>
+        <h2 class="section-title">Print it. Flash it. Desk it.</h2>
+        <ul class="feature-list">
+          <li>Banana Pi BPI-R3 Mini — 2× 2.5GbE production target</li>
+          <li>Waveshare 2.13" e-ink — Tamagotchi enclosure STLs included</li>
+          <li>2.4" ILI9341 LCD — color "arcade" variant STLs</li>
+          <li>M5Stack Cardputer — remote status via HTTP poll</li>
+          <li>Docker compose for homelab one-liner deploy</li>
+        </ul>
+      </div>
+      <div>
+        <img
+          src="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/docs/images/hero.png"
+          alt="Cipherhorn mascot hero graphic"
+          style="border-radius:var(--radius);border:1px solid var(--panel-border)"
+        />
+      </div>
+    </div>
+
+    <section class="reveal" style="text-align:center;padding-bottom:2rem">
+      <p class="section-label">Quick start</p>
+      <pre style="text-align:left;background:var(--panel);border:1px solid var(--panel-border);border-radius:var(--radius);padding:1.25rem;overflow-x:auto;font-size:0.9rem;color:var(--muted)"><code>git clone https://github.com/salvador-Data/cyberThreatGotchi
+cd cyberThreatGotchi
+python -m venv .venv && .venv\Scripts\activate
+pip install -r requirements.txt
+python main.py --simulation --web
+# → http://127.0.0.1:8765/</code></pre>
+      <p style="margin-top:1.5rem">
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/ABOUT.md" target="_blank" rel="noopener">Full about doc ↗</a>
+        ·
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/WEB.md" target="_blank" rel="noopener">API reference ↗</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Defensive use only · Authorized networks only · © <span id="year"></span> Hacker Planet LLC</p>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>

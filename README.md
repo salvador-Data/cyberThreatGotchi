@@ -26,7 +26,7 @@
 
 Built for the **Banana Pi BPI-R3 Mini** (2× 2.5GbE, Wi-Fi 6) and dev machines. Your mascot **Cipherhorn** is a unicorn CISO in a business suit and mask, orbited by **cat sentinels** (business, mass-market, and SOC personas).
 
-Full story → **[docs/ABOUT.md](docs/ABOUT.md)** · Web UI → **[docs/WEB.md](docs/WEB.md)** · Export → **[docs/EXPORT.md](docs/EXPORT.md)** · Cardputer → **[docs/CARDPUTER.md](docs/CARDPUTER.md)** · **Launch kit** → **[docs/social/LAUNCH.md](docs/social/LAUNCH.md)** · Integrations → **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)** · CISO playbook → **[docs/CISO_PLAYBOOK.md](docs/CISO_PLAYBOOK.md)** · Hardware → **[hardware/README.md](hardware/README.md)** · Ecosystem → **[docs/ECOSYSTEM.md](docs/ECOSYSTEM.md)**
+Full story → **[docs/ABOUT.md](docs/ABOUT.md)** · Company → **[docs/ABOUT_HACKER_PLANET.md](docs/ABOUT_HACKER_PLANET.md)** · **Website** → **[website/](website/)** ([GitHub Pages](https://salvador-Data.github.io/cyberThreatGotchi/)) · Web UI → **[docs/WEB.md](docs/WEB.md)** · Export → **[docs/EXPORT.md](docs/EXPORT.md)** · Cardputer → **[docs/CARDPUTER.md](docs/CARDPUTER.md)** · **Launch kit** → **[docs/social/LAUNCH.md](docs/social/LAUNCH.md)** · Integrations → **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)** · CISO playbook → **[docs/CISO_PLAYBOOK.md](docs/CISO_PLAYBOOK.md)** · Hardware → **[hardware/README.md](hardware/README.md)** · Ecosystem → **[docs/ECOSYSTEM.md](docs/ECOSYSTEM.md)**
 
 ## Features
 
@@ -106,6 +106,7 @@ Marketing graphics live in **`docs/images/`** (regenerate: `python assets/market
 | **Facebook** | Andy Klwal · Philadelphia | [docs/social/FACEBOOK.md](docs/social/FACEBOOK.md) |
 | **2600 / meetups** | Local chapter | [docs/social/2600_ONEPAGER.md](docs/social/2600_ONEPAGER.md) |
 | **Kickstarter BOM** | Kit planning | [docs/KICKSTARTER_BOM.md](docs/KICKSTARTER_BOM.md) |
+| **Website** | Hacker Planet LLC · Philly | [salvador-Data.github.io/cyberThreatGotchi](https://salvador-Data.github.io/cyberThreatGotchi/) |
 
 ## Tests
 
