@@ -10,6 +10,8 @@ window.HPL_PAYMENTS = {
     boostFormulaCod: "",
     marauderCustom175: "",
     codStlPack: "",
+    sabretoAkachi: "",
+    crackbotCyd: "",
     dsPwnagotchi: "",
     dsNetgotchi: "",
     dsNetgotchiPro: "",
