@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pillow
+
+      - name: Generate assets
+        run: |
+          python assets/sprites/generate_sprites.py
+          python assets/marketing/generate_graphics.py
+          python hardware/generate_stl.py --variant all --python-only
+
+      - name: Run tests
+        env:
+          CTG_SIMULATION: "1"
+        run: pytest tests/ -q
+
+      - name: Package release zips
+        run: |
+          mkdir -p dist
+          (cd docs/images && zip -r ../../dist/marketing-graphics.zip .)
+          (cd assets/sprites/png && zip -r ../../dist/sprites.zip .)
+          (cd hardware/stl/eink && zip -r ../../../dist/enclosure-stl-eink.zip .)
+          (cd hardware/stl/lcd && zip -r ../../../dist/enclosure-stl-lcd.zip .)
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            dist/marketing-graphics.zip
+            dist/sprites.zip
+            dist/enclosure-stl-eink.zip
+            dist/enclosure-stl-lcd.zip
+            docs/images/hero.png
+            docs/images/og-ecosystem.png
+            docs/images/og-cyberthreatgotchi.png

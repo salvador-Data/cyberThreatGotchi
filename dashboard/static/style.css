@@ -100,6 +100,20 @@ button {
 
 button:hover { filter: brightness(1.1); }
 
+.btn-link {
+  display: inline-block;
+  background: #21262d;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.btn-link:hover { background: #30363d; }
+
 threats-panel { grid-column: 2; }
 
 table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
@@ -118,6 +132,11 @@ th { color: var(--accent); }
 .runtime-panel {
   grid-column: 2;
   font-size: 0.85rem;
+}
+
+.history-panel {
+  grid-column: 1 / -1;
+  font-size: 0.8rem;
 }
 
 .runtime-panel ul { margin: 0.25rem 0; padding-left: 1.2rem; }

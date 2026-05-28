@@ -1,6 +1,38 @@
-# CyberThreatGotchi — 3D Printable Enclosure Spec
+# CyberThreatGotchi — 3D Printable Enclosure
 
 Tamagotchi-style **desktop-portable** shell for Banana Pi BPI-R3 Mini + 2.13" e-ink (or 2.4" LCD).
+
+## STL files (print these)
+
+### E-ink variant (Waveshare 2.13")
+
+| File | Path |
+|------|------|
+| Front shell | `stl/eink/ctg_front_shell.stl` |
+| Rear shell | `stl/eink/ctg_rear_shell.stl` |
+| Snap clip | `stl/eink/ctg_clip.stl` |
+
+Legacy copies also live in `stl/` (same as e-ink).
+
+### LCD variant (ILI9341 2.4" portrait)
+
+| File | Path |
+|------|------|
+| Front shell | `stl/lcd/ctg_front_shell.stl` |
+| Rear shell | `stl/lcd/ctg_rear_shell.stl` |
+| Snap clip | `stl/lcd/ctg_clip.stl` |
+
+Rear shell includes embossed **HACKER PLANET LLC** branding (best with OpenSCAD export).
+
+Regenerate:
+
+```bash
+python hardware/generate_stl.py          # e-ink
+python hardware/generate_stl.py --variant lcd
+python hardware/generate_stl.py --all    # both
+```
+
+If [OpenSCAD](https://openscad.org/) is installed, exports use the parametric sources in `openscad/` (higher quality). Otherwise a built-in Python mesh builder writes valid binary STL.
 
 ## Overall dimensions
 
@@ -10,7 +42,16 @@ Tamagotchi-style **desktop-portable** shell for Banana Pi BPI-R3 Mini + 2.13" e-
 | Height | 110 | Classic Tamagotchi oval height |
 | Depth | 32 | Board + display + battery |
 | Wall thickness | 2.0 | PLA/PETG |
-| Button bore | 6.0 | Reset access |
+| Button bore | 6.0 | Reset access (rear shell) |
+
+## Assembly
+
+1. Print all **3 STL** parts (see settings below).
+2. Press-fit **M2.5×8 mm** screws through BPI-R3 Mini into front-shell standoffs.
+3. Mount e-ink behind front window (optional 1 mm acrylic lens).
+4. Slide USB-C PD battery into rear tray; route cable through bottom slot.
+5. Mate front + rear at center seam; install **snap clip** on left/right slots.
+6. Ethernet: pass cables through rear grommet holes.
 
 ## Internal layout (top view)
 
@@ -18,63 +59,44 @@ Tamagotchi-style **desktop-portable** shell for Banana Pi BPI-R3 Mini + 2.13" e-
 ┌─────────────────────────────────────┐
 │  [CAT]                    [CAT]     │  ← bezel cat icons (embossed)
 │       ┌───────────────┐             │
-│       │  E-INK 2.13"  │             │  ← window cutout 27×27 mm active
-│       │   250×122     │             │
+│       │  E-INK 2.13"  │             │  ← window 50×26 mm
 │       └───────────────┘             │
-│  [CAT]     BPI-R3 Mini     [CAT]    │  ← 65×65 mm board standoffs
-│            (65×65)                  │
-│         [USB-C PD in]               │  ← bottom edge port slot 12×6 mm
-│         [2.5GbE×2]                  │  ← rear grommet holes
+│  [CAT]     BPI-R3 Mini     [CAT]    │  ← 65×65 mm board
+│         [USB-C PD in]               │
+│         [2.5GbE×2 rear]             │
 └─────────────────────────────────────┘
 ```
 
-## Component stack (front → back)
+## OpenSCAD sources (parametric)
 
-1. Front shell + display bezel (e-ink glued behind 1 mm acrylic window optional)
-2. SPI ribbon route channel (2 mm height under display)
-3. BPI-R3 Mini on M2.5 standoffs (height 6 mm)
-4. 5000 mAh USB-C PD power bank (slid-in tray, velcro strap)
-5. Rear vent slots (2×15 mm × 3 mm) for Wi-Fi/heat
+| Source | Output |
+|--------|--------|
+| `openscad/ctg_front_shell.scad` | Front shell |
+| `openscad/ctg_rear_shell.scad` | Rear shell |
+| `openscad/ctg_clip.scad` | Snap clip |
+| `openscad/ctg_params.scad` | Shared dimensions |
 
-## Standoffs
+Manual export:
 
-| Post | Position (from bottom-left, mm) | Height |
-|------|----------------------------------|--------|
-| P1 | (12, 45) | 6 |
-| P2 | (53, 45) | 6 |
-| P3 | (12, 78) | 6 |
-| P4 | (53, 78) | 6 |
-
-Use **M2.5×8 mm** screws; board mounting matches BPI-R3 Mini corner pattern (verify against your revision).
-
-## Display cutout
-
-| Panel | Active area (mm) | Cutout (mm) |
-|-------|------------------|-------------|
-| Waveshare 2.13" | 48.55 × 23.7 | 50 × 26 |
-| ILI9341 2.4" | 36.7 × 52 | 39 × 55 |
-
-## SPI wiring pocket
-
-Leave **8×20 mm** channel along left inner wall for SPI HAT ribbon (5V, GND, DIN, CLK, CS, DC, RST, BUSY).
-
-## Export files (to generate in CAD)
-
-- `ctg_front_shell.stl` — bezel + cat emboss + display window
-- `ctg_rear_shell.stl` — battery tray + vents + USB-C cutout
-- `ctg_clip.stl` — snap clip or 4× M3 thumb screws
+```bash
+cd hardware/openscad
+openscad -o ../stl/ctg_front_shell.stl ctg_front_shell.scad
+openscad -o ../stl/ctg_rear_shell.stl ctg_rear_shell.scad
+openscad -o ../stl/ctg_clip.stl ctg_clip.scad
+```
 
 ## Print settings
 
-- Material: PETG (durability) or PLA+ (prototype)
-- Layer: 0.2 mm
-- Infill: 20% gyroid
-- Supports: only under cat emboss if >45° overhang
+- **Material:** PETG (durability) or PLA+ (prototype)
+- **Layer:** 0.2 mm
+- **Infill:** 20% gyroid
+- **Supports:** Front shell only under cat emboss if needed
+- **Brim:** Recommended for rear shell (large flat face)
 
 ## Branding
 
-Emboss text on rear: `HACKER PLANET LLC` — 2 mm height, 8 pt equivalent.
+Deboss pocket on rear shell for `HACKER PLANET LLC` label or 2 mm embossed text in OpenSCAD.
 
 ---
 
-OpenSCAD starter sketch: see `hardware/enclosure.scad` (parametric preview).
+*Hacker Planet LLC — desk guardian.*

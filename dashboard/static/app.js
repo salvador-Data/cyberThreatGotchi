@@ -10,7 +10,8 @@ function applySnapshot(data) {
   $("g-xp").textContent = g.security_xp;
   $("g-blocked").textContent = g.threats_blocked;
   $("g-seen").textContent = g.threats_seen;
-  $("sprite").src = `/api/sprite/${g.mood}.png?t=${Date.now()}`;
+  const frame = (g.frame_index ?? 0) % 2;
+  $("sprite").src = `/api/sprite/${g.mood}.png?frame=${frame}&t=${Date.now()}`;
 
   const tbody = $("threat-rows");
   tbody.innerHTML = "";
@@ -69,9 +70,40 @@ async function postAction(path) {
 $("btn-feed").addEventListener("click", () => postAction("/api/feed"));
 $("btn-pet").addEventListener("click", () => postAction("/api/pet"));
 
+async function loadHistory() {
+  try {
+    const r = await fetch("/api/threats?limit=25");
+    const data = await r.json();
+    const tbody = $("history-rows");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    const rows = data.threats || [];
+    if (!rows.length) {
+      tbody.innerHTML = "<tr><td colspan='6'>No logged threats yet</td></tr>";
+      return;
+    }
+    rows.forEach((t) => {
+      const tr = document.createElement("tr");
+      const sev = (t.severity || "").toLowerCase();
+      tr.innerHTML = `
+        <td class="sev-${sev}">${t.severity || "?"}</td>
+        <td>${(t.timestamp || "").slice(0, 19)}</td>
+        <td>${t.source_ip || ""}</td>
+        <td>${t.category || ""}</td>
+        <td>${t.action_taken || ""}</td>
+        <td>${(t.description || "").slice(0, 60)}</td>`;
+      tbody.appendChild(tr);
+    });
+  } catch (e) {
+    console.warn(e);
+  }
+}
+
 fetch("/api/status")
   .then((r) => r.json())
   .then(applySnapshot)
   .catch(console.error);
 
 connectSSE();
+loadHistory();
+setInterval(loadHistory, 15000);

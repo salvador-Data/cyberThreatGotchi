@@ -48,7 +48,7 @@ class CyberThreatGotchiApp:
         self.settings.interface = iface
 
         self.logger = ThreatLogger(self.settings.db_path)
-        self.gotchi = CyberGotchi(name=args.name)
+        self.gotchi = CyberGotchi(name=args.name or self.settings.gotchi_name)
         self.ips = IntrusionPreventionSystem(enabled=not args.no_ips)
         self.detector = ThreatDetector(settings=self.settings, on_threat=self._on_threat)
         self.sniffer = PacketSniffer(
@@ -68,11 +68,14 @@ class CyberThreatGotchiApp:
             self.web = WebDashboard(
                 self.bus,
                 self.gotchi,
-                host=getattr(args, "web_host", "0.0.0.0"),
-                port=getattr(args, "web_port", 8765),
+                logger=self.logger,
+                host=getattr(args, "web_host", self.settings.web_host),
+                port=getattr(args, "web_port", self.settings.web_port),
             )
         self._stop = threading.Event()
         self._idle_packets = 0
+        self._last_sprite_render = 0.0
+        self._sprite_interval = self.settings.eink_refresh_sec
 
     def _on_threat(self, event: ThreatEvent) -> None:
         action = self.ips.process_threat(event)
@@ -123,9 +126,28 @@ class CyberThreatGotchiApp:
             f"({action}) score={event.score}"
         )
         if hasattr(self.display, "render_sprite"):
-            self.display.render_sprite(self.gotchi.state.mood.value, title=compact)
+            self.display.render_sprite(
+                self.gotchi.state.mood.value,
+                title=compact,
+                frame=self.gotchi.state.frame_index,
+            )
         else:
             self.display.render_text(self.gotchi.render_sprite(), title=compact)
+        self._last_sprite_render = time.time()
+
+    def _maybe_refresh_display(self, force: bool = False) -> None:
+        if not hasattr(self.display, "render_sprite"):
+            return
+        now = time.time()
+        if not force and now - self._last_sprite_render < self._sprite_interval:
+            return
+        self._last_sprite_render = now
+        s = self.gotchi.state
+        self.display.render_sprite(
+            s.mood.value,
+            title=s.status_line[:28],
+            frame=s.frame_index,
+        )
 
     def _engine_loop(self) -> None:
         self.sniffer.start()
@@ -143,6 +165,7 @@ class CyberThreatGotchiApp:
             idle = self._idle_packets >= 5
             self.gotchi.tick(idle_traffic=idle)
             self._sync_bus()
+            self._maybe_refresh_display()
 
             if self._idle_packets % 10 == 0:
                 self.logger.log_gotchi(
@@ -188,6 +211,7 @@ class CyberThreatGotchiApp:
             self.web.start()
             print(f"Web dashboard: http://127.0.0.1:{self.web.port}/")
             self._sync_bus()
+            self._maybe_refresh_display(force=True)
 
         engine = threading.Thread(target=self._engine_loop, name="ctg-engine", daemon=True)
         engine.start()

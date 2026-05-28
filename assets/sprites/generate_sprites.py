@@ -33,8 +33,8 @@ def _cat(draw: ImageDraw.ImageDraw, x: int, y: int, scale: int = 1) -> None:
     draw.ellipse([x + 5 * s, y + 2 * s, x + 6 * s, y + 3 * s], fill=INK)
 
 
-def _unicorn(draw: ImageDraw.ImageDraw, mood: str) -> None:
-    cx, cy = 64, 72
+def _unicorn(draw: ImageDraw.ImageDraw, mood: str, bob: int = 0) -> None:
+    cx, cy = 64, 72 + bob
     # Horn
     draw.polygon([(cx, cy - 38), (cx - 6, cy - 18), (cx + 6, cy - 18)], fill=HORN)
     # Head
@@ -69,18 +69,19 @@ def _unicorn(draw: ImageDraw.ImageDraw, mood: str) -> None:
     draw.rectangle([cx + 4, cy + 36, cx + 14, cy + 48], fill=INK)
 
 
-def _frame(mood: str) -> Image.Image:
+def _frame(mood: str, anim: int = 0) -> Image.Image:
+    bob = 2 if anim % 2 else 0
+    cat_bob = 1 if anim % 2 else 0
     img = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(img)
-    # Orbiting cats — business / mass / sentinel
-    _cat(draw, 8, 20, 2)
-    _cat(draw, 96, 18, 2)
-    _cat(draw, 14, 96, 2)
-    _cat(draw, 100, 94, 2)
+    _cat(draw, 8, 20 + cat_bob, 2)
+    _cat(draw, 96, 18 + cat_bob, 2)
+    _cat(draw, 14, 96 - cat_bob, 2)
+    _cat(draw, 100, 94 - cat_bob, 2)
     if mood == "feed":
         draw.ellipse([52, 100, 76, 112], fill=ACCENT)
         draw.text((56, 102), "PCAP", fill=INK)
-    _unicorn(draw, mood)
+    _unicorn(draw, mood, bob=bob)
     label = mood.upper()[:8]
     draw.text((4, 4), label, fill=INK)
     if mood == "defend":
@@ -90,11 +91,17 @@ def _frame(mood: str) -> Image.Image:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
+    count = 0
     for mood in MOODS:
-        path = OUT / f"{mood}.png"
-        _frame(mood).save(path, optimize=True)
-        print(f"Wrote {path}")
-    print(f"Done — {len(MOODS)} sprites in {OUT}")
+        for anim in (0, 1):
+            path = OUT / f"{mood}_{anim}.png"
+            _frame(mood, anim).save(path, optimize=True)
+            print(f"Wrote {path}")
+            count += 1
+        legacy = OUT / f"{mood}.png"
+        _frame(mood, 0).save(legacy, optimize=True)
+        count += 1
+    print(f"Done — {count} sprites in {OUT}")
 
 
 if __name__ == "__main__":

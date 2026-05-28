@@ -1,23 +1,5 @@
-"""Render PNG sprites to PIL images for e-ink / LCD."""
+"""Render PNG sprites to PIL images — re-exports sprite_renderer."""
 
-from __future__ import annotations
+from display.sprite_renderer import compose_sprite_canvas, load_sprite_image
 
-from pathlib import Path
-from typing import Optional
-
-from assets.sprites.png_loader import sprite_path
-
-
-def load_sprite_image(mood: str, size: Optional[tuple[int, int]] = None):
-    path = sprite_path(mood) or sprite_path("idle")
-    if path is None:
-        return None
-    try:
-        from PIL import Image
-
-        img = Image.open(path).convert("RGB")
-        if size:
-            img = img.resize(size)
-        return img
-    except Exception:
-        return None
+__all__ = ["load_sprite_image", "compose_sprite_canvas"]

@@ -5,6 +5,7 @@ from __future__ import annotations
 import platform
 
 from display.base import DisplayBackend
+from display.sprite_renderer import compose_sprite_canvas
 from display.terminal import TerminalDisplay
 
 
@@ -25,6 +26,25 @@ class LCDDisplay(DisplayBackend):
             return True
         except Exception:
             return self._fallback.initialize()
+
+    def render_sprite(self, mood: str, title: str = "", frame: int = 0) -> None:
+        if not self._device:
+            self._fallback.render_text(f"[{mood}] {title}", title="LCD")
+            return
+        try:
+            img = compose_sprite_canvas(
+                mood,
+                frame,
+                self._device.size,
+                mono=False,
+                title=title or "CyberThreatGotchi",
+            )
+            if img is None:
+                self.render_text("", title=title)
+                return
+            self._device.display(img)
+        except Exception:
+            self.render_text("", title=title)
 
     def render_text(self, text: str, title: str = "") -> None:
         if not self._device:

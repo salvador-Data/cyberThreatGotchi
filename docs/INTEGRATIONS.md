@@ -117,7 +117,7 @@ Example fields:
 | `threats[0].source_ip` | Last attacker |
 | `runtime.mode` | `LIVE` vs `SIMULATION` |
 
-M5 OS firmware remote-status screen: planned; see [M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer).
+M5 OS firmware remote-status screen: **`scripts/cardputer/ctg_status.py`** + [CARDPUTER.md](CARDPUTER.md).
 
 ## Defensive use
 

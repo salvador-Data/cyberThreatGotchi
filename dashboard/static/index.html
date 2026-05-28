@@ -28,6 +28,8 @@
       <div class="actions">
         <button type="button" id="btn-feed">Feed PCAP</button>
         <button type="button" id="btn-pet">Pet CISO</button>
+        <a class="btn-link" id="btn-export-csv" href="/api/export/threats.csv">Export CSV</a>
+        <a class="btn-link" id="btn-export-json" href="/api/export/report.json" download="ctg_report.json">Export Report</a>
       </div>
     </section>
 
@@ -46,6 +48,16 @@
       <ul id="runtime-info"></ul>
       <h3>IPS Blocks</h3>
       <ul id="block-list"></ul>
+    </section>
+
+    <section class="panel history-panel">
+      <h2>Threat History (SQLite)</h2>
+      <table>
+        <thead>
+          <tr><th>Sev</th><th>Time</th><th>Source</th><th>Category</th><th>Action</th><th>Detail</th></tr>
+        </thead>
+        <tbody id="history-rows"></tbody>
+      </table>
     </section>
   </main>
 

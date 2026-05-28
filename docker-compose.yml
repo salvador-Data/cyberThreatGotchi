@@ -1,0 +1,12 @@
+# CyberThreatGotchi — Docker dev stack
+services:
+  gotchi:
+    build: .
+    ports:
+      - "8765:8765"
+    environment:
+      CTG_SIMULATION: "true"
+      CTG_CONFIG: /app/config/default.yaml
+    command: ["python", "main.py", "--simulation", "--web"]
+    volumes:
+      - ./data:/app/data

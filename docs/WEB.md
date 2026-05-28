@@ -29,7 +29,10 @@ On the BPI-R3 Mini installer, the service binds `0.0.0.0:8765` so you can open i
 | `GET` | `/` | Dashboard HTML |
 | `GET` | `/api/health` | Liveness probe `{ "ok": true }` |
 | `GET` | `/api/status` | JSON snapshot (mood, stats, recent threats) |
-| `GET` | `/api/sprite/<mood>.png` | PNG sprite (`idle`, `happy`, `alert`, …) |
+| `GET` | `/api/export/threats.csv` | Download threat log CSV |
+| `GET` | `/api/export/report.json` | Executive JSON report + stats |
+| `GET` | `/api/threats?limit=50` | SQLite threat history (JSON) |
+| `GET` | `/api/sprite/<mood>.png?frame=0` | PNG sprite (animated frames 0/1) |
 | `POST` | `/api/feed` | Feed Cipherhorn |
 | `POST` | `/api/pet` | Pet Cipherhorn |
 | `GET` | `/api/stream` | Server-Sent Events — one JSON snapshot per second |

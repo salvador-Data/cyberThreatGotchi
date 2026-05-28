@@ -1,0 +1,35 @@
+# CyberThreatGotchi — default configuration
+# Override with CTG_SIMULATION=1 or --simulation flag
+
+interface: ""
+
+display:
+  backend: terminal  # terminal | eink | lcd
+  eink_refresh_sec: 8   # min seconds between idle e-ink updates
+
+ips:
+  enabled: true
+  block_duration_sec: 300
+  auto_block_threshold: 7
+
+gotchi:
+  name: Cipherhorn
+  tick_sec: 2.0
+  hunger_decay: 1
+  happiness_decay: 1
+
+web:
+  enabled: false
+  host: 0.0.0.0
+  port: 8765
+
+webhook:
+  url: ""
+  secret: ""
+  timeout_sec: 5
+
+clamav:
+  host: 127.0.0.1
+  port: 3310
+
+platform: bpi-r3-mini

@@ -26,7 +26,7 @@
 
 Built for the **Banana Pi BPI-R3 Mini** (2× 2.5GbE, Wi-Fi 6) and dev machines. Your mascot **Cipherhorn** is a unicorn CISO in a business suit and mask, orbited by **cat sentinels** (business, mass-market, and SOC personas).
 
-Full story → **[docs/ABOUT.md](docs/ABOUT.md)** · Web UI → **[docs/WEB.md](docs/WEB.md)** · Integrations → **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)** · Ecosystem → **[docs/ECOSYSTEM.md](docs/ECOSYSTEM.md)**
+Full story → **[docs/ABOUT.md](docs/ABOUT.md)** · Web UI → **[docs/WEB.md](docs/WEB.md)** · Export → **[docs/EXPORT.md](docs/EXPORT.md)** · Cardputer → **[docs/CARDPUTER.md](docs/CARDPUTER.md)** · **Launch kit** → **[docs/social/LAUNCH.md](docs/social/LAUNCH.md)** · Integrations → **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)** · CISO playbook → **[docs/CISO_PLAYBOOK.md](docs/CISO_PLAYBOOK.md)** · Hardware → **[hardware/README.md](hardware/README.md)** · Ecosystem → **[docs/ECOSYSTEM.md](docs/ECOSYSTEM.md)**
 
 ## Features
 
@@ -80,6 +80,8 @@ sudo systemctl start cyberthreatgotchi
 | `CTG_DATA_DIR` | `./data` | SQLite + hash DB |
 | `CTG_WEBHOOK_URL` | *(empty)* | POST JSON on each threat |
 | `CTG_WEBHOOK_SECRET` | *(empty)* | Optional `X-CTG-Secret` header |
+| `CTG_CONFIG` | `config/default.yaml` | YAML settings file |
+| `CTG_EINK_REFRESH_SEC` | `8` | Min seconds between idle e-ink updates |
 
 ## Recommended hardware
 
@@ -89,7 +91,18 @@ sudo systemctl start cyberthreatgotchi
 | Face (retro) | **Waveshare 2.13" SPI e-ink** — Tamagotchi feel |
 | Face (smooth) | **2.4" ILI9341 SPI LCD** |
 | Power | **20W USB-C PD** bank or 3S LiPo + PD trigger |
-| Enclosure | 3D-print spec: `hardware/ENCLOSURE.md` + `enclosure.scad` |
+| Enclosure | **3D print** `hardware/stl/` — [hardware/README.md](hardware/README.md) (e-ink + LCD variants) |
+
+## Launch & social
+
+Marketing graphics live in **`docs/images/`** (regenerate: `python assets/marketing/generate_graphics.py`).
+
+| Platform | You | Copy-paste guide |
+|----------|-----|------------------|
+| **GitHub** | [salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) | Tag `v1.0.0` → auto-release ([docs/RELEASE.md](docs/RELEASE.md)) |
+| **Reddit** | u/Salvador_Data | [docs/social/REDDIT.md](docs/social/REDDIT.md) |
+| **Facebook** | Andy Klwal · Philadelphia | [docs/social/FACEBOOK.md](docs/social/FACEBOOK.md) |
+| **2600 / meetups** | Local chapter | [docs/social/LAUNCH.md](docs/social/LAUNCH.md) |
 
 ## Tests
 
@@ -108,7 +121,7 @@ cyberThreatGotchi/
 ├── display/        # terminal | eink | lcd
 ├── assets/sprites/ # Cipherhorn + cat frames
 ├── rules/          # signatures + custom_rules.yar
-├── hardware/       # 3D enclosure
+├── hardware/       # STL enclosure + OpenSCAD sources
 ├── docs/           # About + README art
 ├── scripts/        # install.sh (BPI-R3 Mini)
 └── tests/

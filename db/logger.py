@@ -138,6 +138,45 @@ class ThreatLogger:
             row = conn.execute("SELECT COUNT(*) AS c FROM threats").fetchone()
         return int(row["c"]) if row else 0
 
+    def threat_stats(self) -> dict[str, Any]:
+        with self._lock, self._conn() as conn:
+            by_sev = conn.execute(
+                """
+                SELECT severity, COUNT(*) AS c FROM threats
+                GROUP BY severity ORDER BY c DESC
+                """
+            ).fetchall()
+            top_src = conn.execute(
+                """
+                SELECT source_ip, COUNT(*) AS c FROM threats
+                WHERE source_ip IS NOT NULL AND source_ip != ''
+                GROUP BY source_ip ORDER BY c DESC LIMIT 10
+                """
+            ).fetchall()
+            blocked = conn.execute(
+                "SELECT COUNT(*) AS c FROM threats WHERE action_taken = 'blocked'"
+            ).fetchone()
+        return {
+            "by_severity": {r["severity"]: r["c"] for r in by_sev},
+            "top_sources": [{"ip": r["source_ip"], "count": r["c"]} for r in top_src],
+            "total_blocked": int(blocked["c"]) if blocked else 0,
+            "total": self.threat_count(),
+        }
+
+    def export_csv(self, limit: int = 500) -> str:
+        rows = self.recent_threats(limit)
+        lines = [
+            "id,timestamp,severity,category,source_ip,dest_ip,score,action_taken,description"
+        ]
+        for r in rows:
+            desc = str(r.get("description", "")).replace('"', '""')
+            lines.append(
+                f'{r.get("id","")},{r.get("timestamp","")},{r.get("severity","")},'
+                f'{r.get("category","")},{r.get("source_ip","")},{r.get("dest_ip","")},'
+                f'{r.get("score","")},{r.get("action_taken","")},"{desc}"'
+            )
+        return "\n".join(lines) + "\n"
+
     @staticmethod
     def utc_now() -> str:
         return datetime.now(timezone.utc).isoformat()

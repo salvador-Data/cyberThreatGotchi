@@ -8,6 +8,7 @@ from __future__ import annotations
 import platform
 
 from display.base import DisplayBackend
+from display.sprite_renderer import compose_sprite_canvas
 from display.terminal import TerminalDisplay
 
 
@@ -24,7 +25,6 @@ class EInkDisplay(DisplayBackend):
         try:
             from PIL import Image, ImageDraw, ImageFont  # noqa: F401
 
-            # Waveshare epd2in13 or compatible — import varies by install
             try:
                 from waveshare_epd import epd2in13_v4  # type: ignore
 
@@ -37,33 +37,21 @@ class EInkDisplay(DisplayBackend):
         except Exception:
             return self._fallback.initialize()
 
-    def render_sprite(self, mood: str, title: str = "") -> None:
-        """Draw PNG mascot frame when available."""
-        from display.sprite_display import load_sprite_image
-
-        sprite = load_sprite_image(mood, size=(min(self.width, 122), 80))
-        if sprite is None:
-            self.render_text("", title=title)
-            return
+    def render_sprite(self, mood: str, title: str = "", frame: int = 0) -> None:
         if self._epd is None:
             self._fallback.render_text(f"[{mood}] {title}", title="e-ink")
             return
         try:
-            from PIL import Image, ImageDraw, ImageFont
-
-            image = Image.new("1", (self._epd.width, self._epd.height), 255)
-            gray = sprite.convert("L")
-            mono = gray.point(lambda x: 0 if x < 140 else 255, "1")
-            image.paste(mono, ((self._epd.width - mono.width) // 2, 4))
-            if title:
-                draw = ImageDraw.Draw(image)
-                try:
-                    font = ImageFont.truetype(
-                        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 9
-                    )
-                except OSError:
-                    font = ImageFont.load_default()
-                draw.text((0, self._epd.height - 14), title[:28], font=font, fill=0)
+            image = compose_sprite_canvas(
+                mood,
+                frame,
+                (self._epd.width, self._epd.height),
+                mono=True,
+                title=title,
+            )
+            if image is None:
+                self.render_text("", title=title)
+                return
             self._epd.display(self._epd.getbuffer(image))
         except Exception:
             self.render_text("", title=title)

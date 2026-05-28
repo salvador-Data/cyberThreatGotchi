@@ -20,6 +20,8 @@ jobs:
           pip install -r requirements.txt
       - name: Generate sprite assets
         run: python assets/sprites/generate_sprites.py
+      - name: Generate marketing graphics
+        run: python assets/marketing/generate_graphics.py
       - name: Run tests
         env:
           CTG_SIMULATION: "1"

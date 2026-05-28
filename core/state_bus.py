@@ -18,6 +18,7 @@ class GotchiSnapshot:
     threats_blocked: int
     threats_seen: int
     status_line: str
+    frame_index: int = 0
     sprite_ascii: str = ""
 
 
