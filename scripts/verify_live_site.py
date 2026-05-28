@@ -21,6 +21,7 @@ PAGES = (
     "ecosystem.html",
     "github.html",
     "crackbot.html",
+    "cardputer.html",
 )
 
 

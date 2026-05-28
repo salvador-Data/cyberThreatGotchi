@@ -54,8 +54,9 @@ Run anytime:
 | Check | Result |
 |-------|--------|
 | HTTP 200 on all public HTML pages | ✅ Verified |
-| `check_shop.py` (28 products aligned) | ✅ Pass |
-| `tests/test_website.py` | ✅ 27 passed |
+| `check_shop.py` (30 products aligned) | ✅ Pass |
+| `tests/` full suite | ✅ 86 passed, 3 skipped |
+| Product pricing separation (CYD / CrackBot / Cardputer) | ✅ `docs/PRODUCT_PRICING.md` · commit `2b056dd` |
 | `pages.yml` latest deploy | ✅ Success (GitHub Actions) |
 
 **GitHub CLI (when `gh` is on PATH):**
@@ -110,7 +111,7 @@ Original setup clicks (for reference): [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.
 | Cloudflare DNS → GitHub Pages | ⏳ After registration |
 | GitHub Pages custom domain | ✅ **`hackerplanet.dev` set** in repo Settings (via API) — enable HTTPS after DNS |
 
-**Agent will not purchase the domain for you.** As of 2026-05-28, `hackerplanet.dev` does not resolve in public DNS — register it in Cloudflare if you have not already.
+**Agent will not purchase the domain for you.** Cloudflare MCP can **read** the zone but **cannot write DNS** until the zone is **active** and the API token has Zone.DNS Edit scope. Current state: one **proxied** A `@` → `185.199.108.153` — turn proxy **off** and add the other GitHub Pages records below.
 
 ### Cloudflare Registrar (if not done)
 

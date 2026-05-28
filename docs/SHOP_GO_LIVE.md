@@ -37,7 +37,7 @@ git push origin main
 
 | Script | Pass means |
 |--------|------------|
-| `check_shop.py` | All 28 products aligned across payments / shipping / catalog |
+| `check_shop.py` | All 30 products aligned across payments / shipping / catalog |
 | `check_payments.py` | Every Stripe link filled + `demoMode: false` |
 
 ---
