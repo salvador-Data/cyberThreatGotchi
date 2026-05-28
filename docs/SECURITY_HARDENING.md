@@ -7,6 +7,8 @@ Defensive coding and deployment practices for Hacker Planet LLC projects.
 | Variable | Purpose |
 |----------|---------|
 | `CTG_WEB_API_TOKEN` | Bearer token for `POST /api/feed` and `POST /api/pet` |
+| `CTG_OPERATOR_TOKEN` | Bearer token for fulfillment dashboard + `/api/fulfillment/*` (falls back to `CTG_WEB_API_TOKEN`) |
+| `CTG_FULFILLMENT_WEBHOOK_URL` | Discord/Slack webhook when orders queue or status changes (optional) |
 | `CTG_WEBHOOK_SECRET` | `X-CTG-Secret` on outbound webhooks |
 | `CTG_PRO_API_KEY` | Master Pro feed key (or use per-customer keys DB) |
 | `CTG_AUDIT_SECRET` | HMAC on audit chain export |
@@ -38,6 +40,22 @@ Implemented in `core/security.py` and `dashboard/web_server.py`:
 - **Rate limiting** — 120 req/min per IP on `/api/*`; 30/min on Feed/Pet
 - **Sprite path sanitization** — mood parameter whitelist (blocks traversal)
 - **Optional API token** — mutating routes require `Authorization: Bearer …` when token set
+
+## Operator fulfillment (v1.3+)
+
+- **Dashboard:** `http://127.0.0.1:8765/operator/fulfillment` when `python main.py --web` is running
+- **Queue file:** `data/fulfillment_queue.json` (gitignored; schema in `data/fulfillment_queue.example.json`)
+- **Auth:** set `CTG_OPERATOR_TOKEN` (recommended) or reuse `CTG_WEB_API_TOKEN`
+- **Stripe auto-queue:** `POST /api/fulfillment/webhook` with `CTG_STRIPE_WEBHOOK_SECRET`; Payment Link metadata `stripe_key=ds…`
+- **No PCI scope expansion** — operator pays suppliers manually; dashboard never stores card numbers or marketplace passwords
+
+```powershell
+$env:CTG_OPERATOR_TOKEN = "long-random-token"
+$env:CTG_FULFILLMENT_WEBHOOK_URL = "https://discord.com/api/webhooks/..."  # optional
+python main.py --simulation --web
+```
+
+See [DROPSHIP_FULFILLMENT_RUNBOOK.md](DROPSHIP_FULFILLMENT_RUNBOOK.md).
 
 ```powershell
 $env:CTG_WEB_API_TOKEN = "long-random-token"

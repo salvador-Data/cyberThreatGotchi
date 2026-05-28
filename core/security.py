@@ -113,6 +113,10 @@ def rate_limit(limiter: RateLimiter) -> Callable[..., Any]:
     return decorator
 
 
+def _auth_header_token() -> str:
+    return request.headers.get("Authorization", "") or request.headers.get("X-CTG-Api-Token", "")
+
+
 def require_api_token(expected: str) -> Callable[..., Any]:
     """Protect mutating routes when CTG_WEB_API_TOKEN is set."""
 
@@ -121,9 +125,26 @@ def require_api_token(expected: str) -> Callable[..., Any]:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             if not expected:
                 return fn(*args, **kwargs)
-            header = request.headers.get("Authorization", "") or request.headers.get(
-                "X-CTG-Api-Token", ""
-            )
+            if not verify_bearer_or_header(_auth_header_token(), expected):
+                return jsonify({"error": "unauthorized"}), 401
+            return fn(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
+def require_operator_token(operator_token: str, api_token: str = "") -> Callable[..., Any]:
+    """Protect operator routes — CTG_OPERATOR_TOKEN, else CTG_WEB_API_TOKEN."""
+
+    expected = operator_token or api_token
+
+    def decorator(fn: Callable[..., Any]) -> Callable[..., Any]:
+        @wraps(fn)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            if not expected:
+                return fn(*args, **kwargs)
+            header = _auth_header_token() or request.headers.get("X-CTG-Operator-Token", "")
             if not verify_bearer_or_header(header, expected):
                 return jsonify({"error": "unauthorized"}), 401
             return fn(*args, **kwargs)

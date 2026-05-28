@@ -143,10 +143,10 @@
     },
     dsMeshtasticHeltec: {
       id: "dsMeshtasticHeltec",
-      name: "Heltec V3 Meshtastic node",
-      price: 79,
+      name: "Heltec V3 fully built Meshtastic",
+      price: 129,
       period: "one-time",
-      desc: "Drop-ship compact mesh radio",
+      desc: "Drop-ship Etsy turnkey mesh radio",
       stripeKey: "dsMeshtasticHeltec",
     },
     dsMeshtasticRAK: {
@@ -216,9 +216,9 @@
     dsRaspberryPi5: {
       id: "dsRaspberryPi5",
       name: "Raspberry Pi 5 starter kit",
-      price: 139,
+      price: 159,
       period: "one-time",
-      desc: "Drop-ship Pi 5 homelab kit",
+      desc: "Drop-ship authorized Pi 5 kit",
       stripeKey: "dsRaspberryPi5",
     },
     dsOrangePi5: {
@@ -244,6 +244,22 @@
       period: "one-time",
       desc: "Drop-ship 2× CYD boards",
       stripeKey: "dsEsp32Cyd",
+    },
+    dsWiringLab: {
+      id: "dsWiringLab",
+      name: "Breadboard + jumper wiring kit",
+      price: 22,
+      period: "one-time",
+      desc: "Drop-ship prototyping wire bundle",
+      stripeKey: "dsWiringLab",
+    },
+    dsKaliNetHunter: {
+      id: "dsKaliNetHunter",
+      name: "Kali NetHunter lab phone",
+      price: 399,
+      period: "one-time",
+      desc: "Drop-ship pre-flashed lab handset",
+      stripeKey: "dsKaliNetHunter",
     },
   };
 

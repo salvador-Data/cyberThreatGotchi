@@ -17,11 +17,22 @@ from core.pro_feed import (
     build_yara_payload,
     validate_pro_key,
 )
+from core.fulfillment_queue import (
+    add_order,
+    build_order,
+    get_order,
+    list_orders,
+    notify_fulfillment_event,
+    order_from_stripe_event,
+    update_order,
+)
 from core.security import (
     RateLimiter,
     apply_security_headers,
     require_api_token,
+    require_operator_token,
     sanitize_mood,
+    verify_stripe_webhook,
 )
 from core.state_bus import GotchiSnapshot, StateBus
 from db.audit_chain import AuditChain
@@ -32,6 +43,7 @@ if TYPE_CHECKING:
     from db.pro_keys import ProKeyStore
 
 STATIC = Path(__file__).resolve().parent / "static"
+WEBSITE = Path(__file__).resolve().parent.parent / "website"
 
 
 def create_web_app(
@@ -40,6 +52,9 @@ def create_web_app(
     audit: Optional[AuditChain] = None,
     pro_keys: Optional["ProKeyStore"] = None,
     api_token: str = "",
+    operator_token: str = "",
+    fulfillment_webhook_url: str = "",
+    stripe_webhook_secret: str = "",
     on_feed: Optional[Callable[[], None]] = None,
     on_pet: Optional[Callable[[], None]] = None,
 ) -> Flask:
@@ -47,6 +62,7 @@ def create_web_app(
     limiter = RateLimiter(max_calls=120, window_sec=60.0)
     write_limiter = RateLimiter(max_calls=30, window_sec=60.0)
     token_guard = require_api_token(api_token)
+    operator_guard = require_operator_token(operator_token, api_token)
     app.config["JSON_SORT_KEYS"] = False
 
     @app.after_request
@@ -188,6 +204,122 @@ def create_web_app(
 
         return Response(generate(), mimetype="text/event-stream")
 
+    @app.get("/operator/fulfillment")
+    @app.get("/operator/fulfillment.html")
+    def operator_fulfillment_page() -> Response:
+        page = WEBSITE / "operator" / "fulfillment.html"
+        if not page.is_file():
+            return Response("operator fulfillment dashboard not found", status=404)
+        return Response(page.read_text(encoding="utf-8"), mimetype="text/html")
+
+    @app.get("/website/js/<path:filename>")
+    def website_js(filename: str) -> Response:
+        safe = Path(filename).name if "/" not in filename else filename
+        if ".." in safe or safe.startswith("/"):
+            return Response(status=400)
+        base = WEBSITE / "js"
+        path = (base / safe).resolve()
+        if not str(path).startswith(str(base.resolve())):
+            return Response(status=400)
+        if not path.is_file():
+            return Response(status=404)
+        return send_from_directory(path.parent, path.name)
+
+    @app.get("/website/css/<path:filename>")
+    def website_css(filename: str) -> Response:
+        if ".." in filename:
+            return Response(status=400)
+        base = WEBSITE / "css"
+        path = (base / filename).resolve()
+        if not str(path).startswith(str(base.resolve())):
+            return Response(status=400)
+        if not path.is_file():
+            return Response(status=404)
+        return send_from_directory(path.parent, path.name)
+
+    @app.get("/api/fulfillment/queue")
+    @operator_guard
+    def api_fulfillment_list() -> Response:
+        pending_only = request.args.get("pending", "").lower() in ("1", "true", "yes")
+        status = request.args.get("status", "").strip() or None
+        orders = list_orders(status=status, pending_only=pending_only)
+        return jsonify({"orders": orders, "count": len(orders)})
+
+    @app.post("/api/fulfillment/queue")
+    @operator_guard
+    def api_fulfillment_enqueue() -> Response:
+        if not write_limiter.allow():
+            return jsonify({"error": "rate limit exceeded"}), 429
+        body = request.get_json(silent=True) or {}
+        try:
+            if body.get("type") and body.get("data"):
+                order = order_from_stripe_event(body)
+            elif body.get("object") and body.get("object", {}).get("object") == "checkout.session":
+                order = order_from_stripe_event({"type": "checkout.session.completed", "data": {"object": body["object"]}})
+            elif body.get("stripe_key"):
+                order = build_order(
+                    stripe_key=str(body["stripe_key"]),
+                    ship_to=body.get("ship_to") or body.get("ship_to_text") or "",
+                    customer_email=str(body.get("customer_email") or ""),
+                    stripe_session_id=str(body.get("stripe_session_id") or ""),
+                    stripe_payment_intent=str(body.get("stripe_payment_intent") or ""),
+                    notes=str(body.get("notes") or ""),
+                )
+            else:
+                return jsonify({"error": "stripe_key or Stripe event payload required"}), 400
+            saved = add_order(order)
+            notify_fulfillment_event("fulfillment.queued", saved, fulfillment_webhook_url)
+            return jsonify({"ok": True, "order": saved}), 201
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+
+    @app.post("/api/fulfillment/webhook")
+    def api_fulfillment_stripe_webhook() -> Response:
+        if not write_limiter.allow():
+            return jsonify({"error": "rate limit exceeded"}), 429
+        body = request.get_data()
+        sig = request.headers.get("Stripe-Signature", "")
+        if stripe_webhook_secret and not verify_stripe_webhook(body, sig, stripe_webhook_secret):
+            return jsonify({"error": "invalid signature"}), 400
+        try:
+            event = json.loads(body.decode("utf-8"))
+        except json.JSONDecodeError:
+            return jsonify({"error": "invalid json"}), 400
+        etype = str(event.get("type") or "")
+        if etype not in ("checkout.session.completed", "payment_intent.succeeded"):
+            return jsonify({"ok": True, "skipped": etype})
+        try:
+            order = order_from_stripe_event(event)
+            saved = add_order(order)
+            notify_fulfillment_event("fulfillment.queued", saved, fulfillment_webhook_url)
+            return jsonify({"ok": True, "order_id": saved.get("id")})
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+
+    @app.patch("/api/fulfillment/queue/<order_id>")
+    @operator_guard
+    def api_fulfillment_update(order_id: str) -> Response:
+        if not write_limiter.allow():
+            return jsonify({"error": "rate limit exceeded"}), 429
+        body = request.get_json(silent=True) or {}
+        try:
+            updated = update_order(order_id, body)
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+        if updated is None:
+            return jsonify({"error": "not found"}), 404
+        if body.get("status"):
+            notify_fulfillment_event(f"fulfillment.{body['status']}", updated, fulfillment_webhook_url)
+        return jsonify({"ok": True, "order": updated})
+
+    @app.get("/api/fulfillment/queue/<order_id>")
+    @operator_guard
+    def api_fulfillment_get(order_id: str) -> Response:
+        order = get_order(order_id)
+        if order is None:
+            return jsonify({"error": "not found"}), 404
+        return jsonify(order)
+
     return app
 
 
@@ -200,6 +332,9 @@ class WebDashboard:
         audit: Optional[AuditChain] = None,
         pro_keys: Optional["ProKeyStore"] = None,
         api_token: str = "",
+        operator_token: str = "",
+        fulfillment_webhook_url: str = "",
+        stripe_webhook_secret: str = "",
         host: str = "0.0.0.0",
         port: int = 8765,
     ) -> None:
@@ -216,6 +351,9 @@ class WebDashboard:
             audit=audit,
             pro_keys=pro_keys,
             api_token=api_token,
+            operator_token=operator_token,
+            fulfillment_webhook_url=fulfillment_webhook_url,
+            stripe_webhook_secret=stripe_webhook_secret,
             on_feed=self.gotchi.feed,
             on_pet=self.gotchi.pet,
         )

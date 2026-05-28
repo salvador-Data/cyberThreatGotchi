@@ -76,6 +76,9 @@ class CyberThreatGotchiApp:
                 audit=self.audit,
                 pro_keys=self.pro_keys,
                 api_token=self.settings.web_api_token,
+                operator_token=self.settings.operator_token,
+                fulfillment_webhook_url=self.settings.fulfillment_webhook_url,
+                stripe_webhook_secret=self.settings.stripe_webhook_secret,
                 host=getattr(args, "web_host", self.settings.web_host),
                 port=getattr(args, "web_port", self.settings.web_port),
             )

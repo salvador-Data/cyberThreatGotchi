@@ -65,6 +65,8 @@ AUDIT_SECRET = os.environ.get("CTG_AUDIT_SECRET", "").strip()
 AUDIT_DB_PATH = Path(os.environ.get("CTG_AUDIT_DB", DATA_DIR / "audit_chain.db"))
 PRO_KEYS_DB_PATH = Path(os.environ.get("CTG_PRO_KEYS_DB", DATA_DIR / "pro_keys.db"))
 WEB_API_TOKEN = os.environ.get("CTG_WEB_API_TOKEN", "").strip()
+OPERATOR_TOKEN = os.environ.get("CTG_OPERATOR_TOKEN", "").strip()
+FULFILLMENT_WEBHOOK_URL = os.environ.get("CTG_FULFILLMENT_WEBHOOK_URL", "").strip()
 STRIPE_WEBHOOK_SECRET = os.environ.get("CTG_STRIPE_WEBHOOK_SECRET", "").strip()
 
 
@@ -100,6 +102,8 @@ class Settings:
     audit_db_path: Path = field(default_factory=lambda: AUDIT_DB_PATH)
     pro_keys_db_path: Path = field(default_factory=lambda: PRO_KEYS_DB_PATH)
     web_api_token: str = field(default_factory=lambda: WEB_API_TOKEN)
+    operator_token: str = field(default_factory=lambda: OPERATOR_TOKEN)
+    fulfillment_webhook_url: str = field(default_factory=lambda: FULFILLMENT_WEBHOOK_URL)
     stripe_webhook_secret: str = field(default_factory=lambda: STRIPE_WEBHOOK_SECRET)
 
     def ensure_dirs(self) -> None:

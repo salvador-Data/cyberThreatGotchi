@@ -32,6 +32,8 @@ window.HPL_PAYMENTS = {
     dsOrangePi5: "",
     dsBananaPiR3: "",
     dsEsp32Cyd: "",
+    dsWiringLab: "",
+    dsKaliNetHunter: "",
   },
   paypal: { clientId: "", currency: "USD" },
   paypalMe: { username: "" },

@@ -49,6 +49,10 @@ Use the shop **shipping & tax calculator** for estimates → [SHIPPING_AND_TAX.m
 | `digital` | Digital Pack | $15 |
 | `codStlPack` | COD STL + KSS pack | $19 |
 
+### Drop-ship auto-fulfillment metadata
+
+For every partner `ds*` Payment Link, add Dashboard metadata **`stripe_key`** matching the `stripePaymentLinks` property (see [STRIPE_FULFILLMENT_METADATA.md](STRIPE_FULFILLMENT_METADATA.md)).
+
 For direct hardware: enable **Stripe Tax** on the Payment Link and optionally add **Shipping rates** (US zones) matching `shipping.config.js`.
 
 ### Partner drop-ship (supplier ships)

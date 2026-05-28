@@ -93,5 +93,7 @@ window.HPL_SHIPPING = {
     dsOrangePi5: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
     dsBananaPiR3: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
     dsEsp32Cyd: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
+    dsWiringLab: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
+    dsKaliNetHunter: { fulfillment: "dropship", weightOz: 0, category: "hardware" },
   },
 };

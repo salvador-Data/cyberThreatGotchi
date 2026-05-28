@@ -6,6 +6,9 @@ Config references:
 
 - **Direct products:** `website/js/direct.config.js`
 - **Drop-ship products:** `website/js/catalog.config.js` → `supplierUrl`
+- **Fulfillment tracker:** `website/js/shipping-tracker.config.js` · `scripts/dropship_order_export.py`
+- **Runbook:** [DROPSHIP_FULFILLMENT_RUNBOOK.md](DROPSHIP_FULFILLMENT_RUNBOOK.md)
+- **Stripe metadata:** [STRIPE_FULFILLMENT_METADATA.md](STRIPE_FULFILLMENT_METADATA.md)
 - **Shipping zones:** `website/js/shipping.config.js`
 
 ### Internal — ship-from address (not on public website)
@@ -51,19 +54,24 @@ Use this on carrier labels and packing slips. The public site and shipping calcu
 ### Workflow
 
 1. **Stripe** → Payment received
-2. Open **`supplierUrl`** for that SKU in [DROPSHIP_CATALOG.md](DROPSHIP_CATALOG.md) / `catalog.config.js`
-3. **Place supplier order** using customer ship-to (not your home address unless forwarding)
-4. **Use** customer email for supplier tracking if supported
-5. **Margin** = retail − supplier cost − Stripe fees
-6. **Lead time:** tell customer 5–14 business days if no tracking yet
+2. **Export packet:** `python scripts/dropship_order_export.py --stripe-key dsMeshtasticHeltec --ship-to "..."`  
+   (or full catalog CSV without `--stripe-key`)
+3. Open **`supplierUrl`** + marketplace portal from [DROPSHIP_FULFILLMENT_RUNBOOK.md](DROPSHIP_FULFILLMENT_RUNBOOK.md)
+4. **Place supplier order manually** — operator card checkout only (no bots)
+5. **Use** customer email for supplier tracking if supported
+6. **Margin** = retail − supplier cost − Stripe fees
+7. **Lead time:** from `shipping-tracker.config.js` (typically 5–14 business days)
 
 ### Supplier quick map
 
 | Stripe key | Order from |
 |------------|------------|
 | `dsNetgotchi` / `dsNetgotchiPro` | OlleAdventures Etsy/Tindie |
-| `dsMeshtasticTBeam` | LilyGO / AliExpress |
+| `dsMeshtasticHeltec` | LayerFabUK Etsy (fully built V3) |
+| `dsMeshtasticTBeam` | LilyGO store |
 | `dsMeshtasticRAK` | RAKwireless store |
+| `dsKaliNetHunter` | kalinethunter.com / ViP3R Hunter |
+| `dsWiringLab` | SparkFun / Adafruit |
 | `dsHackberryZero` / Pi5 / CM5 | ZitaoTech (Discord/Tindie) |
 | `dsMarauderGps` | HoneyHoneyTrading Tindie |
 | `dsRaspberryPi5` / `dsOrangePi5` / etc. | AliExpress (vetted seller) |
