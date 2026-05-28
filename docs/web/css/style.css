@@ -1150,6 +1150,70 @@ section {
   font-style: italic;
 }
 
+.upsell-strip {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(0, 180, 140, 0.25);
+  border-radius: var(--radius);
+  background: rgba(0, 180, 140, 0.04);
+}
+
+.upsell-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+.upsell-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.upsell-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 8.5rem;
+  flex: 1 1 8.5rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+  background: var(--bg-elevated);
+  text-decoration: none;
+  color: inherit;
+  font-size: 0.82rem;
+}
+
+.upsell-card:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.upsell-price {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.upsell-name {
+  font-weight: 600;
+}
+
+.upsell-blurb {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.upsell-reason,
+.upsell-note {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0.5rem 0 0;
+}
+
 .pay-btn-external {
   background: var(--bg-elevated);
   color: var(--ink) !important;

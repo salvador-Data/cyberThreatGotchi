@@ -71,6 +71,8 @@
     var trk = global.HPLShippingTracker || {};
     var checklist = order.checklist || trk.orderChecklist(order.stripe_key) || [];
     var supplierUrl = order.supplier_url || "";
+    var ebayUrl = order.ebay_search_url || "";
+    var amazonUrl = order.amazon_search_url || "";
     var shipText = formatShipTo(order);
     var status = order.status || "pending";
     var statusOpts = ["pending", "ordered", "shipped", "delivered", "exception"];
@@ -120,6 +122,16 @@
         ? '<a href="' +
           escapeHtml(supplierUrl) +
           '" target="_blank" rel="noopener noreferrer">Open supplier listing -></a>'
+        : "") +
+      (ebayUrl
+        ? '<a href="' +
+          escapeHtml(ebayUrl) +
+          '" target="_blank" rel="noopener noreferrer">Search eBay (partner) -></a>'
+        : "") +
+      (amazonUrl
+        ? '<a href="' +
+          escapeHtml(amazonUrl) +
+          '" target="_blank" rel="noopener noreferrer">Search Amazon (partner) -></a>'
         : "") +
       '<button type="button" class="copy-ship">Copy ship-to</button>' +
       '<button type="button" class="copy-packet">Copy order packet</button>' +

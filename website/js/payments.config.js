@@ -38,6 +38,13 @@ window.HPL_PAYMENTS = {
     dsEsp32Cyd: "",
     dsWiringLab: "",
     dsKaliNetHunter: "",
+    dsRtlSdrKit: "",
+    dsNesdrSmart: "",
+    dsLanTap: "",
+    dsThrowingStarKit: "",
+    dsEsp32WifiLab: "",
+    dsUsbRubberDucky: "",
+    dsHak5WifiPineapple: "",
   },
   paypal: { clientId: "", currency: "USD" },
   paypalSubscriptions: {

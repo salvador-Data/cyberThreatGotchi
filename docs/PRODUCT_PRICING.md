@@ -210,6 +210,8 @@ Snapshot of US eBay (and adjacent maker marketplaces where eBay had no listings)
 
 **Do not** list BPI-R3 Mini as standalone **$160** retail — it is a **`coreKit` component**; `dsBananaPiR3` remains ops-only (`catalogHidden: true`).
 
+Broader internet supplier pricing (SDR, Hak5, Adafruit, reference-tier tools): [MARKET_PRICING_INTERNET.md](MARKET_PRICING_INTERNET.md). Operator runbook: [PARTNER_FULFILLMENT_RUNBOOK.md](PARTNER_FULFILLMENT_RUNBOOK.md).
+
 ---
 
 *Hacker Planet LLC · Philadelphia, PA · Authorized use only*
