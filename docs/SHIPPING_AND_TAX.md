@@ -6,7 +6,7 @@ Hacker Planet LLC is based in **Philadelphia, Pennsylvania**. The shop uses **tw
 
 | Model | Products | Shipping | Who ships |
 |-------|----------|----------|-----------|
-| **Direct** | Sabreto Akachi, Mr. CrackBot AI Nano on CYD, CTG kits, custom Marauder/COD builds | Zone rates from Philly | **You (HPL)** |
+| **Direct** | CYD Field Build — Standard, Mr. CrackBot AI Nano on CYD, CTG kits, custom Marauder/COD builds | Zone rates from Philly | **You (HPL)** |
 | **Drop-ship** | Pwnagotchi, Meshtastic, Hackberry Pi, partner Marauder, SBC kits | Included in retail price | **Partner supplier** |
 | **Digital** | STL packs, digital bundle, Pro feed | $0 | Email / download |
 

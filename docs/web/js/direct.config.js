@@ -7,15 +7,15 @@ window.HPL_DIRECT = {
   directNote: "Ships from Philadelphia, PA · 3–5 business days handling · tax & zone shipping extra",
   products: [
     {
-      id: "sabretoAkachi",
+      id: "cydStandard",
       section: "cyd",
       name: "CYD Field Build — Standard",
-      tagline: "Sabreto Akachi · HPL signature profile",
-      image: "images/products/direct-sabreto-akachi.jpg",
+      tagline: "HPL signature profile",
+      image: "images/products/direct-cyd-standard.jpg",
       retailPrice: 79.99,
       priceDisplay: "$79.99",
       fulfillment: "direct",
-      stripeKey: "sabretoAkachi",
+      stripeKey: "cydStandard",
       source: "direct",
       description:
         "Cheap Yellow Display pocket field build — flashed for authorized Wi‑Fi lab work. Standard enclosure, USB-C, quick-start. **$79.99 + tax & shipping.** Not CrackBot firmware.",

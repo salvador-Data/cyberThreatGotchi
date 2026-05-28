@@ -38,7 +38,7 @@ Use the shop **shipping & tax calculator** for estimates → [SHIPPING_AND_TAX.m
 
 | Key | Product | Price |
 |-----|---------|-------|
-| `sabretoAkachi` | CYD Field Build — Standard (Sabreto Akachi) | $79.99 + ship/tax |
+| `cydStandard` | CYD Field Build — Standard | $79.99 + ship/tax |
 | `cydFieldCustom` | CYD Field Build — Custom (GPS, ext radio, battery) | $174.99 + ship/tax |
 | `crackbotBench` | Mr. CrackBot AI Nano — Bench Lab (Jetson) | $449 |
 | `remotePossibility` | Remote Possibility (M5 Cardputer) | $89.99 |
@@ -87,7 +87,7 @@ For direct hardware: enable **Stripe Tax** on the Payment Link and optionally ad
 window.HPL_PAYMENTS = {
   demoMode: false,
   stripePaymentLinks: {
-    sabretoAkachi: "https://buy.stripe.com/...",
+    cydStandard: "https://buy.stripe.com/...",
     cydFieldCustom: "https://buy.stripe.com/...",
     crackbotBench: "https://buy.stripe.com/...",
     remotePossibility: "https://buy.stripe.com/...",

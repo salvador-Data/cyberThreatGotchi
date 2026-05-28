@@ -45,13 +45,13 @@
       desc: "HPL direct ship · core kit + M5 Cardputer",
       stripeKey: "fieldPack",
     },
-    sabretoAkachi: {
-      id: "sabretoAkachi",
+    cydStandard: {
+      id: "cydStandard",
       name: "CYD Field Build — Standard",
       price: 79.99,
       period: "one-time",
-      desc: "Sabreto Akachi CYD · Philly direct · + tax & shipping",
-      stripeKey: "sabretoAkachi",
+      desc: "CYD standard · Philly direct · + tax & shipping",
+      stripeKey: "cydStandard",
     },
     cydFieldCustom: {
       id: "cydFieldCustom",

@@ -1,0 +1,10 @@
+; BIND zone snippet for Cloudflare DNS import (GitHub Pages)
+; Dashboard: hackerplanet.dev -> DNS -> Records -> Import and Export -> Import
+; After import: click each A/CNAME record -> turn OFF proxy (grey cloud / DNS only)
+
+$ORIGIN hackerplanet.dev.
+@       300     IN      A       185.199.108.153
+@       300     IN      A       185.199.109.153
+@       300     IN      A       185.199.110.153
+@       300     IN      A       185.199.111.153
+www     300     IN      CNAME   salvador-Data.github.io.

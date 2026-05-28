@@ -10,10 +10,10 @@ Authoritative retail prices for Philadelphia direct-ship SKUs. **Tax and shippin
 
 | SKU | Stripe key | Retail | + tax/shipping |
 |-----|------------|--------|----------------|
-| Sabreto Akachi (standard CYD) | `sabretoAkachi` | **$79.99** | Yes |
+| CYD Field Build — Standard | `cydStandard` | **$79.99** | Yes |
 | CYD custom field build | `cydFieldCustom` | **$174.99** | Yes |
 
-### Standard CYD — $79.99 (`sabretoAkachi`)
+### Standard CYD — $79.99 (`cydStandard`)
 
 | Qty | Part | Est. cost |
 |-----|------|-----------|
@@ -123,7 +123,7 @@ Authorized BLE lab workflows on the Cardputer keyboard UI — separate from CYD 
 
 | Old key | Replaced by |
 |---------|-------------|
-| `crackbotCyd` | CYD = `sabretoAkachi` / `cydFieldCustom`; CrackBot = `crackbotBench` |
+| `crackbotCyd` | CYD = `cydStandard` / `cydFieldCustom`; CrackBot = `crackbotBench` |
 | `marauderCustom175` | `cydFieldCustom` @ $174.99 |
 
 ---

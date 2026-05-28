@@ -63,7 +63,7 @@ window.HPL_SHIPPING = {
   weightSurchargePer8Oz: 2.5,
   freeShippingDigital: true,
   products: {
-    sabretoAkachi: { fulfillment: "direct", weightOz: 20, category: "hardware" },
+    cydStandard: { fulfillment: "direct", weightOz: 20, category: "hardware" },
     cydFieldCustom: { fulfillment: "direct", weightOz: 28, category: "hardware" },
     crackbotBench: { fulfillment: "direct", weightOz: 48, category: "hardware" },
     remotePossibility: { fulfillment: "direct", weightOz: 18, category: "hardware" },

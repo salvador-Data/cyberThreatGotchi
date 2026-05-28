@@ -67,7 +67,7 @@ Details: [SHIPPING_AND_TAX.md](SHIPPING_AND_TAX.md)
 
 | Order type | What you do |
 |------------|-------------|
-| **Direct (Philly)** | Pack & ship from Philadelphia — Sabreto Akachi, CrackBot CYD, CTG kits |
+| **Direct (Philly)** | Pack & ship from Philadelphia — CYD Field Build, CrackBot CYD, CTG kits |
 | **Partner drop-ship** | Order from `supplierUrl` in `catalog.config.js` → ship to customer |
 | **Digital** | Email download link after payment |
 

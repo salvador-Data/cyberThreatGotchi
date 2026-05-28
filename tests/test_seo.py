@@ -25,6 +25,7 @@ def test_robots_and_sitemap():
     sitemap = (WEB / "sitemap.xml").read_text(encoding="utf-8")
     assert "https://hackerplanet.dev/shop.html" in sitemap
     assert "https://hackerplanet.dev/cardputer.html" in sitemap
+    assert "https://hackerplanet.dev/cyd.html" in sitemap
 
 
 def test_all_pages_have_seo_markers():

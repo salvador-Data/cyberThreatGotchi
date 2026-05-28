@@ -19,6 +19,7 @@ def test_website_structure():
         "cyberthreatgotchi.html",
         "crackbot.html",
         "cardputer.html",
+        "cyd.html",
         "ecosystem.html",
         "contact.html",
         "shop.html",
@@ -79,7 +80,7 @@ def test_shipping_config_structure():
     assert "664 Walker Street" in text
     assert "11135" in text
     assert "publicLabel" in text
-    assert "sabretoAkachi" in text
+    assert "cydStandard" in text
     assert "fulfillment: \"direct\"" in text or '"direct"' in text
     assert "nexusStates" in text
 
@@ -95,7 +96,7 @@ def test_no_street_address_on_public_site():
 def test_direct_config_structure():
     text = (WEB / "js" / "direct.config.js").read_text(encoding="utf-8")
     assert "HPL_DIRECT" in text
-    assert "Sabreto Akachi" in text
+    assert "cydStandard" in text
     assert "tagline:" in text
     assert "HPL signature profile" in text
     assert "crackbotBench" in text
@@ -178,6 +179,33 @@ def test_cardputer_page_content():
     assert "$79.99" in html
     assert "M5_OS-Cardputer" in html
     assert "shop.html#remote-possibility" in html
+    assert "Firmware downloads" in html
+    assert 'id="firmware"' in html
+    assert "CARDPUTER_PRODUCTS.md" in html
+
+
+def test_cyd_page_content():
+    html = (WEB / "cyd.html").read_text(encoding="utf-8")
+    assert "CYD Field Build" in html
+    assert "Sabreto" not in html
+    assert "Akachi" not in html
+    assert "$79.99" in html
+    assert "$174.99" in html
+    assert "Firmware downloads" in html
+    assert 'id="firmware"' in html
+    assert "shop.html#cyd-standard" in html
+    assert "Not" in html and "CrackBot" in html
+
+
+def test_product_firmware_sections():
+    for name in ("crackbot.html", "cyberthreatgotchi.html"):
+        html = (WEB / name).read_text(encoding="utf-8")
+        assert "Firmware downloads" in html, name
+        assert 'id="firmware"' in html, name
+    crackbot = (WEB / "crackbot.html").read_text(encoding="utf-8")
+    assert "Mr.-CrackBot-AI-Nano/releases" in crackbot
+    ctg = (WEB / "cyberthreatgotchi.html").read_text(encoding="utf-8")
+    assert "releases/tag/v1.1.0" in ctg
 
 
 def test_shop_product_lines_intro():
@@ -220,7 +248,7 @@ def test_index_has_philly_and_branding():
     assert "shop.html" in html
     assert "featured-shop" in html
     assert "images/products/ds-netgotchi.jpg" in html
-    assert "images/products/direct-sabreto-akachi.jpg" in html
+    assert "images/products/direct-cyd-standard.jpg" in html
     assert "$79.99" in html
     assert "$189" not in html
     assert "ThreatGachi" not in html
@@ -269,10 +297,10 @@ def test_direct_config_pricing_separation():
 
 def test_direct_product_images():
     text = (WEB / "js" / "direct.config.js").read_text(encoding="utf-8")
-    assert 'image: "images/products/direct-sabreto-akachi.jpg"' in text
+    assert 'image: "images/products/direct-cyd-standard.jpg"' in text
     assert 'image: "images/products/direct-core-kit.jpg"' in text
     assert 'image: "images/products/mr-pac-bot-product.png"' in text
-    assert (WEB / "images" / "products" / "direct-sabreto-akachi.jpg").is_file()
+    assert (WEB / "images" / "products" / "direct-cyd-standard.jpg").is_file()
     assert (WEB / "images" / "products" / "direct-core-kit.jpg").is_file()
     assert (WEB / "images" / "products" / "mr-pac-bot-product.png").is_file()
 

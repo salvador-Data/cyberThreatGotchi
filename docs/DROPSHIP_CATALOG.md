@@ -42,7 +42,7 @@ Customer → shop.html checkout ($ retail)
 | Hackberry Pi CM5 | $499 | `dsHackberryCM5` | ZitaoTech |
 | Marauder GPS pocket v2 | $219 | `dsMarauderGps` | HoneyHoneyTrading |
 | CYD battery + GPS mod | $59 | `dsMarauderBatteryMod` | Biscuit Shop |
-| **CYD standard (Sabreto Akachi)** | **$79.99** + ship/tax | `sabretoAkachi` | **Direct — Philly** |
+| **CYD Field Build — Standard** | **$79.99** + ship/tax | `cydStandard` | **Direct — Philly** |
 | **CYD custom (GPS, ext radio, battery)** | **$174.99** + ship/tax | `cydFieldCustom` | **Direct — Philly** |
 | **Mr. CrackBot bench lab (Jetson)** | **$449** | `crackbotBench` | **Direct — Philly** |
 | **Remote Possibility (Cardputer)** | **$89.99** | `remotePossibility` | **Direct — Philly** |

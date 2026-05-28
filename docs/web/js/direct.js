@@ -55,7 +55,7 @@
   function anchorId(product) {
     if (product.id === "crackbotBench") return "crackbot-bench";
     if (product.id === "cydFieldCustom") return "cyd-custom";
-    if (product.id === "sabretoAkachi") return "cyd-standard";
+    if (product.id === "cydStandard") return "cyd-standard";
     if (product.id === "remotePossibility") return "remote-possibility";
     if (product.id === "bleBot") return "ble-bot";
     return product.id || "";

@@ -24,7 +24,7 @@ Use this on carrier labels and packing slips. The public site and shipping calcu
 
 ## Direct ship — Philadelphia (you pack & ship)
 
-**Products:** Sabreto Akachi, Mr. CrackBot AI Nano on CYD, Boost Formula COD, Marauder GPS custom, Cipherhorn Core Kit, Field Pack.
+**Products:** CYD Field Build — Standard, Mr. CrackBot AI Nano on CYD, Boost Formula COD, Marauder GPS custom, Cipherhorn Core Kit, Field Pack.
 
 ### Workflow
 

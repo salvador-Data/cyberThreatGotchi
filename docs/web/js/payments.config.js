@@ -9,7 +9,7 @@ window.HPL_PAYMENTS = {
     fieldPack: "",
     boostFormulaCod: "",
     codStlPack: "",
-    sabretoAkachi: "",
+    cydStandard: "",
     cydFieldCustom: "",
     crackbotBench: "",
     remotePossibility: "",

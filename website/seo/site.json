@@ -79,6 +79,14 @@
       "ogImage": "/images/products/direct-field-pack.png",
       "jsonLd": ["organization", "product", "breadcrumb"]
     },
+    "cyd.html": {
+      "title": "CYD Field Build · HackerPlanet",
+      "description": "Cheap Yellow Display pocket field build from Hacker Planet LLC. HPL signature Wi-Fi lab profile $79.99; custom CYD $174.99. Philadelphia assembled.",
+      "keywords": "CYD field build, ESP32-2432S028, authorized WiFi lab, Philadelphia security hardware",
+      "ogType": "product",
+      "ogImage": "/images/products/direct-cyd-standard.jpg",
+      "jsonLd": ["organization", "product", "breadcrumb"]
+    },
     "ecosystem.html": {
       "title": "Open-Source Security Ecosystem · HackerPlanet",
       "description": "Hacker Planet LLC ecosystem — CyberThreatGotchi edge defense, Bjorn Pi assessment, Mr. CrackBot lab VLAN, and M5 OS Cardputer field clients. Philadelphia open source.",

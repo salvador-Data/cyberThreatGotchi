@@ -5,6 +5,7 @@
 | Doc | Purpose |
 |-----|---------|
 | This file | **Today's go-live steps** (Voice → domain → email → payments) |
+| [GO_LIVE_NOW.md](GO_LIVE_NOW.md) | **One-page runbook** with Account ID + Zone ID + links |
 | [HOSTING_OPTIONS.md](HOSTING_OPTIONS.md) | DNS table, `CNAME`, brand vs URL |
 | [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md) | **Expanded** Cloudflare DNS, TLS, WAF, Email Routing |
 | [FIREWALL_BASELINE.md](FIREWALL_BASELINE.md) | BPI-R3 default-deny iptables + CTG IPS interaction |
