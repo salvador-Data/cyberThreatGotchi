@@ -28,15 +28,41 @@ def _inject_security(html_path: Path) -> None:
     html_path.write_text(text, encoding="utf-8")
 
 
+def _mirror_tree(src: Path, dest: Path) -> None:
+    """Copy src → dest without rmtree (Windows-safe when files are open/read-only)."""
+    dest.mkdir(parents=True, exist_ok=True)
+    for src_path in src.rglob("*"):
+        rel = src_path.relative_to(src)
+        dest_path = dest / rel
+        if src_path.is_dir():
+            dest_path.mkdir(parents=True, exist_ok=True)
+            continue
+        dest_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src_path, dest_path)
+    for dest_path in sorted(dest.rglob("*"), key=lambda p: len(p.parts), reverse=True):
+        rel = dest_path.relative_to(dest)
+        src_path = src / rel
+        if src_path.exists():
+            continue
+        if dest_path.is_file():
+            try:
+                dest_path.unlink()
+            except OSError:
+                pass
+        elif dest_path.is_dir():
+            try:
+                dest_path.rmdir()
+            except OSError:
+                pass
+
+
 def sync() -> int:
     if not SRC.is_dir():
         print("Missing website/ folder", file=sys.stderr)
         return 1
     for html in SRC.glob("*.html"):
         _inject_security(html)
-    if DEST.exists():
-        shutil.rmtree(DEST)
-    shutil.copytree(SRC, DEST)
+    _mirror_tree(SRC, DEST)
     count = sum(1 for _ in DEST.rglob("*") if _.is_file())
     print(f"Synced {SRC} -> {DEST} ({count} files)")
     return 0
