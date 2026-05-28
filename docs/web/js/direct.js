@@ -46,6 +46,7 @@
   function renderProductCard(product) {
     var card = el("article", "shop-card catalog-card shop-card-featured");
     card.setAttribute("data-fulfillment", product.fulfillment || "direct");
+    if (product.id) card.id = product.id === "crackbotCyd" ? "crackbot-cyd" : product.id;
     var imgWrap = renderProductImage(product);
     if (imgWrap) card.appendChild(imgWrap);
     if (product.badge) card.appendChild(el("div", "shop-badge", product.badge));

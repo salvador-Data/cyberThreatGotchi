@@ -17,6 +17,7 @@ def test_website_structure():
         "about.html",
         "services.html",
         "cyberthreatgotchi.html",
+        "crackbot.html",
         "ecosystem.html",
         "contact.html",
         "shop.html",
@@ -138,6 +139,39 @@ def test_nav_includes_services_on_all_pages():
         assert 'href="services.html"' in text, html_file.name
 
 
+def test_nav_includes_crackbot_on_all_pages():
+    for html_file in sorted(WEB.glob("*.html")):
+        text = html_file.read_text(encoding="utf-8")
+        assert 'href="crackbot.html"' in text, html_file.name
+
+
+def test_crackbot_page_content():
+    html = (WEB / "crackbot.html").read_text(encoding="utf-8")
+    assert "Mr. CrackBot AI Nano" in html
+    assert "$149" in html
+    assert "simulation" in html.lower()
+    assert "vlan" in html.lower() and "authorized" in html.lower()
+    assert "Mr.-CrackBot-AI-Nano" in html
+    assert "hardware/stl" in html
+    assert "direct-crackbot-cyd.jpg" in html
+    assert "shop.html#crackbot-cyd" in html
+    assert "$0" in html
+
+
+def test_shop_crackbot_intro():
+    html = (WEB / "shop.html").read_text(encoding="utf-8")
+    assert "crackbot-build" in html
+    assert "$149" in html
+    assert "crackbot.html" in html
+    assert "direct-crackbot-cyd.jpg" in html
+
+
+def test_ecosystem_crackbot_pricing():
+    html = (WEB / "ecosystem.html").read_text(encoding="utf-8")
+    assert "$149" in html
+    assert "crackbot.html" in html
+
+
 def test_no_dr_eric_as_agent_on_public_html():
     forbidden = ("Dr. Eric", "Dr.Eric")
     for html_file in sorted(WEB.glob("*.html")):
@@ -234,6 +268,8 @@ def test_shop_renderers_support_images():
         assert "shop-card-img" in text
         assert "shop-tagline" in text
     assert "catalog-section-banner" in (WEB / "js" / "catalog.js").read_text(encoding="utf-8")
+    direct = (WEB / "js" / "direct.js").read_text(encoding="utf-8")
+    assert "crackbot-cyd" in direct
 
 
 def test_about_page_content():
