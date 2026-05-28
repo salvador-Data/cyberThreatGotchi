@@ -51,6 +51,15 @@
     if (product.stripeKey) renderStripeCheckout(checkout, product);
     card.appendChild(checkout);
 
+    if (product.stripeKey && typeof window.HPL_preselectCalculator === "function") {
+      var estBtn = el("button", "ship-calc-link", "Estimate shipping & tax");
+      estBtn.type = "button";
+      estBtn.addEventListener("click", function () {
+        window.HPL_preselectCalculator(product.stripeKey);
+      });
+      card.appendChild(estBtn);
+    }
+
     var note = el("p", "catalog-ship-note", cfg().directNote || "Ships from Philadelphia, PA");
     if (product.fulfillment === "digital") {
       note.textContent = "Digital delivery · no shipping charge";
