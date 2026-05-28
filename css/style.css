@@ -987,6 +987,60 @@ section {
   font-size: 0.88rem;
 }
 
+.pay-method-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.pay-method-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.pay-method-badge--stripe {
+  border-color: rgba(99, 91, 255, 0.45);
+  color: #c4bfff;
+}
+
+.pay-method-badge--apple {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.pay-method-badge--google {
+  border-color: rgba(66, 133, 244, 0.35);
+  color: #9ec5ff;
+}
+
+.pay-method-badge--link {
+  border-color: rgba(0, 212, 255, 0.35);
+  color: var(--cyan);
+}
+
+.pay-method-badge--paypal {
+  border-color: rgba(0, 112, 186, 0.45);
+  color: #7ec8ff;
+}
+
+.pay-method-badge--venmo {
+  border-color: rgba(0, 140, 255, 0.45);
+  color: #8fd4ff;
+}
+
+.pay-method-badge--cashapp {
+  border-color: rgba(0, 214, 50, 0.45);
+  color: #7dff9a;
+}
+
 .returning-customer-panel {
   padding: 1rem 1.25rem;
   margin-bottom: 1rem;
