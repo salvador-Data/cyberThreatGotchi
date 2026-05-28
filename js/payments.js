@@ -267,7 +267,7 @@
     dsBananaPiR3: {
       id: "dsBananaPiR3",
       name: "Banana Pi BPI-R3 Mini",
-      price: 119,
+      price: 160,
       period: "one-time",
       desc: "Partner fulfillment - edge router SBC",
       stripeKey: "dsBananaPiR3",
