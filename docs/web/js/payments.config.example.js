@@ -127,6 +127,13 @@ window.HPL_PAYMENTS = {
 
   supportEmail: "salvadorData@proton.me",
 
+  /**
+   * Kickstarter project URL — also in js/kickstarter.config.js (authoritative for kickstarter.html).
+   * Replace placeholder after creating project on kickstarter.com.
+   */
+  kickstarterProjectUrl:
+    "https://www.kickstarter.com/projects/hackerplanet/cyberthreatgotchi-edge-ips-tamagotchi",
+
   /** Returning customer localStorage (browser only — never PAN). */
   returningCustomer: {
     maxAgeDays: 365,

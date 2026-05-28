@@ -63,6 +63,7 @@
         <li><a href="cardputer.html">Cardputer</a></li>
         <li><a href="ecosystem.html">Ecosystem</a></li>
         <li><a href="shop.html">Shop</a></li>
+        <li><a href="kickstarter.html" class="active">Kickstarter</a></li>
         <li><a href="github.html">On GitHub</a></li>
         <li><a href="contact.html">Contact</a></li>
         <li><a href="https://github.com/salvador-Data/cyberThreatGotchi" class="nav-cta" target="_blank" rel="noopener">GitHub -></a></li>
@@ -72,7 +73,11 @@
 
   <main class="wrap">
     <header class="page-hero reveal">
-      <p class="section-label">Kickstarter preview | Philadelphia PA</p>
+      <p class="hero-badge" id="ks-live-badge" hidden>
+        <span class="dot" aria-hidden="true"></span>
+        Live on Kickstarter
+      </p>
+      <p class="section-label" id="ks-hero-label">Kickstarter preview | Philadelphia PA</p>
       <h1 class="title-stack">
         <span class="title-stack-main">CyberThreatGotchi</span>
         <span class="title-stack-layer">Edge IPS with a Tamagotchi soul</span>
@@ -80,19 +85,27 @@
       <p class="lead">
         <strong>Real threats in. Mood out. Evidence saved.</strong>
         Open-source edge IPS on Banana Pi BPI-R3 Mini - Cipherhorn on e-ink, SQLite audit chain, IPS blocks on authorized networks.
-        This page previews reward tiers before the live Kickstarter campaign.
+        This page previews reward tiers and links to our live Kickstarter campaign when published.
       </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="mailto:salvadorData@proton.me?subject=Kickstarter%20notify%20me">Notify me at launch</a>
+        <a class="btn btn-primary" id="ks-hero-primary" href="mailto:salvadorData@proton.me?subject=Kickstarter%20notify%20me">Notify me at launch</a>
         <a class="btn btn-ghost" href="cyberthreatgotchi.html">Product story -></a>
       </div>
     </header>
 
-    <div class="prelaunch-banner reveal" role="status">
+    <div class="prelaunch-banner reveal" id="ks-prelaunch-banner" role="status">
       <p>
         <strong>Campaign not live yet.</strong> Reward tiers and timeline below match our internal draft.
         Email <a href="mailto:salvadorData@proton.me?subject=Kickstarter%20notify%20me">salvadorData@proton.me</a> for launch day notice.
-        Full campaign copy on GitHub: <code>docs/kickstarter/KICKSTARTER_CAMPAIGN.md</code>
+      </p>
+      <ol style="margin:0.75rem 0 0 1.25rem;padding:0;color:var(--muted);font-size:0.92rem">
+        <li>Create project at <a href="https://www.kickstarter.com/start" target="_blank" rel="noopener noreferrer">kickstarter.com/start</a></li>
+        <li>Paste copy from <code>docs/kickstarter/KICKSTARTER_DASHBOARD_PASTE.md</code></li>
+        <li>Replace <code>kickstarterProjectUrl</code> in <code>website/js/kickstarter.config.js</code> with your live URL</li>
+        <li>Run <code>python scripts/sync_website_to_docs.py</code> and deploy</li>
+      </ol>
+      <p style="margin-top:0.75rem;margin-bottom:0">
+        Step-by-step: <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/kickstarter/KICKSTARTER_CREATE_ON_KICKSTARTER_COM.md" target="_blank" rel="noopener">Create on kickstarter.com -></a>
       </p>
     </div>
 
@@ -238,13 +251,24 @@
       </p>
     </section>
 
+    <section class="reveal section-compact">
+      <p class="section-label">Planning docs</p>
+      <h2 class="section-title">Business & launch references</h2>
+      <ul class="feature-list" style="max-width:42rem">
+        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/BUSINESS_PROJECTIONS.md" target="_blank" rel="noopener">Year 1-3 revenue projections</a> - COGS, MSP retainers, Kickstarter net</li>
+        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/BUSINESS_IDEAS.md" target="_blank" rel="noopener">Ranked business ideas</a> - Kickstarter as #1 leverage event</li>
+        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/KICKSTARTER_LAUNCH_PLAN.md" target="_blank" rel="noopener">30-day launch calendar</a> - T-14 through Day 30</li>
+        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/kickstarter/KICKSTARTER_DASHBOARD_PASTE.md" target="_blank" rel="noopener">Dashboard paste pack</a> - copy for kickstarter.com editor</li>
+      </ul>
+    </section>
+
     <section class="reveal" style="text-align:center;padding-bottom:2rem">
       <p class="section-label">Stay in the loop</p>
       <h2 class="section-title">Built in Philly | open source | MIT</h2>
       <p style="max-width:36rem;margin:0 auto 1.5rem;color:var(--muted)">
         Salvador Data | Hacker Planet LLC | salvadorData@proton.me
       </p>
-      <a class="btn btn-primary" href="mailto:salvadorData@proton.me?subject=Kickstarter%20notify%20me">Email notify me</a>
+      <a class="btn btn-primary" id="ks-footer-primary" href="mailto:salvadorData@proton.me?subject=Kickstarter%20notify%20me">Email notify me</a>
       <a class="btn btn-ghost" href="shop.html" style="margin-left:0.5rem">Current shop -></a>
     </section>
   </main>
@@ -252,9 +276,13 @@
   <footer class="site-footer">
     <ul class="footer-links">
       <li><a href="index.html">Hacker Planet</a></li>
+      <li><a href="kickstarter.html">Kickstarter</a></li>
+      <li><a href="shop.html">Shop</a></li>
     </ul>
     <p>Defensive use only | Authorized networks only | &copy; <span id="year"></span> Hacker Planet LLC</p>
   </footer>
+  <script src="js/kickstarter.config.js"></script>
+  <script src="js/kickstarter.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

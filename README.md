@@ -113,6 +113,8 @@ Marketing graphics live in **`docs/images/`** (regenerate: `python assets/market
 | **Facebook** | Andy Klwal · Philadelphia | [docs/social/FACEBOOK.md](docs/social/FACEBOOK.md) |
 | **2600 / meetups** | Local chapter | [docs/social/2600_ONEPAGER.md](docs/social/2600_ONEPAGER.md) |
 | **Kickstarter BOM** | Kit planning | [docs/KICKSTARTER_BOM.md](docs/KICKSTARTER_BOM.md) |
+| **Kickstarter launch** | Campaign + site wiring | [docs/KICKSTARTER_LAUNCH_PLAN.md](docs/KICKSTARTER_LAUNCH_PLAN.md) · [Dashboard paste](docs/kickstarter/KICKSTARTER_DASHBOARD_PASTE.md) · [Create on kickstarter.com](docs/kickstarter/KICKSTARTER_CREATE_ON_KICKSTARTER_COM.md) · [Preview page](https://hackerplanet.dev/kickstarter.html) |
+| **Business planning** | Revenue + ideas | [docs/BUSINESS_PROJECTIONS.md](docs/BUSINESS_PROJECTIONS.md) · [docs/BUSINESS_IDEAS.md](docs/BUSINESS_IDEAS.md) |
 | **Website** | Hacker Planet LLC · Philly | [GitHub site](https://github.com/salvador-Data/cyberThreatGotchi/tree/main/website) · [Live (enable Pages)](https://salvador-Data.github.io/cyberThreatGotchi/) · [WEBSITE_LINKS.md](docs/WEBSITE_LINKS.md) |
 | **Shop** | Direct Philly ship + partner drop-ship | [shop.html](https://salvador-Data.github.io/cyberThreatGotchi/shop.html) · [SHOP_GO_LIVE.md](docs/SHOP_GO_LIVE.md) |
 

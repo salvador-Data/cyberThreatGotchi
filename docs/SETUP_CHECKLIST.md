@@ -11,6 +11,10 @@
 | [FIREWALL_BASELINE.md](FIREWALL_BASELINE.md) | BPI-R3 default-deny iptables + CTG IPS interaction |
 | [SEO.md](SEO.md) | Meta tags, JSON-LD, sitemap, robots.txt |
 | [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md) | Stripe, tax, fulfillment |
+| [KICKSTARTER_LAUNCH_PLAN.md](KICKSTARTER_LAUNCH_PLAN.md) | 30-day Kickstarter calendar |
+| [kickstarter/KICKSTARTER_CREATE_ON_KICKSTARTER_COM.md](kickstarter/KICKSTARTER_CREATE_ON_KICKSTARTER_COM.md) | Create project on kickstarter.com today |
+| [BUSINESS_PROJECTIONS.md](BUSINESS_PROJECTIONS.md) | Year 1–3 revenue scenarios |
+| [BUSINESS_IDEAS.md](BUSINESS_IDEAS.md) | Ranked growth ideas |
 | [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) | Pages enable / troubleshoot |
 
 **Quick verify (local):**

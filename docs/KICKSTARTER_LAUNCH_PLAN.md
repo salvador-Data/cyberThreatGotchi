@@ -1,7 +1,7 @@
 # CyberThreatGotchi Kickstarter — 30-day launch calendar
 
 **I (Salvador Data)** run this calendar for **Hacker Planet LLC**, Philadelphia.  
-**Campaign draft:** [kickstarter/KICKSTARTER_CAMPAIGN.md](kickstarter/KICKSTARTER_CAMPAIGN.md) · **Preview:** [hackerplanet.dev/kickstarter.html](https://hackerplanet.dev/kickstarter.html)
+**Campaign draft:** [kickstarter/KICKSTARTER_CAMPAIGN.md](kickstarter/KICKSTARTER_CAMPAIGN.md) · **Dashboard paste:** [kickstarter/KICKSTARTER_DASHBOARD_PASTE.md](kickstarter/KICKSTARTER_DASHBOARD_PASTE.md) · **Create today:** [kickstarter/KICKSTARTER_CREATE_ON_KICKSTARTER_COM.md](kickstarter/KICKSTARTER_CREATE_ON_KICKSTARTER_COM.md) · **Preview:** [hackerplanet.dev/kickstarter.html](https://hackerplanet.dev/kickstarter.html) · **Business:** [BUSINESS_PROJECTIONS.md](BUSINESS_PROJECTIONS.md) · [BUSINESS_IDEAS.md](BUSINESS_IDEAS.md)
 
 **Funding goal:** $35,000 · **Duration:** 30 days · **Ship target:** Core tiers Oct 2026
 

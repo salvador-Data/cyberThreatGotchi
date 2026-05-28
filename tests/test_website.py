@@ -507,9 +507,18 @@ def test_product_pricing_doc_exists():
     assert "crackbotCyd" in text  # deprecated table
 
 
+def test_kickstarter_config():
+    config = (WEB / "js" / "kickstarter.config.js").read_text(encoding="utf-8")
+    assert "kickstarterProjectUrl" in config
+    assert "kickstarter.com" in config
+    assert "hackerplanet/cyberthreatgotchi-edge-ips-tamagotchi" in config
+    site = (WEB / "seo" / "site.json").read_text(encoding="utf-8")
+    assert '"kickstarterProjectUrl"' in site
+
+
 def test_kickstarter_preview_page():
     html = (WEB / "kickstarter.html").read_text(encoding="utf-8")
-    assert "Kickstarter preview" in html
+    assert "Kickstarter preview" in html or "ks-hero-label" in html
     assert "$149" in html
     assert "$219" in html
     assert "$279" in html
@@ -518,6 +527,13 @@ def test_kickstarter_preview_page():
     assert "Authorized networks only" in html
     assert "direct-core-kit.jpg" in html
     assert "dropship" not in html.lower().replace('id="dropship-catalog"', "")
+    assert "kickstarter.config.js" in html
+    assert "kickstarter.js" in html
+    assert "kickstarter.com" in html
+    assert "BUSINESS_PROJECTIONS.md" in html
+    assert "KICKSTARTER_LAUNCH_PLAN.md" in html
+    js = (WEB / "js" / "kickstarter.js").read_text(encoding="utf-8")
+    assert "kickstarter.com" in js or "Back this project on Kickstarter" in js
 
 
 def test_sync_website_to_docs():

@@ -182,7 +182,14 @@
       "ogType": "website",
       "ogImage": "/images/products/direct-core-kit.jpg",
       "jsonLd": ["organization", "localBusiness", "breadcrumb"],
-      "sitemapPriority": "0.85"
+      "sitemapPriority": "0.85",
+      "kickstarterProjectUrl": "https://www.kickstarter.com/projects/hackerplanet/cyberthreatgotchi-edge-ips-tamagotchi"
     }
+  },
+  "kickstarter": {
+    "kickstarterProjectUrl": "https://www.kickstarter.com/projects/hackerplanet/cyberthreatgotchi-edge-ips-tamagotchi",
+    "placeholderSlug": "hackerplanet/cyberthreatgotchi-edge-ips-tamagotchi",
+    "configKey": "kickstarterProjectUrl",
+    "configFile": "website/js/kickstarter.config.js"
   }
 }
