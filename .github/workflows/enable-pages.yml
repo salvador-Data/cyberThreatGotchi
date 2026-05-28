@@ -9,7 +9,6 @@ on:
 permissions:
   contents: read
   pages: read
-  administration: read
 
 concurrency:
   group: enable-pages
