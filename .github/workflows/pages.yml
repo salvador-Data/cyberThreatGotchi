@@ -25,7 +25,6 @@ jobs:
     permissions:
       contents: read
       pages: write
-      administration: write
     steps:
       - name: Enable GitHub Pages (workflow build)
         uses: actions/github-script@v7
