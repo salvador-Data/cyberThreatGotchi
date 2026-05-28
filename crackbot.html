@@ -189,6 +189,9 @@
         CrackBot is primarily a <strong>Python lab stack</strong> on Jetson or your laptop (simulation mode).
         Clone the repo to run tests and bench workflows; Philadelphia bench kits add CYD UI firmware in the Mr. Pac-Bot shell.
       </p>
+      <p class="section-sub muted-inline" style="max-width:42rem;margin-top:0.75rem">
+        <strong>Authorized lab use only.</strong> Download and run wordlist tools only on networks you own or have written permission to test (bench VLAN / simulation).
+      </p>
       <ul class="feature-list" style="max-width:42rem;margin-top:1rem">
         <li>
           <a href="https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano" target="_blank" rel="noopener">Mr.-CrackBot-AI-Nano repository ↗</a>
@@ -203,8 +206,11 @@
           — pocket shell and accessories (<code>hardware/stl/pocket/</code>)
         </li>
         <li>
-          <a href="https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano/blob/main/README.md" target="_blank" rel="noopener">README flash &amp; setup ↗</a>
-          — Jetson image, GPU hashcat path, CYD display wiring
+          <a href="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/scripts/mr_crackbot/password_generator.py" target="_blank" rel="noopener" download>password_generator.py ↗</a>
+          — heuristic + optional AI wordlist (<code>MR_CRACKBOT_USE_AI=1</code>);
+          local clone: <code>scripts/mr_crackbot/password_generator.py</code>;
+          logs under <code>data/logs/mr_crackbot_ai.log</code> (or <code>CTG_DATA_DIR</code> / <code>MR_CRACKBOT_LOG_PATH</code>);
+          <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/scripts/mr_crackbot/password_generator.py" target="_blank" rel="noopener">GitHub ↗</a>
         </li>
       </ul>
     </section>
