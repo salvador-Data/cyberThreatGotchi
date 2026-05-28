@@ -121,6 +121,15 @@
       "ogType": "website",
       "ogImage": "/images/hero-cybertech.png",
       "jsonLd": ["localBusiness", "breadcrumb"]
+    },
+    "kickstarter.html": {
+      "title": "CyberThreatGotchi Kickstarter Preview · HackerPlanet",
+      "description": "Kickstarter preview — CyberThreatGotchi edge IPS kits from Philadelphia. Early Bird Core $149, Field Pack $219, open-source Cipherhorn guardian. Defensive use only.",
+      "keywords": "CyberThreatGotchi Kickstarter, edge IPS kit, Cipherhorn, homelab security, Philadelphia maker",
+      "ogType": "website",
+      "ogImage": "/images/products/direct-core-kit.jpg",
+      "jsonLd": ["localBusiness", "product", "breadcrumb"],
+      "sitemapPriority": "0.85"
     }
   }
 }

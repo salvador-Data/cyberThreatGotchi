@@ -10,10 +10,19 @@ Allow: /
 User-agent: Slurp
 Allow: /
 
-User-agent: facebot
+User-agent: Yandex
 Allow: /
 
-User-agent: Yandex
+User-agent: Applebot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: Brave
+Allow: /
+
+User-agent: facebot
 Allow: /
 
 User-agent: *

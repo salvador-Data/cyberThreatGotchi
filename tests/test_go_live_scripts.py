@@ -15,9 +15,12 @@ def test_go_live_scripts_exist():
         "scripts/go_live_all.ps1",
         "scripts/cloudflare_apply_dns.py",
         "scripts/github_pages_https.py",
+        "scripts/seo_verification_dns.py",
+        "scripts/seo_go_live_checklist.ps1",
         "scripts/cloudflare/dns-github-pages.bind",
         "scripts/cloudflare/dns-email-routing.bind",
         "docs/GO_LIVE_NOW.md",
+        "docs/SEO_GOOGLE_BUSINESS_PROFILE.md",
     ):
         assert (ROOT / name).is_file(), name
 
@@ -67,3 +70,21 @@ def test_cloudflare_apply_dns_email_flag_prints_manual_steps():
     assert "route1.mx.cloudflare.net" in r.stdout
     assert "v=spf1 include:_spf.mx.cloudflare.net ~all" in r.stdout
     assert "hello@hackerplanet.dev" in r.stdout
+
+
+def test_seo_verification_dns_requires_token_for_apply():
+    env = {k: v for k, v in __import__("os").environ.items() if k != "CF_API_TOKEN"}
+    r = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "seo_verification_dns.py"),
+            "--google-txt",
+            "google-site-verification=test",
+        ],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    assert r.returncode == 1
+    assert "CF_API_TOKEN" in r.stderr

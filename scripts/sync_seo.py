@@ -22,8 +22,11 @@ SEARCH_BOTS = (
     "Bingbot",
     "DuckDuckBot",
     "Slurp",
-    "facebot",
     "Yandex",
+    "Applebot",
+    "Baiduspider",
+    "Brave",
+    "facebot",
 )
 
 

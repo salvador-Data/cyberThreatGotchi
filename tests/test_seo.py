@@ -29,7 +29,17 @@ def test_seo_config_valid():
 def test_robots_and_sitemap():
     robots = (WEB / "robots.txt").read_text(encoding="utf-8")
     assert "Sitemap: https://hackerplanet.dev/sitemap.xml" in robots
-    for bot in ("Googlebot", "Bingbot", "DuckDuckBot", "Slurp", "facebot", "Yandex"):
+    for bot in (
+        "Googlebot",
+        "Bingbot",
+        "DuckDuckBot",
+        "Slurp",
+        "Yandex",
+        "Applebot",
+        "Baiduspider",
+        "Brave",
+        "facebot",
+    ):
         assert f"User-agent: {bot}" in robots, bot
         assert "Allow: /" in robots
     assert "Disallow: /js/payments.config.js" in robots
@@ -38,6 +48,7 @@ def test_robots_and_sitemap():
     assert "https://hackerplanet.dev/cardputer.html" in sitemap
     assert "https://hackerplanet.dev/cyd.html" in sitemap
     assert "https://hackerplanet.dev/cybersecurity-philadelphia.html" in sitemap
+    assert "https://hackerplanet.dev/kickstarter.html" in sitemap
 
 
 def test_all_pages_have_seo_markers():
@@ -99,6 +110,8 @@ def test_cybersecurity_philadelphia_page_content():
     assert "Philadelphia" in html
     assert "salvadorData@proton.me" in html
     assert "cybersecurity-philadelphia.html" in (WEB / "index.html").read_text(encoding="utf-8")
+    index = (WEB / "index.html").read_text(encoding="utf-8")
+    assert "kickstarter.html" in index
 
 
 def test_sync_seo_script():
@@ -109,6 +122,18 @@ def test_sync_seo_script():
         text=True,
     )
     assert r.returncode == 0, r.stderr
+
+
+def test_seo_verification_dns_doc_mode():
+    r = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "seo_verification_dns.py"), "--doc"],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+    )
+    assert r.returncode == 0, r.stderr
+    assert "google-site-verification=" in r.stdout
+    assert "verify.bing.com" in r.stdout
 
 
 def test_ping_indexnow_dry_run():
