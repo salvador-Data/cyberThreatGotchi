@@ -2,14 +2,20 @@
  * Hacker Planet LLC - payment configuration
  *
  * Copy to payments.config.js and fill in your live links from Stripe / PayPal dashboards.
- * See docs/PAYMENTS.md for setup steps.
+ * See docs/PAYMENTS.md and docs/PAYMENTS_RECURRING.md for setup steps.
  *
- * Safe to commit: Payment Link URLs and PayPal client IDs are publishable.
+ * Safe to commit: Payment Link URLs, Customer Portal URL, and PayPal client IDs are publishable.
  * Never put Stripe secret keys or PayPal secrets in this file.
  */
 window.HPL_PAYMENTS = {
   /** Set false when links below are configured */
   demoMode: true,
+
+  /**
+   * Stripe Customer Portal (Dashboard -> Settings -> Billing -> Customer portal).
+   * Returning subscribers manage cards, invoices, and cancellations here — not on our site.
+   */
+  stripeCustomerPortal: "",
 
   /** Stripe Payment Links - cards, debit, Apple Pay, Google Pay, Link */
   /**
@@ -34,6 +40,9 @@ window.HPL_PAYMENTS = {
     digital: "",
     proMonthly: "",
     proYearly: "",
+    mspMonitor: "",
+    mspDefend: "",
+    mspHarden: "",
     coreKit: "",
     fieldPack: "",
     boostFormulaCod: "",
@@ -75,6 +84,18 @@ window.HPL_PAYMENTS = {
     currency: "USD",
   },
 
+  /**
+   * PayPal subscription plan IDs (Dashboard -> Subscriptions -> Plans).
+   * Optional — when set, shop renders hosted PayPal subscription buttons.
+   */
+  paypalSubscriptions: {
+    proMonthly: { planId: "" },
+    proYearly: { planId: "" },
+    mspMonitor: { planId: "" },
+    mspDefend: { planId: "" },
+    mspHarden: { planId: "" },
+  },
+
   /** PayPal.Me or hosted payment links (fallback without SDK) */
   paypalMe: {
     username: "",
@@ -91,4 +112,9 @@ window.HPL_PAYMENTS = {
   },
 
   supportEmail: "salvadorData@proton.me",
+
+  /** Returning customer localStorage (browser only — never PAN). */
+  returningCustomer: {
+    maxAgeDays: 365,
+  },
 };

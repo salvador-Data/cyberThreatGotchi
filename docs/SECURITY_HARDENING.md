@@ -12,7 +12,8 @@ Defensive coding and deployment practices for Hacker Planet LLC projects.
 | `CTG_WEBHOOK_SECRET` | `X-CTG-Secret` on outbound webhooks |
 | `CTG_PRO_API_KEY` | Master Pro feed key (or use per-customer keys DB) |
 | `CTG_AUDIT_SECRET` | HMAC on audit chain export |
-| `CTG_STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification |
+| `CTG_STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification (`verify_stripe_webhook` / `hmac.compare_digest`) |
+| `CTG_STRIPE_SECRET_KEY` | Server-only Stripe API key (`sk_…`) for `scripts/stripe_portal_session.py` — never in `payments.config.js` |
 | `CTG_PRO_KEYS_DB` | SQLite path for provisioned Pro keys |
 | `CTG_WEB_PORT` | Web dashboard port for firewall baseline (default `8765`) |
 | `CTG_EXTRA_TCP_PORTS` | Comma-separated extra TCP ports for `scripts/firewall-baseline.sh` |
@@ -48,6 +49,8 @@ Implemented in `core/security.py` and `dashboard/web_server.py`:
 - **Auth:** set `CTG_OPERATOR_TOKEN` (recommended) or reuse `CTG_WEB_API_TOKEN`
 - **Stripe auto-queue:** `POST /api/fulfillment/webhook` with `CTG_STRIPE_WEBHOOK_SECRET`; Payment Link metadata `stripe_key=ds…`
 - **No PCI scope expansion** — operator pays suppliers manually; dashboard never stores card numbers or marketplace passwords
+- **Fulfillment queue** — may store `stripe_customer_id` and ship-to text from Stripe sessions; never PAN, CVV, or PaymentMethod payloads
+- **Static shop** — `customer-prefill.js` stores email + ship-to in browser `localStorage` only; saved cards live in Stripe Customer Portal / PayPal vault
 
 ```powershell
 $env:CTG_OPERATOR_TOKEN = "long-random-token"

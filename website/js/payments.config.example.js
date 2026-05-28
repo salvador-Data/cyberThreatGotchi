@@ -112,4 +112,9 @@ window.HPL_PAYMENTS = {
   },
 
   supportEmail: "salvadorData@proton.me",
+
+  /** Returning customer localStorage (browser only — never PAN). */
+  returningCustomer: {
+    maxAgeDays: 365,
+  },
 };

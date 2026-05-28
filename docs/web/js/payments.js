@@ -1,6 +1,7 @@
 /**
  * Hacker Planet LLC - checkout buttons
- * Stripe (cards, debit, Apple Pay) | PayPal | Venmo | Cash App
+ * Stripe (hosted Payment Links + Customer Portal) | PayPal hosted | Venmo | Cash App
+ * Never collects PAN/CVV on this site — cards vault on Stripe/PayPal only.
  */
 
 (function () {
@@ -18,16 +19,50 @@
       name: "CTG Pro Feed",
       price: 9,
       period: "/month",
+      recurring: true,
       desc: "Pro signatures, YARA, hash packs via API key",
       stripeKey: "proMonthly",
+      paypalPlanKey: "proMonthly",
     },
     proYearly: {
       id: "proYearly",
       name: "CTG Pro Feed",
       price: 99,
       period: "/year",
+      recurring: true,
       desc: "Pro feed - save vs monthly",
       stripeKey: "proYearly",
+      paypalPlanKey: "proYearly",
+    },
+    mspMonitor: {
+      id: "mspMonitor",
+      name: "Blue Team MSP — Monitor",
+      price: 1500,
+      period: "/month",
+      recurring: true,
+      desc: "Log review, CTG edge health, patch advisory, quarterly review",
+      stripeKey: "mspMonitor",
+      paypalPlanKey: "mspMonitor",
+    },
+    mspDefend: {
+      id: "mspDefend",
+      name: "Blue Team MSP — Defend",
+      price: 2750,
+      period: "/month",
+      recurring: true,
+      desc: "Monitor + UTM policy, YARA cadence, business-hours triage",
+      stripeKey: "mspDefend",
+      paypalPlanKey: "mspDefend",
+    },
+    mspHarden: {
+      id: "mspHarden",
+      name: "Blue Team MSP — Harden",
+      price: 4500,
+      period: "/month",
+      recurring: true,
+      desc: "Defend + DDoS edge hardening, scrubbing liaison, on-call escalation",
+      stripeKey: "mspHarden",
+      paypalPlanKey: "mspHarden",
     },
     coreKit: {
       id: "coreKit",
@@ -267,9 +302,212 @@
     return window.HPL_PAYMENTS || {};
   }
 
+  function prefillApi() {
+    return window.HPL_customerPrefill || null;
+  }
+
   function stripeLink(key) {
     var links = cfg().stripePaymentLinks || {};
     return (links[key] || "").trim();
+  }
+
+  function customerPortalUrl() {
+    return String(cfg().stripeCustomerPortal || cfg().stripe?.customerPortalUrl || "").trim();
+  }
+
+  function isRecurringProduct(product) {
+    return !!product.recurring || product.period === "/month" || product.period === "/year";
+  }
+
+  function loadCustomerProfile() {
+    var api = prefillApi();
+    if (!api) return {};
+    var data = api.load() || {};
+    return data.email ? data : {};
+  }
+
+  function saveCustomerProfile(profile) {
+    var api = prefillApi();
+    if (!api || !profile || !profile.email) return false;
+    api.save({
+      email: profile.email,
+      name: profile.name || (profile.ship_to && profile.ship_to.name) || "",
+      shipTo: {
+        line1: (profile.ship_to && profile.ship_to.line1) || "",
+        city: (profile.ship_to && profile.ship_to.city) || "",
+        state: (profile.ship_to && profile.ship_to.state) || "",
+        zip: (profile.ship_to && profile.ship_to.postal_code) || "",
+      },
+    });
+    return true;
+  }
+
+  function clearCustomerProfile() {
+    var api = prefillApi();
+    if (api) api.clear();
+  }
+
+  function buildStripeCheckoutUrl(baseUrl, product) {
+    if (!baseUrl) return "";
+    var url = baseUrl;
+    var api = prefillApi();
+    var profile = loadCustomerProfile();
+    if (api && profile.email) {
+      url = api.appendStripePrefill(url, profile.email);
+    }
+    if (product && product.stripeKey) {
+      var sep2 = url.indexOf("?") >= 0 ? "&" : "?";
+      url += sep2 + "client_reference_id=" + encodeURIComponent(product.stripeKey);
+    }
+    return url;
+  }
+
+  function formatShipToPreview(profile) {
+    if (!profile || !profile.email) return "";
+    var ship = profile.shipTo || profile.ship_to || {};
+    var parts = [];
+    if (profile.name) parts.push(profile.name);
+    if (ship.line1) parts.push(ship.line1);
+    var cityLine = [ship.city, ship.state, ship.zip || ship.postal_code].filter(Boolean).join(" ");
+    if (cityLine) parts.push(cityLine);
+    return parts.join(", ");
+  }
+
+  function renderReturningCustomerBar() {
+    var host = document.getElementById("returning-customer-bar");
+    if (!host) return;
+    host.innerHTML = "";
+    var profile = loadCustomerProfile();
+    var portal = customerPortalUrl();
+    var demo = cfg().demoMode !== false;
+
+    if (!profile.email && !portal && demo) return;
+
+    var box = el("div", "returning-customer-panel");
+    if (profile && profile.email) {
+      var preview = formatShipToPreview(profile);
+      box.appendChild(
+        el(
+          "p",
+          "returning-customer-greeting",
+          "<strong>Welcome back.</strong> Checkout can prefill your email" +
+            (preview ? " — last ship-to: " + escapeHtml(preview) : "") +
+            ". Saved cards are managed in Stripe (not on this site)."
+        )
+      );
+    } else if (!demo) {
+      box.appendChild(
+        el(
+          "p",
+          "returning-customer-greeting",
+          "Returning customer? Your saved payment methods live in Stripe Customer Portal."
+        )
+      );
+    }
+
+    var actions = el("div", "returning-customer-actions");
+    if (portal) {
+      actions.appendChild(
+        payBtn("Manage billing & saved cards", portal, "portal", "")
+      );
+    }
+    if (profile.email) {
+      var clearBtn = el("button", "returning-clear-btn", "Clear saved ship-to on this device");
+      clearBtn.type = "button";
+      clearBtn.addEventListener("click", function () {
+        clearCustomerProfile();
+        renderReturningCustomerBar();
+      });
+      actions.appendChild(clearBtn);
+    }
+    if (actions.childNodes.length) box.appendChild(actions);
+    if (box.childNodes.length) host.appendChild(box);
+  }
+
+  function renderShipToSaveForm() {
+    var host = document.getElementById("ship-to-save-form");
+    if (!host) return;
+    var profile = loadCustomerProfile();
+    host.innerHTML =
+      '<p class="pay-privacy-note">' +
+      "<strong>Privacy:</strong> We never store card numbers on hackerplanet.dev. " +
+      "Optional ship-to + email save only in <em>your browser</em> for faster checkout. " +
+      "Payment methods vault on Stripe or PayPal hosted pages." +
+      "</p>" +
+      '<form class="ship-to-save-form" id="hpl-ship-profile-form" autocomplete="shipping">' +
+      '<label>Email <input type="email" name="email" required maxlength="254" /></label>' +
+      '<label>Name <input type="text" name="name" maxlength="120" autocomplete="name" /></label>' +
+      '<label>Address <input type="text" name="line1" maxlength="200" autocomplete="address-line1" /></label>' +
+      '<label>Apt / suite <input type="text" name="line2" maxlength="120" autocomplete="address-line2" /></label>' +
+      '<label>City <input type="text" name="city" maxlength="80" autocomplete="address-level2" /></label>' +
+      '<label>State <input type="text" name="state" maxlength="40" autocomplete="address-level1" /></label>' +
+      '<label>ZIP <input type="text" name="postal_code" maxlength="20" autocomplete="postal-code" /></label>' +
+      '<button type="submit" class="btn btn-ghost">Save ship-to for next visit</button>' +
+      "</form>";
+
+    var form = document.getElementById("hpl-ship-profile-form");
+    if (!form) return;
+    if (profile && profile.email) {
+      form.email.value = profile.email || "";
+      form.name.value = profile.name || "";
+      var s = profile.shipTo || profile.ship_to || {};
+      form.line1.value = s.line1 || "";
+      form.line2.value = s.line2 || "";
+      form.city.value = s.city || "";
+      form.state.value = s.state || "";
+      form.postal_code.value = s.zip || s.postal_code || "";
+    }
+    form.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      saveCustomerProfile({
+        email: form.email.value,
+        ship_to: {
+          name: form.name.value,
+          line1: form.line1.value,
+          line2: form.line2.value,
+          city: form.city.value,
+          state: form.state.value,
+          postal_code: form.postal_code.value,
+          country: "US",
+        },
+      });
+      renderReturningCustomerBar();
+      alert("Ship-to saved on this device only. Use Stripe Portal to update saved cards.");
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function updatePayTrustBar() {
+    var bar = document.getElementById("pay-trust-bar");
+    if (!bar) return;
+    var demo = cfg().demoMode !== false;
+    var hasStripe = Object.keys(cfg().stripePaymentLinks || {}).some(function (k) {
+      return !!stripeLink(k);
+    });
+    var portal = customerPortalUrl();
+    if (demo && !hasStripe) {
+      bar.className = "pay-trust-bar reveal pay-trust-bar--muted";
+      bar.innerHTML =
+        "<span>Checkout: demo mode</span>" +
+        "<span>Stripe | PayPal | Venmo | Cash App</span>";
+      return;
+    }
+    bar.className = "pay-trust-bar reveal";
+    var parts = ["<span>Secure checkout</span>"];
+    if (hasStripe) parts.push("<span>Stripe: cards, Apple Pay, Google Pay, Link</span>");
+    if ((cfg().paypal || {}).clientId || (cfg().paypalMe || {}).username) {
+      if (cfg().paypalSubscriptions) parts.push("<span>PayPal subscriptions</span>");
+      else parts.push("<span>PayPal</span>");
+    }
+    if (portal) parts.push('<span><a href="' + escapeHtml(portal) + '" rel="noopener noreferrer">Billing portal</a></span>');
+    bar.innerHTML = parts.join("");
   }
 
   function cashAppUrl(amount, note) {
@@ -322,35 +560,45 @@
     container.innerHTML = "";
     var c = cfg();
     var demo = c.demoMode !== false;
-    var hasStripe = !!stripeLink(product.stripeKey);
+    var link = buildStripeCheckoutUrl(stripeLink(product.stripeKey), product);
+    var hasStripe = !!link;
     var hasPayPalMe = !!(c.paypalMe && c.paypalMe.username);
     var hasCash = !!(c.cashapp && c.cashapp.cashtag);
     var hasVenmo = !!(c.venmo && c.venmo.username);
     var hasPayPalSdk = !!(c.paypal && c.paypal.clientId);
+    var portal = customerPortalUrl();
+    var recurring = isRecurringProduct(product);
+
+    if (recurring) {
+      container.appendChild(
+        el("p", "pay-recurring-badge", "Recurring subscription — cancel anytime via billing portal")
+      );
+    }
 
     var methods = el("div", "pay-methods");
 
     if (hasStripe) {
-      methods.appendChild(
-        payBtn("Card | Debit | Apple Pay", stripeLink(product.stripeKey), "stripe")
-      );
+      var label = recurring
+        ? "Subscribe (Stripe)"
+        : "Card | Debit | Apple Pay | Save for next time";
+      methods.appendChild(payBtn(label, link, "stripe"));
     } else if (demo) {
       methods.appendChild(el("span", "pay-placeholder", "Stripe link - see docs/PAYMENTS.md"));
     }
 
-    if (hasPayPalMe) {
-      methods.appendChild(
-        payBtn("PayPal", paypalMeUrl(product.price), "paypal")
-      );
+    if (portal && recurring) {
+      methods.appendChild(payBtn("Manage subscription", portal, "portal"));
     }
 
-    if (hasVenmo) {
-      methods.appendChild(
-        payBtn("Venmo", venmoUrl(product.price, product.name), "venmo")
-      );
+    if (hasPayPalMe && !recurring) {
+      methods.appendChild(payBtn("PayPal", paypalMeUrl(product.price), "paypal"));
     }
 
-    if (hasCash) {
+    if (hasVenmo && !recurring) {
+      methods.appendChild(payBtn("Venmo", venmoUrl(product.price, product.name), "venmo"));
+    }
+
+    if (hasCash && !recurring) {
       var ca = cashAppUrl(product.price, product.name);
       if (ca) methods.appendChild(payBtn("Cash App", ca, "cashapp"));
     }
@@ -362,6 +610,8 @@
       sdkHost.id = "paypal-" + product.id;
       sdkHost.dataset.amount = String(product.price);
       sdkHost.dataset.name = product.name;
+      sdkHost.dataset.recurring = recurring ? "1" : "0";
+      if (product.paypalPlanKey) sdkHost.dataset.paypalPlan = product.paypalPlanKey;
       container.appendChild(sdkHost);
     }
 
@@ -387,13 +637,25 @@
       callback(true);
       return;
     }
+    var intent = "";
+    var subs = cfg().paypalSubscriptions || {};
+    var needsSubs = Object.keys(subs).some(function (k) {
+      var entry = subs[k];
+      return entry && (entry.planId || (typeof entry === "string" && entry));
+    });
+    if (needsSubs) {
+      intent = "&vault=true&intent=subscription";
+    } else if (c.vault) {
+      intent = "&intent=capture&vault=true";
+    }
     var s = document.createElement("script");
     s.src =
       "https://www.paypal.com/sdk/js?client-id=" +
       encodeURIComponent(c.clientId) +
       "&currency=" +
       encodeURIComponent(c.currency || "USD") +
-      "&enable-funding=venmo,paylater&disable-funding=credit";
+      "&enable-funding=venmo,paylater&disable-funding=credit" +
+      intent;
     s.onload = function () {
       callback(true);
     };
@@ -403,11 +665,38 @@
     document.head.appendChild(s);
   }
 
+  function paypalPlanId(planKey) {
+    var subs = cfg().paypalSubscriptions || {};
+    var entry = subs[planKey];
+    if (!entry) return "";
+    return String(entry.planId || entry || "").trim();
+  }
+
   function renderPayPalButtons() {
     if (!window.paypal) return;
     document.querySelectorAll(".paypal-sdk-host").forEach(function (host) {
       var amount = host.dataset.amount;
       var name = host.dataset.name || "Hacker Planet LLC";
+      var recurring = host.dataset.recurring === "1";
+      var planKey = host.dataset.paypalPlan || "";
+      var planId = planKey ? paypalPlanId(planKey) : "";
+
+      if (recurring && planId) {
+        window.paypal
+          .Buttons({
+            fundingSource: window.paypal.FUNDING.PAYPAL,
+            style: { label: "subscribe" },
+            createSubscription: function (data, actions) {
+              return actions.subscription.create({ plan_id: planId });
+            },
+            onApprove: function (data) {
+              console.info("[paypal] subscription approved", data.subscriptionID);
+            },
+          })
+          .render(host);
+        return;
+      }
+
       window.paypal
         .Buttons({
           fundingSource: window.paypal.FUNDING.PAYPAL,
@@ -427,7 +716,7 @@
         })
         .render(host);
 
-      if (window.paypal.FUNDING.VENMO) {
+      if (!recurring && window.paypal.FUNDING.VENMO) {
         var venmoHost = document.createElement("div");
         venmoHost.className = "paypal-venmo-host";
         host.parentNode.appendChild(venmoHost);
@@ -454,6 +743,10 @@
   }
 
   function initShop() {
+    renderReturningCustomerBar();
+    renderShipToSaveForm();
+    updatePayTrustBar();
+
     document.querySelectorAll("[data-product]").forEach(function (card) {
       var id = card.getAttribute("data-product");
       var product = PRODUCTS[id];
@@ -470,6 +763,11 @@
   window.HPL_PRODUCTS = PRODUCTS;
   window.HPL_renderCheckout = renderCheckout;
   window.HPL_initShop = initShop;
+  window.HPL_renderReturningCustomer = renderReturningCustomerBar;
+  window.HPL_loadCustomerProfile = loadCustomerProfile;
+  window.HPL_saveCustomerProfile = saveCustomerProfile;
+  window.HPL_clearCustomerProfile = clearCustomerProfile;
+  window.HPL_buildStripeCheckoutUrl = buildStripeCheckoutUrl;
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initShop);
