@@ -878,6 +878,25 @@ section {
   margin: 0.75rem 0 0;
 }
 
+.prelaunch-banner {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  background: rgba(0, 255, 200, 0.06);
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.prelaunch-banner a {
+  color: var(--cyan);
+}
+
+.pay-trust-bar--muted {
+  opacity: 0.85;
+  font-size: 0.88rem;
+}
+
 .pay-demo-note code {
   font-size: 0.8rem;
   color: var(--magenta);
