@@ -79,7 +79,7 @@
       </h1>
       <p class="lead">
         The <strong>M5Stack Cardputer</strong> (ESP32-S3, ST7789 240x135 display, built-in QWERTY keyboard) is a keyboard-first pocket platform for authorized field work - separate from Cheap Yellow Display Wi-Fi builds.
-        Two Philadelphia-assembled firmware SKUs share the same M5 Cardputer hardware: <strong>Remote Possibility</strong> polls CyberThreatGotchi; <strong>BLE Bot</strong> runs authorized BLE proximity lab workflows on the Cardputer keyboard UI.
+        Two Philadelphia-assembled firmware SKUs share the same M5 Cardputer hardware: <strong>Remote Possibility</strong> is a universal IR remote (learn, library, scan); <strong>BLE Bot</strong> runs authorized BLE proximity lab workflows on the Cardputer keyboard UI.
       </p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#remote-possibility">Remote Possibility</a>
@@ -129,40 +129,45 @@
       <div class="feature-row">
         <div>
           <p class="section-sub" style="max-width:42rem">
-            M5 Cardputer field HTTP client that polls CyberThreatGotchi <code>/api/status</code> over authorized lab Wi-Fi.
-            Shows mood tile and threat pressure on the ST7789 display while you walk the rack.
+            Universal <strong>multi-transport remote</strong> for the M5 Cardputer — <strong>IR</strong> (38 kHz),
+            <strong>RF 433/315 MHz</strong> OOK, and <strong>CC1101 sub-GHz</strong> (documented SPI wiring). Learn OEM remotes,
+            browse SD libraries, scan TV/fan/AC NEC codes. Keyboard-first UX for gear you own.
           </p>
           <ul class="feature-list">
-            <li>MicroPython <code>ctg_status.py</code> and PlatformIO env <code>m5stack-cardputer</code> (<code>M5Cardputer</code> + <code>ArduinoJson</code>)</li>
-            <li>Configure CTG URL on-device: settings menu, USB serial <code>SET HOST</code> / <code>SET PORT</code>, or optional SD <code>/config/remote_possibility.cfg</code></li>
-            <li>Wi-Fi credentials in NVS; HTTP timeout, reconnect, and <code>r</code> manual refresh</li>
+            <li><strong>IR</strong> GPIO 44 TX / 1 RX · <strong>RF</strong> 43 TX / 2 RX · <strong>CC1101</strong> SPI on GPIO 8/35/36/37/9 — <a href="https://github.com/salvador-Data/Remote-Possibility/blob/main/docs/HARDWARE.md" target="_blank" rel="noopener">HARDWARE.md</a></li>
+            <li>Library on SD <code>/home/default/remotes/</code> — categories: TV, fan, AC, projector, audio, light</li>
+            <li>Learn mode captures NEC + raw timing; scan mode tries common brand NEC patterns with <strong>y/n</strong> confirm</li>
+            <li>PlatformIO env <code>m5stack-cardputer</code> (<code>M5Cardputer</code> + <code>Arduino-IRremote</code>)</li>
             <li>M5 OS manifest package: <code>remote_possibility.bin</code></li>
             <li>GitHub: <a href="https://github.com/salvador-Data/Remote-Possibility" target="_blank" rel="noopener">Remote-Possibility -></a></li>
           </ul>
           <p style="margin-top:1rem"><a class="btn btn-primary" href="shop.html#remote-possibility">Shop Remote Possibility | $99.99 -></a></p>
         </div>
         <div class="prose">
-          <h3>Keyboard map (status + settings)</h3>
+          <h3>Keyboard map (home + library)</h3>
           <table class="spec-table" style="width:100%;font-size:0.9rem">
             <thead>
               <tr><th>Key</th><th>Action</th></tr>
             </thead>
             <tbody>
-              <tr><td><code>r</code></td><td>Poll <code>/api/status</code> now</td></tr>
-              <tr><td><code>e</code></td><td>Open settings (host, port, Wi-Fi, poll ms)</td></tr>
-              <tr><td><code>;</code> / <code>w</code></td><td>Move selection up (settings)</td></tr>
-              <tr><td><code>.</code> / <code>s</code></td><td>Move selection down (settings)</td></tr>
-              <tr><td>Enter</td><td>Edit field · save</td></tr>
-              <tr><td><code>`</code></td><td>Back / cancel edit</td></tr>
+              <tr><td><code>;</code> / <code>w</code></td><td>Move selection up</td></tr>
+              <tr><td><code>.</code> / <code>s</code></td><td>Move selection down</td></tr>
+              <tr><td><code>l</code></td><td>Learn mode — capture IR from OEM remote</td></tr>
+              <tr><td><code>f</code></td><td>Scan mode — try common NEC codes (lab demo)</td></tr>
+              <tr><td><code>x</code></td><td>Send highlighted command</td></tr>
+              <tr><td>Enter</td><td>Select · send · save learned code</td></tr>
+              <tr><td><code>y</code> / <code>n</code></td><td>Scan hit worked / try next</td></tr>
+              <tr><td><code>`</code></td><td>Back</td></tr>
             </tbody>
           </table>
           <p style="margin-top:1rem">
-            USB serial at 115200: <code>HELP</code>, <code>SET SSID</code>, <code>SET HOST</code>, <code>WIFI</code>.
-            See <a href="https://github.com/salvador-Data/Remote-Possibility/blob/main/docs/CARDPUTER.md" target="_blank" rel="noopener">CARDPUTER.md -></a>.
+            Copy example remotes from the repo to SD, then browse Library.
+            See <a href="https://github.com/salvador-Data/Remote-Possibility/blob/main/docs/CARDPUTER.md" target="_blank" rel="noopener">CARDPUTER.md -></a>
+            and <a href="https://github.com/salvador-Data/Remote-Possibility/blob/main/docs/HARDWARE.md" target="_blank" rel="noopener">HARDWARE.md -></a>.
           </p>
           <h3>Separate from BLE Bot</h3>
           <p>
-            Remote Possibility is a <strong>Wi-Fi HTTP poll client</strong> for CTG edge status - it does not run BLE scans.
+            Remote Possibility is an <strong>IR universal remote</strong> — it does not poll CyberThreatGotchi or run BLE scans.
             BLE Bot is a separate firmware image for authorized BLE proximity lab work on the same M5 Cardputer hardware.
           </p>
         </div>
@@ -227,8 +232,8 @@
         <p>
           BLE Bot firmware design and field-research lineage originates from <strong>WhiteHat CyberSecurity</strong> firm workflows.
           <strong>Hacker Planet LLC</strong> assembles Philadelphia SKUs, maintains open-source repos, and ships pre-flashed M5 Cardputer units.
-          Salvador Data (<a href="https://github.com/salvadorData" target="_blank" rel="noopener">salvadorData</a> /
-          <a href="https://github.com/salvador-Data" target="_blank" rel="noopener">salvador-Data</a>) is the firmware author and repo maintainer.
+          Salvador Data (<a href="https://github.com/salvador-Data" target="_blank" rel="noopener">salvador-Data</a> ·
+          <a href="https://www.reddit.com/user/SalvadorData" target="_blank" rel="noopener">u/SalvadorData</a>) is the firmware author and repo maintainer.
         </p>
       </div>
     </section>
@@ -238,14 +243,14 @@
       <h2 class="section-title">Philadelphia assembled Cardputer builds</h2>
       <div class="shop-grid" style="max-width:52rem">
         <article class="shop-card shop-card-featured">
-          <div class="shop-badge">CTG remote</div>
+          <div class="shop-badge">IR remote</div>
           <div class="shop-price">$99.99</div>
           <h3>Remote Possibility</h3>
-          <p>M5 Cardputer pre-flashed to poll CTG <code>/api/status</code> - mood tile and field HTTP client for authorized lab Wi-Fi.</p>
+          <p>M5 Cardputer + 38 kHz IR module — learn OEM remotes, scan TV/fan/AC codes, save libraries on SD.</p>
           <ul class="shop-features">
             <li>M5 Cardputer + SD</li>
-            <li>Remote Possibility firmware</li>
-            <li>Pairing quick-start</li>
+            <li>Remote Possibility IR firmware</li>
+            <li>IR wiring quick-start</li>
           </ul>
           <p style="margin-top:1rem"><a class="btn btn-primary" href="shop.html#remote-possibility">Shop -></a></p>
         </article>
@@ -300,11 +305,15 @@
       <ul class="feature-list" style="max-width:42rem">
         <li>
           <a href="https://github.com/salvador-Data/Remote-Possibility" target="_blank" rel="noopener">Remote-Possibility on GitHub -></a>
-          - MicroPython <code>ctg_status.py</code> and PlatformIO remote status
+          - universal IR firmware; legacy CTG client in <code>legacy/ctg_client/</code>
         </li>
         <li>
           <a href="https://github.com/salvador-Data/Remote-Possibility/blob/main/docs/CARDPUTER.md" target="_blank" rel="noopener">CARDPUTER.md -></a>
-          - poll <code>/api/status</code>, keyboard settings, serial <code>SET</code>, optional SD config
+          - learn, scan, SD library paths, keyboard map
+        </li>
+        <li>
+          <a href="https://github.com/salvador-Data/Remote-Possibility/blob/main/docs/HARDWARE.md" target="_blank" rel="noopener">HARDWARE.md -></a>
+          - IR module GPIO 44 (TX) and 1 (RX) on HY2.0-4P
         </li>
         <li>
           <a href="https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/docs/CARDPUTER_PRODUCTS.md" target="_blank" rel="noopener">CARDPUTER_PRODUCTS.md -></a>
