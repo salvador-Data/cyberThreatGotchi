@@ -11,6 +11,30 @@
 
 All links: [WEBSITE_LINKS.md](WEBSITE_LINKS.md)
 
+---
+
+## Current live hosting (what we're doing now)
+
+| Item | Detail |
+|------|--------|
+| **Repository** | [salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) |
+| **Source branch** | `main` — static site in `website/` |
+| **Deploy workflow** | [.github/workflows/pages.yml](../.github/workflows/pages.yml) on push to `main` (paths: `website/**`, `docs/web/**`, sync script, workflow file) |
+| **Deploy action** | [peaceiris/actions-gh-pages@v4](https://github.com/peaceiris/actions-gh-pages) publishes `website/` → **`gh-pages`** branch (root) |
+| **Pre-deploy step** | `python scripts/sync_website_to_docs.py` mirrors `website/` → `docs/web/` for repo browsing |
+| **Live URL** | **https://salvador-Data.github.io/cyberThreatGotchi/** |
+| **GitHub Pages setting** | [Settings → Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages) → branch **`gh-pages`** / **(root)** |
+
+**Published pages:** `index`, `about`, `services`, `shop`, `contact`, `cyberthreatgotchi`, `ecosystem`, `github`, `crackbot` (plus CSS/JS/assets under `website/`).
+
+**Current state:** HackerPlanet branding, Philadelphia HQ copy, pre-launch shop (`demoMode` in payments config), inquiry email placeholder `hello@hackerplanet.dev` (domain not purchased yet).
+
+**Custom domain path:** Register **`hackerplanet.dev`** (~$10–12/yr at Cloudflare Registrar) → add `website/CNAME` → DNS A/CNAME records → **Settings → Pages → Custom domain** → enforce HTTPS. Full steps in [Connect custom domain](#connect-custom-domain-to-github-pages-after-purchase) below.
+
+Contact & business phone: [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md)
+
+---
+
 ### Brand vs URL (common confusion)
 
 We **rebranded the site to HackerPlanet** (logo, page titles, copy). That does **not** change the browser URL automatically.

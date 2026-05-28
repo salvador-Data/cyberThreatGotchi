@@ -284,6 +284,22 @@ def test_about_page_content():
     assert "shop.html" in html
 
 
+def test_contact_page_content():
+    html = (WEB / "contact.html").read_text(encoding="utf-8")
+    assert "Salvador Data" in html
+    assert "Hacker Planet LLC" in html
+    assert "Philadelphia" in html
+    assert "hello@hackerplanet.dev" in html
+    assert "MSP" in html
+    assert "Call forwarding setup in progress" in html
+    assert "CONTACT_AND_PHONE.md" in html
+    assert "services.html" in html
+    assert "shop.html" in html
+    assert "salvador-Data" in html
+    assert "Salvador_Data" in html
+    assert "not registered yet" in html.lower() or "not registered" in html.lower()
+
+
 def test_no_warehouse_address_in_public_html():
     forbidden = ("664 Walker", "664 Walker Street", "11135")
     for html_file in sorted(WEB.glob("*.html")):
