@@ -67,7 +67,7 @@
     coreKit: {
       id: "coreKit",
       name: "CyberThreatGotchi",
-      price: 169,
+      price: 189,
       period: "one-time",
       desc: "HPL direct ship | BPI-R3 Mini + e-ink + enclosure",
       stripeKey: "coreKit",
@@ -75,7 +75,7 @@
     fieldPack: {
       id: "fieldPack",
       name: "Field Pack",
-      price: 219,
+      price: 249,
       period: "one-time",
       desc: "HPL direct ship | core kit + M5 Cardputer",
       stripeKey: "fieldPack",
@@ -83,7 +83,7 @@
     cydStandard: {
       id: "cydStandard",
       name: "CYD Field Build - Standard",
-      price: 79.99,
+      price: 89.99,
       period: "one-time",
       desc: "CYD standard | Philly direct | + tax & shipping",
       stripeKey: "cydStandard",
@@ -91,7 +91,7 @@
     cydFieldCustom: {
       id: "cydFieldCustom",
       name: "CYD Field Build - Custom",
-      price: 174.99,
+      price: 189.99,
       period: "one-time",
       desc: "GPS | ext Wi-Fi/BLE | battery | switch | Philly direct",
       stripeKey: "cydFieldCustom",
@@ -99,7 +99,7 @@
     crackbotBench: {
       id: "crackbotBench",
       name: "Mr. CrackBot AI Nano - Bench Lab",
-      price: 449,
+      price: 499,
       period: "one-time",
       desc: "Jetson + CYD UI + GPU hashcat | difficult Philly assembly",
       stripeKey: "crackbotBench",
@@ -107,7 +107,7 @@
     remotePossibility: {
       id: "remotePossibility",
       name: "Remote Possibility",
-      price: 89.99,
+      price: 99.99,
       period: "one-time",
       desc: "M5 Cardputer | CTG remote status client",
       stripeKey: "remotePossibility",
@@ -115,7 +115,7 @@
     bleBot: {
       id: "bleBot",
       name: "BLE Bot",
-      price: 79.99,
+      price: 89.99,
       period: "one-time",
       desc: "M5 Cardputer | authorized BLE scout firmware",
       stripeKey: "bleBot",
@@ -267,7 +267,7 @@
     dsBananaPiR3: {
       id: "dsBananaPiR3",
       name: "Banana Pi BPI-R3 Mini",
-      price: 109,
+      price: 119,
       period: "one-time",
       desc: "Partner fulfillment - edge router SBC",
       stripeKey: "dsBananaPiR3",
