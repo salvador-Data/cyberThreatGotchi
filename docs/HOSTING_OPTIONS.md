@@ -11,6 +11,18 @@
 
 All links: [WEBSITE_LINKS.md](WEBSITE_LINKS.md)
 
+### Brand vs URL (common confusion)
+
+We **rebranded the site to HackerPlanet** (logo, page titles, copy). That does **not** change the browser URL automatically.
+
+| What changed | What did not |
+|--------------|--------------|
+| Site says **HackerPlanet** everywhere | Address bar still **`salvador-Data.github.io/cyberThreatGotchi/`** |
+| Contact email placeholder **`hello@hackerplanet.dev`** | No `CNAME` file in `website/` yet — domain not purchased |
+| Docs mention **`hackerplanet.dev`** as the target | **`hackerplanet.com`** is listed for sale (~$6k) — not ours today |
+
+To get **`https://hackerplanet.dev`** (or another name you own), follow [Connect custom domain](#connect-custom-domain-to-github-pages-after-purchase) below.
+
 ---
 
 ## Free hosting (recommended — already configured)
@@ -88,12 +100,64 @@ Still not as clean as GitHub’s URL for your repo name.
 
 ## Connect custom domain to GitHub Pages (after purchase)
 
-1. Buy domain (e.g. `hackerplanet.dev` on Cloudflare)
-2. GitHub repo → **Settings → Pages → Custom domain** → enter domain
-3. Cloudflare DNS → `CNAME` `@` or `www` → `salvador-Data.github.io`
-4. Enable **Full (strict)** SSL in Cloudflare
+**Prerequisite:** You own the domain (e.g. register `hackerplanet.dev` at [Cloudflare Registrar](https://domains.cloudflare.com/) — typically ~$10–12/yr for `.dev`).
+
+### Step 1 — Add `CNAME` to the repo
+
+Create `website/CNAME` (one line, no `https://`):
+
+```
+hackerplanet.dev
+```
+
+Or use `www.hackerplanet.dev` if you prefer the `www` hostname. Push to `main`; the Pages workflow copies it to `gh-pages`.
+
+### Step 2 — GitHub Pages custom domain
+
+1. Open [Settings → Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages)
+2. **Custom domain** → enter `hackerplanet.dev` (or `www.hackerplanet.dev`)
+3. Wait for DNS check; enable **Enforce HTTPS** when offered
+4. If GitHub shows a **TXT** verification record, add it in Cloudflare DNS
+
+### Step 3 — Cloudflare DNS records
+
+For apex (`hackerplanet.dev`):
+
+| Type | Name | Content | Proxy |
+|------|------|---------|-------|
+| `A` | `@` | `185.199.108.153` | DNS only (grey cloud) |
+| `A` | `@` | `185.199.109.153` | DNS only |
+| `A` | `@` | `185.199.110.153` | DNS only |
+| `A` | `@` | `185.199.111.153` | DNS only |
+
+For `www`:
+
+| Type | Name | Content | Proxy |
+|------|------|---------|-------|
+| `CNAME` | `www` | `salvador-Data.github.io` | DNS only |
+
+GitHub’s four `A` records are required for apex domains; `CNAME` to `salvador-Data.github.io` works for subdomains like `www`.
+
+### Step 4 — SSL
+
+In Cloudflare: **SSL/TLS → Full (strict)**. GitHub provisions the certificate after DNS propagates (often 5–30 minutes).
+
+### Step 5 — Verify
+
+- https://hackerplanet.dev/ loads the HackerPlanet site
+- Old URL still works: https://salvador-Data.github.io/cyberThreatGotchi/
+
+Optional CLI (after `gh auth login`):
+
+```powershell
+gh api repos/salvador-Data/cyberThreatGotchi/pages -X PUT -f cname=hackerplanet.dev -f build_type=legacy -f source[branch]=gh-pages -f source[path]=/
+```
 
 GitHub docs: https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site
+
+### Alternative: user/org site at repo root (no `/cyberThreatGotchi/`)
+
+A URL like `https://salvador-Data.github.io/` (no project folder) requires a repo named **`salvador-Data.github.io`**. That is a different setup from this project repo; most teams prefer a purchased domain instead.
 
 ---
 
