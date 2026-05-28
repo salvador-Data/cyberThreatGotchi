@@ -23,7 +23,7 @@ Philadelphia direct-ship (`coreKit`, `cydStandard`, etc.) are **not** partner-so
 
 ---
 
-## Andy operator workflow
+## My operator workflow
 
 1. **Confirm Stripe payment** — pull ship-to from fulfillment queue (never log full payment payloads).
 

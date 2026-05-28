@@ -1,6 +1,6 @@
 # Go-live setup checklist — Hacker Planet LLC
 
-**Andy:** work top-to-bottom. Automated items are already green unless noted.
+**Salvador Data:** I work top-to-bottom. Automated items are already green unless noted.
 
 | Doc | Purpose |
 |-----|---------|
@@ -74,14 +74,14 @@ gh api repos/salvador-Data/cyberThreatGotchi/pages
 
 ## B. Google Voice — ✅ DONE (paste number on contact page)
 
-**Goal:** Free US business line (215 area) that forwards to your cell. **Do not** put your personal cell on the public site.
+**Goal:** Free US business line (215 area) that forwards to my cell. **Do not** put my personal cell on the public site.
 
 | Item | Status |
 |------|--------|
 | Voice account + 215 number + forward to cell | ✅ **Completed** (2026-05-28) |
 | Public number on contact page | ✅ **(215) 839-8738** · `tel:+12158398738` |
 
-Live on [contact.html](../website/contact.html). Google Voice forwards to your cell — do not publish personal cell on the site.
+Live on [contact.html](../website/contact.html). Google Voice forwards to my cell — do not publish personal cell on the site.
 
 Original setup: [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md)
 
@@ -201,7 +201,7 @@ Customer-facing copy: **Philadelphia, PA** only (`origin.publicLabel`).
 
 ---
 
-## Manual order summary (Andy)
+## Manual order summary (Salvador Data)
 
 | # | Task | Status |
 |---|------|--------|

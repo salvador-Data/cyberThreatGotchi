@@ -22,7 +22,7 @@ Philadelphia direct-ship SKUs (`coreKit`, `cydStandard`, etc.) are **not** eBay-
 
 ---
 
-## Andy operator workflow
+## My operator workflow
 
 1. **Stripe webhook / fulfillment queue** — confirm payment and pull customer ship-to (never log full payment payloads).
 

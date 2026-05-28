@@ -62,7 +62,7 @@
 | 10:00 AM | **YouTube** | Hero video (full 75s) + pinned comment with tier matrix |
 | 12:00 PM | **YouTube Shorts** | "We're live — Early Bird $149" |
 | 2:00 PM | **X** | Quote-tweet first backer milestone / reply to questions |
-| 4:00 PM | **Facebook** | Andy Klwal personal profile — same copy as [LAUNCH.md](../social/LAUNCH.md) Facebook block, swap CTA to Kickstarter |
+| 4:00 PM | **Facebook** | Salvador Data personal profile — same copy as [LAUNCH.md](../social/LAUNCH.md) Facebook block, swap CTA to Kickstarter |
 | 6:00 PM | **Reddit r/SideProject** | Text post — builder story, Philly maker |
 | 8:00 PM | **Live X/LinkedIn** | Optional 30-min AMA — "Edge deploy + audit chain" |
 

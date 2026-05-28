@@ -1,8 +1,8 @@
 /**
  * Hacker Planet LLC - drop-ship catalog (retail prices)
  *
- * Customer pays HPL via Stripe -> you order from supplierUrl -> ships to customer.
- * supplierUrl is for your fulfillment ops (also in docs/DROPSHIP_CATALOG.md).
+ * Customer pays HPL via Stripe -> I order from supplierUrl -> ships to customer.
+ * supplierUrl is for my fulfillment ops (also in docs/DROPSHIP_CATALOG.md).
  */
 window.HPL_CATALOG = {
   dropshipNote: "Partner fulfillment | 5-14 business days | authorized lab use only",

@@ -4,7 +4,7 @@ Graphics, copy-paste posts, and where to publish.
 **GitHub org:** [salvador-Data](https://github.com/salvador-Data)  
 **Latest release:** [v1.1.0](https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0) · [v1.0.1](https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.0.1)  
 **Reddit:** u/Salvador_Data (underscore — not SalvadorData11)  
-**Facebook:** Andy Klwal — Philadelphia, PA (your public profile)
+**Facebook:** Salvador Data — Philadelphia, PA (my public profile)
 
 ---
 
@@ -48,7 +48,7 @@ python assets/marketing/generate_graphics.py
 
 ---
 
-## Facebook post (Andy Klwal — Philadelphia)
+## Facebook post (Salvador Data — Philadelphia)
 
 **Attach:** `docs/images/og-ecosystem.png` or `hero.png`  
 **Best time:** Weekday evening US Eastern (6–9 PM)  

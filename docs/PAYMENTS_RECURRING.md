@@ -74,7 +74,7 @@ MSP subscriptions do **not** auto-provision CTG Pro API keys — operators onboa
 
 ## 4. Stripe webhooks (Pro API keys)
 
-Point webhook endpoint to your provisioner:
+Point webhook endpoint to my provisioner:
 
 - Local: `python scripts/stripe_provision.py --port 9091`
 - Production: reverse proxy to same path `/stripe/webhook`
@@ -101,7 +101,7 @@ Fulfillment (hardware) uses a separate route: `POST /api/fulfillment/webhook` on
 
 ## 5. PayPal subscriptions (optional)
 
-If you prefer PayPal for Pro or MSP billing:
+Optional — PayPal for Pro or MSP billing:
 
 1. [PayPal Developer](https://developer.paypal.com/dashboard/) → **Subscriptions** → create plans.
 2. Copy plan IDs (`P-XXXXXXXX`) into `payments.config.js`:
@@ -157,7 +157,7 @@ Set `demoMode: false` when all links are live, then push to `main`.
 
 ---
 
-## Andy Stripe Dashboard checklist
+## My Stripe Dashboard checklist
 
 Run these in order (one command per step when using PowerShell locally):
 

@@ -69,7 +69,7 @@ Hacker Planet LLC is structured for **kit sales**, **Pro threat-feed subscriptio
 | **Website** | [salvador-Data.github.io/cyberThreatGotchi](https://salvador-Data.github.io/cyberThreatGotchi/) |
 | **GitHub** | [salvador-Data](https://github.com/salvador-Data) |
 | **Reddit** | u/Salvador_Data |
-| **Facebook** | Andy Klwal · Philadelphia, PA |
+| **Facebook** | Salvador Data · Philadelphia, PA |
 
 **2600 / meetups:** print [2600_ONEPAGER.md](social/2600_ONEPAGER.md) — “defensive box for my network, open source.”
 

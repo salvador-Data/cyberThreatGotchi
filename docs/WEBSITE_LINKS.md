@@ -1,6 +1,6 @@
 # Website links — Hacker Planet LLC
 
-Quick reference for Andy — repo, live site, and shop.
+Quick reference for Salvador Data — repo, live site, and shop.
 
 ## GitHub (source code)
 

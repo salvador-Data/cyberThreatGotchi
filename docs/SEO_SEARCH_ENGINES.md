@@ -2,7 +2,7 @@
 
 **Hacker Planet LLC · hackerplanet.dev · Philadelphia, PA**
 
-> **Honest expectation:** No one can guarantee top-3 Google (or Bing) rankings. Competitive terms like “cybersecurity Philadelphia” and “ethical hacking” take **3–6 months** of consistent indexing, content, and backlinks — often longer. This playbook implements best-practice technical SEO and documents verification steps for Andy.
+> **Honest expectation:** No one can guarantee top-3 Google (or Bing) rankings. Competitive terms like “cybersecurity Philadelphia” and “ethical hacking” take **3–6 months** of consistent indexing, content, and backlinks — often longer. This playbook implements best-practice technical SEO and documents verification steps I run as Salvador Data.
 
 Technical SEO is driven by `website/seo/site.json` and `python scripts/sync_seo.py`. Content positioning frames **“hacking” as authorized / ethical lab use only**.
 
@@ -80,7 +80,7 @@ See `python scripts/seo_verification_dns.py --doc` for copy-paste instructions.
 1. GSC → **Sitemaps** → add: `https://hackerplanet.dev/sitemap.xml`
 2. Confirm no errors after deploy (GitHub Pages + custom domain).
 
-### Ongoing (Andy)
+### Ongoing (Salvador Data)
 
 - [ ] Inspect URL for `cybersecurity-philadelphia.html` after first deploy
 - [ ] Monitor **Coverage** and **Core Web Vitals**
@@ -179,7 +179,7 @@ DuckDuckGo is a **priority engine** for privacy-conscious users. Hacker Planet a
 
 DuckDuckGo’s web search results are largely sourced from **Bing’s index**. If Bing has not crawled or ranked your pages, DDG web results will lag or omit them even when DuckDuckBot is allowed.
 
-**Andy actions:**
+**My actions:**
 
 - [ ] Complete **Bing Webmaster Tools** verification (§2)
 - [ ] Submit `https://hackerplanet.dev/sitemap.xml` in Bing
@@ -225,7 +225,7 @@ After Bing shows at least your homepage and `cybersecurity-philadelphia.html`:
 - [DuckDuckGo: Suggest a site](https://duckduckgo.com/duckduckgo-help-pages/company/suggesting-a-site/)
 - Optional product feedback (unrelated to ranking): [DuckDuckGo homepage feedback](https://duckduckgo.com/newhomepage)
 
-### DuckDuckGo checklist (Andy)
+### DuckDuckGo checklist (Salvador Data)
 
 - [ ] Bing verified + sitemap submitted (Path A)
 - [ ] Live `robots.txt` allows `DuckDuckBot` (Path B)
@@ -333,7 +333,7 @@ Primary brand queries to monitor in GSC / Bing after verification:
 
 ---
 
-## 11. Andy’s verification checklist (printable)
+## 11. My verification checklist (printable)
 
 Run automated preflight from repo root:
 

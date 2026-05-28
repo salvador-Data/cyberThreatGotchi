@@ -57,7 +57,7 @@ CTG **webhooks → Bjorn bridge** (`scripts/bjorn_bridge.py`) pushes one-line st
 
 | | |
 |---|---|
-| **Name** | Andy Klwal |
+| **Name** | Salvador Data |
 | **Org** | Hacker Planet LLC |
 | **City** | Philadelphia, PA |
 | **GitHub** | [salvador-Data](https://github.com/salvador-Data) |

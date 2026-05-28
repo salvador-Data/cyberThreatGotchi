@@ -1,4 +1,4 @@
-# Go live now — Andy’s checklist
+# Go live now — my checklist
 
 One-page runbook. **Phone and email are already on the site.** Code is deployed on GitHub Pages.
 

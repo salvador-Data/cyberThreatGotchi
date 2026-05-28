@@ -132,7 +132,7 @@
       el(
         "p",
         "section-sub",
-        "Separate logic for <strong>Philadelphia direct ship</strong> (your builds) vs " +
+        "Separate logic for <strong>Philadelphia direct ship</strong> (my builds) vs " +
           "<strong>partner fulfillment</strong> (shipping included). Not legal advice - see tax guide."
       )
     );

@@ -18,7 +18,7 @@ Secondary factors (after indexing):
 | Competitive keywords (`cybersecurity philadelphia`) | High | 3–6+ months vs established firms |
 | No Google Business Profile yet | Medium | Local pack won't show Hacker Planet |
 
-**We cannot guarantee #1.** We can implement every legitimate on-site lever and give Andy the exact steps that unlock visibility **this week**.
+**I cannot guarantee #1.** I can implement every legitimate on-site lever and document the exact steps that unlock visibility **this week**.
 
 ---
 
@@ -33,7 +33,7 @@ Secondary factors (after indexing):
 
 ---
 
-## Andy's 3 things THIS WEEK (mandatory)
+## My 3 things THIS WEEK (mandatory)
 
 These three actions unlock **all major search engines** (Google, Bing, DuckDuckGo via Bing, Yahoo, Ecosia, Apple crawl, Brave):
 
@@ -114,7 +114,7 @@ py scripts/ping_indexnow.py
 
 ---
 
-## Off-site signals (Andy — can't be coded)
+## Off-site signals (Salvador Data — can't be coded)
 
 Do these in parallel with GSC/Bing verification:
 

@@ -10,7 +10,7 @@
 
 ---
 
-## Before you start (2 min)
+## Before I start (2 min)
 
 - [ ] Run `.\scripts\seo_go_live_checklist.ps1` — all checks should PASS
 - [ ] Confirm live: https://hackerplanet.dev/robots.txt (all bots allowed)
@@ -31,7 +31,7 @@ Run the automated checklist:
 
 ---
 
-## Engine matrix — what Andy must do
+## Engine matrix — what I must do
 
 | Engine | Verify? | Sitemap / notify | Notes |
 |--------|---------|------------------|-------|
@@ -176,7 +176,7 @@ Test: search `site:hackerplanet.dev` on Bing, then on duckduckgo.com.
 
 ## Step 5 — Yahoo, Apple, Brave, Ecosia (no extra verify)
 
-| Engine | Andy action |
+| Engine | My action |
 |--------|-------------|
 | **Yahoo** | Nothing beyond Bing — Slurp crawler allowed |
 | **Apple** | Nothing — Applebot allowed; keep pages mobile-friendly |

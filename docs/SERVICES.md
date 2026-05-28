@@ -1,6 +1,6 @@
 # Hacker Planet LLC — Services pricing reference (internal)
 
-> **Audience:** Andy / Pat — pricing for proposals, not a public contract. Published ranges on `website/services.html` should stay aligned with this doc. Adjust after each closed deal.
+> **Audience:** Salvador Data / Pat — internal pricing for proposals, not a public contract. Published ranges on `website/services.html` should stay aligned with this doc. I adjust after each closed deal.
 
 ## Market research summary (May 2026)
 

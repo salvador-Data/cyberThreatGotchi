@@ -1,6 +1,6 @@
 # Facebook post — ready to paste
 
-**Profile:** Andy Klwal (Philadelphia, PA)  
+**Profile:** Salvador Data (Philadelphia, PA)  
 **Image:** Upload `docs/images/og-ecosystem.png` or `docs/images/hero.png`
 
 ---

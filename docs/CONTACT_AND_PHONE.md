@@ -1,6 +1,6 @@
 # Contact & business phone — Hacker Planet LLC
 
-Primary contact: **Salvador Data** (Andy Klwal) · **Hacker Planet LLC** · Philadelphia, PA
+Primary contact: **Salvador Data** · **Hacker Planet LLC** · Philadelphia, PA
 
 | Channel | Value | Status |
 |---------|-------|--------|
@@ -36,25 +36,25 @@ Until `hello@hackerplanet.dev` resolves, use **salvadorData@proton.me** or GitHu
 For a solo US founder in Philadelphia, **Google Voice (personal/free tier)** is the best $0 option:
 
 - Free US local number (choose **215** Philadelphia area code when available)
-- Inbound calls ring your linked cell — your real number stays private
+- Inbound calls ring my linked cell — my real number stays private
 - Voicemail with custom greeting and transcription to Gmail
 - SMS on the Voice number (personal use; business SMS to customers requires paid Workspace Voice + 10DLC registration)
 - Web + iOS/Android apps at [voice.google.com](https://voice.google.com)
 
 Google documents call forwarding: [Set up linked numbers](https://support.google.com/voice/answer/165221) · [Custom forwarding rules](https://support.google.com/voice/answer/11420769)
 
-### Setup checklist (Andy)
+### My setup checklist
 
 1. Sign in at [voice.google.com](https://voice.google.com) → **For personal use**
 2. Pick a **215** (or **267/445**) number when offered
-3. **Settings → Account → Linked numbers → New linked number** — add your cell, verify via SMS or call
+3. **Settings → Account → Linked numbers → New linked number** — add my cell, verify via SMS or call
 4. **Settings → Calls** — ensure forwarding to the linked number is **on**
 5. **Settings → Voicemail** — record a greeting, e.g.  
    *“You’ve reached Hacker Planet LLC in Philadelphia. We can’t take your call right now. Leave a message and we’ll respond during business hours.”*
-6. Install the Google Voice app on your phone for outbound caller-ID as the business line
+6. Install the Google Voice app on my phone for outbound caller-ID as the business line
 7. When the number is live, update [website/contact.html](../website/contact.html) and business cards
 
-**Note:** Free Voice is officially “personal use.” Many solo operators use it as a business line for voice/voicemail. Upgrade to [Google Voice for Workspace](https://workspace.google.com/products/voice/) ($10+/user/mo) when you need team inboxes, auto-attendant, or compliant business texting.
+**Note:** Free Voice is officially “personal use.” Many solo operators use it as a business line for voice/voicemail. Upgrade to [Google Voice for Workspace](https://workspace.google.com/products/voice/) ($10+/user/mo) when I need team inboxes, auto-attendant, or compliant business texting.
 
 ---
 

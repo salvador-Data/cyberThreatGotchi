@@ -35,7 +35,7 @@ Set metadata on **each** Stripe Payment Link, then paste the link into
 All other `ds*` keys in `payments.config.js` use the same pattern:
 metadata `stripe_key` equals the config property name (e.g. `dsPwnagotchi` → `stripe_key=dsPwnagotchi`).
 
-## Stripe Dashboard — step by step (Andy)
+## Stripe Dashboard — step by step (Salvador Data)
 
 Do this **once per product** Payment Link (repeat for all nine SKUs above, then other `ds*` links).
 

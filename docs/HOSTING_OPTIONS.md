@@ -1,6 +1,6 @@
 # Hosting & domain — Hacker Planet LLC website
 
-## TL;DR for Andy
+## TL;DR for me (Salvador Data)
 
 | Need | Best choice | Cost |
 |------|-------------|------|
@@ -31,7 +31,7 @@ All links: [WEBSITE_LINKS.md](WEBSITE_LINKS.md)
 
 **Custom domain path:** Register **`hackerplanet.dev`** (~$10–12/yr at Cloudflare Registrar) → add `website/CNAME` → DNS A/CNAME records → **Settings → Pages → Custom domain** → enforce HTTPS. Full steps in [Connect custom domain](#connect-custom-domain-to-github-pages-after-purchase) below.
 
-Go-live steps (Andy): [SETUP_CHECKLIST.md](SETUP_CHECKLIST.md) · Contact & phone: [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md)
+Go-live steps (Salvador Data): [SETUP_CHECKLIST.md](SETUP_CHECKLIST.md) · Contact & phone: [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md)
 
 ---
 

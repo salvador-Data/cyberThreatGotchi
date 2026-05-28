@@ -8,7 +8,7 @@ See also: [SEO_SEARCH_ENGINES.md](./SEO_SEARCH_ENGINES.md) · [SEO.md](./SEO.md)
 
 ---
 
-## Before you start
+## Before I start
 
 - [ ] Domain verified in [Google Search Console](https://search.google.com/search-console) (`hackerplanet.dev`)
 - [ ] Consistent NAP everywhere: **Hacker Planet LLC · Philadelphia, PA · (215) 839-8738 · salvadorData@proton.me**
@@ -120,7 +120,7 @@ Tips:
 
 ---
 
-## Checklist (Andy)
+## Checklist (Salvador Data)
 
 - [ ] Profile created as service-area business (no public street)
 - [ ] Categories: Computer security service (+ optional secondaries)

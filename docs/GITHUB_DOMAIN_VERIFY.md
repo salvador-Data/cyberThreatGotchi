@@ -1,6 +1,6 @@
 # GitHub domain verification — hackerplanet.dev
 
-Andy runbook for the **“There are no verified domains”** message on GitHub.com during SEO / go-live. This is **not** the same as Google Search Console (GSC) verification.
+Salvador Data runbook for the **“There are no verified domains”** message on GitHub.com during SEO / go-live. This is **not** the same as Google Search Console (GSC) verification.
 
 | ID | Value |
 |----|-------|
@@ -20,7 +20,7 @@ Andy runbook for the **“There are no verified domains”** message on GitHub.c
 | **Repo → Settings → Pages → Custom domain** — DNS check + HTTPS | **Repo-level** hosting. Needs A/CNAME to GitHub (`185.199.x.x`, `salvador-Data.github.io`). | Site won’t serve on custom domain until DNS is correct |
 | **Google Search Console** — domain property | **Search indexing**. Needs TXT `@` with `google-site-verification=…` | GSC won’t verify until that TXT exists |
 
-**Current repo state (2026-05-28):** Custom domain `hackerplanet.dev` is set, HTTPS cert is **approved**, `https_enforced=true`, site returns **HTTP 200**. GSC TXT is already in public DNS. The GitHub **Verified domains** list is still empty because `_github-pages-challenge-salvador-Data` TXT was never added — that is what triggers the banner Andy saw.
+**Current repo state (2026-05-28):** Custom domain `hackerplanet.dev` is set, HTTPS cert is **approved**, `https_enforced=true`, site returns **HTTP 200**. GSC TXT is already in public DNS. The GitHub **Verified domains** list is still empty because `_github-pages-challenge-salvador-Data` TXT was never added — that is what triggers the banner I saw.
 
 **Do not confuse:** GSC verification does **not** populate GitHub Verified domains, and vice versa. Two TXT records on `@` (SPF + GSC) already coexist; GitHub’s challenge uses a **subdomain** TXT, not `@`.
 
@@ -28,7 +28,7 @@ See also: [PAGES_VERIFIED_DOMAINS_FAQ.md](PAGES_VERIFIED_DOMAINS_FAQ.md), [SEO_S
 
 ---
 
-## Andy steps — in order
+## My steps — in order
 
 ### Step 0 — Confirm repo custom domain (already done)
 

@@ -78,7 +78,7 @@ Hardware kits ship **Philadelphia-assembled** BPI-R3 Mini + Waveshare e-ink + en
 
 | | |
 |---|---|
-| **Founder / builder** | **Salvador Data** (Andy Klwal) — Philadelphia. Open-source defender, field hardware assembler, public face of Hacker Planet LLC. |
+| **Founder / builder** | **Salvador Data** — Philadelphia. Open-source defender, field hardware assembler, public face of Hacker Planet LLC. |
 | **Brand** | Hacker Planet LLC — Blue Team retainers, authorized Red Team assessments, OSINT, and open edge tools. |
 | **Community** | GitHub [salvador-Data](https://github.com/salvador-Data) · Reddit u/SalvadorData · ecosystem: Bjorn, Mr. CrackBot AI Nano, M5 Cardputer launcher. |
 
