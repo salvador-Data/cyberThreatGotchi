@@ -1,65 +1,63 @@
 name: Enable GitHub Pages (one-time)
 
-# Run manually once: Actions → Enable GitHub Pages (one-time) → Run workflow
-# Enables branch deploy from gh-pages / (root) — no custom domain required.
+# Optional: verify Pages or enable gh-pages branch deploy.
+# Pages was enabled via `gh` / Settings — this workflow should pass with "already live".
 
 on:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
+  pages: read
+  administration: read
 
 concurrency:
   group: enable-pages
   cancel-in-progress: false
 
 jobs:
-  enable:
+  verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Enable Pages from gh-pages branch
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const payload = {
-              build_type: "legacy",
-              source: { branch: "gh-pages", path: "/" },
-            };
-            try {
-              const res = await github.rest.repos.createPagesSite({
-                owner,
-                repo,
-                ...payload,
-              });
-              core.info("Created Pages site: " + (res.data.html_url || ""));
-            } catch (err) {
-              if (err.status === 409) {
-                const res = await github.rest.repos.updateInformationAboutPagesSite({
-                  owner,
-                  repo,
-                  ...payload,
-                });
-                core.info("Updated Pages site: " + (res.data.html_url || ""));
-              } else {
-                core.setFailed(err.message);
-                throw err;
-              }
-            }
-
-      - name: Wait for Pages propagation
-        run: sleep 45
-
-      - name: Verify site responds
+      - name: Check public site
+        id: site
         run: |
           URL="https://salvador-Data.github.io/cyberThreatGotchi/"
           CODE=$(curl -s -o /dev/null -w "%{http_code}" "$URL" || true)
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
           echo "HTTP $CODE for $URL"
-          if [ "$CODE" != "200" ]; then
-            echo "::warning::Site not 200 yet — if still 404, set Settings → Pages → gh-pages / (root) manually."
-            exit 0
+          if [ "$CODE" = "200" ]; then
+            echo "✅ Site is live."
+          else
+            echo "⚠️ Site returned $CODE — enable manually: Settings → Pages → gh-pages / (root)"
           fi
-          echo "Site is live."
+
+      - name: Check Pages API (informational)
+        uses: actions/github-script@v7
+        continue-on-error: true
+        with:
+          script: |
+            try {
+              const res = await github.rest.repos.getPages({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+              core.info("Pages configured: " + (res.data.html_url || ""));
+              core.info("Source: " + JSON.stringify(res.data.source || {}));
+            } catch (err) {
+              core.warning(
+                "Could not read Pages config via GITHUB_TOKEN (normal if token lacks admin). " +
+                  "Use Settings → Pages → branch gh-pages / (root), or run: python scripts/enable_github_pages.py"
+              );
+            }
+
+      - name: Result
+        if: steps.site.outputs.code == '200'
+        run: echo "GitHub Pages is working — no action needed."
+
+      - name: Manual enable required
+        if: steps.site.outputs.code != '200'
+        run: |
+          echo "::error::Pages not live. Open https://github.com/salvador-Data/cyberThreatGotchi/settings/pages"
+          echo "Set Source: Deploy from a branch → gh-pages → / (root)"
+          exit 1

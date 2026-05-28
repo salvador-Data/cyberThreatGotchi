@@ -65,6 +65,10 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 python scripts\enable_github_pages.py
 ```
 
+Or run **Actions → Enable GitHub Pages (one-time)** — it verifies the site is live (does not require admin token).
+
+**Note:** The one-time enable workflow may show red if run before Pages was enabled — use Settings or `gh` above instead. After Pages is live, re-run the workflow and it should pass.
+
 ---
 
 ## Optional: custom domain later (then “Verified domains” matters)
