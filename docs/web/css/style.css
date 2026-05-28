@@ -1,4 +1,4 @@
-/* Hacker Planet LLC — Philadelphia PA */
+/* Hacker Planet LLC  -  Philadelphia PA */
 
 :root {
   --bg: #0a0e14;
@@ -227,7 +227,7 @@ img {
   50% { opacity: 0.5; }
 }
 
-/* Layered hero titles — solid ink + overlapping accent tagline (no gradient text clip) */
+/* Layered hero titles  -  solid ink + overlapping accent tagline (no gradient text clip) */
 .hero h1.title-stack,
 .page-hero h1.title-stack {
   font-family: var(--font-display);
@@ -518,7 +518,7 @@ section {
 }
 
 .feature-list li::before {
-  content: "◆";
+  content: "*";
   color: var(--accent);
   font-size: 0.65rem;
   margin-top: 0.35rem;
@@ -858,7 +858,7 @@ section {
 }
 
 .shop-features li::before {
-  content: "✓ ";
+  content: "OK  ";
   color: var(--accent);
 }
 

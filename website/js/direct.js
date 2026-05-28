@@ -1,14 +1,14 @@
 /**
- * Hacker Planet LLC — direct-ship catalog (Philadelphia fulfillment)
+ * Hacker Planet LLC - direct-ship catalog (Philadelphia fulfillment)
  */
 (function () {
   var SOURCE_LABELS = {
-    direct: { label: "Philly ship", icon: "📍", class: "source-direct" },
+    direct: { label: "Philly ship", icon: "Ship", class: "source-direct" },
   };
 
   var SECTIONS = {
-    cyd: { label: "Cheap Yellow Display", title: "CYD field builds — hardware only" },
-    crackbot: { label: "Lab VLAN", title: "Mr. CrackBot AI Nano — bench lab" },
+    cyd: { label: "Cheap Yellow Display", title: "CYD field builds - hardware only" },
+    crackbot: { label: "Lab VLAN", title: "Mr. CrackBot AI Nano - bench lab" },
     cardputer: { label: "M5 Cardputer", title: "Remote Possibility & BLE Bot" },
     ctg: { label: "Edge IPS", title: "CyberThreatGotchi kits" },
     other: { label: "Field kits", title: "Other Philadelphia builds" },
@@ -70,17 +70,17 @@
     if (imgWrap) card.appendChild(imgWrap);
     if (product.badge) card.appendChild(el("div", "shop-badge", product.badge));
     card.appendChild(sourceBadge(product.source));
-    card.appendChild(el("h3", "", product.name));
+    card.appendChild(el("h3", product.name));
     if (product.tagline) {
       card.appendChild(el("p", "shop-tagline", product.tagline));
     }
     card.appendChild(el("div", "shop-price catalog-price", product.priceDisplay || ""));
-    card.appendChild(el("p", "", product.description || ""));
+    card.appendChild(el("p", product.description || ""));
 
     if (product.includes && product.includes.length) {
       var ul = el("ul", "shop-features");
       product.includes.forEach(function (item) {
-        ul.appendChild(el("li", "", item));
+        ul.appendChild(el("li", item));
       });
       card.appendChild(ul);
     }
@@ -100,7 +100,7 @@
 
     var note = el("p", "catalog-ship-note", cfg().directNote || "Ships from Philadelphia, PA");
     if (product.fulfillment === "digital") {
-      note.textContent = "Digital delivery · no shipping charge";
+      note.textContent = "Digital delivery | no shipping charge";
     }
     card.appendChild(note);
     return card;
@@ -130,12 +130,12 @@
     var wrap = el("section", "reveal catalog-section");
     wrap.id = "catalog-hpl-direct";
     wrap.appendChild(el("p", "section-label", "Made in Philadelphia"));
-    wrap.appendChild(el("h2", "section-title", "HackerPlanet builds — direct ship"));
+    wrap.appendChild(el("h2", "section-title", "HackerPlanet builds - direct ship"));
     wrap.appendChild(
       el(
         "p",
         "section-sub catalog-intro",
-        "CYD pocket hardware, Mr. CrackBot Jetson bench labs, M5 Cardputer tools, and CyberThreatGotchi kits — " +
+        "CYD pocket hardware, Mr. CrackBot Jetson bench labs, M5 Cardputer tools, and CyberThreatGotchi kits - " +
           "assembled in Philadelphia. <strong>CYD prices exclude tax & shipping.</strong> Use the calculator above."
       )
     );

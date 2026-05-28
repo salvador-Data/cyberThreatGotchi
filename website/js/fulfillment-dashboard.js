@@ -1,12 +1,12 @@
 /**
- * Hacker Planet LLC — operator fulfillment dashboard helpers
- * PCI-safe: queue display, clipboard, status updates — no marketplace checkout automation.
+ * Hacker Planet LLC - operator fulfillment dashboard helpers
+ * PCI-safe: queue display, clipboard, status updates - no marketplace checkout automation.
  */
 (function (global) {
   "use strict";
 
   var STATUS_LABELS = {
-    pending: "Pending — place supplier order",
+    pending: "Pending - place supplier order",
     ordered: "Ordered at supplier",
     shipped: "Shipped",
     delivered: "Delivered",
@@ -42,7 +42,7 @@
       try {
         var ta = document.createElement("textarea");
         ta.value = text;
-        ta.setAttribute("readonly", "");
+        ta.setAttribute("readonly");
         ta.style.position = "absolute";
         ta.style.left = "-9999px";
         document.body.appendChild(ta);
@@ -119,13 +119,13 @@
       (supplierUrl
         ? '<a href="' +
           escapeHtml(supplierUrl) +
-          '" target="_blank" rel="noopener noreferrer">Open supplier listing ↗</a>'
+          '" target="_blank" rel="noopener noreferrer">Open supplier listing -></a>'
         : "") +
       '<button type="button" class="copy-ship">Copy ship-to</button>' +
       '<button type="button" class="copy-packet">Copy order packet</button>' +
       "</div>" +
       '<div class="ship-block" aria-label="Ship to">' +
-      escapeHtml(shipText || "[no address — paste from Stripe]") +
+      escapeHtml(shipText || "[no address - paste from Stripe]") +
       "</div>" +
       (checklist.length ? '<ol class="checklist">' + checklistHtml + "</ol>" : "") +
       '<div class="update-row">' +
@@ -153,7 +153,7 @@
   }
 
   function fetchQueue(apiBase, token) {
-    return fetch(apiBase.replace(/\/$/, "") + "/api/fulfillment/queue?pending=true", {
+    return fetch(apiBase.replace(/\/$/) + "/api/fulfillment/queue?pending=true", {
       headers: authHeaders(token),
     }).then(function (resp) {
       if (!resp.ok) throw new Error("API " + resp.status);
@@ -162,7 +162,7 @@
   }
 
   function patchOrder(apiBase, token, orderId, body) {
-    return fetch(apiBase.replace(/\/$/, "") + "/api/fulfillment/queue/" + encodeURIComponent(orderId), {
+    return fetch(apiBase.replace(/\/$/) + "/api/fulfillment/queue/" + encodeURIComponent(orderId), {
       method: "PATCH",
       headers: Object.assign({ "Content-Type": "application/json" }, authHeaders(token)),
       body: JSON.stringify(body),
@@ -192,7 +192,7 @@
     }
 
     function loadQueue() {
-      setStatus("Loading…");
+      setStatus("Loading...");
       fetchQueue(apiBaseEl.value, tokenEl.value)
         .then(function (data) {
           var orders = data.orders || [];
@@ -222,7 +222,7 @@
             setStatus("Ship-to copied.");
           })
           .catch(function () {
-            setStatus("Clipboard failed — select text manually.", true);
+            setStatus("Clipboard failed - select text manually.", true);
           });
         return;
       }
@@ -258,7 +258,7 @@
           var num = body.tracking_url.split("/").pop() || "";
           body.tracking_number = num;
         }
-        setStatus("Saving…");
+        setStatus("Saving...");
         patchOrder(apiBaseEl.value, tokenEl.value, orderId, body)
           .then(function () {
             setStatus("Order updated.");

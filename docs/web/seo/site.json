@@ -33,8 +33,8 @@
   ],
   "pages": {
     "index.html": {
-      "title": "Hacker Planet | Official Site — Philadelphia Cybersecurity Lab",
-      "description": "Hacker Planet — official site of Hacker Planet LLC, Philadelphia cybersecurity firm for Blue Team, Red Team, and OSINT. Remote US consulting, ethical hacking lab hardware, CyberThreatGotchi IPS, and authorized penetration testing training gear.",
+      "title": "Hacker Planet | Official Site  -  Philadelphia Cybersecurity Lab",
+      "description": "Hacker Planet  -  official site of Hacker Planet LLC, Philadelphia cybersecurity firm for Blue Team, Red Team, and OSINT. Remote US consulting, ethical hacking lab hardware, CyberThreatGotchi IPS, and authorized penetration testing training gear.",
       "keywords": "Hacker Planet, Hacker Planet LLC, hacker planet philadelphia, cybersecurity Philadelphia, ethical hacking lab Philadelphia, CyberThreatGotchi",
       "ogType": "website",
       "ogImage": "/images/og-cybertech.png",
@@ -42,7 +42,7 @@
       "faqs": [
         {
           "question": "What is Hacker Planet?",
-          "answer": "Hacker Planet is the brand and official site of Hacker Planet LLC — a Philadelphia cybersecurity firm offering Blue Team retainers, authorized Red Team assessments, OSINT support, and ethical hacking lab hardware including CyberThreatGotchi edge IPS."
+          "answer": "Hacker Planet is the brand and official site of Hacker Planet LLC  -  a Philadelphia cybersecurity firm offering Blue Team retainers, authorized Red Team assessments, OSINT support, and ethical hacking lab hardware including CyberThreatGotchi edge IPS."
         },
         {
           "question": "Is Hacker Planet the same as Hacker Planet LLC?",
@@ -54,7 +54,7 @@
         },
         {
           "question": "What products does Hacker Planet make?",
-          "answer": "Hacker Planet builds and ships CyberThreatGotchi edge IPS kits, Mr. CrackBot AI Nano lab assistants, M5 Cardputer field tools, and CYD pocket lab hardware — all for authorized defensive security and isolated lab use."
+          "answer": "Hacker Planet builds and ships CyberThreatGotchi edge IPS kits, Mr. CrackBot AI Nano lab assistants, M5 Cardputer field tools, and CYD pocket lab hardware  -  all for authorized defensive security and isolated lab use."
         },
         {
           "question": "How do I contact Hacker Planet?",
@@ -64,8 +64,8 @@
       "sitemapPriority": "1.0"
     },
     "hacker-planet.html": {
-      "title": "Hacker Planet | Official Brand — Philadelphia Cybersecurity LLC",
-      "description": "Hacker Planet — official brand page for Hacker Planet LLC, Philadelphia cybersecurity hardware lab. Blue Team, Red Team, OSINT, CyberThreatGotchi, and authorized ethical hacking lab gear.",
+      "title": "Hacker Planet | Official Brand  -  Philadelphia Cybersecurity LLC",
+      "description": "Hacker Planet  -  official brand page for Hacker Planet LLC, Philadelphia cybersecurity hardware lab. Blue Team, Red Team, OSINT, CyberThreatGotchi, and authorized ethical hacking lab gear.",
       "keywords": "Hacker Planet, Hacker Planet LLC, hacker planet official site, hacker planet philadelphia, HackerPlanet brand",
       "ogType": "website",
       "ogImage": "/images/og-cybertech.png",
@@ -73,29 +73,29 @@
       "sitemapPriority": "0.98"
     },
     "about.html": {
-      "title": "Hacker Planet | About — Philadelphia Cybersecurity LLC",
-      "description": "About Hacker Planet LLC — open-source defensive security tools and Philadelphia-assembled field hardware. Cybersecurity firm serving Philly metro and remote US clients. Authorized networks only.",
+      "title": "Hacker Planet | About  -  Philadelphia Cybersecurity LLC",
+      "description": "About Hacker Planet LLC  -  open-source defensive security tools and Philadelphia-assembled field hardware. Cybersecurity firm serving Philly metro and remote US clients. Authorized networks only.",
       "keywords": "Hacker Planet, Hacker Planet LLC, hacker planet philadelphia, cybersecurity Philadelphia, open source security",
       "ogType": "website",
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
     },
     "services.html": {
       "title": "Hacker Planet | Cybersecurity Services Philadelphia & Remote US",
-      "description": "Hacker Planet LLC — managed Blue Team UTM and DDoS hardening, authorized Red Team assessments, OSINT investigations, and remote cybersecurity consulting for US clients.",
+      "description": "Hacker Planet LLC  -  managed Blue Team UTM and DDoS hardening, authorized Red Team assessments, OSINT investigations, and remote cybersecurity consulting for US clients.",
       "keywords": "Hacker Planet, Hacker Planet LLC, cybersecurity services Philadelphia, Blue Team Philadelphia, Red Team assessment, remote cybersecurity consulting",
       "ogType": "website",
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
     },
     "contact.html": {
-      "title": "Hacker Planet | Contact — Philadelphia Cybersecurity",
-      "description": "Contact Hacker Planet LLC — Philadelphia PA cybersecurity firm. Email salvadorData@proton.me, phone (215) 839-8738. Blue Team, Red Team, OSINT, MSP, and ethical hacking lab inquiries.",
+      "title": "Hacker Planet | Contact  -  Philadelphia Cybersecurity",
+      "description": "Contact Hacker Planet LLC  -  Philadelphia PA cybersecurity firm. Email salvadorData@proton.me, phone (215) 839-8738. Blue Team, Red Team, OSINT, MSP, and ethical hacking lab inquiries.",
       "keywords": "Hacker Planet, contact Hacker Planet LLC, cybersecurity Philadelphia contact, hacker planet philadelphia",
       "ogType": "website",
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
     },
     "cybersecurity-philadelphia.html": {
-      "title": "Hacker Planet | Official Site — Cybersecurity Philadelphia",
-      "description": "Hacker Planet — Philadelphia cybersecurity firm (Hacker Planet LLC) with local Blue Team retainers, remote US consulting, and authorized ethical hacking lab hardware. CyberThreatGotchi IPS and pentest training gear.",
+      "title": "Hacker Planet | Official Site  -  Cybersecurity Philadelphia",
+      "description": "Hacker Planet  -  Philadelphia cybersecurity firm (Hacker Planet LLC) with local Blue Team retainers, remote US consulting, and authorized ethical hacking lab hardware. CyberThreatGotchi IPS and pentest training gear.",
       "keywords": "Hacker Planet, Hacker Planet LLC, hacker planet philadelphia, cybersecurity Philadelphia, ethical hacking lab Philadelphia, Philadelphia cybersecurity firm",
       "ogType": "website",
       "ogImage": "/images/hero-cybertech.png",
@@ -103,7 +103,7 @@
       "faqs": [
         {
           "question": "Who is the best cybersecurity firm in Philadelphia for ethical hacking labs?",
-          "answer": "Hacker Planet LLC (brand: Hacker Planet) is a Philadelphia cybersecurity practice specializing in Blue Team retainers, authorized Red Team assessments, and ethical hacking lab hardware — serving Philly metro and remote US clients from https://hackerplanet.dev."
+          "answer": "Hacker Planet LLC (brand: Hacker Planet) is a Philadelphia cybersecurity practice specializing in Blue Team retainers, authorized Red Team assessments, and ethical hacking lab hardware  -  serving Philly metro and remote US clients from https://hackerplanet.dev."
         },
         {
           "question": "Does Hacker Planet have a storefront in Philadelphia?",
@@ -111,7 +111,7 @@
         },
         {
           "question": "What ethical hacking lab tools does Hacker Planet offer in Philadelphia?",
-          "answer": "Hacker Planet assembles CyberThreatGotchi edge IPS, Mr. CrackBot AI Nano Jetson benches, CYD pocket lab builds, and M5 Cardputer field clients — all for networks and systems you own or have written permission to test."
+          "answer": "Hacker Planet assembles CyberThreatGotchi edge IPS, Mr. CrackBot AI Nano Jetson benches, CYD pocket lab builds, and M5 Cardputer field clients  -  all for networks and systems you own or have written permission to test."
         },
         {
           "question": "Can Hacker Planet help remote US teams outside Pennsylvania?",
@@ -121,8 +121,8 @@
       "sitemapPriority": "0.95"
     },
     "shop.html": {
-      "title": "Hacker Planet | Shop Field Hardware — CYD, CrackBot, CTG",
-      "description": "Hacker Planet shop — CYD field builds, CrackBot Jetson bench, CyberThreatGotchi kits, M5 Cardputer tools, and curated partner hardware. Philadelphia direct ship.",
+      "title": "Hacker Planet | Shop Field Hardware  -  CYD, CrackBot, CTG",
+      "description": "Hacker Planet shop  -  CYD field builds, CrackBot Jetson bench, CyberThreatGotchi kits, M5 Cardputer tools, and curated partner hardware. Philadelphia direct ship.",
       "keywords": "Hacker Planet, Hacker Planet shop, CyberThreatGotchi kit, CrackBot, CYD field build, Philadelphia tech shop",
       "ogType": "website",
       "ogImage": "/images/hero-cybertech.png",
@@ -130,30 +130,30 @@
     },
     "cyberthreatgotchi.html": {
       "title": "Hacker Planet | CyberThreatGotchi Edge IPS",
-      "description": "CyberThreatGotchi by Hacker Planet LLC — Banana Pi edge IPS with e-ink status, tamper-evident audit chain, web dashboard, and Pro threat feed. Philadelphia-assembled core kit.",
+      "description": "CyberThreatGotchi by Hacker Planet LLC  -  Banana Pi edge IPS with e-ink status, tamper-evident audit chain, web dashboard, and Pro threat feed. Philadelphia-assembled core kit.",
       "keywords": "Hacker Planet, CyberThreatGotchi, edge IPS, BPI-R3 Mini, Philadelphia cybersecurity hardware",
       "ogType": "product",
       "ogImage": "/images/products/cyphertek-rache-product.jpg",
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
     },
     "crackbot.html": {
-      "title": "Hacker Planet | Mr. CrackBot AI Nano — Ethical Hacking Lab",
-      "description": "Mr. CrackBot AI Nano from Hacker Planet LLC — authorized Wi-Fi lab wordlist assistant for ethical hacking training in isolated VLANs. Philadelphia Jetson bench lab.",
+      "title": "Hacker Planet | Mr. CrackBot AI Nano  -  Ethical Hacking Lab",
+      "description": "Mr. CrackBot AI Nano from Hacker Planet LLC  -  authorized Wi-Fi lab wordlist assistant for ethical hacking training in isolated VLANs. Philadelphia Jetson bench lab.",
       "keywords": "Hacker Planet, ethical hacking lab, CrackBot AI Nano, authorized penetration testing lab, Philadelphia",
       "ogType": "product",
       "ogImage": "/images/products/mr-pac-bot-product.png",
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
     },
     "cardputer.html": {
-      "title": "Hacker Planet | M5 Cardputer — Remote Possibility & BLE Bot",
-      "description": "M5Stack Cardputer field tools from Hacker Planet LLC — Remote Possibility CTG remote client and BLE Bot authorized scout. Philadelphia assembled.",
+      "title": "Hacker Planet | M5 Cardputer  -  Remote Possibility & BLE Bot",
+      "description": "M5Stack Cardputer field tools from Hacker Planet LLC  -  Remote Possibility CTG remote client and BLE Bot authorized scout. Philadelphia assembled.",
       "keywords": "Hacker Planet, M5 Cardputer, Remote Possibility, BLE Bot, CyberThreatGotchi remote",
       "ogType": "product",
       "ogImage": "/images/products/direct-field-pack.png",
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
     },
     "cyd.html": {
-      "title": "Hacker Planet | CYD Field Build — Authorized Wi-Fi Lab",
+      "title": "Hacker Planet | CYD Field Build  -  Authorized Wi-Fi Lab",
       "description": "Cheap Yellow Display pocket field build from Hacker Planet LLC. HPL signature Wi-Fi lab profile and custom CYD builds. Philadelphia assembled ethical hacking lab hardware.",
       "keywords": "Hacker Planet, CYD field build, authorized WiFi lab, ethical hacking hardware, Philadelphia",
       "ogType": "product",
@@ -162,14 +162,14 @@
     },
     "ecosystem.html": {
       "title": "Hacker Planet | Open-Source Security Ecosystem",
-      "description": "Hacker Planet LLC ecosystem — CyberThreatGotchi edge defense, Bjorn Pi assessment, Mr. CrackBot lab VLAN, and M5 OS Cardputer field clients. Philadelphia open source.",
+      "description": "Hacker Planet LLC ecosystem  -  CyberThreatGotchi edge defense, Bjorn Pi assessment, Mr. CrackBot lab VLAN, and M5 OS Cardputer field clients. Philadelphia open source.",
       "keywords": "Hacker Planet, CyberThreatGotchi ecosystem, Bjorn scanner, CrackBot, open source security tools",
       "ogType": "website",
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
     },
     "github.html": {
-      "title": "Hacker Planet | On GitHub — Releases, CI & Source",
-      "description": "CyberThreatGotchi and Hacker Planet LLC on GitHub — clone, star, download releases, STLs, and follow CI for Philadelphia defensive security projects.",
+      "title": "Hacker Planet | On GitHub  -  Releases, CI & Source",
+      "description": "CyberThreatGotchi and Hacker Planet LLC on GitHub  -  clone, star, download releases, STLs, and follow CI for Philadelphia defensive security projects.",
       "keywords": "Hacker Planet, CyberThreatGotchi GitHub, salvador-Data, open source releases",
       "ogType": "website",
       "ogImage": "/images/hero-cybertech.png",
@@ -177,7 +177,7 @@
     },
     "kickstarter.html": {
       "title": "Hacker Planet | CyberThreatGotchi Kickstarter Preview",
-      "description": "Hacker Planet Kickstarter preview — CyberThreatGotchi edge IPS kits from Philadelphia. Early Bird Core and Field Pack tiers. Defensive use only.",
+      "description": "Hacker Planet Kickstarter preview  -  CyberThreatGotchi edge IPS kits from Philadelphia. Early Bird Core and Field Pack tiers. Defensive use only.",
       "keywords": "Hacker Planet, CyberThreatGotchi Kickstarter, edge IPS kit, homelab security, Philadelphia",
       "ogType": "website",
       "ogImage": "/images/products/direct-core-kit.jpg",

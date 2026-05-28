@@ -269,6 +269,35 @@ def test_public_html_avoids_repo_jargon():
         text = html_file.read_text(encoding="utf-8")
         assert ">Repo" not in text, html_file.name
         assert "public repo" not in text.lower(), html_file.name
+    for js_name in ("payments.js", "direct.config.js", "catalog.js"):
+        text = (WEB / "js" / js_name).read_text(encoding="utf-8")
+        assert "Repo access" not in text, js_name
+        assert "Repo bundle" not in text, js_name
+        assert "Full repo assets" not in text, js_name
+
+
+def test_public_site_copy_is_ascii():
+    """Public HTML and checkout/catalog JS should stay ASCII (no mojibake or smart punctuation)."""
+    targets = sorted(WEB.glob("*.html"))
+    targets.extend(
+        WEB / "js" / name
+        for name in (
+            "catalog.js",
+            "catalog.config.js",
+            "direct.js",
+            "direct.config.js",
+            "payments.js",
+            "shipping.js",
+            "shipping.config.js",
+            "main.js",
+        )
+    )
+    targets.append(WEB / "css" / "style.css")
+    for path in targets:
+        text = path.read_text(encoding="utf-8")
+        assert not text.startswith("\ufeff"), f"BOM in {path.name}"
+        bad = [c for c in text if ord(c) > 127]
+        assert not bad, f"non-ASCII in {path.relative_to(ROOT)}: {bad[:8]!r}"
 
 
 def test_index_has_philly_and_branding():
@@ -348,7 +377,7 @@ def test_direct_product_images():
 
 
 def test_shop_flows_avoid_mascot_og_assets():
-    """Shop, home featured, and checkout pages use hardware photos â€” not CTG cartoon OG."""
+    """Shop, home featured, and checkout pages use hardware photos - not CTG cartoon OG."""
     forbidden = (
         "docs/images/hero.png",
         "docs/images/og-cyberthreatgotchi.png",

@@ -1,15 +1,15 @@
 /**
- * Hacker Planet LLC — direct-ship products (made in Philadelphia)
- * fulfillment: "direct" — ships from HPL, not drop-shipped.
+ * Hacker Planet LLC - direct-ship products (made in Philadelphia)
+ * fulfillment: "direct" - ships from HPL, not drop-shipped.
  * CYD hardware is separate from Mr. CrackBot AI Nano bench builds.
  */
 window.HPL_DIRECT = {
-  directNote: "Ships from Philadelphia, PA · 3–5 business days handling · tax & zone shipping extra",
+  directNote: "Ships from Philadelphia, PA | 3-5 business days handling | tax & zone shipping extra",
   products: [
     {
       id: "cydStandard",
       section: "cyd",
-      name: "CYD Field Build — Standard",
+      name: "CYD Field Build - Standard",
       tagline: "HPL signature profile",
       image: "images/products/direct-cyd-standard.jpg",
       retailPrice: 79.99,
@@ -18,15 +18,15 @@ window.HPL_DIRECT = {
       stripeKey: "cydStandard",
       source: "direct",
       description:
-        "Cheap Yellow Display pocket field build — flashed for authorized Wi‑Fi lab work. Standard enclosure, USB-C, quick-start. **$79.99 + tax & shipping.** Not CrackBot firmware.",
-      includes: ["CYD 2.8″ display", "Printed enclosure", "HPL field image", "USB-C cable"],
+        "Cheap Yellow Display pocket field build - flashed for authorized Wi-Fi lab work. Standard enclosure, USB-C, quick-start. **$79.99 + tax & shipping.** Not CrackBot firmware.",
+      includes: ["CYD 2.8" display", "Printed enclosure", "HPL field image", "USB-C cable"],
       badge: "CYD standard",
     },
     {
       id: "cydFieldCustom",
       section: "cyd",
-      name: "CYD Field Build — Custom",
-      tagline: "Extended Wi‑Fi/BLE · GPS · battery · power switch",
+      name: "CYD Field Build - Custom",
+      tagline: "Extended Wi-Fi/BLE | GPS | battery | power switch",
       image: "images/products/direct-marauder-custom.jpg",
       retailPrice: 174.99,
       priceDisplay: "$174.99",
@@ -34,15 +34,15 @@ window.HPL_DIRECT = {
       stripeKey: "cydFieldCustom",
       source: "direct",
       description:
-        "Custom CYD with SMA antenna, extended Wi‑Fi/BLE, GPS wardrive option, LiPo, and hardware on/off switch. Firmware profile (Marauder GPS, wardrive, etc.) at checkout. **$174.99 + tax & shipping.**",
+        "Custom CYD with SMA antenna, extended Wi-Fi/BLE, GPS wardrive option, LiPo, and hardware on/off switch. Firmware profile (Marauder GPS, wardrive, etc.) at checkout. **$174.99 + tax & shipping.**",
       includes: ["Custom CYD stack", "GPS + antenna routing", "LiPo + switch", "Printed enclosure"],
       badge: "CYD custom",
     },
     {
       id: "crackbotBench",
       section: "crackbot",
-      name: "Mr. CrackBot AI Nano — Bench Lab",
-      tagline: "Jetson GPU hashcat · difficult assembly",
+      name: "Mr. CrackBot AI Nano - Bench Lab",
+      tagline: "Jetson GPU hashcat | difficult assembly",
       image: "images/products/mr-pac-bot-product.png",
       retailPrice: 449,
       priceDisplay: "$449",
@@ -50,11 +50,11 @@ window.HPL_DIRECT = {
       stripeKey: "crackbotBench",
       source: "direct",
       description:
-        "Full authorized lab build — Jetson Nano 4GB, monitor-mode USB Wi‑Fi, CYD pocket UI in Mr. Pac-Bot shell, CrackBot firmware, GPU hashcat path. **Not** a CYD-only product. 4+ hour Philly assembly.",
+        "Full authorized lab build - Jetson Nano 4GB, monitor-mode USB Wi-Fi, CYD pocket UI in Mr. Pac-Bot shell, CrackBot firmware, GPU hashcat path. **Not** a CYD-only product. 4+ hour Philly assembly.",
       includes: [
         "Jetson Nano 4GB + carrier",
         "CYD UI in Mr. Pac-Bot shell",
-        "USB Wi‑Fi + LiPo",
+        "USB Wi-Fi + LiPo",
         "CrackBot flash + burn-in",
       ],
       badge: "CrackBot bench",
@@ -63,7 +63,7 @@ window.HPL_DIRECT = {
       id: "remotePossibility",
       section: "cardputer",
       name: "Remote Possibility",
-      tagline: "M5 Cardputer · CTG field remote",
+      tagline: "M5 Cardputer | CTG field remote",
       image: "images/products/direct-field-pack.png",
       retailPrice: 89.99,
       priceDisplay: "$89.99",
@@ -71,7 +71,7 @@ window.HPL_DIRECT = {
       stripeKey: "remotePossibility",
       source: "direct",
       description:
-        "M5Stack Cardputer pre-flashed with Remote Possibility — poll CyberThreatGotchi mood and status from the field over Wi‑Fi. Authorized lab networks only.",
+        "M5Stack Cardputer pre-flashed with Remote Possibility - poll CyberThreatGotchi mood and status from the field over Wi-Fi. Authorized lab networks only.",
       includes: ["M5 Cardputer", "Remote Possibility firmware", "SD card", "Quick-start guide"],
       badge: "Cardputer",
     },
@@ -79,7 +79,7 @@ window.HPL_DIRECT = {
       id: "bleBot",
       section: "cardputer",
       name: "BLE Bot",
-      tagline: "M5 Cardputer · authorized BLE scout",
+      tagline: "M5 Cardputer | authorized BLE scout",
       image: "images/products/direct-field-pack.png",
       retailPrice: 79.99,
       priceDisplay: "$79.99",
@@ -87,7 +87,7 @@ window.HPL_DIRECT = {
       stripeKey: "bleBot",
       source: "direct",
       description:
-        "M5Stack Cardputer with BLE Bot firmware — keyboard-first BLE lab workflows for authorized research. Separate from CYD Wi‑Fi field builds.",
+        "M5Stack Cardputer with BLE Bot firmware - keyboard-first BLE lab workflows for authorized research. Separate from CYD Wi-Fi field builds.",
       includes: ["M5 Cardputer", "BLE Bot firmware", "SD card", "Quick-start guide"],
       badge: "Cardputer",
     },
@@ -102,7 +102,7 @@ window.HPL_DIRECT = {
       stripeKey: "coreKit",
       source: "direct",
       description:
-        "CyberThreatGotchi Cipherhorn core — BPI-R3 Mini, e-ink HAT, 3D enclosure, flashed SD, PSU. Display variant (e-ink vs IPS) is the only hardware customization.",
+        "CyberThreatGotchi Cipherhorn core - BPI-R3 Mini, e-ink HAT, 3D enclosure, flashed SD, PSU. Display variant (e-ink vs IPS) is the only hardware customization.",
       includes: ["BPI-R3 Mini", "E-ink HAT", "Enclosure", "SD + PSU"],
       badge: "Popular",
     },
@@ -117,7 +117,7 @@ window.HPL_DIRECT = {
       stripeKey: "fieldPack",
       source: "direct",
       description:
-        "Desk + pocket bundle — Cipherhorn core kit plus M5Stack Cardputer (M5 OS) and printed quick-start. Saves vs buying core + Cardputer separately.",
+        "Desk + pocket bundle - Cipherhorn core kit plus M5Stack Cardputer (M5 OS) and printed quick-start. Saves vs buying core + Cardputer separately.",
       includes: ["Cipherhorn core", "M5 Cardputer + M5 OS", "Quick-start guide"],
     },
     {
@@ -131,7 +131,7 @@ window.HPL_DIRECT = {
       stripeKey: "boostFormulaCod",
       source: "direct",
       description:
-        "ESP32-S3 COD field kit — Deauther-ready profile, external antenna, USB-C, tested in Philly. Firmware variant is the only customization; specify authorized-lab profile at checkout.",
+        "ESP32-S3 COD field kit - Deauther-ready profile, external antenna, USB-C, tested in Philly. Firmware variant is the only customization; specify authorized-lab profile at checkout.",
       includes: ["ESP32-S3", "External antenna", "Pre-flashed lab image", "Quick-start card"],
     },
     {
@@ -143,7 +143,7 @@ window.HPL_DIRECT = {
       fulfillment: "digital",
       stripeKey: "codStlPack",
       source: "direct",
-      description: "Digital delivery — pocket clip, wall dock, Prusa/SuperSlicer profiles.",
+      description: "Digital delivery - pocket clip, wall dock, Prusa/SuperSlicer profiles.",
       includes: ["COD clip STL", "Wall dock STL", "KSS profiles"],
       badge: "Digital",
     },
@@ -156,8 +156,8 @@ window.HPL_DIRECT = {
       fulfillment: "digital",
       stripeKey: "digital",
       source: "direct",
-      description: "Full repo assets, STL zip, sprites, marketing graphics — instant link.",
-      includes: ["Repo bundle", "STL zip", "Sprites", "Release PNGs"],
+      description: "Full GitHub bundle, STL zip, sprites, marketing graphics - instant link.",
+      includes: ["GitHub bundle", "STL zip", "Sprites", "Release PNGs"],
     },
   ],
 };

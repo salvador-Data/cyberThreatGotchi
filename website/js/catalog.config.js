@@ -1,11 +1,11 @@
 /**
- * Hacker Planet LLC — drop-ship catalog (retail prices)
+ * Hacker Planet LLC - drop-ship catalog (retail prices)
  *
- * Customer pays HPL via Stripe → you order from supplierUrl → ships to customer.
+ * Customer pays HPL via Stripe -> you order from supplierUrl -> ships to customer.
  * supplierUrl is for your fulfillment ops (also in docs/DROPSHIP_CATALOG.md).
  */
 window.HPL_CATALOG = {
-  dropshipNote: "Partner fulfillment · 5–14 business days · authorized lab use only",
+  dropshipNote: "Partner fulfillment | 5-14 business days | authorized lab use only",
   affiliate: {
     aliexpress: "",
     etsy: "",
@@ -15,14 +15,14 @@ window.HPL_CATALOG = {
     {
       id: "gotchi-pods",
       label: "Cyber wardrive pods",
-      title: "Pwnagotchi · Netgotchi · night-hunter field pods",
+      title: "Pwnagotchi | Netgotchi | night-hunter field pods",
       banner: "images/banner-gotchi-pods.png",
       intro:
-        "Cyber wardrive pods — compact WiFi lab hardware ships from verified makers. Mid-range Kali-ready configs available on request.",
+        "Cyber wardrive pods - compact WiFi lab hardware ships from verified makers. Mid-range Kali-ready configs available on request.",
       products: [
         {
           id: "ds-pwnagotchi",
-          name: "Pwnagotchi — assembled wardrive pod",
+          name: "Pwnagotchi - assembled wardrive pod",
           image: "images/products/ds-pwnagotchi.png",
           retailPrice: 169,
           priceDisplay: "$169",
@@ -32,13 +32,13 @@ window.HPL_CATALOG = {
           supplier: "Etsy / community makers",
           source: "dropship",
           description:
-            "Community-assembled Pi Zero W or ESP32 wardrive pod with OLED telemetry panel — passive WiFi observation for authorized labs. Board, display theme, and enclosure vary by maker; tell us your preferences at checkout and we route to a matching Etsy build.",
+            "Community-assembled Pi Zero W or ESP32 wardrive pod with OLED telemetry panel - passive WiFi observation for authorized labs. Board, display theme, and enclosure vary by maker; tell us your preferences at checkout and we route to a matching Etsy build.",
           includes: ["Flashed SD image", "OLED status panel", "Pi Zero W or ESP base", "USB power cable"],
           badge: "Wardrive",
         },
         {
           id: "ds-netgotchi",
-          name: "Netgotchi — defensive network guardian",
+          name: "Netgotchi - defensive network guardian",
           image: "images/products/ds-netgotchi.jpg",
           retailPrice: 99,
           priceDisplay: "$99",
@@ -48,13 +48,13 @@ window.HPL_CATALOG = {
           supplier: "OlleAdventures",
           source: "dropship",
           description:
-            "NETGOTCHI v2 from OlleAdventures — Pwnagotchi's defensive sibling: honeypot, intrusion alerts, and periodic 2.4 GHz WiFi scans. Expandable case with OLED and speaker; open-source firmware on GitHub. Case color is the only customization — message your preference (default black or blue) at checkout.",
+            "NETGOTCHI v2 from OlleAdventures - Pwnagotchi's defensive sibling: honeypot, intrusion alerts, and periodic 2.4 GHz WiFi scans. Expandable case with OLED and speaker; open-source firmware on GitHub. Case color is the only customization - message your preference (default black or blue) at checkout.",
           includes: ["Assembled board + case", "OLED + speaker", "Micro USB cable", "Open-source firmware"],
           badge: "Defensive",
         },
         {
           id: "ds-netgotchi-pro",
-          name: "Netgotchi Pro — keypad + buzzer",
+          name: "Netgotchi Pro - keypad + buzzer",
           image: "images/products/ds-netgotchi-pro.jpg",
           retailPrice: 129,
           priceDisplay: "$129",
@@ -64,12 +64,12 @@ window.HPL_CATALOG = {
           supplier: "OlleAdventures",
           source: "dropship",
           description:
-            "NETGOTCHI PRO — portable network guardian with keypad, buzzer, TEXTgotchi mode, and on-device settings. Scans and protects 2.4 GHz networks; expandable case. Customization is case color only — note your choice at checkout.",
+            "NETGOTCHI PRO - portable network guardian with keypad, buzzer, TEXTgotchi mode, and on-device settings. Scans and protects 2.4 GHz networks; expandable case. Customization is case color only - note your choice at checkout.",
           includes: ["Keypad + buzzer", "Expandable case", "OLED + speaker", "USB cable"],
         },
         {
           id: "ds-night-hunter",
-          name: "Night Hunter pod — Kali-ready field build",
+          name: "Night Hunter pod - Kali-ready field build",
           image: "images/products/ds-night-hunter.jpg",
           retailPrice: 189,
           priceDisplay: "$189",
@@ -79,7 +79,7 @@ window.HPL_CATALOG = {
           supplier: "HoneyHoneyTrading",
           source: "dropship",
           description:
-            "ESP32 Marauder Pocket Unit with GPS v2 — 2.8\" touchscreen, dual SMA WiFi/BT antennas, wardrive GPS, dual 18650 bays, SD PCAP storage, and 3D-printed enclosure (~9.2×4.6×7.1 cm). Enclosure color is the listing customization; we pass your choice to HoneyHoneyTrading.",
+            "ESP32 Marauder Pocket Unit with GPS v2 - 2.8\" touchscreen, dual SMA WiFi/BT antennas, wardrive GPS, dual 18650 bays, SD PCAP storage, and 3D-printed enclosure (~9.2x4.6x7.1 cm). Enclosure color is the listing customization; we pass your choice to HoneyHoneyTrading.",
           includes: ["CYD 2.8\" touchscreen", "GPS + dual SMA", "8GB SD", "Printed enclosure"],
           badge: "Kali-ready",
         },
@@ -90,7 +90,7 @@ window.HPL_CATALOG = {
       label: "Meshtastic",
       title: "Meshtastic mesh radio kits",
       intro:
-        "Off-grid LoRa mesh nodes — turnkey Etsy builds and kit options ship to your authorized lab. Operator places supplier orders manually after HPL checkout.",
+        "Off-grid LoRa mesh nodes - turnkey Etsy builds and kit options ship to your authorized lab. Operator places supplier orders manually after HPL checkout.",
       products: [
         {
           id: "ds-meshtastic-tbeam",
@@ -104,7 +104,7 @@ window.HPL_CATALOG = {
           supplier: "LilyGO / AliExpress",
           source: "dropship",
           description:
-            "Classic Meshtastic backpack node — ESP32 + SX1276 LoRa + GPS, battery holder, and antenna. LilyGO ships multiple LoRa band options; tell us your region at checkout and we order the matching band.",
+            "Classic Meshtastic backpack node - ESP32 + SX1276 LoRa + GPS, battery holder, and antenna. LilyGO ships multiple LoRa band options; tell us your region at checkout and we order the matching band.",
           includes: ["T-Beam v1.1 board", "GPS module", "LoRa antenna", "Battery holder"],
           badge: "LoRa mesh",
         },
@@ -121,7 +121,7 @@ window.HPL_CATALOG = {
           supplier: "LayerFabUK (Etsy)",
           source: "dropship",
           description:
-            "Turnkey Heltec WiFi LoRa 32 V3 mesh radio — professionally assembled, flashed for Meshtastic, and housed in a field-ready printed case. Routed through LayerFabUK, an Etsy Star Seller with consistent five-star reviews. Specify US 915 MHz (or your region) at checkout; we place the matching variant with the maker.",
+            "Turnkey Heltec WiFi LoRa 32 V3 mesh radio - professionally assembled, flashed for Meshtastic, and housed in a field-ready printed case. Routed through LayerFabUK, an Etsy Star Seller with consistent five-star reviews. Specify US 915 MHz (or your region) at checkout; we place the matching variant with the maker.",
           includes: [
             "Heltec V3 with Meshtastic firmware",
             "Printed protective case",
@@ -142,7 +142,7 @@ window.HPL_CATALOG = {
           supplier: "RAKwireless",
           source: "dropship",
           description:
-            "WisBlock Meshtastic Starter Kit — RAK4631 (nRF52840 + SX1262) pre-flashed, 2 dBi rubber antenna, BLE antenna, USB cable. Pick base board size and optional OLED/GNSS modules on RAKwireless; customization is module mix only.",
+            "WisBlock Meshtastic Starter Kit - RAK4631 (nRF52840 + SX1262) pre-flashed, 2 dBi rubber antenna, BLE antenna, USB cable. Pick base board size and optional OLED/GNSS modules on RAKwireless; customization is module mix only.",
           includes: ["RAK4631 core (Meshtastic FW)", "WisBlock base", "2 dBi LoRa antenna", "USB cable"],
           badge: "Starter",
         },
@@ -158,7 +158,7 @@ window.HPL_CATALOG = {
           supplier: "Etsy makers",
           source: "dropship",
           description:
-            "Weather-resistant printed enclosure for T-Beam or Heltec — routed through Etsy makers. Case color and board fit (T-Beam vs Heltec) are the only customization; note your board model at checkout.",
+            "Weather-resistant printed enclosure for T-Beam or Heltec - routed through Etsy makers. Case color and board fit (T-Beam vs Heltec) are the only customization; note your board model at checkout.",
           includes: ["Printed top/bottom", "Mounting hardware", "Antenna passthrough"],
         },
       ],
@@ -168,11 +168,11 @@ window.HPL_CATALOG = {
       label: "Hackberry Pi",
       title: "Hackberry Pi cyberdecks (ZitaoTech)",
       intro:
-        "BlackBerry-keyboard Linux handhelds — Kali-ready cyberdecks ship from ZitaoTech / community distributors.",
+        "BlackBerry-keyboard Linux handhelds - Kali-ready cyberdecks ship from ZitaoTech / community distributors.",
       products: [
         {
           id: "ds-hackberry-zero",
-          name: "Hackberry Pi Zero — pocket Kali terminal",
+          name: "Hackberry Pi Zero - pocket Kali terminal",
           image: "images/products/ds-hackberry-zero.png",
           retailPrice: 279,
           priceDisplay: "$279",
@@ -182,13 +182,13 @@ window.HPL_CATALOG = {
           supplier: "ZitaoTech / Elecrow",
           source: "dropship",
           description:
-            "Handheld Linux terminal — Raspberry Pi Zero 2 W, 720×720 TFT, BlackBerry keyboard (Q10/Q20/9900), three USB ports, swappable Nokia BL-5C cells. Keyboard layout is the main supplier customization.",
+            "Handheld Linux terminal - Raspberry Pi Zero 2 W, 720x720 TFT, BlackBerry keyboard (Q10/Q20/9900), three USB ports, swappable Nokia BL-5C cells. Keyboard layout is the main supplier customization.",
           includes: ["Assembled deck", "BB keyboard", "Batteries", "Type-C charge"],
           badge: "Cyberdeck",
         },
         {
           id: "ds-hackberry-pi5",
-          name: "Hackberry Pi 5 — full cyberdeck",
+          name: "Hackberry Pi 5 - full cyberdeck",
           image: "images/products/ds-hackberry-pi5.png",
           retailPrice: 449,
           priceDisplay: "$449",
@@ -198,12 +198,12 @@ window.HPL_CATALOG = {
           supplier: "ZitaoTech / Tindie",
           source: "dropship",
           description:
-            "Pi 5 cyberdeck with 720×720 touch display, dual 18650 power, stereo Bluetooth speakers, VIAL keymaps, Stemma I2C — runs Kali or Raspberry Pi OS. Keyboard and plate options are configured with ZitaoTech.",
-          includes: ["Pi 5 slot build", "720×720 touch", "Stereo BT speakers", "Stemma I2C"],
+            "Pi 5 cyberdeck with 720x720 touch display, dual 18650 power, stereo Bluetooth speakers, VIAL keymaps, Stemma I2C - runs Kali or Raspberry Pi OS. Keyboard and plate options are configured with ZitaoTech.",
+          includes: ["Pi 5 slot build", "720x720 touch", "Stereo BT speakers", "Stemma I2C"],
         },
         {
           id: "ds-hackberry-cm5",
-          name: "Hackberry Pi CM5 — ultra portable",
+          name: "Hackberry Pi CM5 - ultra portable",
           image: "images/products/ds-hackberry-cm5.png",
           retailPrice: 499,
           priceDisplay: "$499",
@@ -213,7 +213,7 @@ window.HPL_CATALOG = {
           supplier: "ZitaoTech",
           source: "dropship",
           description:
-            "CM5 compute module in aluminium body — NVMe slot, USB 3, HDMI out, dual speakers. Ultra-portable pro deck; enclosure and keymap are the configurable options from ZitaoTech.",
+            "CM5 compute module in aluminium body - NVMe slot, USB 3, HDMI out, dual speakers. Ultra-portable pro deck; enclosure and keymap are the configurable options from ZitaoTech.",
           includes: ["CM5-compatible shell", "Dual speakers", "Metal plates", "3D mid-frame"],
           badge: "Pro",
         },
@@ -222,8 +222,8 @@ window.HPL_CATALOG = {
     {
       id: "marauder-wifi",
       label: "Marauder & WiFi lab",
-      title: "ESP32 Marauder · Deauther · custom builds",
-      intro: "Authorized RF lab tools — GPS wardrive builds and battery mods ship from partner makers.",
+      title: "ESP32 Marauder | Deauther | custom builds",
+      intro: "Authorized RF lab tools - GPS wardrive builds and battery mods ship from partner makers.",
       products: [
         {
           id: "ds-marauder-gps",
@@ -237,7 +237,7 @@ window.HPL_CATALOG = {
           supplier: "HoneyHoneyTrading",
           source: "dropship",
           description:
-            "HoneyHoneyTrading ESP32 Marauder Pocket with GPS v2 — wardrive logging, dual SMA antennas, 8GB SanDisk SD, 2.8\" CYD touchscreen, dual 18650 (batteries not shipped). Case color is the only customization on the listing.",
+            "HoneyHoneyTrading ESP32 Marauder Pocket with GPS v2 - wardrive logging, dual SMA antennas, 8GB SanDisk SD, 2.8\" CYD touchscreen, dual 18650 (batteries not shipped). Case color is the only customization on the listing.",
           includes: ["GPS module", "WiFi/BT antennas", "8GB SD", "USB-C charge"],
         },
         {
@@ -252,7 +252,7 @@ window.HPL_CATALOG = {
           supplier: "Biscuit Shop",
           source: "dropship",
           description:
-            "Biscuit Shop V2 drop-in PCB for Cheap Yellow Display — no soldering, adds LiPo power, I2C fuel gauge, and GPS for Marauder wardrive builds.",
+            "Biscuit Shop V2 drop-in PCB for Cheap Yellow Display - no soldering, adds LiPo power, I2C fuel gauge, and GPS for Marauder wardrive builds.",
           includes: ["GPS antenna", "Charge circuit", "Plug-in PCB"],
         },
         {
@@ -267,7 +267,7 @@ window.HPL_CATALOG = {
           supplier: "JustCallMeKoko",
           source: "dropship",
           description:
-            "JustCallMeKoko official ESP32 Marauder kit — PCB and 3D-printed enclosure; you supply Huzzah32 and LiPo. Portable WiFi/BT analysis firmware.",
+            "JustCallMeKoko official ESP32 Marauder kit - PCB and 3D-printed enclosure; you supply Huzzah32 and LiPo. Portable WiFi/BT analysis firmware.",
           includes: ["PCB", "3D printed case", "Screws", "QR docs"],
         },
       ],
@@ -275,8 +275,8 @@ window.HPL_CATALOG = {
     {
       id: "sbc-hacker",
       label: "SBC & Pi kits",
-      title: "Raspberry Pi · Orange Pi · edge router boards",
-      intro: "Mid-range hacker SBC kits ship from AliExpress / official distributors — vetted sellers only.",
+      title: "Raspberry Pi | Orange Pi | edge router boards",
+      intro: "Mid-range hacker SBC kits ship from AliExpress / official distributors - vetted sellers only.",
       products: [
         {
           id: "ds-rpi5-kit",
@@ -290,7 +290,7 @@ window.HPL_CATALOG = {
           supplier: "CanaKit (authorized reseller)",
           source: "dropship",
           description:
-            "Pi 5 board + active cooler + 27W PSU + case — homelab IDS or CyberThreatGotchi dev bench. RAM tier (4GB vs 8GB) and case color are the supplier variants; specify your preference at checkout.",
+            "Pi 5 board + active cooler + 27W PSU + case - homelab IDS or CyberThreatGotchi dev bench. RAM tier (4GB vs 8GB) and case color are the supplier variants; specify your preference at checkout.",
           includes: ["Pi 5 board", "Active cooler", "Power supply", "Case"],
         },
         {
@@ -305,7 +305,7 @@ window.HPL_CATALOG = {
           supplier: "AliExpress / Orange Pi store",
           source: "dropship",
           description:
-            "RK3588 SBC for lightweight SIEM edges and portable lab stacks. RAM and storage bundle options vary on AliExpress — tell us your target config at checkout.",
+            "RK3588 SBC for lightweight SIEM edges and portable lab stacks. RAM and storage bundle options vary on AliExpress - tell us your target config at checkout.",
           includes: ["8GB RAM variant", "Heatsink", "Power adapter"],
         },
         {
@@ -320,13 +320,13 @@ window.HPL_CATALOG = {
           supplier: "AliExpress",
           source: "dropship",
           description:
-            "Same class as CyberThreatGotchi core — dual 2.5G Ethernet, Wi-Fi 6. Optional case and antenna kit are the only customization on the supplier listing.",
+            "Same class as CyberThreatGotchi core - dual 2.5G Ethernet, Wi-Fi 6. Optional case and antenna kit are the only customization on the supplier listing.",
           includes: ["BPI-R3 Mini", "Antennas", "Optional case"],
           badge: "Edge IPS",
         },
         {
           id: "ds-esp32-lab",
-          name: "ESP32 CYD lab bundle (×2 boards)",
+          name: "ESP32 CYD lab bundle (x2 boards)",
           image: "images/products/ds-esp32-lab.jpg",
           retailPrice: 49,
           priceDisplay: "$49",
@@ -336,8 +336,8 @@ window.HPL_CATALOG = {
           supplier: "AliExpress / Makerfabs (vetted)",
           source: "dropship",
           description:
-            "Two ESP32-2432S028R Cheap Yellow Display modules — integrated 2.8\" touch TFT for Marauder, Bruce, or LVGL lab dashboards. Operator orders the resistive-touch ILI9341 variant from a vetted marketplace listing (see community pinout guide).",
-          includes: ["2× CYD 2.8\"", "USB cables", "Basic antennas"],
+            "Two ESP32-2432S028R Cheap Yellow Display modules - integrated 2.8\" touch TFT for Marauder, Bruce, or LVGL lab dashboards. Operator orders the resistive-touch ILI9341 variant from a vetted marketplace listing (see community pinout guide).",
+          includes: ["2x CYD 2.8\"", "USB cables", "Basic antennas"],
         },
         {
           id: "ds-wiring-lab",
@@ -351,8 +351,8 @@ window.HPL_CATALOG = {
           supplier: "SparkFun / Adafruit",
           source: "dropship",
           description:
-            "Bench prototyping pack — half-size breadboard plus pre-cut 22 AWG jumper sets for CYD, Pi, and ESP32 bring-up. Ships from US maker distributors; ideal companion for homelab kit orders.",
-          includes: ["Half-size breadboard", "140× pre-bent jumpers", "Color-coded solid core set"],
+            "Bench prototyping pack - half-size breadboard plus pre-cut 22 AWG jumper sets for CYD, Pi, and ESP32 bring-up. Ships from US maker distributors; ideal companion for homelab kit orders.",
+          includes: ["Half-size breadboard", "140x pre-bent jumpers", "Color-coded solid core set"],
           badge: "Lab essentials",
         },
       ],
@@ -360,9 +360,9 @@ window.HPL_CATALOG = {
     {
       id: "authorized-lab-phones",
       label: "Lab phones",
-      title: "Kali NetHunter · authorized mobile lab platforms",
+      title: "Kali NetHunter | authorized mobile lab platforms",
       intro:
-        "Pre-configured Android lab phones for authorized penetration testing education — sourced from specialist builders, not grey-market auto-checkout bots.",
+        "Pre-configured Android lab phones for authorized penetration testing education - sourced from specialist builders, not grey-market auto-checkout bots.",
       products: [
         {
           id: "ds-kali-nethunter",
@@ -376,7 +376,7 @@ window.HPL_CATALOG = {
           supplier: "KaliNetHunter.com / ViP3R Hunter",
           source: "dropship",
           description:
-            "Handset prepared for authorized mobile security labs — Kali NetHunter with supported kernel where available. Model varies by stock (OnePlus, Pixel-class, or legacy Nexus tiers). We confirm device tier with you after checkout, then place the builder order manually.",
+            "Handset prepared for authorized mobile security labs - Kali NetHunter with supported kernel where available. Model varies by stock (OnePlus, Pixel-class, or legacy Nexus tiers). We confirm device tier with you after checkout, then place the builder order manually.",
           includes: [
             "Pre-flashed NetHunter image",
             "USB data cable when supplied by builder",
@@ -389,7 +389,7 @@ window.HPL_CATALOG = {
     {
       id: "diy-stl",
       label: "DIY printables",
-      title: "Free STL files · paid slicer packs",
+      title: "Free STL files | paid slicer packs",
       intro: "Download free community STLs or order digital KSS/SuperSlicer profile packs through checkout.",
       products: [
         {
@@ -398,7 +398,7 @@ window.HPL_CATALOG = {
           priceDisplay: "Free",
           source: "github",
           buyUrl: "https://github.com/salvador-Data/cyberThreatGotchi/tree/main/hardware/stl",
-          description: "Front shell, rear shell, clip — e-ink and IPS display variants.",
+          description: "Front shell, rear shell, clip - e-ink and IPS display variants.",
           includes: ["ctg_front_shell.stl", "ctg_rear_shell.stl", "ctg_clip.stl"],
           badge: "Open source",
         },

@@ -1,7 +1,7 @@
 /**
- * Hacker Planet LLC — drop-ship fulfillment tracker (operator config)
+ * Hacker Planet LLC - drop-ship fulfillment tracker (operator config)
  *
- * Manual / semi-automated dropship only — no Etsy or AliExpress auto-charge.
+ * Manual / semi-automated dropship only - no Etsy or AliExpress auto-charge.
  * Keys match stripeKey in catalog.config.js and payments.js.
  */
 window.HPL_SHIPPING_TRACKER = {
@@ -9,9 +9,9 @@ window.HPL_SHIPPING_TRACKER = {
     "Operator places supplier orders manually. Never store marketplace passwords in repo.",
   fulfillmentStatuses: [
     { id: "awaiting_payment", label: "Awaiting HPL payment confirmation" },
-    { id: "ready_to_order", label: "Ready — place supplier order" },
+    { id: "ready_to_order", label: "Ready - place supplier order" },
     { id: "ordered", label: "Ordered at supplier" },
-    { id: "shipped", label: "Shipped — tracking active" },
+    { id: "shipped", label: "Shipped - tracking active" },
     { id: "delivered", label: "Delivered" },
     { id: "exception", label: "Exception / RMA" },
   ],
@@ -19,17 +19,17 @@ window.HPL_SHIPPING_TRACKER = {
     etsy: {
       label: "Etsy",
       orderPortal: "https://www.etsy.com/your/purchases",
-      trackingHint: "Use Etsy order confirmation → carrier tracking link",
+      trackingHint: "Use Etsy order confirmation -> carrier tracking link",
     },
     aliexpress: {
       label: "AliExpress",
       orderPortal: "https://www.aliexpress.com/p/order/index.html",
-      trackingHint: "AliExpress order detail → logistics tab",
+      trackingHint: "AliExpress order detail -> logistics tab",
     },
     tindie: {
       label: "Tindie",
       orderPortal: "https://www.tindie.com/accounts/orders/",
-      trackingHint: "Tindie email → carrier tracking",
+      trackingHint: "Tindie email -> carrier tracking",
     },
     direct_store: {
       label: "Supplier store",
@@ -44,8 +44,8 @@ window.HPL_SHIPPING_TRACKER = {
     generic: "https://www.google.com/search?q={tracking}+package+tracking",
   },
   suppliers: {
-    LayerFabUK: { channel: "etsy", region: "US", ratingNote: "Etsy Star Seller · Heltec V3 turnkey builds" },
-    GarthVH: { channel: "etsy", region: "US", ratingNote: "Etsy Star Seller · Meshtastic / solar nodes" },
+    LayerFabUK: { channel: "etsy", region: "US", ratingNote: "Etsy Star Seller | Heltec V3 turnkey builds" },
+    GarthVH: { channel: "etsy", region: "US", ratingNote: "Etsy Star Seller | Meshtastic / solar nodes" },
     OlleAdventures: { channel: "etsy", region: "US", ratingNote: "Netgotchi family" },
     ZitaoTech: { channel: "tindie", region: "EU/US", ratingNote: "Hackberry Pi cyberdecks" },
     HoneyHoneyTrading: { channel: "tindie", region: "US", ratingNote: "Marauder pocket builds" },
@@ -56,9 +56,9 @@ window.HPL_SHIPPING_TRACKER = {
     KaliNetHunterDevices: {
       channel: "direct_store",
       region: "US",
-      ratingNote: "Pre-flashed NetHunter hardware — authorized testing only",
+      ratingNote: "Pre-flashed NetHunter hardware - authorized testing only",
     },
-    AliExpressVetted: { channel: "aliexpress", region: "CN→US", ratingNote: "Operator picks vetted seller per SKU" },
+    AliExpressVetted: { channel: "aliexpress", region: "CN->US", ratingNote: "Operator picks vetted seller per SKU" },
     LilyGO: { channel: "direct_store", region: "CN", ratingNote: "T-Beam boards" },
     RAKwireless: { channel: "direct_store", region: "US", ratingNote: "WisBlock Meshtastic kits" },
   },
@@ -72,7 +72,7 @@ window.HPL_SHIPPING_TRACKER = {
       supplierUrl: "https://www.etsy.com/listing/1733234765/the-knight-complete-device-heltec-v3",
       orderChecklist: [
         "Confirm LoRa band (US 915 MHz default)",
-        "Ship to customer address — not HPL warehouse unless forwarding",
+        "Ship to customer address - not HPL warehouse unless forwarding",
         "Paste Etsy order ID into fulfillment log",
         "Message buyer preferences from Stripe order notes",
       ],
@@ -114,7 +114,7 @@ window.HPL_SHIPPING_TRACKER = {
       orderChecklist: [
         "Confirm device model and NetHunter tier with customer",
         "Include authorized-lab disclaimer in HPL shipment email",
-        "Record IMEI only in secure ops log — never in git",
+        "Record IMEI only in secure ops log - never in git",
       ],
     },
     dsWiringLab: {
@@ -133,7 +133,7 @@ window.HPL_SHIPPING_TRACKER = {
       leadTimeDays: { min: 10, max: 21 },
       supplierCostUsd: 165,
       supplierUrl: "https://www.elecrow.com/hackberrypi-zero-with-q10-keyboard.html",
-      orderChecklist: ["Confirm keyboard variant (Q10/Q20/9900)", "Pi Zero 2 W often sold separately — verify listing"],
+      orderChecklist: ["Confirm keyboard variant (Q10/Q20/9900)", "Pi Zero 2 W often sold separately - verify listing"],
     },
     dsHackberryPi5: {
       supplier: "ZitaoTech",
@@ -142,7 +142,7 @@ window.HPL_SHIPPING_TRACKER = {
       leadTimeDays: { min: 14, max: 28 },
       supplierCostUsd: 280,
       supplierUrl: "https://www.tindie.com/products/zitaotech/hackberrypi5-with-9900-keyboard/",
-      orderChecklist: ["Deck ships without Pi 5 — note if customer expects full SBC", "Confirm keyboard option"],
+      orderChecklist: ["Deck ships without Pi 5 - note if customer expects full SBC", "Confirm keyboard option"],
     },
     dsHackberryCM5: {
       supplier: "ZitaoTech",
@@ -218,7 +218,7 @@ window.HPL_SHIPPING_TRACKER = {
       leadTimeDays: { min: 7, max: 14 },
       supplierCostUsd: 155,
       supplierUrl: "https://www.tindie.com/products/honeyhoneytrading/esp32-marauder-pocket-unit-with-gps-v2/",
-      orderChecklist: ["Same SKU as Night Hunter — verify customer intent"],
+      orderChecklist: ["Same SKU as Night Hunter - verify customer intent"],
     },
     dsMarauderBatteryMod: {
       supplier: "BiscuitShop",
@@ -227,7 +227,7 @@ window.HPL_SHIPPING_TRACKER = {
       leadTimeDays: { min: 5, max: 10 },
       supplierCostUsd: 38,
       supplierUrl: "https://biscuitshop.us/products/esp32-marauder-battery-mod-kit",
-      orderChecklist: ["CYD board not included — customer may already own CYD"],
+      orderChecklist: ["CYD board not included - customer may already own CYD"],
     },
     dsMarauderKoko: {
       supplier: "JustCallMeKoko",

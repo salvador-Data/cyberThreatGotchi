@@ -1,6 +1,6 @@
 /**
- * Hacker Planet LLC — checkout buttons
- * Stripe (cards, debit, Apple Pay) · PayPal · Venmo · Cash App
+ * Hacker Planet LLC - checkout buttons
+ * Stripe (cards, debit, Apple Pay) | PayPal | Venmo | Cash App
  */
 
 (function () {
@@ -10,7 +10,7 @@
       name: "Digital Pack",
       price: 15,
       period: "one-time",
-      desc: "Repo access, STL zip, sprites, release assets",
+      desc: "GitHub bundle, STL zip, sprites, release assets",
       stripeKey: "digital",
     },
     proMonthly: {
@@ -26,7 +26,7 @@
       name: "CTG Pro Feed",
       price: 99,
       period: "/year",
-      desc: "Pro feed — save vs monthly",
+      desc: "Pro feed - save vs monthly",
       stripeKey: "proYearly",
     },
     coreKit: {
@@ -34,7 +34,7 @@
       name: "CyberThreatGotchi",
       price: 169,
       period: "one-time",
-      desc: "HPL direct ship · BPI-R3 Mini + e-ink + enclosure",
+      desc: "HPL direct ship | BPI-R3 Mini + e-ink + enclosure",
       stripeKey: "coreKit",
     },
     fieldPack: {
@@ -42,31 +42,31 @@
       name: "Field Pack",
       price: 219,
       period: "one-time",
-      desc: "HPL direct ship · core kit + M5 Cardputer",
+      desc: "HPL direct ship | core kit + M5 Cardputer",
       stripeKey: "fieldPack",
     },
     cydStandard: {
       id: "cydStandard",
-      name: "CYD Field Build — Standard",
+      name: "CYD Field Build - Standard",
       price: 79.99,
       period: "one-time",
-      desc: "CYD standard · Philly direct · + tax & shipping",
+      desc: "CYD standard | Philly direct | + tax & shipping",
       stripeKey: "cydStandard",
     },
     cydFieldCustom: {
       id: "cydFieldCustom",
-      name: "CYD Field Build — Custom",
+      name: "CYD Field Build - Custom",
       price: 174.99,
       period: "one-time",
-      desc: "GPS · ext Wi-Fi/BLE · battery · switch · Philly direct",
+      desc: "GPS | ext Wi-Fi/BLE | battery | switch | Philly direct",
       stripeKey: "cydFieldCustom",
     },
     crackbotBench: {
       id: "crackbotBench",
-      name: "Mr. CrackBot AI Nano — Bench Lab",
+      name: "Mr. CrackBot AI Nano - Bench Lab",
       price: 449,
       period: "one-time",
-      desc: "Jetson + CYD UI + GPU hashcat · difficult Philly assembly",
+      desc: "Jetson + CYD UI + GPU hashcat | difficult Philly assembly",
       stripeKey: "crackbotBench",
     },
     remotePossibility: {
@@ -74,7 +74,7 @@
       name: "Remote Possibility",
       price: 89.99,
       period: "one-time",
-      desc: "M5 Cardputer · CTG remote status client",
+      desc: "M5 Cardputer | CTG remote status client",
       stripeKey: "remotePossibility",
     },
     bleBot: {
@@ -82,7 +82,7 @@
       name: "BLE Bot",
       price: 79.99,
       period: "one-time",
-      desc: "M5 Cardputer · authorized BLE scout firmware",
+      desc: "M5 Cardputer | authorized BLE scout firmware",
       stripeKey: "bleBot",
     },
     boostFormulaCod: {
@@ -90,7 +90,7 @@
       name: "Boost Formula COD Field Kit",
       price: 99,
       period: "one-time",
-      desc: "HPL direct ship · ESP32-S3 + antenna",
+      desc: "HPL direct ship | ESP32-S3 + antenna",
       stripeKey: "boostFormulaCod",
     },
     codStlPack: {
@@ -98,7 +98,7 @@
       name: "COD STL + KSS print pack",
       price: 19,
       period: "one-time",
-      desc: "Digital delivery · STL + slicer profiles",
+      desc: "Digital delivery | STL + slicer profiles",
       stripeKey: "codStlPack",
     },
     dsPwnagotchi: {
@@ -106,7 +106,7 @@
       name: "Pwnagotchi wardrive pod",
       price: 169,
       period: "one-time",
-      desc: "Partner fulfillment — assembled Pwnagotchi build",
+      desc: "Partner fulfillment - assembled Pwnagotchi build",
       stripeKey: "dsPwnagotchi",
     },
     dsNetgotchi: {
@@ -114,7 +114,7 @@
       name: "Netgotchi defensive guardian",
       price: 99,
       period: "one-time",
-      desc: "Partner fulfillment — from OlleAdventures",
+      desc: "Partner fulfillment - from OlleAdventures",
       stripeKey: "dsNetgotchi",
     },
     dsNetgotchiPro: {
@@ -122,7 +122,7 @@
       name: "Netgotchi Pro",
       price: 129,
       period: "one-time",
-      desc: "Partner fulfillment — Pro with keypad + buzzer",
+      desc: "Partner fulfillment - Pro with keypad + buzzer",
       stripeKey: "dsNetgotchiPro",
     },
     dsNightHunter: {
@@ -130,7 +130,7 @@
       name: "Night Hunter Kali-ready pod",
       price: 189,
       period: "one-time",
-      desc: "Partner fulfillment — GPS wardrive field pod",
+      desc: "Partner fulfillment - GPS wardrive field pod",
       stripeKey: "dsNightHunter",
     },
     dsMeshtasticTBeam: {
@@ -138,7 +138,7 @@
       name: "LilyGO T-Beam Meshtastic kit",
       price: 89,
       period: "one-time",
-      desc: "Partner fulfillment — LoRa mesh node",
+      desc: "Partner fulfillment - LoRa mesh node",
       stripeKey: "dsMeshtasticTBeam",
     },
     dsMeshtasticHeltec: {
@@ -146,7 +146,7 @@
       name: "Heltec V3 fully built Meshtastic",
       price: 129,
       period: "one-time",
-      desc: "Partner fulfillment — Etsy turnkey mesh radio",
+      desc: "Partner fulfillment - Etsy turnkey mesh radio",
       stripeKey: "dsMeshtasticHeltec",
     },
     dsMeshtasticRAK: {
@@ -154,7 +154,7 @@
       name: "RAK4631 Meshtastic starter",
       price: 119,
       period: "one-time",
-      desc: "Partner fulfillment — WisBlock mesh kit",
+      desc: "Partner fulfillment - WisBlock mesh kit",
       stripeKey: "dsMeshtasticRAK",
     },
     dsMeshtasticCase: {
@@ -162,7 +162,7 @@
       name: "Meshtastic field case",
       price: 34,
       period: "one-time",
-      desc: "Partner fulfillment — 3D printed enclosure",
+      desc: "Partner fulfillment - 3D printed enclosure",
       stripeKey: "dsMeshtasticCase",
     },
     dsHackberryZero: {
@@ -170,7 +170,7 @@
       name: "Hackberry Pi Zero cyberdeck",
       price: 279,
       period: "one-time",
-      desc: "Partner fulfillment — ZitaoTech pocket terminal",
+      desc: "Partner fulfillment - ZitaoTech pocket terminal",
       stripeKey: "dsHackberryZero",
     },
     dsHackberryPi5: {
@@ -178,7 +178,7 @@
       name: "Hackberry Pi 5 cyberdeck",
       price: 449,
       period: "one-time",
-      desc: "Partner fulfillment — full Pi 5 handheld",
+      desc: "Partner fulfillment - full Pi 5 handheld",
       stripeKey: "dsHackberryPi5",
     },
     dsHackberryCM5: {
@@ -186,7 +186,7 @@
       name: "Hackberry Pi CM5",
       price: 499,
       period: "one-time",
-      desc: "Partner fulfillment — CM5 ultra portable",
+      desc: "Partner fulfillment - CM5 ultra portable",
       stripeKey: "dsHackberryCM5",
     },
     dsMarauderGps: {
@@ -194,7 +194,7 @@
       name: "Marauder pocket + GPS v2",
       price: 219,
       period: "one-time",
-      desc: "Partner fulfillment — HoneyHoneyTrading build",
+      desc: "Partner fulfillment - HoneyHoneyTrading build",
       stripeKey: "dsMarauderGps",
     },
     dsMarauderBatteryMod: {
@@ -202,7 +202,7 @@
       name: "CYD battery + GPS mod",
       price: 59,
       period: "one-time",
-      desc: "Partner fulfillment — Biscuit Shop mod kit",
+      desc: "Partner fulfillment - Biscuit Shop mod kit",
       stripeKey: "dsMarauderBatteryMod",
     },
     dsMarauderKoko: {
@@ -210,7 +210,7 @@
       name: "Official Marauder Kit",
       price: 89,
       period: "one-time",
-      desc: "Partner fulfillment — Koko PCB kit",
+      desc: "Partner fulfillment - Koko PCB kit",
       stripeKey: "dsMarauderKoko",
     },
     dsRaspberryPi5: {
@@ -218,7 +218,7 @@
       name: "Raspberry Pi 5 starter kit",
       price: 159,
       period: "one-time",
-      desc: "Partner fulfillment — authorized Pi 5 kit",
+      desc: "Partner fulfillment - authorized Pi 5 kit",
       stripeKey: "dsRaspberryPi5",
     },
     dsOrangePi5: {
@@ -226,7 +226,7 @@
       name: "Orange Pi 5 Plus kit",
       price: 119,
       period: "one-time",
-      desc: "Partner fulfillment — RK3588 SBC kit",
+      desc: "Partner fulfillment - RK3588 SBC kit",
       stripeKey: "dsOrangePi5",
     },
     dsBananaPiR3: {
@@ -234,7 +234,7 @@
       name: "Banana Pi BPI-R3 Mini",
       price: 109,
       period: "one-time",
-      desc: "Partner fulfillment — edge router SBC",
+      desc: "Partner fulfillment - edge router SBC",
       stripeKey: "dsBananaPiR3",
     },
     dsEsp32Cyd: {
@@ -242,7 +242,7 @@
       name: "ESP32 CYD lab bundle",
       price: 49,
       period: "one-time",
-      desc: "Partner fulfillment — 2× CYD boards",
+      desc: "Partner fulfillment - 2x CYD boards",
       stripeKey: "dsEsp32Cyd",
     },
     dsWiringLab: {
@@ -250,7 +250,7 @@
       name: "Breadboard + jumper wiring kit",
       price: 22,
       period: "one-time",
-      desc: "Partner fulfillment — prototyping wire bundle",
+      desc: "Partner fulfillment - prototyping wire bundle",
       stripeKey: "dsWiringLab",
     },
     dsKaliNetHunter: {
@@ -258,7 +258,7 @@
       name: "Kali NetHunter lab phone",
       price: 399,
       period: "one-time",
-      desc: "Partner fulfillment — pre-flashed lab handset",
+      desc: "Partner fulfillment - pre-flashed lab handset",
       stripeKey: "dsKaliNetHunter",
     },
   };
@@ -275,7 +275,7 @@
   function cashAppUrl(amount, note) {
     var tag = (cfg().cashapp || {}).cashtag || "";
     if (!tag) return "";
-    var base = "https://cash.app/$" + encodeURIComponent(tag.replace(/^\$/, ""));
+    var base = "https://cash.app/$" + encodeURIComponent(tag.replace(/^\$/));
     if (amount) base += "/" + amount;
     return base;
   }
@@ -287,7 +287,7 @@
       audience: "private",
       amount: String(amount),
       note: note || "Hacker Planet LLC",
-      recipients: user.replace(/^@/, ""),
+      recipients: user.replace(/^@/),
     });
     return "https://account.venmo.com/pay?" + params.toString();
   }
@@ -332,27 +332,27 @@
 
     if (hasStripe) {
       methods.appendChild(
-        payBtn("Card · Debit · Apple Pay", stripeLink(product.stripeKey), "stripe", "💳")
+        payBtn("Card | Debit | Apple Pay", stripeLink(product.stripeKey), "stripe")
       );
     } else if (demo) {
-      methods.appendChild(el("span", "pay-placeholder", "Stripe link — see docs/PAYMENTS.md"));
+      methods.appendChild(el("span", "pay-placeholder", "Stripe link - see docs/PAYMENTS.md"));
     }
 
     if (hasPayPalMe) {
       methods.appendChild(
-        payBtn("PayPal", paypalMeUrl(product.price), "paypal", "🅿️")
+        payBtn("PayPal", paypalMeUrl(product.price), "paypal")
       );
     }
 
     if (hasVenmo) {
       methods.appendChild(
-        payBtn("Venmo", venmoUrl(product.price, product.name), "venmo", "📱")
+        payBtn("Venmo", venmoUrl(product.price, product.name), "venmo")
       );
     }
 
     if (hasCash) {
       var ca = cashAppUrl(product.price, product.name);
-      if (ca) methods.appendChild(payBtn("Cash App", ca, "cashapp", "💵"));
+      if (ca) methods.appendChild(payBtn("Cash App", ca, "cashapp"));
     }
 
     container.appendChild(methods);
@@ -370,8 +370,8 @@
         el(
           "p",
           "pay-demo-note",
-          'Checkout is in <strong>demo mode</strong>. Configure <code>website/js/payments.config.js</code> — ' +
-            '<a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/PAYMENTS.md" target="_blank" rel="noopener">setup guide ↗</a>'
+          'Checkout is in <strong>demo mode</strong>. Configure <code>website/js/payments.config.js</code> - ' +
+            '<a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/PAYMENTS.md" target="_blank" rel="noopener">setup guide -></a>'
         )
       );
     }

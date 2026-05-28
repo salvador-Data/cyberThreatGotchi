@@ -1,4 +1,4 @@
-/** Hacker Planet LLC — site interactions */
+/** Hacker Planet LLC - site interactions */
 
 (function () {
   const toggle = document.querySelector(".nav-toggle");

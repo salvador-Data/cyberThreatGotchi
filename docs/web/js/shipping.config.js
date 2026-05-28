@@ -1,9 +1,9 @@
 /**
- * Hacker Planet LLC — shipping & tax configuration
- * Estimates only — enable Stripe Tax at checkout for live compliance.
+ * Hacker Planet LLC - shipping & tax configuration
+ * Estimates only - enable Stripe Tax at checkout for live compliance.
  */
 window.HPL_SHIPPING = {
-  /** Internal fulfillment only — never render shipFrom.street on public HTML. */
+  /** Internal fulfillment only - never render shipFrom.street on public HTML. */
   shipFrom: {
     company: "Hacker Planet LLC",
     street: "664 Walker Street",
@@ -45,16 +45,16 @@ window.HPL_SHIPPING = {
   dropship: {
     shippingIncluded: true,
     label: "Shipping included",
-    leadTime: "5–14 business days",
+    leadTime: "5-14 business days",
   },
   digital: {
     shipping: 0,
-    label: "Digital delivery — no shipping",
+    label: "Digital delivery - no shipping",
     taxableInPa: true,
   },
-  /** Direct ship from Philadelphia — zone flat rates (USD). */
+  /** Direct ship from Philadelphia - zone flat rates (USD). */
   directZones: [
-    { id: "near", label: "PA · NJ · DE · NY", states: ["PA", "NJ", "DE", "NY"], base: 8.95 },
+    { id: "near", label: "PA | NJ | DE | NY", states: ["PA", "NJ", "DE", "NY"], base: 8.95 },
     { id: "mid", label: "Mid-Atlantic & Midwest", states: ["MD", "VA", "WV", "OH", "NC", "SC", "GA", "FL", "MI", "IN", "KY", "TN", "IL", "WI", "MN", "IA", "MO"], base: 11.95 },
     { id: "central", label: "South & Plains", states: ["AL", "MS", "LA", "AR", "OK", "KS", "NE", "TX", "SD", "ND", "CO", "NM"], base: 14.95 },
     { id: "west", label: "West & Pacific", states: ["MT", "WY", "ID", "UT", "AZ", "NV", "CA", "OR", "WA", "AK", "HI"], base: 17.95 },

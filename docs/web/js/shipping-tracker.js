@@ -1,5 +1,5 @@
 /**
- * Hacker Planet LLC — shipping locator / fulfillment status helpers (operator-facing)
+ * Hacker Planet LLC - shipping locator / fulfillment status helpers (operator-facing)
  *
  * PCI-safe: builds tracking URLs and checklists only; does not call Etsy/AliExpress APIs or marketplace checkout.
  */
@@ -27,7 +27,7 @@
     var meta = productMeta(stripeKey);
     if (!meta || !meta.leadTimeDays) return "";
     var d = meta.leadTimeDays;
-    return d.min + "–" + d.max + " business days";
+    return d.min + "-" + d.max + " business days";
   }
 
   function orderChecklist(stripeKey) {
@@ -50,7 +50,7 @@
 
   function formatFulfillmentPacket(row) {
     var lines = [
-      "Hacker Planet LLC — partner fulfillment order packet",
+      "Hacker Planet LLC - partner fulfillment order packet",
       "SKU: " + (row.sku || ""),
       "Product: " + (row.productName || ""),
       "Stripe key: " + (row.stripeKey || ""),
@@ -65,7 +65,6 @@
       "Fulfillment status: " + (row.status || "ready_to_order"),
       "Tracking: " + (row.tracking || ""),
       "Tracking URL: " + (row.trackingUrl || ""),
-      "",
       "Order checklist:",
     ];
     (row.checklist || []).forEach(function (item, i) {

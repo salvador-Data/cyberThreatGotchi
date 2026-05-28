@@ -88,12 +88,12 @@ def _area_served(cfg: dict[str, Any]) -> list[dict[str, Any]]:
 def _brand_description(cfg: dict[str, Any]) -> str:
     tagline = (cfg.get("tagline") or "").strip()
     base = (
-        "Hacker Planet LLC — Philadelphia cybersecurity hardware lab. "
+        "Hacker Planet LLC - Philadelphia cybersecurity hardware lab. "
         "Blue Team, Red Team, OSINT, remote US consulting, and authorized ethical hacking lab hardware. "
         "City-only public address; no walk-in retail."
     )
     if tagline and tagline not in base:
-        return f"{cfg['siteName']} — {tagline}. {base.split('. ', 1)[1]}"
+        return f"{cfg['siteName']} - {tagline}. {base.split('. ', 1)[1]}"
     return base
 
 
