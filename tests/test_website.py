@@ -34,6 +34,9 @@ def test_website_structure():
         "js/shipping.js",
         "js/shipping.config.js",
         "README.md",
+        "robots.txt",
+        "sitemap.xml",
+        "seo/site.json",
     ):
         assert (WEB / name).is_file(), name
 

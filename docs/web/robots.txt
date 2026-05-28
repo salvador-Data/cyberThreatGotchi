@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /js/payments.config.js
+Sitemap: https://hackerplanet.dev/sitemap.xml

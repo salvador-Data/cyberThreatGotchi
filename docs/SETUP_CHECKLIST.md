@@ -8,7 +8,7 @@
 | [HOSTING_OPTIONS.md](HOSTING_OPTIONS.md) | DNS table, `CNAME`, brand vs URL |
 | [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md) | **Expanded** Cloudflare DNS, TLS, WAF, Email Routing |
 | [FIREWALL_BASELINE.md](FIREWALL_BASELINE.md) | BPI-R3 default-deny iptables + CTG IPS interaction |
-| [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md) | Google Voice detail |
+| [SEO.md](SEO.md) | Meta tags, JSON-LD, sitemap, robots.txt |
 | [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md) | Stripe, tax, fulfillment |
 | [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) | Pages enable / troubleshoot |
 

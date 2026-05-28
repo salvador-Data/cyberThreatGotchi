@@ -60,6 +60,11 @@ def sync() -> int:
     if not SRC.is_dir():
         print("Missing website/ folder", file=sys.stderr)
         return 1
+    seo_script = ROOT / "scripts" / "sync_seo.py"
+    if seo_script.is_file():
+        import subprocess
+
+        subprocess.run([sys.executable, str(seo_script)], check=True, cwd=str(ROOT))
     for html in SRC.glob("*.html"):
         _inject_security(html)
     _mirror_tree(SRC, DEST)
