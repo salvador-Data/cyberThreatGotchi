@@ -168,7 +168,7 @@ try {
 }
 
 Write-Host ""
-Write-Host "Andy - manual steps remaining (all engines)" -ForegroundColor Yellow
+Write-Host "Salvador Data - manual steps remaining (all engines)" -ForegroundColor Yellow
 Write-Host "  - Run: .\scripts\seo_all_engines_go_live.ps1  (GSC + Bing verify + IndexNow)"
 Write-Host "  - Checklist: docs/SEO_INDEXING_NOW.md  |  Ranking: docs/SEO_GET_ON_TOP.md"
 Write-Host "  - GSC + Bing: verify domain, submit sitemap.xml, request indexing for / and key pages"

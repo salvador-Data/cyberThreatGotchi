@@ -378,7 +378,7 @@ window.HPL_CATALOG = {
       label: "RF & network lab",
       title: "SDR | passive tap | authorized WiFi lab tools",
       intro:
-        "Curated partner fulfillment for authorized lab environments — spectrum monitoring, passive Ethernet visibility, and training-grade tools. Offensive-capable SKUs require written scope and owned targets only.",
+        "Curated partner fulfillment for authorized lab environments - spectrum monitoring, passive Ethernet visibility, and training-grade tools. Offensive-capable SKUs require written scope and owned targets only.",
       products: [
         {
           id: "ds-rtl-sdr-kit",
@@ -395,7 +395,7 @@ window.HPL_CATALOG = {
           supplier: "SparkFun / RTL-SDR Blog",
           source: "dropship",
           description:
-            "RTL-SDR Blog V3 USB dongle with dipole antenna kit — receive-only spectrum lab for ADS-B, pager, and ISM survey on authorized networks. Operator sources from SparkFun or Amazon RTL-SDR Blog storefront; we ship curated quick-start scope to your lab.",
+            "RTL-SDR Blog V3 USB dongle with dipole antenna kit - receive-only spectrum lab for ADS-B, pager, and ISM survey on authorized networks. Operator sources from SparkFun or Amazon RTL-SDR Blog storefront; we ship curated quick-start scope to your lab.",
           includes: ["RTL-SDR V3 dongle", "Dipole antenna kit", "SMA adapter", "Authorized-lab quick-start"],
           badge: "SDR starter",
         },
@@ -414,7 +414,7 @@ window.HPL_CATALOG = {
           supplier: "NooElec",
           source: "dropship",
           description:
-            "Budget RTL-SDR bundle with three antennas — HF/VHF/UHF receive lab companion for CyberThreatGotchi edge deployments. Receive-only; pair with Wireshark on a mirrored span or LAN Tap.",
+            "Budget RTL-SDR bundle with three antennas - HF/VHF/UHF receive lab companion for CyberThreatGotchi edge deployments. Receive-only; pair with Wireshark on a mirrored span or LAN Tap.",
           includes: ["NESDR SMArt v5", "3x antenna masts", "Aluminum enclosure", "Lab scope card"],
           badge: "SDR value",
         },
@@ -432,7 +432,7 @@ window.HPL_CATALOG = {
           supplier: "Hak5",
           source: "dropship",
           description:
-            "Passive Ethernet tap for inline monitoring on authorized network segments — feeds tcpdump/Wireshark without injecting packets. Ideal companion for CTG edge IDS validation in your lab.",
+            "Passive Ethernet tap for inline monitoring on authorized network segments - feeds tcpdump/Wireshark without injecting packets. Ideal companion for CTG edge IDS validation in your lab.",
           includes: ["Assembled LAN Tap Pro", "Passive monitor ports", "Field quick-start"],
           badge: "Network lab",
         },
@@ -449,7 +449,7 @@ window.HPL_CATALOG = {
           supplier: "Hak5",
           source: "dropship",
           description:
-            "DIY passive tap PCB kit — solder four RJ45 jacks and capacitors for homelab span monitoring. Same authorized-use scope as the assembled Pro; lower cost for makers who already bench solder.",
+            "DIY passive tap PCB kit - solder four RJ45 jacks and capacitors for homelab span monitoring. Same authorized-use scope as the assembled Pro; lower cost for makers who already bench solder.",
           includes: ["Tap PCB", "RJ45 jacks", "Capacitors", "Assembly guide link"],
         },
         {
@@ -466,7 +466,7 @@ window.HPL_CATALOG = {
           supplier: "Adafruit",
           source: "dropship",
           description:
-            "Adafruit HUZZAH32 ESP32 Feather — dual-core WiFi/BT lab platform for authorized firmware experiments (monitor mode stacks, BLE survey). Not a turnkey Marauder build; pairs with our wiring kit.",
+            "Adafruit HUZZAH32 ESP32 Feather - dual-core WiFi/BT lab platform for authorized firmware experiments (monitor mode stacks, BLE survey). Not a turnkey Marauder build; pairs with our wiring kit.",
           includes: ["HUZZAH32 Feather", "USB serial", "Pinout card", "Authorized-lab README"],
           badge: "WiFi lab",
         },
@@ -484,7 +484,7 @@ window.HPL_CATALOG = {
           supplier: "Hak5",
           source: "dropship",
           description:
-            "Hak5 USB Rubber Ducky — keystroke injection trainer for authorized physical-security and red-team education. Use only on systems you own or have written permission to test; DuckyScript payloads run in isolated lab VMs first.",
+            "Hak5 USB Rubber Ducky - keystroke injection trainer for authorized physical-security and red-team education. Use only on systems you own or have written permission to test; DuckyScript payloads run in isolated lab VMs first.",
           includes: ["USB Rubber Ducky", "Payload Studio access info", "Authorized-use scope card"],
           badge: "Training",
         },
@@ -501,7 +501,7 @@ window.HPL_CATALOG = {
           supplier: "Hak5",
           source: "dropship",
           description:
-            "Industry-reference wireless audit platform for sanctioned red-team engagements — rogue AP assessment, captive portal tests, and PineAP recon on networks where you hold written authorization. Operator places Hak5 order manually after HPL checkout.",
+            "Industry-reference wireless audit platform for sanctioned red-team engagements - rogue AP assessment, captive portal tests, and PineAP recon on networks where you hold written authorization. Operator places Hak5 order manually after HPL checkout.",
           includes: ["WiFi Pineapple Mark VII base", "Antennas + USB-C power", "Engagement scope checklist"],
           badge: "Red team ref",
         },

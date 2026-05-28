@@ -1,6 +1,6 @@
-﻿# SEO - Andy do now (hackerplanet.dev)
+# SEO — Salvador do now (hackerplanet.dev)
 
-One page, run in order from repo root (`c:\Users\Owner\Projects\cyberThreatGotchi`). Last automated run: checklist **PASS**, IndexNow **200 (14 URLs)**, `CF_API_TOKEN` **not set** (use manual DNS or set token before step 2).
+One page, run in order from repo root (`c:\Users\Owner\Projects\cyberThreatGotchi`). Last automated run: checklist **PASS**, IndexNow **200 (14 URLs)**, `CF_API_TOKEN` **not set** (I use manual DNS or set token before step 2).
 
 ## 1. Confirm live site (30 sec)
 
@@ -107,11 +107,11 @@ If the script prints `"code": 9109` (often `Unauthorized to access requested res
 | Account | `a819200afa7f246ea8bdb770f634ab84` |
 | Zone ID (script default) | `c81e69edbf957423a22392798309fc35` |
 | Optional override | `$env:CF_ZONE_ID = "c81e69edbf957423a22392798309fc35"` |
-| IP filtering | **None**, or your current public IP must be allowed (9109 often means IP block) |
+| IP filtering | **None**, or my current public IP must be allowed (9109 often means IP block) |
 
 Create or edit token: [dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens)
 
-**Verify token can read the zone (session only — use your real token locally):**
+**Verify token can read the zone (session only — use real token locally):**
 
 Go to the repo root:
 
@@ -131,7 +131,7 @@ Test zone read (expect `"success": true`):
 curl.exe -s "https://api.cloudflare.com/client/v4/zones/c81e69edbf957423a22392798309fc35" -H "Authorization: Bearer $env:CF_API_TOKEN" -H "Content-Type: application/json"
 ```
 
-If verify fails with 9109, fix permissions/zone scope or IP filter, then retry. If verify succeeds, re-run with your real GSC value:
+If verify fails with 9109, fix permissions/zone scope or IP filter, then retry. If verify succeeds, re-run with the real GSC value:
 
 Go to the repo root:
 
@@ -147,10 +147,10 @@ py scripts/seo_verification_dns.py --google-txt "google-site-verification=YOUR_A
 
 **Manual alternative — Google Search Console TXT (no API token)**
 
-Use this when 9109 persists or you prefer the dashboard.
+Use this when 9109 persists or I prefer the dashboard.
 
 1. Open [Google Search Console](https://search.google.com/search-console) → **Add property** → **Domain** → enter `hackerplanet.dev`.
-2. GSC shows a **TXT** record — copy the **full** content, e.g. `google-site-verification=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` (your value differs).
+2. GSC shows a **TXT** record — copy the **full** content, e.g. `google-site-verification=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` (value differs per property).
 3. Open [Cloudflare DNS for hackerplanet.dev](https://dash.cloudflare.com/a819200afa7f246ea8bdb770f634ab84/hackerplanet.dev/dns/records) → **Add record**.
 4. Set **Type** = `TXT`, **Name** = `@` (apex; Cloudflare may display as `hackerplanet.dev`), **Content** = paste the exact GSC value, **TTL** = Auto → **Save**.
 5. Wait 1–5 minutes for DNS propagation, then in GSC click **Verify**.
@@ -164,7 +164,7 @@ cd c:\Users\Owner\Projects\cyberThreatGotchi
 py scripts/seo_verification_dns.py --doc
 ```
 
-Print-only; compares shapes to what you added in the dashboard.
+Print-only; compares shapes to what I added in the dashboard.
 
 ## 3. Submit sitemap + request indexing
 
@@ -192,7 +192,7 @@ Search: `site:hackerplanet.dev` then `hacker planet philadelphia`. Early signal:
 
 ---
 
-**Your next PowerShell commands right now:**
+**My next PowerShell commands right now:**
 
 Go to the repo root:
 

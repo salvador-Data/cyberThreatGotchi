@@ -24,7 +24,7 @@ Andy runbook for the **“There are no verified domains”** message on GitHub.c
 
 **Do not confuse:** GSC verification does **not** populate GitHub Verified domains, and vice versa. Two TXT records on `@` (SPF + GSC) already coexist; GitHub’s challenge uses a **subdomain** TXT, not `@`.
 
-See also: [PAGES_VERIFIED_DOMAINS_FAQ.md](PAGES_VERIFIED_DOMAINS_FAQ.md), [SEO_ANDY_DO_NOW.md](SEO_ANDY_DO_NOW.md), [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md).
+See also: [PAGES_VERIFIED_DOMAINS_FAQ.md](PAGES_VERIFIED_DOMAINS_FAQ.md), [SEO_SALVADOR_DO_NOW.md](SEO_SALVADOR_DO_NOW.md), [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md).
 
 ---
 
@@ -150,7 +150,7 @@ Confirm both apex TXT records:
 nslookup -type=TXT hackerplanet.dev
 ```
 
-Then in GSC: submit sitemap `https://hackerplanet.dev/sitemap.xml`. Full SEO flow: [SEO_ANDY_DO_NOW.md](SEO_ANDY_DO_NOW.md).
+Then in GSC: submit sitemap `https://hackerplanet.dev/sitemap.xml`. Full SEO flow: [SEO_SALVADOR_DO_NOW.md](SEO_SALVADOR_DO_NOW.md).
 
 ---
 
