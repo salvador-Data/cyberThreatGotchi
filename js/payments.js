@@ -31,7 +31,7 @@
     },
     coreKit: {
       id: "coreKit",
-      name: "Cipherhorn Core Kit",
+      name: "CyberThreatGotchi",
       price: 169,
       period: "one-time",
       desc: "HPL direct ship · BPI-R3 Mini + e-ink + enclosure",
