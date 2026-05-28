@@ -69,12 +69,43 @@ Or when DNS is verified:
 
 ---
 
-## Step 4 — Email Routing (free)
+## Step 4 — Email Routing (fixes spoofing warning)
 
-1. [Email Routing](https://dash.cloudflare.com/a819200afa7f246ea8bdb770f634ab84/hackerplanet.dev/email/routing)
-2. **Get started**
-3. Rule: **`hello@hackerplanet.dev`** → **`salvadorData@proton.me`**
-4. Send a test email to `hello@hackerplanet.dev`
+Cloudflare warns *“Email cannot reach @hackerplanet.dev addresses”* until MX, SPF, DKIM, and DMARC exist. Add the records below, then enable routing.
+
+**Option A — Import (fastest)**
+
+1. [DNS records](https://dash.cloudflare.com/a819200afa7f246ea8bdb770f634ab84/hackerplanet.dev/dns/records) → **Import and Export** → **Import**
+2. Upload [`scripts/cloudflare/dns-email-routing.bind`](../scripts/cloudflare/dns-email-routing.bind)
+3. [Email Routing](https://dash.cloudflare.com/a819200afa7f246ea8bdb770f634ab84/hackerplanet.dev/email/routing) → **Get started** (creates DKIM if missing)
+
+**Option B — API (after token)**
+
+```powershell
+$env:CF_API_TOKEN = "paste_token_here"
+.\.venv\Scripts\python scripts\cloudflare_apply_dns.py --email
+# or both GitHub Pages + email:
+.\.venv\Scripts\python scripts\cloudflare_apply_dns.py --all
+```
+
+**DNS records (exact values)**
+
+| Type | Name | Content | Priority |
+|------|------|---------|----------|
+| MX | `@` | `route1.mx.cloudflare.net` | 82 |
+| MX | `@` | `route2.mx.cloudflare.net` | 83 |
+| MX | `@` | `route3.mx.cloudflare.net` | 84 |
+| TXT | `@` | `v=spf1 include:_spf.mx.cloudflare.net ~all` | — |
+| TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:salvadorData@proton.me` | — |
+| TXT | `cf2024-1._domainkey` | *(from Email Routing dashboard — click **Get started**)* | — |
+
+**Enable routing + test**
+
+1. [Email Routing](https://dash.cloudflare.com/a819200afa7f246ea8bdb770f634ab84/hackerplanet.dev/email/routing) → **Get started** (if not done)
+2. Custom address: **`hello@hackerplanet.dev`** → destination **`salvadorData@proton.me`**
+3. Send a test email to `hello@hackerplanet.dev` from an external mailbox (Gmail, Proton, etc.)
+
+*Only one SPF TXT on `@` — if you add Google/Office 365 later, merge into a single record with multiple `include:` statements.*
 
 ---
 

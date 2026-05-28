@@ -1,0 +1,14 @@
+; BIND zone snippet for Cloudflare Email Routing (hackerplanet.dev)
+; Dashboard: DNS -> Records -> Import and Export -> Import
+; OR enable Email Routing (recommended): https://dash.cloudflare.com/.../email/routing -> Get started
+;
+; After import: enable Email Routing in dashboard to auto-create DKIM (cf2024-1._domainkey).
+; DKIM is NOT listed below — Cloudflare generates the TXT value when you click Get started.
+; Verify in: Email Routing -> Settings -> DNS records (cf2024-1._domainkey should show Locked).
+
+$ORIGIN hackerplanet.dev.
+@       300     IN      MX      82 route1.mx.cloudflare.net.
+@       300     IN      MX      83 route2.mx.cloudflare.net.
+@       300     IN      MX      84 route3.mx.cloudflare.net.
+@       300     IN      TXT     "v=spf1 include:_spf.mx.cloudflare.net ~all"
+_dmarc  300     IN      TXT     "v=DMARC1; p=none; rua=mailto:salvadorData@proton.me"

@@ -39,13 +39,16 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
 if ($env:CF_API_TOKEN) {
     Write-Host ""
     Write-Host "--- Cloudflare DNS (API token set) ---" -ForegroundColor Gray
-    & $py scripts\cloudflare_apply_dns.py
+    & $py scripts\cloudflare_apply_dns.py --all
 } else {
     Write-Host ""
     Write-Host "CF_API_TOKEN not set - skip Cloudflare DNS API." -ForegroundColor Yellow
     Write-Host "Create token: https://dash.cloudflare.com/profile/api-tokens" -ForegroundColor Gray
     Write-Host "  Template: Edit zone DNS | Zone: $Domain | Permissions: Zone.DNS Edit, Zone.Read" -ForegroundColor Gray
     Write-Host '  Then: $env:CF_API_TOKEN = "your_token"; .\scripts\go_live_all.ps1' -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "--- Cloudflare DNS (manual steps) ---" -ForegroundColor Yellow
+    & $py scripts\cloudflare_apply_dns.py --all
 }
 
 Write-Host ""
@@ -54,10 +57,12 @@ Write-Host "  1. Register domain: https://domains.cloudflare.com/"
 Write-Host "  2. DNS records:    https://dash.cloudflare.com/$CfAccountId/$Domain/dns/records"
 Write-Host "     Import file:    scripts/cloudflare/dns-github-pages.bind"
 Write-Host "     Turn ALL GitHub records to grey cloud (DNS only)"
-Write-Host "  3. Email Routing:  https://dash.cloudflare.com/$CfAccountId/$Domain/email/routing"
+Write-Host "  3. Email DNS:      Import scripts/cloudflare/dns-email-routing.bind"
+Write-Host "     MX route1/2/3, SPF, _dmarc; DKIM via Email Routing Get started"
+Write-Host "  4. Email Routing:  https://dash.cloudflare.com/$CfAccountId/$Domain/email/routing"
 Write-Host "     hello@ -> salvadorData@proton.me"
-Write-Host "  4. GitHub HTTPS:   https://github.com/$Repo/settings/pages"
-Write-Host "  5. Search Console: https://search.google.com/search-console"
+Write-Host "  5. GitHub HTTPS:   https://github.com/$Repo/settings/pages"
+Write-Host "  6. Search Console: https://search.google.com/search-console"
 Write-Host "     Add $Domain + sitemap https://$Domain/sitemap.xml"
 Write-Host ""
 Write-Host "Full guide: docs/GO_LIVE_NOW.md" -ForegroundColor Cyan
