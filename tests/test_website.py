@@ -103,9 +103,35 @@ def test_github_repo_page():
 def test_index_has_philly_and_branding():
     html = (WEB / "index.html").read_text(encoding="utf-8")
     assert "Philadelphia" in html
+    assert "HackerPlanet" in html
     assert "Hacker Planet LLC" in html
     assert "CyberThreatGotchi" in html
     assert "shop.html" in html
+    assert "featured-shop" in html
+    assert "images/products/ds-netgotchi.jpg" in html
+    assert "ThreatGachi" not in html
+    assert ">ThreatGotchi" not in html
+    assert "ThreatGotchi ·" not in html
+
+
+def test_catalog_product_images():
+    text = (WEB / "js" / "catalog.config.js").read_text(encoding="utf-8")
+    assert 'image: "images/products/ds-netgotchi.jpg"' in text
+    assert 'image: "images/products/ds-night-hunter.jpg"' in text
+    assert (WEB / "images" / "products" / "ds-netgotchi.jpg").is_file()
+    assert (WEB / "images" / "products" / "ds-night-hunter.jpg").is_file()
+
+
+def test_direct_product_images():
+    text = (WEB / "js" / "direct.config.js").read_text(encoding="utf-8")
+    assert 'image: "images/products/direct-sabreto-akachi.jpg"' in text
+    assert (WEB / "images" / "products" / "direct-sabreto-akachi.jpg").is_file()
+
+
+def test_shop_renderers_support_images():
+    for name in ("catalog.js", "direct.js"):
+        text = (WEB / "js" / name).read_text(encoding="utf-8")
+        assert "shop-card-img" in text
 
 
 def test_about_page_content():
@@ -122,4 +148,4 @@ def test_sync_website_to_docs():
     assert (DOCS_WEB / "shop.html").is_file()
     assert (DOCS_WEB / "js" / "payments.js").is_file()
     shop = (DOCS_WEB / "shop.html").read_text(encoding="utf-8")
-    assert "Hacker Planet LLC" in shop
+    assert "HackerPlanet" in shop

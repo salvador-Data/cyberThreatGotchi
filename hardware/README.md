@@ -2,6 +2,10 @@
 
 CyberThreatGotchi ships as a **Tamagotchi-style portable appliance**. You print **three STL parts** per display variant, assemble with the BPI-R3 Mini, e-ink or LCD, and a USB-C PD battery.
 
+<p align="center">
+  <img src="../docs/images/cyphertek-rache-product.png" alt="CypherTek Rache — 95×110×32 mm Tamagotchi edge shell" width="480"/>
+</p>
+
 ## Quick start
 
 ```bash

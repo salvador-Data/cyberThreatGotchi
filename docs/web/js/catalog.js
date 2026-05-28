@@ -80,8 +80,23 @@
     return a;
   }
 
+  function renderProductImage(product) {
+    if (!product.image) return null;
+    var wrap = el("div", "shop-card-img-wrap");
+    var img = document.createElement("img");
+    img.className = "shop-card-img";
+    img.src = product.image;
+    img.alt = product.name || "Product";
+    img.loading = "lazy";
+    img.decoding = "async";
+    wrap.appendChild(img);
+    return wrap;
+  }
+
   function renderProductCard(product) {
     var card = el("article", "shop-card catalog-card");
+    var imgWrap = renderProductImage(product);
+    if (imgWrap) card.appendChild(imgWrap);
     if (product.badge) {
       card.appendChild(el("div", "shop-badge", product.badge));
     }

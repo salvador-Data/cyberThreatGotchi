@@ -30,9 +30,24 @@
     if (payProduct) window.HPL_renderCheckout(host, payProduct);
   }
 
+  function renderProductImage(product) {
+    if (!product.image) return null;
+    var wrap = el("div", "shop-card-img-wrap");
+    var img = document.createElement("img");
+    img.className = "shop-card-img";
+    img.src = product.image;
+    img.alt = product.name || "Product";
+    img.loading = "lazy";
+    img.decoding = "async";
+    wrap.appendChild(img);
+    return wrap;
+  }
+
   function renderProductCard(product) {
     var card = el("article", "shop-card catalog-card shop-card-featured");
     card.setAttribute("data-fulfillment", product.fulfillment || "direct");
+    var imgWrap = renderProductImage(product);
+    if (imgWrap) card.appendChild(imgWrap);
     if (product.badge) card.appendChild(el("div", "shop-badge", product.badge));
     card.appendChild(sourceBadge(product.source));
     card.appendChild(el("div", "shop-price catalog-price", product.priceDisplay || ""));
@@ -75,13 +90,13 @@
     var wrap = el("section", "reveal catalog-section");
     wrap.id = "catalog-hpl-direct";
     wrap.appendChild(el("p", "section-label", "Made in Philadelphia"));
-    wrap.appendChild(el("h2", "section-title", "Hacker Planet builds — direct ship"));
+    wrap.appendChild(el("h2", "section-title", "HackerPlanet builds — direct ship"));
     wrap.appendChild(
       el(
         "p",
         "section-sub catalog-intro",
         "Sabreto Akachi, Mr. CrackBot AI Nano on CYD, CyberThreatGotchi kits, and custom field builds — " +
-          "assembled by you, shipped from Philly. Use the calculator above for shipping & tax."
+          "assembled in Philadelphia. Customization is the only rendezvous option on these SKUs. Use the calculator above for shipping & tax."
       )
     );
 
