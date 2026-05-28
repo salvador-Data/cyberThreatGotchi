@@ -152,6 +152,9 @@ def test_index_has_philly_and_branding():
     assert "HackerPlanet" in html
     assert "Hacker Planet LLC" in html
     assert "CyberThreatGotchi" in html
+    assert "CypherTek Rache kit" not in html
+    assert "Cypertech" not in html
+    assert "<h3>CyberThreatGotchi</h3>" in html
     assert "services.html" in html
     assert "Blue Team" in html or "OSINT" in html
     assert "shop.html" in html
@@ -174,6 +177,16 @@ def test_catalog_product_images():
     assert (WEB / "images" / "products" / "ds-night-hunter.jpg").is_file()
     assert (WEB / "images" / "products" / "ds-rpi5-kit.jpg").is_file()
     assert (WEB / "images" / "products" / "ds-meshtastic-case.jpg").is_file()
+
+
+def test_direct_core_kit_product_name():
+    text = (WEB / "js" / "direct.config.js").read_text(encoding="utf-8")
+    assert 'id: "coreKit"' in text
+    assert 'name: "CyberThreatGotchi"' in text
+    assert "Cipherhorn Core Kit" not in text
+    pay = (WEB / "js" / "payments.js").read_text(encoding="utf-8")
+    assert 'name: "CyberThreatGotchi"' in pay
+    assert "Cipherhorn Core Kit" not in pay
 
 
 def test_direct_product_images():

@@ -63,7 +63,7 @@ window.HPL_DIRECT = {
     },
     {
       id: "coreKit",
-      name: "Cipherhorn Core Kit",
+      name: "CyberThreatGotchi",
       image: "images/products/direct-core-kit.jpg",
       retailPrice: 169,
       priceDisplay: "$169",
