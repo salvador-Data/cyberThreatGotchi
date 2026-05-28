@@ -184,6 +184,8 @@ def test_cardputer_page_content():
     assert "Firmware downloads" in html
     assert 'id="firmware"' in html
     assert "CARDPUTER_PRODUCTS.md" in html
+    assert "BLE-Bot-Cardputer/releases" in html
+    assert "m5stack-cardputer" in html
 
 
 def test_cyd_page_content():
