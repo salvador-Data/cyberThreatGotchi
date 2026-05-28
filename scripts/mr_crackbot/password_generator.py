@@ -17,6 +17,8 @@ from pathlib import Path
 from typing import Any
 
 # Lazy GPT-2 singletons (loaded only when AI path is enabled)
+# Pinned Hugging Face commit for gpt2 (bandit B615 — immutable revision).
+_GPT2_HF_REVISION = "607a30d783dfa663caf39e06633721c8d4cfcd7e"
 _model: Any = None
 _tokenizer: Any = None
 
@@ -81,8 +83,8 @@ def get_model():
             "transformers/torch not installed — use heuristic mode or "
             "pip install transformers torch"
         ) from exc
-    _tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    _model = GPT2LMHeadModel.from_pretrained("gpt2")
+    _tokenizer = GPT2Tokenizer.from_pretrained("gpt2", revision=_GPT2_HF_REVISION)
+    _model = GPT2LMHeadModel.from_pretrained("gpt2", revision=_GPT2_HF_REVISION)
     if _tokenizer.pad_token_id is None:
         _tokenizer.pad_token_id = _tokenizer.eos_token_id
     return _model, _tokenizer
