@@ -15,6 +15,7 @@ def test_website_structure():
     for name in (
         "index.html",
         "about.html",
+        "services.html",
         "cyberthreatgotchi.html",
         "ecosystem.html",
         "contact.html",
@@ -113,12 +114,41 @@ def test_github_repo_page():
     assert "salvador-Data/cyberThreatGotchi" in html
 
 
+def test_services_page_content():
+    html = (WEB / "services.html").read_text(encoding="utf-8")
+    assert "Blue Team" in html
+    assert "Red Team" in html
+    assert "OSINT" in html
+    assert "UTM" in html
+    assert "DDoS" in html
+    assert "hello@hackerplanet.dev" in html
+    assert "$1,500" in html
+    assert "Dr. Eric" not in html
+    assert "services.html" in (WEB / "index.html").read_text(encoding="utf-8")
+
+
+def test_nav_includes_services_on_all_pages():
+    for html_file in sorted(WEB.glob("*.html")):
+        text = html_file.read_text(encoding="utf-8")
+        assert 'href="services.html"' in text, html_file.name
+
+
+def test_no_dr_eric_as_agent_on_public_html():
+    forbidden = ("Dr. Eric", "Dr.Eric")
+    for html_file in sorted(WEB.glob("*.html")):
+        text = html_file.read_text(encoding="utf-8")
+        for token in forbidden:
+            assert token not in text, f"{token!r} in {html_file.name}"
+
+
 def test_index_has_philly_and_branding():
     html = (WEB / "index.html").read_text(encoding="utf-8")
     assert "Philadelphia" in html
     assert "HackerPlanet" in html
     assert "Hacker Planet LLC" in html
     assert "CyberThreatGotchi" in html
+    assert "services.html" in html
+    assert "Blue Team" in html or "OSINT" in html
     assert "shop.html" in html
     assert "featured-shop" in html
     assert "images/products/ds-netgotchi.jpg" in html

@@ -1108,3 +1108,55 @@ section {
   color: var(--accent);
 }
 
+/* Services pricing tables */
+.table-scroll {
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+
+.pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+}
+
+.pricing-table th,
+.pricing-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--panel-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.pricing-table tr:last-child td {
+  border-bottom: none;
+}
+
+.pricing-table th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.pricing-table .price-col {
+  color: var(--accent);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pricing-table--compact {
+  max-width: 28rem;
+}
+
+.pricing-note {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0.5rem 0 0;
+}
+

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+<meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+  <meta name="referrer" content="strict-origin-when-cross-origin"/>
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.paypal.com https://www.paypalobjects.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://www.paypal.com; frame-src https://www.paypal.com; base-uri 'self'; form-action 'self' https://www.paypal.com https://buy.stripe.com https://cash.app https://account.venmo.com;"/>
+<meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Hacker Planet LLC services — Blue Team UTM and DDoS hardening, authorized Red Team assessments, OSINT investigations. Philadelphia boutique pricing."/>
+  <meta property="og:title" content="Services · HackerPlanet"/>
+  <meta property="og:image" content="https://raw.githubusercontent.com/salvador-Data/cyberThreatGotchi/main/docs/web/images/og-cybertech.png"/>
+  <title>HackerPlanet · Services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="logo" href="index.html">
+        <span class="logo-mark" aria-hidden="true">🪐</span>
+        HackerPlanet
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Menu">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="services.html" class="active">Services</a></li>
+        <li><a href="cyberthreatgotchi.html">CyberThreatGotchi</a></li>
+        <li><a href="ecosystem.html">Ecosystem</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="github.html">On GitHub</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi" class="nav-cta" target="_blank" rel="noopener">Repo ↗</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <header class="page-hero reveal">
+      <p class="section-label">Hacker Planet LLC · Philadelphia</p>
+      <h1>Professional security services</h1>
+      <p class="lead">
+        Retainers, scoped assessments, and intelligence support for networks and investigations you are
+        <strong>authorized</strong> to defend or examine. Hardware and open-source tools are part of the story — not the whole business.
+      </p>
+      <p class="hero-actions" style="margin-top:1rem">
+        <a class="btn btn-primary" href="mailto:hello@hackerplanet.dev?subject=Hacker%20Planet%20services%20inquiry">Request a scope call</a>
+        <a class="btn btn-ghost" href="shop.html">Shop kits &amp; hardware</a>
+      </p>
+    </header>
+
+    <section class="reveal section-compact" id="blue-team">
+      <p class="section-label">Blue Team</p>
+      <h2 class="section-title">Defend the edge you own</h2>
+      <p class="section-sub">
+        Monitoring, patch cadence, and appliance management aligned with CyberThreatGotchi edge IPS —
+        including <strong>Unified Threat Management (UTM)</strong> deployment and policy lifecycle, plus
+        <strong>DDoS hardening hardware</strong> at the perimeter (edge appliances, upstream scrubbing coordination,
+        rate limits, and failover playbooks).
+      </p>
+      <div class="table-scroll">
+        <table class="pricing-table">
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Monthly</th>
+              <th>Includes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Monitor</strong></td>
+              <td class="price-col">$1,500</td>
+              <td>Log review cadence, CTG edge health checks, patch advisory, quarterly business review</td>
+            </tr>
+            <tr>
+              <td><strong>Defend</strong></td>
+              <td class="price-col">$2,750</td>
+              <td>Monitor + UTM policy management, signature/YARA update cadence, business-hours incident triage</td>
+            </tr>
+            <tr>
+              <td><strong>Harden</strong></td>
+              <td class="price-col">$4,500</td>
+              <td>Defend + DDoS edge hardening (appliance tuning, scrubbing liaison, rate-limit runbooks), on-call escalation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="pricing-note">Typical initial term: 12 months. Environment size and compliance drivers quoted after intake.</p>
+    </section>
+
+    <section class="reveal section-compact" id="platform">
+      <p class="section-label">Platform</p>
+      <h2 class="section-title">CTG Pro threat feed</h2>
+      <p class="section-sub">
+        API-delivered signatures, YARA, and hash deny-lists for your own CyberThreatGotchi or MSP stack —
+        one line item, not a substitute for managed defense.
+      </p>
+      <div class="table-scroll">
+        <table class="pricing-table pricing-table--compact">
+          <thead>
+            <tr>
+              <th>Plan</th>
+              <th>Price</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pro Monthly</td>
+              <td class="price-col">$9/mo</td>
+              <td><code>X-CTG-Pro-Key</code> API access</td>
+            </tr>
+            <tr>
+              <td>Pro Yearly</td>
+              <td class="price-col">$99/yr</td>
+              <td>Same feed — save vs monthly</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="section-cta"><a href="shop.html#pro-feed">Subscribe in shop →</a></p>
+    </section>
+
+    <section class="reveal section-compact" id="red-team">
+      <p class="section-label">Red Team</p>
+      <h2 class="section-title">Authorized testing only</h2>
+      <p class="section-sub">
+        Penetration tests and limited adversary simulation under signed rules of engagement —
+        for systems and networks you <strong>own or have written permission</strong> to test. No opportunistic scanning.
+      </p>
+      <div class="table-scroll">
+        <table class="pricing-table">
+          <thead>
+            <tr>
+              <th>Engagement</th>
+              <th>From</th>
+              <th>Scope</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>External lite</strong></td>
+              <td class="price-col">$3,500</td>
+              <td>Perimeter / exposed services, findings report (~3–5 tester-days)</td>
+            </tr>
+            <tr>
+              <td><strong>Web + API</strong></td>
+              <td class="price-col">$6,500</td>
+              <td>Authenticated app + API review, remediation priorities (~5–8 days)</td>
+            </tr>
+            <tr>
+              <td><strong>Adversary simulation</strong></td>
+              <td class="price-col">$12,000</td>
+              <td>Multi-phase campaign, limited scope — not enterprise-wide red team</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="pricing-note">Fixed fee after scoping call. Retest windows and compliance attestations quoted separately.</p>
+    </section>
+
+    <section class="reveal section-compact" id="osint">
+      <p class="section-label">OSINT</p>
+      <h2 class="section-title">Investigation support</h2>
+      <p class="section-sub">
+        Open-source intelligence for <strong>authorized</strong> matters — executive due diligence, vendor screening,
+        and incident context. Defensive framing only; no harassment or non-consensual surveillance.
+      </p>
+      <div class="table-scroll">
+        <table class="pricing-table">
+          <thead>
+            <tr>
+              <th>Package</th>
+              <th>Fee</th>
+              <th>Deliverable</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Matter brief</strong></td>
+              <td class="price-col">$750</td>
+              <td>Narrow public-source summary · ~5 business days</td>
+            </tr>
+            <tr>
+              <td><strong>Due diligence</strong></td>
+              <td class="price-col">$1,500</td>
+              <td>Entity/person screening, timeline, PDF report</td>
+            </tr>
+            <tr>
+              <td><strong>Executive pack</strong></td>
+              <td class="price-col">$2,500</td>
+              <td>Multi-source fusion, executive summary + evidence index</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="pricing-note">Rush delivery (+25%) and multi-jurisdiction matters quoted after intake.</p>
+    </section>
+
+    <section class="reveal section-compact">
+      <p class="section-label">Hardware</p>
+      <h2 class="section-title">Field kits support Blue Team work</h2>
+      <p class="section-sub">
+        Philadelphia-built sensors and partner drop-ship nodes deploy the same edge story as our retainers.
+        <a href="shop.html">Browse the shop →</a>
+      </p>
+    </section>
+
+    <div class="philly-band reveal">
+      <h2>Scope it in writing</h2>
+      <p>
+        Email <a href="mailto:hello@hackerplanet.dev">hello@hackerplanet.dev</a> with Blue Team, Red Team, or OSINT in the subject line.
+        See <a href="contact.html">contact</a> for community channels.
+      </p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <ul class="footer-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <p>© <span id="year"></span> Hacker Planet LLC · Philadelphia, PA · Authorized use only</p>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>

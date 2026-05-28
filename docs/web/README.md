@@ -6,8 +6,9 @@ Static marketing site for **Hacker Planet LLC** (Philadelphia, PA) and the **Cyb
 
 | File | URL path | Content |
 |------|----------|---------|
-| `index.html` | `/` | Company home, hero, ecosystem preview |
+| `index.html` | `/` | Company home, hero, services + shop + open source |
 | `about.html` | `/about.html` | Company story, principles, founder |
+| `services.html` | `/services.html` | Blue / Red / OSINT pricing and scope |
 | `cyberthreatgotchi.html` | `/cyberthreatgotchi.html` | Product deep-dive |
 | `ecosystem.html` | `/ecosystem.html` | All four repos |
 | `contact.html` | `/contact.html` | Social links, Philly, 2600 |
