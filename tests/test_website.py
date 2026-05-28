@@ -121,9 +121,11 @@ def test_index_has_philly_and_branding():
     assert "shop.html" in html
     assert "featured-shop" in html
     assert "images/products/ds-netgotchi.jpg" in html
+    assert "images/products/direct-core-kit.jpg" in html
     assert "ThreatGachi" not in html
     assert ">ThreatGotchi" not in html
     assert "ThreatGotchi ·" not in html
+    assert "🦄" not in html
 
 
 def test_catalog_product_images():
@@ -137,7 +139,26 @@ def test_catalog_product_images():
 def test_direct_product_images():
     text = (WEB / "js" / "direct.config.js").read_text(encoding="utf-8")
     assert 'image: "images/products/direct-sabreto-akachi.jpg"' in text
+    assert 'image: "images/products/direct-core-kit.jpg"' in text
+    assert 'image: "images/products/direct-crackbot-cyd.jpg"' in text
     assert (WEB / "images" / "products" / "direct-sabreto-akachi.jpg").is_file()
+    assert (WEB / "images" / "products" / "direct-core-kit.jpg").is_file()
+    assert (WEB / "images" / "products" / "direct-crackbot-cyd.jpg").is_file()
+
+
+def test_shop_flows_avoid_mascot_og_assets():
+    """Shop, home featured, and checkout pages use hardware photos — not CTG cartoon OG."""
+    forbidden = (
+        "docs/images/hero.png",
+        "docs/images/og-cyberthreatgotchi.png",
+    )
+    for name in ("index.html", "shop.html"):
+        text = (WEB / name).read_text(encoding="utf-8")
+        for token in forbidden:
+            assert token not in text, f"{token!r} in website/{name}"
+    shop_js = (WEB / "js" / "payments.js").read_text(encoding="utf-8")
+    for token in forbidden:
+        assert token not in shop_js
 
 
 def test_shop_renderers_support_images():
