@@ -4,6 +4,14 @@ One-page checklist to launch the Philadelphia shop + partner drop-ship catalog.
 
 ## 1. GitHub Pages (site live)
 
+**Website on GitHub (source):** https://github.com/salvador-Data/cyberThreatGotchi/tree/main/website  
+
+**Free public URL (after enable):** https://salvador-Data.github.io/cyberThreatGotchi/  
+
+**Shop:** https://salvador-Data.github.io/cyberThreatGotchi/shop.html  
+
+All links: [WEBSITE_LINKS.md](WEBSITE_LINKS.md) · Hosting & domain costs: [HOSTING_OPTIONS.md](HOSTING_OPTIONS.md)
+
 The deploy workflow pushes `website/` → **`gh-pages`** branch. The public URL **404s** until you enable Pages once:
 
 1. [Settings → Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages)
