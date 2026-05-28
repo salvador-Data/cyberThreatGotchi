@@ -834,6 +834,7 @@ section {
 .source-github { color: var(--ink); }
 .source-printables { color: var(--magenta); background: rgba(210, 168, 255, 0.12); }
 .source-hpl { color: var(--accent); background: rgba(0, 180, 140, 0.15); }
+.source-dropship { color: var(--philly-gold); background: rgba(201, 162, 39, 0.15); }
 
 .catalog-price {
   font-size: 1.65rem;

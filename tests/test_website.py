@@ -42,16 +42,21 @@ def test_shop_page_payments():
     assert "Apple Pay" in html
     assert "Venmo" in html
     assert "Cash App" in html
-    assert "AliExpress" in html
+    assert "AliExpress" in html or "Meshtastic" in html
     assert "Netgotchi" in html
+    assert "Pwnagotchi" in html or "dropship-catalog" in html
 
 
 def test_catalog_config_structure():
     text = (WEB / "js" / "catalog.config.js").read_text(encoding="utf-8")
     assert "HPL_CATALOG" in text
-    assert "etsy-partners" in text
-    assert "aliexpress-deals" in text
-    assert "netgotchi-etsy" in text
+    assert "gotchi-pods" in text
+    assert "meshtastic" in text
+    assert "hackberry" in text
+    assert "dsPwnagotchi" in text
+    assert "fulfillment: \"dropship\"" in text
+    assert "dsMeshtasticTBeam" in text
+    assert "dsHackberryZero" in text
 
 
 def test_github_repo_page():

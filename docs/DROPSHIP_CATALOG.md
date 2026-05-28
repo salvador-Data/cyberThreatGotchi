@@ -1,79 +1,65 @@
 # Drop-ship catalog — merchant guide
 
-Hacker Planet LLC shop combines **direct fulfillment** (Stripe) with **partner drop-ship** (Etsy, Tindie, AliExpress). The static site links out to partners; you earn margin on Hacker Planet builds and optional affiliate revenue on external listings.
+Hacker Planet LLC operates **retail drop-ship**: customer pays you at **retail price** → you order from **supplierUrl** → supplier ships to customer.
 
-## Where things live
+No affiliate “buy on Etsy” buttons on the live shop — everything with a price checks out through **Stripe** (plus PayPal/Venmo/Cash App when configured).
+
+## Workflow
+
+```
+Customer → shop.html checkout ($ retail)
+         → Stripe webhook / email to you
+         → You order from supplierUrl
+         → Supplier drop-ships to customer address
+```
+
+## Config files
 
 | File | Purpose |
 |------|---------|
-| `website/js/catalog.config.js` | Partner products, buy URLs, affiliate tags |
-| `website/js/catalog.js` | Renders drop-ship sections on `shop.html` |
-| `website/js/payments.config.js` | Stripe links for HPL custom builds |
-| `website/shop.html` | Shop page layout |
+| `website/js/catalog.config.js` | Products, retail prices, `supplierUrl`, `stripeKey` |
+| `website/js/payments.config.js` | Stripe Payment Links (one per `stripeKey`) |
+| `docs/DROPSHIP_CATALOG.md` | This guide + supplier table |
 
-## Hacker Planet direct sales (you ship)
+## Retail catalog (current)
 
-Configure Stripe Payment Links for:
+| Product | Retail | Stripe key | Supplier |
+|---------|--------|------------|----------|
+| Pwnagotchi wardrive pod | $169 | `dsPwnagotchi` | Etsy makers |
+| Netgotchi | $99 | `dsNetgotchi` | OlleAdventures |
+| Netgotchi Pro | $129 | `dsNetgotchiPro` | OlleAdventures |
+| Night Hunter Kali pod | $189 | `dsNightHunter` | HoneyHoneyTrading / CYD |
+| LilyGO T-Beam Meshtastic | $89 | `dsMeshtasticTBeam` | LilyGO / AliExpress |
+| Heltec V3 Meshtastic | $79 | `dsMeshtasticHeltec` | Heltec |
+| RAK4631 Meshtastic starter | $119 | `dsMeshtasticRAK` | RAKwireless |
+| Meshtastic field case | $34 | `dsMeshtasticCase` | Etsy 3D print |
+| Hackberry Pi Zero | $279 | `dsHackberryZero` | ZitaoTech |
+| Hackberry Pi 5 | $449 | `dsHackberryPi5` | ZitaoTech |
+| Hackberry Pi CM5 | $499 | `dsHackberryCM5` | ZitaoTech |
+| Marauder GPS pocket v2 | $219 | `dsMarauderGps` | HoneyHoneyTrading |
+| CYD battery + GPS mod | $59 | `dsMarauderBatteryMod` | Biscuit Shop |
+| HPL Marauder custom GPS | $199 | `marauderCustom175` | HPL assembly |
+| Boost Formula COD kit | $99 | `boostFormulaCod` | HPL assembly |
+| Official Marauder Kit | $89 | `dsMarauderKoko` | JustCallMeKoko |
+| Raspberry Pi 5 kit | $139 | `dsRaspberryPi5` | AliExpress vetted |
+| Orange Pi 5 Plus kit | $119 | `dsOrangePi5` | AliExpress / Orange Pi |
+| Banana Pi BPI-R3 Mini | $109 | `dsBananaPiR3` | AliExpress |
+| ESP32 CYD lab bundle (×2) | $49 | `dsEsp32Cyd` | AliExpress |
+| COD STL + KSS pack | $19 | `codStlPack` | HPL digital |
 
-| Product | Price | Stripe key |
-|---------|-------|------------|
-| Boost Formula COD Field Kit | $85.99 | `boostFormulaCod` |
-| Marauder GPS Custom Build | $175.00 | `marauderCustom175` |
-| COD STL + KSS print pack | $12.00 | `codStlPack` |
+Free STLs (GitHub / Printables) stay as direct download links — no checkout.
 
-```powershell
-python scripts/check_payments.py
-python scripts/sync_website_to_docs.py
-```
+## Margin tip
 
-## Partner drop-ship (they ship)
+Target **~30–45%** over supplier cost to cover payment fees, shipping variance, and handling. Adjust `retailPrice` in `catalog.config.js` and matching `price` in `payments.js`.
 
-Edit `website/js/catalog.config.js`:
+## Go-live
 
-1. Replace `buyUrl` with your preferred listing (or your own Etsy store when you list there).
-2. Add affiliate parameters when enrolled:
-
-```javascript
-affiliate: {
-  aliexpress: "aff_fcid=YOUR_ID",
-  etsy: "?ref=YOUR_REF",
-  tindie: "",
-},
-```
-
-3. Push to `main` — GitHub Pages workflow republishes automatically.
-
-### Curated categories
-
-- **Netgotchi** — OlleAdventures Etsy/Tindie (defensive network scanner)
-- **Marauder** — CYD kits, GPS wardrive builds, battery mods
-- **Mustache / custom Etsy builds** — search URL placeholder; paste specific listing URLs
-- **AliExpress SBC deals** — Pi, Orange Pi, Banana Pi R3 Mini, ESP32 CYD boards
-- **Free STLs** — CyberThreatGotchi enclosure + Printables Marauder CYD case
-
-## Fulfillment workflow
-
-```
-Customer clicks "Buy on Etsy"  →  partner ships  →  you track affiliate (optional)
-Customer pays via Stripe     →  you assemble   →  ship from Philly
-Customer downloads STL       →  GitHub/Printables or Stripe digital delivery
-```
+1. Create Stripe Payment Links for every `stripeKey` in `payments.config.js`
+2. Set `demoMode: false`
+3. `python scripts/check_payments.py`
+4. `python scripts/sync_website_to_docs.py` → push to `main`
 
 ## Legal
 
-Listings for Marauder, WiFi Deauther, and wardrive gear must state **authorized lab / education use only**. Netgotchi and CyberThreatGotchi are defensive products.
-
-## Validate before go-live
-
-```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
-python -m pytest tests/test_website.py -v
-python scripts/sync_website_to_docs.py
-```
-
-Open `website/shop.html` locally:
-
-```powershell
-cd website
-python -m http.server 8080
-```
+Authorized lab / education use only for offensive-capable RF tools. Meshtastic complies with local LoRa regulations — customer responsible for band plan.
