@@ -1,4 +1,4 @@
-"""Website static files, shop checkout, and docs/web mirror."""
+﻿"""Website static files, shop checkout, and docs/web mirror."""
 
 from __future__ import annotations
 
@@ -178,6 +178,8 @@ def test_cardputer_page_content():
     assert "$89.99" in html
     assert "$79.99" in html
     assert "M5_OS-Cardputer" in html
+    assert "Remote-Possibility" in html
+    assert "BLE-Bot-Cardputer" in html
     assert "shop.html#remote-possibility" in html
     assert "Firmware downloads" in html
     assert 'id="firmware"' in html
@@ -255,8 +257,8 @@ def test_index_has_philly_and_branding():
     assert "$189" not in html
     assert "ThreatGachi" not in html
     assert ">ThreatGotchi" not in html
-    assert "ThreatGotchi ·" not in html
-    assert "🦄" not in html
+    assert "ThreatGotchi Â·" not in html
+    assert "ðŸ¦„" not in html
 
 
 def test_catalog_product_images():
@@ -308,7 +310,7 @@ def test_direct_product_images():
 
 
 def test_shop_flows_avoid_mascot_og_assets():
-    """Shop, home featured, and checkout pages use hardware photos — not CTG cartoon OG."""
+    """Shop, home featured, and checkout pages use hardware photos â€” not CTG cartoon OG."""
     forbidden = (
         "docs/images/hero.png",
         "docs/images/og-cyberthreatgotchi.png",
