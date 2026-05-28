@@ -106,9 +106,9 @@ Original setup clicks (for reference): [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.
 | Item | Status |
 |------|--------|
 | Cloudflare account | ✅ **Created** (2026-05-28) |
-| Register `hackerplanet.dev` at Cloudflare Registrar | ⏳ **Your action** (~$10/yr) |
+| Register `hackerplanet.dev` at Cloudflare Registrar | ⏳ **Zone status `pending`** — finish purchase/activation |
 | `website/CNAME` in repo | ✅ **Added** (`hackerplanet.dev`) |
-| Cloudflare DNS → GitHub Pages | ⏳ After registration |
+| Cloudflare DNS → GitHub Pages | ⏳ **1× A proxied ON** — add 3 A + `www` CNAME, grey cloud all |
 | GitHub Pages custom domain | ✅ **`hackerplanet.dev` set** in repo Settings (via API) — enable HTTPS after DNS |
 
 **Agent will not purchase the domain for you.** Cloudflare MCP can **read** the zone but **cannot write DNS** until the zone is **active** and the API token has Zone.DNS Edit scope. Current state: one **proxied** A `@` → `185.199.108.153` — turn proxy **off** and add the other GitHub Pages records below.
