@@ -11,6 +11,7 @@
     github: { label: "GitHub", icon: "⌨️", class: "source-github" },
     printables: { label: "Printables", icon: "🖨️", class: "source-printables" },
     hpl: { label: "Hacker Planet", icon: "🪐", class: "source-hpl" },
+    dropship: { label: "Drop-ship", icon: "📬", class: "source-dropship" },
   };
 
   function cfg() {
@@ -64,7 +65,7 @@
 
   function renderBuyButton(product) {
     var url = affiliateUrl(product.buyUrl, product.source);
-    if (product.fulfillment === "stripe" && product.stripeKey) {
+    if (product.fulfillment === "dropship" || product.fulfillment === "stripe") {
       return null;
     }
     if (!url) {
@@ -97,7 +98,7 @@
     }
 
     var checkout = el("div", "catalog-checkout");
-    if (product.fulfillment === "stripe" && product.stripeKey) {
+    if ((product.fulfillment === "dropship" || product.fulfillment === "stripe") && product.stripeKey) {
       renderStripeCheckout(checkout, product);
     } else {
       var btn = renderBuyButton(product);
@@ -105,12 +106,13 @@
     }
     card.appendChild(checkout);
 
-    var note = el("p", "catalog-ship-note", "Ships direct from partner · authorized lab use only");
+    var note = el("p", "catalog-ship-note", cfg().dropshipNote || "Drop-ship · 5–14 business days");
     if (product.source === "github" || product.source === "printables") {
       note.textContent = "Instant download · remix allowed where license permits";
-    }
-    if (product.fulfillment === "stripe") {
-      note.textContent = "Fulfillment by Hacker Planet LLC · Philly area";
+    } else if (product.fulfillment === "dropship" || product.fulfillment === "stripe") {
+      note.textContent =
+        (cfg().dropshipNote || "Drop-ship · 5–14 business days") +
+        (product.supplier ? " · via " + product.supplier : "");
     }
     card.appendChild(note);
 
