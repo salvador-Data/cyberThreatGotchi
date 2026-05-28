@@ -146,8 +146,8 @@
     },
     "cardputer.html": {
       "title": "Hacker Planet | M5 Cardputer  -  Remote Possibility & BLE Bot",
-      "description": "M5Stack Cardputer field tools from Hacker Planet LLC  -  Remote Possibility CTG remote client and BLE Bot authorized scout. Philadelphia assembled.",
-      "keywords": "Hacker Planet, M5 Cardputer, Remote Possibility, BLE Bot, CyberThreatGotchi remote",
+      "description": "M5Stack Cardputer (ESP32-S3, ST7789 240x135, QWERTY keyboard) field tools from Hacker Planet LLC - Remote Possibility CTG remote client and BLE Bot authorized BLE scout firmware. Philadelphia assembled.",
+      "keywords": "Hacker Planet, M5 Cardputer, M5Stack Cardputer, ST7789, Remote Possibility, BLE Bot, CyberThreatGotchi remote, WhiteHat CyberSecurity",
       "ogType": "product",
       "ogImage": "/images/products/direct-field-pack.png",
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
