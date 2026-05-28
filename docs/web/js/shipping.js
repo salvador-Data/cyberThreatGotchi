@@ -249,6 +249,18 @@
     panel.appendChild(btn);
     panel.appendChild(result);
     host.appendChild(panel);
+
+    window.HPL_preselectCalculator = function (productId) {
+      if (products[productId]) prodSelect.value = productId;
+      host.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (stateSelect.value) btn.click();
+    };
+
+    document.querySelectorAll("[data-estimate]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        window.HPL_preselectCalculator(el.getAttribute("data-estimate"));
+      });
+    });
   }
 
   window.HPL_estimateShipping = estimate;

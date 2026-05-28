@@ -43,6 +43,7 @@ def test_shop_page_payments():
     assert "dropship-catalog" in html
     assert "direct-catalog" in html
     assert "shipping-calculator" in html
+    assert "data-estimate" in html
     assert "shipping.config.js" in html
     assert "direct-catalog" in html
     assert "Apple Pay" in html

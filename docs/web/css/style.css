@@ -957,3 +957,21 @@ section {
   color: var(--warn);
 }
 
+.ship-calc-link {
+  display: inline-block;
+  margin-top: 0.65rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--magenta);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: var(--font-body);
+}
+
+.ship-calc-link:hover {
+  color: var(--accent);
+}
+

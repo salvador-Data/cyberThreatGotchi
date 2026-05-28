@@ -2,128 +2,157 @@
 
 Configure checkout on the static GitHub Pages site (`website/` and mirrored `docs/web/`).
 
-**Supported methods**
+**Fulfillment types**
+
+| Type | Checkout | Shipping at Stripe |
+|------|----------|-------------------|
+| **Direct (Philly)** | Sabreto Akachi, CrackBot CYD, CTG kits, custom builds | Add shipping line or Stripe Shipping Rates |
+| **Partner drop-ship** | Pwnagotchi, Meshtastic, Hackberry, etc. | Shipping baked into price |
+| **Digital** | STL pack, repo bundle | None |
+| **Subscription** | Pro feed | None |
+
+Use the shop **shipping & tax calculator** for estimates → [SHIPPING_AND_TAX.md](SHIPPING_AND_TAX.md).
+
+---
+
+## Supported payment methods
 
 | Method | Provider | Setup |
 |--------|----------|--------|
 | Credit & debit cards | Stripe Payment Links | Stripe Dashboard |
-| Apple Pay | Stripe (auto on Payment Links) | Enable in Stripe → Settings → Payment methods |
-| Google Pay | Stripe | Same as Apple Pay |
-| PayPal | PayPal JS SDK or PayPal.Me | PayPal Developer + Business account |
-| Venmo | PayPal SDK (`enable-funding=venmo`) or direct link | US PayPal business + Venmo username |
-| Cash App | Direct pay URL | Cash App $Cashtag |
+| Apple Pay | Stripe (auto on Payment Links) | Settings → Payment methods |
+| Google Pay | Stripe | Same |
+| PayPal | PayPal JS SDK or PayPal.Me | PayPal Developer |
+| Venmo | PayPal SDK or direct link | US PayPal business |
+| Cash App | Direct pay URL | $Cashtag |
 
 ---
 
-## 1. Stripe (cards, debit, Apple Pay)
+## 1. Stripe Payment Links (required for go-live)
 
 1. Create account at [stripe.com](https://stripe.com).
-2. **Products** → create products matching shop tiers (Digital $15, Pro $9/mo, etc.).
-3. For each product: **Create payment link** (one-time or subscription).
-4. Copy each link into `website/js/payments.config.js`:
+2. **Enable Stripe Tax** → Settings → Tax → add Pennsylvania + states where registered.
+3. Create **Products** matching every `stripeKey` in `website/js/payments.config.js`.
+
+### Direct ship (you fulfill from Philadelphia)
+
+| Key | Product | Price |
+|-----|---------|-------|
+| `sabretoAkachi` | Sabreto Akachi | $189 |
+| `crackbotCyd` | Mr. CrackBot AI Nano on CYD | $149 |
+| `boostFormulaCod` | Boost Formula COD kit | $99 |
+| `marauderCustom175` | Marauder GPS custom build | $199 |
+| `coreKit` | Cipherhorn Core Kit | $169 |
+| `fieldPack` | Field Pack | $219 |
+| `digital` | Digital Pack | $15 |
+| `codStlPack` | COD STL + KSS pack | $19 |
+
+For direct hardware: enable **Stripe Tax** on the Payment Link and optionally add **Shipping rates** (US zones) matching `shipping.config.js`.
+
+### Partner drop-ship (supplier ships)
+
+| Key | Example | Price |
+|-----|---------|-------|
+| `dsPwnagotchi` | Pwnagotchi pod | $169 |
+| `dsNetgotchi` | Netgotchi | $99 |
+| `dsNetgotchiPro` | Netgotchi Pro | $129 |
+| `dsNightHunter` | Night Hunter pod | $189 |
+| `dsMeshtasticTBeam` | T-Beam kit | $89 |
+| `dsMeshtasticHeltec` | Heltec V3 | $79 |
+| `dsMeshtasticRAK` | RAK4631 starter | $119 |
+| `dsMeshtasticCase` | Meshtastic case | $34 |
+| `dsHackberryZero` | Hackberry Pi Zero | $279 |
+| `dsHackberryPi5` | Hackberry Pi 5 | $449 |
+| `dsHackberryCM5` | Hackberry CM5 | $499 |
+| `dsMarauderGps` | Marauder GPS pocket | $219 |
+| `dsMarauderBatteryMod` | CYD battery mod | $59 |
+| `dsMarauderKoko` | Official Marauder Kit | $89 |
+| `dsRaspberryPi5` | Pi 5 kit | $139 |
+| `dsOrangePi5` | Orange Pi 5 Plus | $119 |
+| `dsBananaPiR3` | BPI-R3 Mini | $109 |
+| `dsEsp32Cyd` | CYD lab bundle | $49 |
+
+### Subscriptions
+
+| Key | Product | Price |
+|-----|---------|-------|
+| `proMonthly` | CTG Pro feed | $9/mo |
+| `proYearly` | CTG Pro feed | $99/yr |
+
+4. Paste each link into `website/js/payments.config.js`:
 
 ```javascript
 window.HPL_PAYMENTS = {
   demoMode: false,
   stripePaymentLinks: {
-    digital: "https://buy.stripe.com/xxxx",
-    proMonthly: "https://buy.stripe.com/yyyy",
-    proYearly: "https://buy.stripe.com/zzzz",
-    coreKit: "https://buy.stripe.com/aaaa",
-    fieldPack: "https://buy.stripe.com/bbbb",
+    sabretoAkachi: "https://buy.stripe.com/...",
+    crackbotCyd: "https://buy.stripe.com/...",
+    // ... every key above
   },
-  // ...
 };
 ```
 
-5. Stripe Dashboard → **Settings → Payment methods** → enable **Apple Pay**, **Google Pay**, **Link**.
+5. Validate:
 
-6. After editing config, sync to docs mirror:
-
-```bash
+```powershell
+python scripts/check_payments.py
 python scripts/sync_website_to_docs.py
 ```
 
-**Auto Pro keys:** run `python scripts/stripe_provision.py` with `CTG_STRIPE_WEBHOOK_SECRET` — see [SECURITY_HARDENING.md](SECURITY_HARDENING.md).
-
-**Subscriptions (Pro feed):** Create recurring prices on Stripe products. After payment, provision `CTG_PRO_API_KEY` manually or via Stripe webhook → your backend (future: `scripts/stripe_provision.py`).
+**Auto Pro keys:** `python scripts/stripe_provision.py` with `CTG_STRIPE_WEBHOOK_SECRET`.
 
 ---
 
 ## 2. PayPal (PayPal + Venmo buttons)
 
-1. [PayPal Developer](https://developer.paypal.com/dashboard/applications) → Create app → copy **Client ID** (live or sandbox).
-2. Add to `payments.config.js`:
+[PayPal Developer](https://developer.paypal.com/dashboard/applications) → Client ID → `payments.config.js`:
 
 ```javascript
-paypal: {
-  clientId: "YOUR_CLIENT_ID",
-  currency: "USD",
-},
+paypal: { clientId: "YOUR_CLIENT_ID", currency: "USD" },
 ```
 
-3. Venmo appears automatically for US buyers when `enable-funding=venmo` is set (already in `payments.js`).
-
-**Fallback without SDK** — PayPal.Me:
-
-```javascript
-paypalMe: { username: "YourPayPalMe" },
-```
-
-Generates `https://paypal.me/YourPayPalMe/15` per tier.
+Fallback: `paypalMe: { username: "YourPayPalMe" }`
 
 ---
 
-## 3. Venmo (direct link)
+## 3. Venmo & Cash App
 
 ```javascript
 venmo: { username: "YourVenmoUsername" },
-```
-
-Opens Venmo pay flow with amount and note pre-filled. Works even without PayPal SDK.
-
----
-
-## 4. Cash App
-
-```javascript
 cashapp: { cashtag: "HackerPlanetLLC" },
 ```
 
-Generates `https://cash.app/$HackerPlanetLLC/15` per product price.
+---
+
+## 4. Deploy
+
+1. Set `demoMode: false` in `payments.config.js`.
+2. `python scripts/sync_website_to_docs.py`
+3. Push to `main` — workflow publishes `website/` → `gh-pages`.
+4. **One-time:** GitHub → Settings → Pages → branch **`gh-pages`** / root → [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md)
+
+**Shop URL:** https://salvador-Data.github.io/cyberThreatGotchi/shop.html
 
 ---
 
-## 5. Deploy
-
-1. Edit `website/js/payments.config.js` (set `demoMode: false`).
-2. Run sync: `python scripts/sync_website_to_docs.py`
-3. Commit and push — GitHub Actions deploys Pages from `website/`.
-4. Repo browsers see the same files under `docs/web/`.
-
-**GitHub Pages URL:** https://salvador-Data.github.io/cyberThreatGotchi/shop.html
-
----
-
-## Security notes
+## Security
 
 | OK in config (public) | Never commit |
 |----------------------|--------------|
-| Stripe Payment Link URLs | Stripe **secret** key (`sk_live_…`) |
-| PayPal **client ID** | PayPal **secret** |
+| Stripe Payment Link URLs | Stripe **secret** key |
+| PayPal client ID | PayPal **secret** |
 | Cashtag, Venmo username | Webhook signing secrets |
-
-Payment Links are designed to be shared. Rotate a link from Stripe Dashboard if leaked.
 
 ---
 
 ## Test checklist
 
-- [ ] Stripe test link opens Checkout with card + Apple Pay (Safari/iOS)
-- [ ] PayPal sandbox button completes test payment
-- [ ] Venmo button visible on mobile (US)
-- [ ] Cash App link opens app with correct amount
-- [ ] `demoMode: false` hides demo placeholder text
+- [ ] Every `stripePaymentLinks` key has a URL (`check_payments.py` exit 0)
+- [ ] Stripe Tax enabled for PA
+- [ ] Direct product: calculator total ≈ Stripe Checkout
+- [ ] Apple Pay on Safari/iOS
+- [ ] `demoMode: false` hides placeholder text
+- [ ] Partner drop-ship order workflow documented in [DROPSHIP_CATALOG.md](DROPSHIP_CATALOG.md)
 
 ---
 

@@ -107,6 +107,15 @@
     }
     card.appendChild(checkout);
 
+    if (product.stripeKey && typeof window.HPL_preselectCalculator === "function") {
+      var estBtn = el("button", "ship-calc-link", "Estimate shipping & tax");
+      estBtn.type = "button";
+      estBtn.addEventListener("click", function () {
+        window.HPL_preselectCalculator(product.stripeKey);
+      });
+      card.appendChild(estBtn);
+    }
+
     var note = el("p", "catalog-ship-note", cfg().dropshipNote || "Drop-ship · 5–14 business days");
     if (product.source === "github" || product.source === "printables") {
       note.textContent = "Instant download · remix allowed where license permits";
