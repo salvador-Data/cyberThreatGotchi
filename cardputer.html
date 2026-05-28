@@ -118,10 +118,60 @@
       </p>
     </section>
 
+    <section class="reveal section-compact" id="firmware">
+      <p class="section-label">Firmware</p>
+      <h2 class="section-title">Firmware downloads</h2>
+      <p class="section-sub" style="max-width:42rem">
+        Flash the <strong>M5 OS</strong> launcher first, then install Remote Possibility or BLE Bot packages from the manifest or SD
+        <code>/firmware/</code> folder. Philadelphia SKUs ship pre-flashed.
+      </p>
+      <h3 class="section-title" style="font-size:1.15rem;margin:1.5rem 0 0.75rem">M5 OS (Cardputer base)</h3>
+      <ul class="feature-list" style="max-width:42rem">
+        <li>
+          <a href="https://github.com/salvador-Data/M5_OS-Cardputer" target="_blank" rel="noopener">M5_OS-Cardputer repository ↗</a>
+          — keyboard launcher, SD catalog, PlatformIO project
+        </li>
+        <li>
+          <a href="https://github.com/salvador-Data/M5_OS-Cardputer/releases" target="_blank" rel="noopener">M5 OS releases ↗</a>
+          — prebuilt <code>.bin</code> assets when tagged
+        </li>
+        <li>
+          <a href="https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/data/manifest.example.json" target="_blank" rel="noopener">manifest.example.json ↗</a>
+          — Wi‑Fi firmware catalog template
+        </li>
+      </ul>
+      <h3 class="section-title" style="font-size:1.15rem;margin:1.5rem 0 0.75rem">Remote Possibility</h3>
+      <ul class="feature-list" style="max-width:42rem">
+        <li>
+          <a href="https://github.com/salvador-Data/cyberThreatGotchi/tree/main/scripts/cardputer" target="_blank" rel="noopener">CTG Cardputer clients ↗</a>
+          — MicroPython <code>ctg_status.py</code> and PlatformIO remote status
+        </li>
+        <li>
+          <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/CARDPUTER.md" target="_blank" rel="noopener">CARDPUTER.md ↗</a>
+          — poll <code>/api/status</code>, configure <code>CTG_HOST</code>
+        </li>
+        <li>
+          <a href="https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/docs/CARDPUTER_PRODUCTS.md" target="_blank" rel="noopener">CARDPUTER_PRODUCTS.md ↗</a>
+          — manifest entry for Remote Possibility package URL
+        </li>
+      </ul>
+      <h3 class="section-title" style="font-size:1.15rem;margin:1.5rem 0 0.75rem">BLE Bot</h3>
+      <ul class="feature-list" style="max-width:42rem">
+        <li>
+          <a href="https://github.com/salvador-Data/M5_OS-Cardputer/tree/main/data/firmware" target="_blank" rel="noopener">M5 OS <code>data/firmware/</code> ↗</a>
+          — drop <code>ble_bot.bin</code> on SD or build from source (see CARDPUTER_PRODUCTS.md)
+        </li>
+        <li>
+          <a href="https://github.com/salvador-Data/M5_OS-Cardputer/raw/main/data/firmware/ble_bot.bin" target="_blank" rel="noopener">ble_bot.bin (raw) ↗</a>
+          — published when the binary is checked in; build with PlatformIO until then
+        </li>
+      </ul>
+    </section>
+
     <section class="reveal prose" style="max-width:var(--max-w)">
       <h2>vs CYD &amp; CrackBot</h2>
       <ul class="feature-list">
-        <li><strong>CYD</strong> — ESP32 Wi‑Fi pocket display builds ($79.99 / $174.99 custom)</li>
+        <li><strong>CYD</strong> — <a href="cyd.html">field builds</a> ($79.99 / $174.99 custom)</li>
         <li><strong>CrackBot</strong> — Jetson bench wordlist lab ($449) — CYD is UI only inside that stack</li>
         <li><strong>Cardputer</strong> — M5 keyboard handheld; Remote Possibility + BLE Bot firmware SKUs here</li>
       </ul>
