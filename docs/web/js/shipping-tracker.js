@@ -50,7 +50,7 @@
 
   function formatFulfillmentPacket(row) {
     var lines = [
-      "Hacker Planet LLC — drop-ship order packet",
+      "Hacker Planet LLC — partner fulfillment order packet",
       "SKU: " + (row.sku || ""),
       "Product: " + (row.productName || ""),
       "Stripe key: " + (row.stripeKey || ""),

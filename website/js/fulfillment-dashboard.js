@@ -197,7 +197,7 @@
         .then(function (data) {
           var orders = data.orders || [];
           if (!orders.length) {
-            listEl.innerHTML = '<p class="empty-state">No pending drop-ship orders in queue.</p>';
+            listEl.innerHTML = '<p class="empty-state">No pending partner fulfillment orders in queue.</p>';
           } else {
             listEl.innerHTML = orders.map(renderOrderCard).join("");
           }

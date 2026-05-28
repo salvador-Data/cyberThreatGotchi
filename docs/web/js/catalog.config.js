@@ -5,7 +5,7 @@
  * supplierUrl is for your fulfillment ops (also in docs/DROPSHIP_CATALOG.md).
  */
 window.HPL_CATALOG = {
-  dropshipNote: "Drop-ship · 5–14 business days · authorized lab use only",
+  dropshipNote: "Partner fulfillment · 5–14 business days · authorized lab use only",
   affiliate: {
     aliexpress: "",
     etsy: "",
@@ -18,7 +18,7 @@ window.HPL_CATALOG = {
       title: "Pwnagotchi · Netgotchi · night-hunter field pods",
       banner: "images/banner-gotchi-pods.png",
       intro:
-        "Cyber wardrive pods — compact WiFi lab hardware drop-shipped from verified makers. Mid-range Kali-ready configs available on request.",
+        "Cyber wardrive pods — compact WiFi lab hardware ships from verified makers. Mid-range Kali-ready configs available on request.",
       products: [
         {
           id: "ds-pwnagotchi",
@@ -90,7 +90,7 @@ window.HPL_CATALOG = {
       label: "Meshtastic",
       title: "Meshtastic mesh radio kits",
       intro:
-        "Off-grid LoRa mesh nodes — turnkey Etsy builds and kit options drop-shipped to your lab. Operator places supplier orders manually after HPL checkout.",
+        "Off-grid LoRa mesh nodes — turnkey Etsy builds and kit options ship to your authorized lab. Operator places supplier orders manually after HPL checkout.",
       products: [
         {
           id: "ds-meshtastic-tbeam",
@@ -168,7 +168,7 @@ window.HPL_CATALOG = {
       label: "Hackberry Pi",
       title: "Hackberry Pi cyberdecks (ZitaoTech)",
       intro:
-        "BlackBerry-keyboard Linux handhelds — Kali-ready cyberdecks drop-shipped from ZitaoTech / community distributors.",
+        "BlackBerry-keyboard Linux handhelds — Kali-ready cyberdecks ship from ZitaoTech / community distributors.",
       products: [
         {
           id: "ds-hackberry-zero",
@@ -223,7 +223,7 @@ window.HPL_CATALOG = {
       id: "marauder-wifi",
       label: "Marauder & WiFi lab",
       title: "ESP32 Marauder · Deauther · custom builds",
-      intro: "Authorized RF lab tools — GPS wardrive builds and battery mods drop-shipped from partner makers.",
+      intro: "Authorized RF lab tools — GPS wardrive builds and battery mods ship from partner makers.",
       products: [
         {
           id: "ds-marauder-gps",
@@ -276,7 +276,7 @@ window.HPL_CATALOG = {
       id: "sbc-hacker",
       label: "SBC & Pi kits",
       title: "Raspberry Pi · Orange Pi · edge router boards",
-      intro: "Mid-range hacker SBC kits drop-shipped from AliExpress / official distributors — vetted sellers only.",
+      intro: "Mid-range hacker SBC kits ship from AliExpress / official distributors — vetted sellers only.",
       products: [
         {
           id: "ds-rpi5-kit",

@@ -356,7 +356,12 @@ def test_shop_renderers_support_images():
 def test_about_page_content():
     html = (WEB / "about.html").read_text(encoding="utf-8")
     assert "Cipherhorn" in html or "CypherTek" in html
-    assert "Andy Klwal" in html
+    assert "Salvador Data" in html
+    assert "salvadorData@proton.me" in html
+    assert "(215) 839-8738" in html
+    assert "Andrew Kowal" not in html
+    assert "linkedin.com" not in html.lower()
+    assert "Nucamp" not in html
     assert "Pat" in html
     assert "Philadelphia" in html
     assert "Mr. CrackBot" in html or "CrackBot" in html
@@ -381,6 +386,17 @@ def test_contact_page_content():
     assert "salvador-Data" in html
     assert "Salvador_Data" in html
     assert "email routing" in html.lower() or "mx records" in html.lower()
+
+
+def test_no_dropship_phrasing_on_public_html():
+    """Public pages must not say drop-ship/dropship (partner fulfillment wording instead)."""
+    forbidden = ("drop-ship", "drop ship", "Drop-ship", "dropship")
+    for html_file in sorted(WEB.rglob("*.html")):
+        text = html_file.read_text(encoding="utf-8")
+        text = text.replace('id="dropship-catalog"', "")
+        lower = text.lower()
+        for phrase in forbidden:
+            assert phrase.lower() not in lower, f"{phrase!r} found in {html_file.relative_to(ROOT)}"
 
 
 def test_no_warehouse_address_in_public_html():
