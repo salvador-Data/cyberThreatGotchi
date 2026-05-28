@@ -8,6 +8,7 @@ window.HPL_DIRECT = {
     {
       id: "sabretoAkachi",
       name: "Sabreto Akachi",
+      tagline: "HackerPlanet signature CYD field build",
       image: "images/products/direct-sabreto-akachi.jpg",
       retailPrice: 189,
       priceDisplay: "$189",
@@ -15,7 +16,7 @@ window.HPL_DIRECT = {
       stripeKey: "sabretoAkachi",
       source: "direct",
       description:
-        "HackerPlanet signature CYD field build — Philly assembled. Customization is the only option: firmware profile, enclosure color, and antenna layout are configured to your lab brief at checkout.",
+        "Philadelphia-assembled Cheap Yellow Display pocket lab — flashed for authorized WiFi field work. Customization is the only rendezvous option: firmware profile, enclosure color, and antenna layout are configured to your lab brief at checkout.",
       includes: ["Custom CYD stack", "Printed enclosure", "Flashed lab image", "Quick-start card"],
       badge: "HPL original",
     },

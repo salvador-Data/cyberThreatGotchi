@@ -142,6 +142,7 @@ window.HPL_CATALOG = {
         {
           id: "ds-meshtastic-case",
           name: "Meshtastic 3D-printed field case",
+          image: "images/products/ds-meshtastic-case.jpg",
           retailPrice: 34,
           priceDisplay: "$34",
           fulfillment: "dropship",
@@ -149,7 +150,8 @@ window.HPL_CATALOG = {
           supplierUrl: "https://www.etsy.com/search?q=meshtastic+case+3d+print",
           supplier: "Etsy makers",
           source: "dropship",
-          description: "Weather-resistant printed enclosure for T-Beam or Heltec — maker drop-ship.",
+          description:
+            "Weather-resistant printed enclosure for T-Beam or Heltec — routed through Etsy makers. Case color and board fit (T-Beam vs Heltec) are the only customization; note your board model at checkout.",
           includes: ["Printed top/bottom", "Mounting hardware", "Antenna passthrough"],
         },
       ],
@@ -272,6 +274,7 @@ window.HPL_CATALOG = {
         {
           id: "ds-rpi5-kit",
           name: "Raspberry Pi 5 starter kit (8GB class)",
+          image: "images/products/ds-rpi5-kit.jpg",
           retailPrice: 139,
           priceDisplay: "$139",
           fulfillment: "dropship",
@@ -279,12 +282,14 @@ window.HPL_CATALOG = {
           supplierUrl: "https://www.aliexpress.com/w/wholesale-raspberry-pi-5-kit.html",
           supplier: "AliExpress (vetted seller)",
           source: "dropship",
-          description: "Pi 5 board + heatsink + 27W PSU + case — homelab IDS or CyberThreatGotchi dev bench.",
+          description:
+            "Pi 5 board + active cooler + 27W PSU + case — homelab IDS or CyberThreatGotchi dev bench. RAM tier (4GB vs 8GB) and case color are the supplier variants; specify your preference at checkout.",
           includes: ["Pi 5 board", "Active cooler", "Power supply", "Case"],
         },
         {
           id: "ds-orange-pi5",
           name: "Orange Pi 5 Plus (8GB) kit",
+          image: "images/products/ds-orange-pi5.jpg",
           retailPrice: 119,
           priceDisplay: "$119",
           fulfillment: "dropship",
@@ -292,12 +297,14 @@ window.HPL_CATALOG = {
           supplierUrl: "https://www.aliexpress.com/w/wholesale-orange-pi-5-plus.html",
           supplier: "AliExpress / Orange Pi store",
           source: "dropship",
-          description: "RK3588 SBC for lightweight SIEM edges and portable lab stacks.",
+          description:
+            "RK3588 SBC for lightweight SIEM edges and portable lab stacks. RAM and storage bundle options vary on AliExpress — tell us your target config at checkout.",
           includes: ["8GB RAM variant", "Heatsink", "Power adapter"],
         },
         {
           id: "ds-bpi-r3",
           name: "Banana Pi BPI-R3 Mini router SBC",
+          image: "images/products/direct-core-kit.jpg",
           retailPrice: 109,
           priceDisplay: "$109",
           fulfillment: "dropship",
@@ -305,13 +312,15 @@ window.HPL_CATALOG = {
           supplierUrl: "https://www.aliexpress.com/w/wholesale-banana-pi-r3-mini.html",
           supplier: "AliExpress",
           source: "dropship",
-          description: "Same class as CyberThreatGotchi core — dual 2.5G Ethernet, Wi-Fi 6.",
+          description:
+            "Same class as CyberThreatGotchi core — dual 2.5G Ethernet, Wi-Fi 6. Optional case and antenna kit are the only customization on the supplier listing.",
           includes: ["BPI-R3 Mini", "Antennas", "Optional case"],
           badge: "Edge IPS",
         },
         {
           id: "ds-esp32-lab",
           name: "ESP32 CYD lab bundle (×2 boards)",
+          image: "images/products/ds-esp32-lab.jpg",
           retailPrice: 49,
           priceDisplay: "$49",
           fulfillment: "dropship",
@@ -319,7 +328,8 @@ window.HPL_CATALOG = {
           supplierUrl: "https://www.aliexpress.com/w/wholesale-esp32-2432s028.html",
           supplier: "AliExpress",
           source: "dropship",
-          description: "Two Cheap Yellow Display boards for Marauder, Bruce, or firmware dev spares.",
+          description:
+            "Two Cheap Yellow Display boards for Marauder, Bruce, or firmware dev spares. Board revision (resistive vs capacitive touch) is the only variant — note your preference at checkout.",
           includes: ["2× CYD 2.8\"", "USB cables", "Basic antennas"],
         },
       ],
