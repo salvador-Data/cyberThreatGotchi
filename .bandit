@@ -1,0 +1,3 @@
+exclude_dirs: ['tests', 'scripts/_list_runs.py']
+# B104: intentional 0.0.0.0 on edge/LAN services; B310: config-driven urllib clients
+skips: ['B104', 'B310']

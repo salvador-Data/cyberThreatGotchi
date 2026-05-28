@@ -55,7 +55,11 @@ python scripts/bjorn_bridge.py --secret shared-secret
 
 - **bandit** — Python SAST
 - **pip-audit** — dependency CVE check
-- **gitleaks** — secret scanning
+- **gitleaks** — secret scanning (see `.gitleaks.toml` allowlist for docs/tests)
+
+## Bandit policy
+
+`.bandit` skips reviewed patterns (B104 LAN bind, B310 urllib clients). CI runs `bandit -ll` so **only Medium+** findings fail the build; Low severity is logged but allowed.
 
 ## Website (GitHub Pages)
 

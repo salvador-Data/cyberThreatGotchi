@@ -25,8 +25,9 @@ Or open `index.html` directly in a browser (images load from GitHub raw URLs).
 ## GitHub Pages deploy
 
 1. Push to `main` — the **Pages** workflow deploys the `website/` folder automatically.
-2. Enable Pages in repo **Settings → Pages → Source: GitHub Actions**.
-3. Site URL (project site):
+2. **One-time:** enable Pages for Actions — [docs/GITHUB_PAGES_SETUP.md](../docs/GITHUB_PAGES_SETUP.md)  
+   (Settings → Pages → Source: **GitHub Actions**, or `gh auth login` then `python scripts/enable_github_pages.py`)
+3. Site URL:
 
    **https://salvador-Data.github.io/cyberThreatGotchi/**
 

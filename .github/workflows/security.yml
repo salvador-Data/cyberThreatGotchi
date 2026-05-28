@@ -19,7 +19,7 @@ jobs:
       - name: Install bandit
         run: pip install bandit
       - name: Run bandit
-        run: bandit -r core db dashboard main.py scripts -ll -x tests
+        run: bandit -c .bandit -r core db dashboard main.py scripts -ll
 
   pip-audit:
     runs-on: ubuntu-latest
@@ -42,3 +42,4 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml

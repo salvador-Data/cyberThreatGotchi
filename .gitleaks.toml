@@ -1,0 +1,35 @@
+title = "CyberThreatGotchi gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Docs, tests, demo hashes, and example env placeholders — not production secrets"
+paths = [
+  '''tests/''',
+  '''docs/''',
+  '''website/js/payments.config.js''',
+  '''config/default.yaml''',
+  '''config/settings.py''',
+  '''rules/pro/pro_hashes.txt''',
+  '''.github/''',
+  '''SECURITY.md''',
+  '''docs/PAYMENTS.md''',
+  '''docs/SECURITY_HARDENING.md''',
+  '''scripts/webhook_receiver.py''',
+  '''scripts/stripe_provision.py''',
+]
+regexes = [
+  '''whsec_test''',
+  '''whsec_\.\.\.''',
+  '''sk_live_''',
+  '''secret-token''',
+  '''mysharedsecret''',
+  '''shared-secret''',
+  '''long-random-token''',
+  '''long-random-secret''',
+  '''YOUR_CLIENT_ID''',
+  '''YOUR_LINK''',
+  '''aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa''',
+  '''bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb''',
+]

@@ -98,3 +98,33 @@ def test_check_payments_script():
     assert r.returncode in (0, 1, 2)
     data = json.loads(r.stdout)
     assert "stripe_links" in data
+
+
+def test_security_config_files_exist():
+    assert (ROOT / ".bandit").is_file()
+    assert (ROOT / ".gitleaks.toml").is_file()
+
+
+def test_bandit_medium_gate_passes():
+    import subprocess
+
+    r = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "bandit",
+            "-c",
+            str(ROOT / ".bandit"),
+            "-r",
+            "core",
+            "db",
+            "dashboard",
+            "main.py",
+            "scripts",
+            "-ll",
+        ],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+    )
+    assert r.returncode == 0, r.stdout + r.stderr
