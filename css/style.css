@@ -786,6 +786,14 @@ section {
 
 .shop-card h3 {
   font-family: var(--font-display);
+  margin: 0 0 0.35rem;
+}
+
+.shop-tagline {
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   margin: 0 0 0.5rem;
 }
 

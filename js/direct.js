@@ -50,8 +50,11 @@
     if (imgWrap) card.appendChild(imgWrap);
     if (product.badge) card.appendChild(el("div", "shop-badge", product.badge));
     card.appendChild(sourceBadge(product.source));
-    card.appendChild(el("div", "shop-price catalog-price", product.priceDisplay || ""));
     card.appendChild(el("h3", "", product.name));
+    if (product.tagline) {
+      card.appendChild(el("p", "shop-tagline", product.tagline));
+    }
+    card.appendChild(el("div", "shop-price catalog-price", product.priceDisplay || ""));
     card.appendChild(el("p", "", product.description || ""));
 
     if (product.includes && product.includes.length) {

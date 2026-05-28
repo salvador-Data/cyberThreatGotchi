@@ -50,7 +50,7 @@
       name: "Sabreto Akachi",
       price: 189,
       period: "one-time",
-      desc: "HPL original · CYD field build · ships from Philly",
+      desc: "HackerPlanet signature CYD field build · Philly direct ship",
       stripeKey: "sabretoAkachi",
     },
     crackbotCyd: {
