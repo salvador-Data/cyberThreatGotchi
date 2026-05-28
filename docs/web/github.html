@@ -97,14 +97,49 @@
       </div>
     </section>
 
-    <section class="reveal section-compact">
+    <section class="reveal section-compact" id="releases">
       <p class="section-label">Releases</p>
       <h2 class="section-title">Download zips &amp; STLs</h2>
-      <p class="section-sub" style="max-width:40rem">
-        Tagged releases bundle source, enclosure STLs (CypherTek Rache, arcade LCD shell), sprite sheets,
-        and cybertech graphics — upload assets ship with each tag; grab the latest from
+      <p class="section-sub" style="max-width:42rem">
+        Tagged releases bundle source, enclosure STLs, sprite sheets, and cybertech graphics — upload assets
+        ship with each tag. Grab the latest from
         <a href="https://github.com/salvador-Data/cyberThreatGotchi/releases" target="_blank" rel="noopener">GitHub Releases ↗</a>
         or clone <code>main</code> for day-to-day dev.
+      </p>
+      <div class="feature-row reveal" style="margin-top:1.5rem;gap:2rem">
+        <div>
+          <h3 class="section-title" style="font-size:1.15rem;margin-bottom:0.75rem">In each release tag</h3>
+          <ul class="feature-list">
+            <li><code>marketing-graphics.zip</code> — OG images + social squares</li>
+            <li><code>sprites.zip</code> — Cipherhorn PNG mood frames</li>
+            <li><code>enclosure-stl-eink.zip</code> — CypherTek Rache Tamagotchi shell (3 STLs)</li>
+            <li><code>enclosure-stl-lcd.zip</code> — arcade LCD shell variant (3 STLs)</li>
+            <li>Full Python source · YARA rules · hardware docs · install scripts</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="section-title" style="font-size:1.15rem;margin-bottom:0.75rem">What it does when you run it</h3>
+          <ul class="feature-list">
+            <li>Live Scapy capture or simulation mode (auto on Windows dev)</li>
+            <li>Traffic analyzer + port-scan detection + signature engine</li>
+            <li>ClamAV + YARA + SHA256 deny-list AV scoring pipeline</li>
+            <li>IPS auto-block via iptables on Linux (authorized networks only)</li>
+            <li>Cipherhorn gotchi FSM — moods, hunger, security XP, Feed/Pet</li>
+            <li>Terminal · Rich CLI · Waveshare e-ink · SPI LCD · Flask web UI</li>
+            <li>SQLite threat log + tamper-evident audit chain export</li>
+            <li>CSV / JSON executive report for board, SOC, and IR</li>
+            <li>Outbound webhooks · Pro feed API (signatures, YARA, hashes)</li>
+            <li>YAML config · rate limits · optional API token on mutating routes</li>
+            <li>Docker compose · BPI-R3 <code>install.sh</code> systemd · M5 Cardputer client</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:1rem;font-size:0.9rem;color:var(--muted);max-width:42rem">
+        Defensive use only — run on networks and systems you own or are authorized to monitor.
+        Full stack docs →
+        <a href="cyberthreatgotchi.html">CyberThreatGotchi page</a>
+        ·
+        <a href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/CISO_PLAYBOOK.md" target="_blank" rel="noopener">CISO playbook ↗</a>
       </p>
     </section>
 
