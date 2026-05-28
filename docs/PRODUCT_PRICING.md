@@ -10,10 +10,10 @@ Authoritative retail prices for Philadelphia direct-ship SKUs. **Tax and shippin
 
 | SKU | Stripe key | Retail | + tax/shipping |
 |-----|------------|--------|----------------|
-| CYD Field Build — Standard | `cydStandard` | **$79.99** | Yes |
-| CYD custom field build | `cydFieldCustom` | **$174.99** | Yes |
+| CYD Field Build — Standard | `cydStandard` | **$89.99** | Yes |
+| CYD custom field build | `cydFieldCustom` | **$189.99** | Yes |
 
-### Standard CYD — $79.99 (`cydStandard`)
+### Standard CYD — $89.99 (`cydStandard`)
 
 | Qty | Part | Est. cost |
 |-----|------|-----------|
@@ -25,7 +25,7 @@ Authoritative retail prices for Philadelphia direct-ship SKUs. **Tax and shippin
 
 Includes: flashed HPL field profile, enclosure color at checkout. **Not** CrackBot firmware.
 
-### Custom CYD — $174.99 (`cydFieldCustom`)
+### Custom CYD — $189.99 (`cydFieldCustom`)
 
 | Qty | Part | Est. cost |
 |-----|------|-----------|
@@ -45,11 +45,11 @@ Includes: GPS wardrive or custom lab profile, antenna layout, battery tray. Firm
 | SKU | Stripe key | Retail | Notes |
 |-----|------------|--------|-------|
 | DIY simulation | — | **$0** | GitHub only |
-| Bench lab assembled | `crackbotBench` | **$449** | Jetson + CYD UI + GPU hashcat path |
+| Bench lab assembled | `crackbotBench` | **$499** | Jetson + CYD UI + GPU hashcat path |
 
 **CrackBot is not sold as a CYD-only SKU.** The CYD in this build is the pocket **UI shell**; the product is the full Jetson lab.
 
-### Bench lab BOM — $449 (`crackbotBench`)
+### Bench lab BOM — $499 (`crackbotBench`)
 
 | Qty | Part | Est. cost |
 |-----|------|-----------|
@@ -70,10 +70,10 @@ Includes: pre-flashed CrackBot stack, wordlist pack scope at checkout, Philadelp
 
 | SKU | Stripe key | Retail | BOM ref |
 |-----|------------|--------|---------|
-| Cipherhorn core | `coreKit` | **$169** | [KICKSTARTER_BOM.md](KICKSTARTER_BOM.md) ~$141 |
-| Field Pack (core + Cardputer) | `fieldPack` | **$219** | Core + M5 Cardputer bundle |
+| Cipherhorn core | `coreKit` | **$189** | [KICKSTARTER_BOM.md](KICKSTARTER_BOM.md) ~$141 |
+| Field Pack (core + Cardputer) | `fieldPack` | **$249** | Core + M5 Cardputer bundle |
 
-Core kit COGS: BPI-R3 Mini ($89) + e-ink HAT ($22) + SD/PSU/enclosure (~$30) → **~$141** retail **$169** (~17% margin after assembly).
+Core kit COGS: BPI-R3 Mini ($89) + e-ink HAT ($22) + SD/PSU/enclosure (~$30) → **~$141** retail **$189** (~25% margin after assembly).
 
 ---
 
@@ -81,10 +81,10 @@ Core kit COGS: BPI-R3 Mini ($89) + e-ink HAT ($22) + SD/PSU/enclosure (~$30) →
 
 | SKU | Stripe key | Retail | Role |
 |-----|------------|--------|------|
-| Remote Possibility | `remotePossibility` | **$89.99** | CTG remote status + field HTTP client |
-| BLE Bot | `bleBot` | **$79.99** | Authorized BLE scout / proximity lab tool |
+| Remote Possibility | `remotePossibility` | **$99.99** | CTG remote status + field HTTP client |
+| BLE Bot | `bleBot` | **$89.99** | Authorized BLE scout / proximity lab tool |
 
-### Remote Possibility — $89.99
+### Remote Possibility — $99.99
 
 | Qty | Part | Est. cost |
 |-----|------|-----------|
@@ -95,7 +95,7 @@ Core kit COGS: BPI-R3 Mini ($89) + e-ink HAT ($22) + SD/PSU/enclosure (~$30) →
 
 Polls CyberThreatGotchi `/api/status`; pairs with Field Pack or standalone.
 
-### BLE Bot — $79.99
+### BLE Bot — $89.99
 
 | Qty | Part | Est. cost |
 |-----|------|-----------|
@@ -124,7 +124,7 @@ Authorized BLE lab workflows on the Cardputer keyboard UI — separate from CYD 
 | Old key | Replaced by |
 |---------|-------------|
 | `crackbotCyd` | CYD = `cydStandard` / `cydFieldCustom`; CrackBot = `crackbotBench` |
-| `marauderCustom175` | `cydFieldCustom` @ $174.99 |
+| `marauderCustom175` | `cydFieldCustom` @ $189.99 |
 
 ---
 

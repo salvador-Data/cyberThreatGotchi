@@ -40,7 +40,7 @@ Or open `index.html` directly in a browser (images load from GitHub raw URLs).
 
 ## Shop & payments
 
-**[shop.html](shop.html)** — CYD from $79.99, CrackBot bench $449, Cardputer tools, CTG kits, partner drop-ship, Pro feed. See [PRODUCT_PRICING.md](../docs/PRODUCT_PRICING.md).
+**[shop.html](shop.html)** — CYD from $89.99, CrackBot bench $499, Cardputer tools, CTG kits, partner drop-ship, Pro feed. See [PRODUCT_PRICING.md](../docs/PRODUCT_PRICING.md).
 
 | Method | How |
 |--------|-----|

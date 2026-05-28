@@ -73,7 +73,7 @@ CyberThreatGotchi is live on Kickstarter.
 
 Real edge IPS on Banana Pi BPI-R3 Mini — signatures, YARA, blocks, SQLite audit chain — with Cipherhorn on e-ink.
 
-Early Bird Core: $149 (50 units) · Field Pack: $219 · Digital: $15
+Early Bird Core: $149 (50 units) · Field Pack: $249 · Digital: $15
 
 Built in Philadelphia. Open source (MIT). Defensive use on authorized networks only.
 

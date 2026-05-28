@@ -161,7 +161,7 @@ def test_nav_includes_cardputer_on_all_pages():
 def test_crackbot_page_content():
     html = (WEB / "crackbot.html").read_text(encoding="utf-8")
     assert "Mr. CrackBot AI Nano" in html
-    assert "$449" in html
+    assert "$499" in html
     assert "$149" not in html
     assert "simulation" in html.lower()
     assert "vlan" in html.lower() and "authorized" in html.lower()
@@ -177,8 +177,8 @@ def test_cardputer_page_content():
     html = (WEB / "cardputer.html").read_text(encoding="utf-8")
     assert "Remote Possibility" in html
     assert "BLE Bot" in html
+    assert "$99.99" in html
     assert "$89.99" in html
-    assert "$79.99" in html
     assert "M5_OS-Cardputer" in html
     assert "Remote-Possibility" in html
     assert "BLE-Bot-Cardputer" in html
@@ -197,8 +197,8 @@ def test_cyd_page_content():
     assert "CYD Field Build" in html
     assert "Sabreto" not in html
     assert "Akachi" not in html
-    assert "$79.99" in html
-    assert "$174.99" in html
+    assert "$89.99" in html
+    assert "$189.99" in html
     assert "Firmware downloads" in html
     assert 'id="firmware"' in html
     assert "shop.html#cyd-standard" in html
@@ -221,17 +221,17 @@ def test_product_firmware_sections():
 def test_shop_product_lines_intro():
     html = (WEB / "shop.html").read_text(encoding="utf-8")
     assert "crackbot-build" in html
-    assert "$449" in html
-    assert "$79.99" in html
-    assert "$174.99" in html
+    assert "$499" in html
+    assert "$89.99" in html
+    assert "$189.99" in html
     assert "crackbot.html" in html
     assert "cardputer.html" in html
 
 
 def test_ecosystem_crackbot_pricing():
     html = (WEB / "ecosystem.html").read_text(encoding="utf-8")
-    assert "$449" in html
-    assert "$79.99" in html
+    assert "$499" in html
+    assert "$89.99" in html
     assert "crackbot.html" in html
     assert "Remote Possibility" in html
 
@@ -315,7 +315,7 @@ def test_index_has_philly_and_branding():
     assert "featured-shop" in html
     assert "images/products/ds-netgotchi.jpg" in html
     assert "images/products/direct-cyd-standard.jpg" in html
-    assert "$79.99" in html
+    assert "$89.99" in html
     assert "$189" not in html
     assert "ThreatGachi" not in html
     assert ">ThreatGotchi" not in html
@@ -351,9 +351,9 @@ def test_direct_config_pricing_separation():
     assert 'id: "cydFieldCustom"' in text
     assert "crackbotCyd" not in text
     assert "marauderCustom175" not in text
-    assert 'retailPrice: 79.99' in text
-    assert 'retailPrice: 174.99' in text
-    assert 'retailPrice: 449' in text
+    assert 'retailPrice: 89.99' in text
+    assert 'retailPrice: 189.99' in text
+    assert 'retailPrice: 499' in text
     assert 'remotePossibility' in text
     assert 'bleBot' in text
     pay = (WEB / "js" / "payments.js").read_text(encoding="utf-8")
@@ -485,9 +485,9 @@ def test_product_pricing_doc_exists():
     doc = ROOT / "docs" / "PRODUCT_PRICING.md"
     assert doc.is_file()
     text = doc.read_text(encoding="utf-8")
-    assert "$79.99" in text
-    assert "$174.99" in text
-    assert "$449" in text
+    assert "$89.99" in text
+    assert "$189.99" in text
+    assert "$499" in text
     assert "Remote Possibility" in text
     assert "BLE Bot" in text
     assert "crackbotCyd" in text  # deprecated table
@@ -497,7 +497,7 @@ def test_kickstarter_preview_page():
     html = (WEB / "kickstarter.html").read_text(encoding="utf-8")
     assert "Kickstarter preview" in html
     assert "$149" in html
-    assert "$219" in html
+    assert "$249" in html
     assert "$35,000" in html
     assert "partner fulfillment" in html.lower() or "Partner fulfillment" in html
     assert "Authorized networks only" in html

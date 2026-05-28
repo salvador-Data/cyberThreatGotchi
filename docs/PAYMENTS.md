@@ -38,14 +38,14 @@ Use the shop **shipping & tax calculator** for estimates → [SHIPPING_AND_TAX.m
 
 | Key | Product | Price |
 |-----|---------|-------|
-| `cydStandard` | CYD Field Build — Standard | $79.99 + ship/tax |
-| `cydFieldCustom` | CYD Field Build — Custom (GPS, ext radio, battery) | $174.99 + ship/tax |
-| `crackbotBench` | Mr. CrackBot AI Nano — Bench Lab (Jetson) | $449 |
-| `remotePossibility` | Remote Possibility (M5 Cardputer) | $89.99 |
-| `bleBot` | BLE Bot (M5 Cardputer) | $79.99 |
+| `cydStandard` | CYD Field Build — Standard | $89.99 + ship/tax |
+| `cydFieldCustom` | CYD Field Build — Custom (GPS, ext radio, battery) | $189.99 + ship/tax |
+| `crackbotBench` | Mr. CrackBot AI Nano — Bench Lab (Jetson) | $499 |
+| `remotePossibility` | Remote Possibility (M5 Cardputer) | $99.99 |
+| `bleBot` | BLE Bot (M5 Cardputer) | $89.99 |
 | `boostFormulaCod` | Boost Formula COD kit | $99 |
-| `coreKit` | CyberThreatGotchi core | $169 |
-| `fieldPack` | Field Pack (core + Cardputer) | $219 |
+| `coreKit` | CyberThreatGotchi core | $189 |
+| `fieldPack` | Field Pack (core + Cardputer) | $249 |
 | `digital` | Digital Pack | $15 |
 | `codStlPack` | COD STL + KSS pack | $19 |
 
@@ -75,7 +75,7 @@ For direct hardware: enable **Stripe Tax** on the Payment Link and optionally ad
 | `dsMarauderKoko` | Official Marauder Kit | $89 |
 | `dsRaspberryPi5` | Pi 5 kit | $139 |
 | `dsOrangePi5` | Orange Pi 5 Plus | $119 |
-| `dsBananaPiR3` | BPI-R3 Mini | $109 |
+| `dsBananaPiR3` | BPI-R3 Mini | $119 |
 | `dsEsp32Cyd` | CYD lab bundle | $49 |
 
 ### Subscriptions

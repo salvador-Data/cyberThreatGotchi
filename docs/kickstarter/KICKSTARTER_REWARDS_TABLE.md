@@ -14,10 +14,10 @@
 |---------|-------------|--------|-------|---------------|--------------|
 | `KS-DIG` | Digital Defender | $15 | ∞ | Jul 2026 (+7 days post-campaign) | Worldwide (email) |
 | `KS-EB` | Early Bird Core | $149 | 50 | Oct 2026 | US, CA, EU, UK |
-| `KS-CORE` | Cipherhorn Core | $169 | 300 | Oct–Nov 2026 | US, CA, EU, UK |
-| `KS-FIELD` | Field Pack | $219 | 150 | Nov 2026 | US, CA, EU, UK |
-| `KS-PROLAB` | Pro Lab | $479 | 40 | Nov–Dec 2026 | US, CA |
-| `KS-BENCH` | Bench Lab (CrackBot) | $449 | 25 | Nov–Dec 2026 | US, CA |
+| `KS-CORE` | Cipherhorn Core | $189 | 300 | Oct–Nov 2026 | US, CA, EU, UK |
+| `KS-FIELD` | Field Pack | $249 | 150 | Nov 2026 | US, CA, EU, UK |
+| `KS-PROLAB` | Pro Lab | $529 | 40 | Nov–Dec 2026 | US, CA |
+| `KS-BENCH` | Bench Lab (CrackBot) | $499 | 25 | Nov–Dec 2026 | US, CA |
 | `KS-MESH` | Meshtastic Relay | $159 | 75 | Dec 2026 – Jan 2027 | US, CA, EU, UK |
 | `KS-MSP` | MSP Pilot | $2,499 | 10 | Dec 2026 – Jan 2027 | US only (initial) |
 
@@ -28,11 +28,11 @@
 | Tier | Hardware / digital contents | Retail value (ref) | Stripe / shop key |
 |------|----------------------------|--------------------|-------------------|
 | Digital Defender | Digital Pack — STLs, sprites, wallpapers | $15 | `digital` |
-| Early Bird Core | Core kit + 3 mo Pro ($27 value) | $196 | `coreKit` + promo |
-| Cipherhorn Core | Core kit | $169 | `coreKit` |
-| Field Pack | Core + Remote Possibility Cardputer | $258.99 | `fieldPack` |
-| Pro Lab | Field Pack + CYD Standard + 1 yr Pro | $357.98 + $99 | bundle |
-| Bench Lab | CrackBot Jetson bench only | $449 | `crackbotBench` |
+| Early Bird Core | Core kit + 3 mo Pro ($27 value) | $216 | `coreKit` + promo |
+| Cipherhorn Core | Core kit | $189 | `coreKit` |
+| Field Pack | Core + Remote Possibility Cardputer | $288.99 | `fieldPack` |
+| Pro Lab | Field Pack + CYD Standard + 1 yr Pro | $437.98 + $99 | bundle |
+| Bench Lab | CrackBot Jetson bench only | $499 | `crackbotBench` |
 | Meshtastic Relay | Heltec V3 built + field case + guide PDF | $163 | `dsMeshtasticHeltec` + case |
 | MSP Pilot | 3× Field Pack + onboarding + 6 mo Pro ×3 sites | $657 + service | custom |
 
@@ -46,16 +46,16 @@ Assumes Kickstarter + payment fees ~**10%**, US ground shipping billed separatel
 |------|--------|------------------------|-------------------|----------------------|-------------|
 | Digital Defender | $15 | ~$0 | $1.50 | ~$13.50 | ~90% · zero hardware risk |
 | Early Bird Core | $149 | ~$141 + $10 ship = $151 | $14.90 | **−$16** | **Loss leader** · cap 50 · Pro upsell |
-| Cipherhorn Core | $169 | ~$151 | $16.90 | ~$1.10 | ~1% · volume tier · labor not fully loaded |
-| Field Pack | $219 | ~$151 + $71 + $12 = $234 | $21.90 | **−$37** | Bundle discount · Cardputer margin helps at retail |
-| Pro Lab | $479 | ~$234 + $49 + $0 digital = $283 | $47.90 | ~$148 | ~31% loaded · best hardware bundle margin |
-| Bench Lab | $449 | ~$341 + $15 ship | $44.90 | ~$48 | ~11% · matches retail intent |
+| Cipherhorn Core | $189 | ~$151 | $18.90 | ~$19.10 | ~10% · volume tier · labor not fully loaded |
+| Field Pack | $249 | ~$151 + $71 + $12 = $234 | $24.90 | ~$15 | Bundle discount · improved vs prior retail |
+| Pro Lab | $529 | ~$234 + $49 + $0 digital = $283 | $52.90 | ~$193 | ~36% loaded · best hardware bundle margin |
+| Bench Lab | $499 | ~$341 + $15 ship | $49.90 | ~$93 | ~19% · matches retail intent |
 | Meshtastic Relay | $159 | ~$90 + $18 + ship incl. $12 | $15.90 | ~$23 | ~14% · partner variance |
 | MSP Pilot | $2,499 | ~$702 hardware + $15 ship ×3 + $200 labor | $249.90 | ~$1,332 | ~53% · service value drives margin |
 
 **Labor not fully allocated** in Core/Field at retail-aligned pledges — treat Early Bird + Field as **marketing CAC** if Pro feed converts.
 
-**Break-even rough count (Core-only scenario):** ~220× `$169` units cover $35K goal after fees if COGS+ship ~$151 (excludes fixed tooling).
+**Break-even rough count (Core-only scenario):** ~200× `$189` units cover $35K goal after fees if COGS+ship ~$151 (excludes fixed tooling).
 
 ---
 

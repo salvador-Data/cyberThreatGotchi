@@ -101,7 +101,7 @@ We are a **small Philly shop**, not a VC-backed appliance vendor. That means tra
 
 Each reward maps to a **real SKU** from [PRODUCT_PRICING.md](../PRODUCT_PRICING.md). No mystery boxes.
 
-### CyberThreatGotchi Cipherhorn Core (`coreKit` — $169 retail)
+### CyberThreatGotchi Cipherhorn Core (`coreKit` — $189 retail)
 
 - Banana Pi BPI-R3 Mini (2× 2.5GbE)
 - Waveshare 2.13″ e-Paper HAT (Cipherhorn face)
@@ -111,25 +111,25 @@ Each reward maps to a **real SKU** from [PRODUCT_PRICING.md](../PRODUCT_PRICING.
 - Quick-start card + QR to docs
 - **Philadelphia assembly** · ~30 min burn-in before pack-out
 
-### Field Pack (`fieldPack` — $219 retail)
+### Field Pack (`fieldPack` — $249 retail)
 
 - Everything in Core +
 - M5Stack Cardputer with **Remote Possibility** firmware (polls CTG `/api/status` over Wi‑Fi)
 - Printed field pairing guide
 
-### CYD Field Build — Standard (`cydStandard` — $79.99 retail)
+### CYD Field Build — Standard (`cydStandard` — $89.99 retail)
 
 - ESP32-2432S028 CYD 2.8″ pocket display
 - PETG enclosure, USB-C cable, HPL field profile flash
 - **Not** CrackBot — separate product line
 
-### CYD Field Build — Custom (`cydFieldCustom` — $174.99 retail)
+### CYD Field Build — Custom (`cydFieldCustom` — $189.99 retail)
 
 - CYD + GPS, extended Wi‑Fi/BLE radio + SMA antenna, LiPo + switch
 - Custom wardrive / lab profile (Marauder GPS, extended Wi‑Fi lab, etc.)
 - Authorized lab workflows only
 
-### Mr. CrackBot AI Nano — Bench Lab (`crackbotBench` — $449 retail)
+### Mr. CrackBot AI Nano — Bench Lab (`crackbotBench` — $499 retail)
 
 - NVIDIA Jetson Nano 4GB + carrier, CYD UI shell, GPU hashcat path
 - 4 hr assembly + burn-in — **difficult bench build**, not a pocket toy
@@ -139,8 +139,8 @@ Each reward maps to a **real SKU** from [PRODUCT_PRICING.md](../PRODUCT_PRICING.
 
 | SKU | Price | Role |
 |-----|-------|------|
-| Remote Possibility | $89.99 | CTG remote status + field HTTP client |
-| BLE Bot | $79.99 | Authorized BLE scout / proximity lab tool |
+| Remote Possibility | $99.99 | CTG remote status + field HTTP client |
+| BLE Bot | $89.99 | Authorized BLE scout / proximity lab tool |
 
 ### Meshtastic bundle (partner fulfillment)
 
@@ -166,11 +166,11 @@ Shipping charged at pledge manager post-campaign (US zones per [SHIPPING_AND_TAX
 | Tier | Pledge | Limit | Includes | Ship from |
 |------|--------|-------|----------|-----------|
 | **Digital Defender** | **$15** | ∞ | Digital Pack — STLs, sprites, backer badge | Email |
-| **Early Bird Core** | **$149** | 50 | Cipherhorn Core kit ($169 value) + 3 mo Pro feed | Philadelphia |
-| **Cipherhorn Core** | **$169** | 300 | Core kit + quick-start | Philadelphia |
-| **Field Pack** | **$219** | 150 | Core + Remote Possibility Cardputer | Philadelphia |
-| **Pro Lab** | **$479** | 40 | Field Pack + CYD Standard ($79.99) + 1 yr Pro feed | Philadelphia |
-| **Bench Lab** | **$449** | 25 | Mr. CrackBot Jetson bench (standalone SKU) | Philadelphia |
+| **Early Bird Core** | **$149** | 50 | Cipherhorn Core kit ($189 value) + 3 mo Pro feed | Philadelphia |
+| **Cipherhorn Core** | **$189** | 300 | Core kit + quick-start | Philadelphia |
+| **Field Pack** | **$249** | 150 | Core + Remote Possibility Cardputer | Philadelphia |
+| **Pro Lab** | **$529** | 40 | Field Pack + CYD Standard ($89.99) + 1 yr Pro feed | Philadelphia |
+| **Bench Lab** | **$499** | 25 | Mr. CrackBot Jetson bench (standalone SKU) | Philadelphia |
 | **Meshtastic Relay** | **$159** | 75 | Heltec V3 node + field case + CTG webhook guide | Partner |
 | **MSP Pilot** | **$2,499** | 10 | 3× Field Pack + MSP onboarding call (90 min) + 6 mo Pro feed keys (3 sites) | Philadelphia + partner |
 
@@ -264,7 +264,7 @@ If we exceed 300 Core units, assembly moves to a **second Philly print/flash shi
    Field Pack adds M5 Cardputer with Remote Possibility firmware to poll CTG status away from the desk.
 
 7. **Is CrackBot included in the Core kit?**  
-   **No.** CrackBot is a separate $449 Jetson bench lab. CYD builds are separate SKUs. We label every tier clearly.
+   **No.** CrackBot is a separate $499 Jetson bench lab. CYD builds are separate SKUs. We label every tier clearly.
 
 8. **What's partner fulfillment for Meshtastic?**  
    We purchase from verified makers (e.g. LayerFabUK-class suppliers) who ship directly to you. Hacker Planet handles support routing and order batching — we don't claim to warehouse every SKU.

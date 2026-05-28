@@ -50,8 +50,8 @@ Estimated retail kit for **Hacker Planet LLC** desk defender bundle (Cipherhorn 
 | Tier | Includes | Backer price | Notes |
 |------|----------|--------------|-------|
 | **Digital** | Repo + STL zip + sprites | $15 | No hardware |
-| **Cipherhorn Core** | BPI-R3 Mini + e-ink + enclosure + SD + PSU | $169 | Early bird $149 (limit 50) |
-| **Field Pack** | Core + Cardputer + printed quick guide | $219 | Polls CTG over Wi-Fi |
+| **Cipherhorn Core** | BPI-R3 Mini + e-ink + enclosure + SD + PSU | $189 | Early bird $149 (limit 50) |
+| **Field Pack** | Core + Cardputer + printed quick guide | $249 | Polls CTG over Wi-Fi |
 | **Lab Duo** | Core + Pi 4 Bjorn bundle (no CTG on Pi) | $289 | Two-device story |
 
 ---
