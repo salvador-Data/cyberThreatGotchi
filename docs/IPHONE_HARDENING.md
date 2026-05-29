@@ -26,6 +26,61 @@ What actually protects iPhone users:
 
 **What you cannot do from a Windows PC:** Install App Store apps on your iPhone remotely without Apple Business Manager / MDM enrollment. Andy must install apps **on the phone** (see [Manual install steps](#what-andy-must-do-manually-on-the-iphone) below).
 
+**Action runbook:** [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) — step-by-step checklist including VPN/DNS verification.
+
+---
+
+## Preserve your existing VPN and DNS (read before installing apps)
+
+**Do not replace** a VPN profile or DNS setup that is already working. Hardening in **Settings** (Face ID, Find My, Safari, updates, Stolen Device Protection) does **not** change VPN or DNS — run those steps regardless.
+
+### Check what you have first
+
+Before installing **Cloudflare 1.1.1.1**, **NextDNS**, **AdGuard DNS**, or any app that installs a VPN configuration profile:
+
+1. **Settings** → **General** → **VPN & Device Management** → **VPN** — note any active profile (corporate VPN, iCloud Private Relay, 1.1.1.1, NextDNS, Tailscale, etc.).
+2. **Settings** → **Wi‑Fi** → tap **ⓘ** on your home network → **Configure DNS** — note **Automatic**, **Manual** (e.g. 1.1.1.1, 9.9.9.9, NextDNS DoH), or **Off**.
+
+Screenshot or write down both screens if you might need to restore them.
+
+### If you already have VPN or DNS configured
+
+| Existing setup | What to do |
+|----------------|------------|
+| **Corporate / school VPN** | Keep it. **Do not** install Cloudflare or NextDNS unless IT approves — only one system VPN slot is practical at a time. |
+| **iCloud Private Relay** | Keep it. Skip DNS VPN apps; they conflict or duplicate filtering. Use Malwarebytes for SMS/Safari only. |
+| **NextDNS profile or app already connected** | Keep it. **Skip** Cloudflare 1.1.1.1. Harden via Settings + Malwarebytes Safari filter. |
+| **Cloudflare 1.1.1.1 already connected** | Keep it. **Skip** NextDNS/AdGuard DNS apps. |
+| **Wi‑Fi Manual DNS only** (no VPN app) | Keep Manual DNS on Wi‑Fi. Optional: add Malwarebytes; skip second DNS VPN app unless you intentionally replace Wi‑Fi DNS. |
+
+**Malwarebytes Mobile Security** is safe alongside any VPN/DNS — its free tier uses **SMS filtering** and **Safari content blocking**, not a system DNS VPN profile (paid Malwarebytes VPN is separate; leave it off if you keep your current VPN/DNS).
+
+### iOS limitation: one DNS VPN at a time
+
+iOS allows only **one** active VPN configuration that captures DNS traffic. You **cannot** stack:
+
+- Cloudflare 1.1.1.1 **+** NextDNS **+** MDM-enforced DNS **+** another DNS VPN app
+
+Connecting a second DNS VPN app typically **disconnects or overrides** the first. Pick **one** DNS VPN strategy (existing corporate VPN, Private Relay, Cloudflare, NextDNS, or Wi‑Fi Manual DNS) and harden everything else in Settings.
+
+### Optional: Wi‑Fi Manual DNS without touching cellular VPN
+
+If you want extra DNS filtering **only on home Wi‑Fi** and you are **not** using a DNS VPN app:
+
+1. **Settings** → **Wi‑Fi** → **ⓘ** on your network → **Configure DNS** → **Manual**
+2. Add servers (e.g. `1.1.1.1`, `1.0.0.1` or your NextDNS linked IP) → **Save**
+
+This affects **that Wi‑Fi network only** — cellular and any separate VPN profile stay as configured. Do **not** add Manual DNS on Wi‑Fi if you already run Cloudflare/NextDNS via VPN profile unless you are **replacing** that approach.
+
+### Verify settings stayed intact after hardening
+
+After completing Settings hardening and any app installs:
+
+1. **Settings** → **General** → **VPN & Device Management** → **VPN** — same profile(s) as before; corporate/Private Relay still **Connected** if they were before.
+2. **Settings** → **Wi‑Fi** → **ⓘ** → **Configure DNS** — unchanged (**Automatic**, **Manual**, or **Off** as you documented).
+3. Open a site you use daily; if on VPN, confirm VPN icon still shows in status bar when expected.
+4. If something broke, disconnect the **new** app’s VPN profile first — your original profile should return.
+
 ---
 
 ## Top 5 settings to do first
@@ -177,23 +232,30 @@ These apps **supplement** Settings—they do **not** replace Apple’s platform 
 
 ### Recommended (reputable, free tier useful)
 
-| App | Free tier | What it actually does on iOS | What it does **not** do |
-|-----|-----------|------------------------------|-------------------------|
-| **[Malwarebytes Mobile Security](https://apps.apple.com/us/app/malwarebytes-mobile-security/id1327105431)** | Yes — ad/tracker blocking in Safari, SMS filtering to Junk, Trusted Advisor, digital footprint scanner (premium adds VPN, web protection, call blocking) | Phishing-adjacent **SMS** filtering, Safari content blocking, security guidance | **No malware scan** of device or other apps ([Malwarebytes confirms iOS limitation](https://www.malwarebytes.com/ios)) |
-| **[Cloudflare 1.1.1.1](https://apps.apple.com/us/app/1-1-1-1-faster-internet/id1423538627)** | Yes — encrypted DNS; optional WARP; **1.1.1.1 for Families** blocks malware/phishing DNS in app settings | System-wide encrypted DNS (via VPN profile), optional WARP privacy | Not a filesystem AV; WARP+ is paid; only one system VPN profile active at a time |
-| **[NextDNS](https://apps.apple.com/us/app/nextdns/id1464120913)** | Yes — **300,000 DNS queries/month**; full feature set on free tier; unlimited devices | Custom blocklists, logging (can disable), analytics/ads/malware DNS blocking | After quota, blocking stops (falls back to non-blocking DNS); heavy users may need Pro (~$2/mo) |
-| **[AdGuard DNS](https://apps.apple.com/us/app/adguard-dns/id1499221030)** | Free tier with DNS filtering profiles | DNS-level ad/malware blocking via VPN profile | Similar VPN-slot constraint; not full AV |
+| App | When to install | What it actually does on iOS | What it does **not** do |
+|-----|-----------------|------------------------------|-------------------------|
+| **[Malwarebytes Mobile Security](https://apps.apple.com/us/app/malwarebytes-mobile-security/id1327105431)** | **Always** — safe with existing VPN/DNS | Phishing-adjacent **SMS** filtering, Safari content blocking, security guidance | **No malware scan** of device or other apps; free tier does **not** install a DNS VPN profile |
+| **[Cloudflare 1.1.1.1](https://apps.apple.com/us/app/1-1-1-1-faster-internet/id1423538627)** | **Optional** — only if no DNS VPN / Manual DNS already | System-wide encrypted DNS (via VPN profile), optional WARP; **1.1.1.1 for Families** blocks malware/phishing DNS | Not filesystem AV; **conflicts** with existing NextDNS, corporate VPN, Private Relay, or second DNS VPN |
+| **[NextDNS](https://apps.apple.com/us/app/nextdns/id1464120913)** | **Optional** — only if no DNS VPN / Manual DNS already | Custom blocklists, logging, analytics/ads/malware DNS blocking via VPN profile | After free quota, blocking stops; **conflicts** with Cloudflare or another active DNS VPN |
+| **[AdGuard DNS](https://apps.apple.com/us/app/adguard-dns/id1499221030)** | **Optional** — same rules as Cloudflare/NextDNS | DNS-level ad/malware blocking via VPN profile | Same single VPN-slot constraint; do not stack |
 
 ### Microsoft Defender (usually not free for personal use)
 
 **[Microsoft Defender: Security](https://apps.apple.com/us/app/microsoft-defender-security/id1526737990)** is free to **download** but requires an active **Microsoft 365 Personal or Family** subscription for full use. On iOS it provides **anti-phishing** and **identity monitoring**—**not** traditional AV scanning. Skip unless you already pay for M365; do not buy a subscription just for iPhone “AV.”
 
-### Andy’s practical pick (1–2 apps)
+### Andy’s practical pick (depends on existing VPN/DNS)
 
-1. **Malwarebytes Mobile Security** — best single free install for SMS junk/phishing filtering + Safari hardening without paying.
-2. **Cloudflare 1.1.1.1** *or* **NextDNS** (pick **one** for always-on DNS) — DNS-level malware/phishing block; use Cloudflare if you want zero quota hassle; use NextDNS if you want customizable blocklists and logs.
+**Always (does not replace VPN/DNS):**
 
-**Do not run two DNS VPN apps connected at once** — iOS allows one VPN configuration to capture DNS at a time. Choose one primary DNS app or configure DNS over HTTPS in a single profile.
+1. **Malwarebytes Mobile Security** — SMS junk/phishing filtering + Safari content blocking. Safe even when corporate VPN, iCloud Private Relay, Cloudflare, or NextDNS is already active.
+
+**Only if you have no DNS VPN / no Manual DNS you want to keep:**
+
+2. **Cloudflare 1.1.1.1** *or* **NextDNS** (pick **one**) — optional DNS-level malware/phishing block. **Skip both** if you already use any of: corporate VPN with DNS, iCloud Private Relay, an existing 1.1.1.1 or NextDNS profile, or Wi‑Fi **Configure DNS → Manual**.
+
+**If keeping existing DNS:** harden via **Settings** (this doc) + **Malwarebytes Safari filter** only — no new DNS VPN app.
+
+**Do not run two DNS VPN apps connected at once** — iOS allows one VPN configuration to capture DNS at a time. Do not stack Cloudflare + NextDNS + MDM DNS profiles.
 
 ### Apps to avoid
 
@@ -207,7 +269,9 @@ These apps **supplement** Settings—they do **not** replace Apple’s platform 
 
 You **cannot** install these from your Windows PC through the App Store without MDM. On the **iPhone 15 Pro Max**:
 
-### Install Malwarebytes (example)
+**Before any app install:** complete [Preserve your existing VPN and DNS](#preserve-your-existing-vpn-and-dns-read-before-installing-apps) checks. If VPN/DNS is already set, install **Malwarebytes only** and skip Cloudflare/NextDNS sections below.
+
+### Install Malwarebytes (recommended — keeps your VPN/DNS)
 
 1. Open **App Store**
 2. Tap **Search** (bottom)
@@ -217,22 +281,27 @@ You **cannot** install these from your Windows PC through the App Store without 
 6. **Settings** → **Apps** → **Messages** → **Unknown & Spam** → enable **Malwarebytes** for filtering (if prompted)
 7. **Settings** → **Safari** → **Extensions** → enable **Malwarebytes** content blockers if offered
 
-### Install Cloudflare 1.1.1.1 (example)
+### Install Cloudflare 1.1.1.1 (optional — only if no DNS VPN already)
+
+**Skip this section** if **Settings → VPN** or **Wi‑Fi → Configure DNS** already shows an active DNS/VPN setup you want to keep.
 
 1. **App Store** → **Search** → **1.1.1.1 Faster Internet**
 2. Install → open app → accept terms
 3. Tap to install **VPN profile** when prompted → allow in **Settings**
 4. Toggle connection **On**; in app settings enable **1.1.1.1 for Families** for malware/phishing DNS if desired
 5. Optional: disable WARP if you only want DNS (Settings inside app)
+6. Re-check **Settings → VPN** — confirm this replaced only what you intended; verify **Wi‑Fi → Configure DNS** if you use Manual DNS elsewhere
 
-### Install NextDNS (alternative DNS)
+### Install NextDNS (optional — only if no DNS VPN already)
+
+**Skip this section** if Cloudflare, corporate VPN, Private Relay, or existing NextDNS is already active.
 
 1. **App Store** → **Search** → **NextDNS**
 2. Create free account at [nextdns.io](https://nextdns.io) → link device in app
 3. Install VPN profile → connect
 4. In NextDNS dashboard, enable **Blocklists** (e.g. Native Tracking Protection, Threat Intelligence Feeds)
 
-Repeat the same **App Store → Search → Get → Open → grant permissions** pattern for any other app above.
+Repeat the same **App Store → Search → Get → Open → grant permissions** pattern for any other app above — but **never** add a second DNS VPN on top of an existing one.
 
 ---
 
@@ -260,6 +329,7 @@ Same principle everywhere: **reduce attack surface**, **log and detect on infras
 ## Quick reference card
 
 ```
+[ ] Documented VPN (Settings → VPN) + Wi‑Fi DNS (Configure DNS) BEFORE app installs
 [ ] iOS updated + automatic security updates ON
 [ ] Strong passcode + Face ID + Stolen Device Protection ON
 [ ] Find My iPhone ON
@@ -269,10 +339,12 @@ Same principle everywhere: **reduce attack surface**, **log and detect on infras
 [ ] Bluetooth / Local Network permissions audited
 [ ] Lock screen previews restricted
 [ ] USB Restricted Mode (accessories when locked OFF)
-[ ] Malwarebytes installed + SMS/Safari features enabled
-[ ] ONE DNS app: Cloudflare 1.1.1.1 OR NextDNS
+[ ] Malwarebytes installed + SMS/Safari features enabled (safe with existing VPN/DNS)
+[ ] DNS VPN app ONLY if none already: Cloudflare 1.1.1.1 OR NextDNS — else SKIP
+[ ] Post-hardening: VPN + Wi‑Fi DNS unchanged from baseline
 [ ] No unknown configuration profiles
 [ ] (Optional) Lockdown Mode if high-threat
+[ ] (Optional) Wi‑Fi Manual DNS only — if no DNS VPN and you want home-Wi‑Fi filtering
 ```
 
 ---
