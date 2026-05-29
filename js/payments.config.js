@@ -7,9 +7,12 @@
  *    $env:CTG_STRIPE_SECRET_KEY = "sk_test_..."
  *    python scripts/stripe_bootstrap_payment_links.py --write-config --go-live
  * 3. Or manual: create Payment Links in Dashboard, paste https://buy.stripe.com/... below.
- * 4. When every stripePaymentLinks key is non-empty, demoMode auto-flips to false below.
- * 5. Sync site: python scripts/sync_website_to_docs.py
- * 6. Verify: python scripts/check_payments.py  (exit 0 = live)
+ * 4. Apple Pay / Google Pay: enable in Stripe Dashboard -> Settings -> Payment methods (auto on Payment Links).
+ * 5. PayPal / Venmo / Cash App (hosted — no secrets in this file):
+ *    paypal.clientId OR paypalMe.username | venmo.username | cashapp.cashtag
+ * 6. When every stripePaymentLinks key is non-empty, demoMode auto-flips to false below.
+ * 7. Sync site: python scripts/sync_website_to_docs.py
+ * 8. Verify: python scripts/check_payments.py  (exit 0 = live)
  *
  * Never put sk_ secret keys in this file. See docs/STRIPE_ADD_LINKS.md
  */
@@ -83,6 +86,12 @@ window.HPL_PAYMENTS = {
     return String(p.stripePaymentLinks[k] || "").trim().indexOf("https://buy.stripe.com/") === 0;
   });
   p.stripeLinksConfigured = filled.length;
+  var altConfigured =
+    !!(p.paypal && p.paypal.clientId) ||
+    !!(p.paypalMe && p.paypalMe.username) ||
+    !!(p.cashapp && p.cashapp.cashtag) ||
+    !!(p.venmo && p.venmo.username);
+  p.altPaymentsConfigured = altConfigured;
   if (filled.length === keys.length && keys.length > 0) {
     p.demoMode = false;
   }
