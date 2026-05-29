@@ -20,6 +20,11 @@ Defensive coding and deployment practices for Hacker Planet LLC projects.
 | `CTG_ALLOW_ICMP` | Set `0` to omit inbound ICMP from firewall baseline |
 | `CTG_SSH_LAN_ONLY` | Set `1` to restrict SSH to RFC1918/link-local in firewall baseline |
 | `CTG_FIREWALL_BASELINE` | Set `1` on `scripts/install.sh` to apply default-deny iptables after install |
+| `CTG_WAZUH_MANAGER` | Wazuh SIEM manager IP/hostname for `scripts/windows/wazuh_agent_setup.ps1` (alias: `WAZUH_MANAGER`) |
+
+## Windows SOC (lab / authorized hosts)
+
+Free stack orchestration: `scripts/windows/README_WINDOWS_SOC.md`. Scripts use env vars only — no embedded manager secrets. Run PowerShell **as Administrator** on systems you own; use explicit flags on `harden_windows.ps1` (default is guidance-only).
 
 ## Firewall baseline (BPI-R3 / Linux)
 

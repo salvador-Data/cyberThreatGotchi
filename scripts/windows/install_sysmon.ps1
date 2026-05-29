@@ -1,0 +1,85 @@
+#Requires -RunAsAdministrator
+<#
+.SYNOPSIS
+  Install Sysmon with SwiftOnSecurity baseline config (authorized lab / owned hosts only).
+
+.DESCRIPTION
+  Downloads Sysmon from Microsoft Sysinternals, fetches the community export config from
+  SwiftOnSecurity/sysmon-config, and installs with -accepteula.
+  Does not run unless you execute this script explicitly.
+
+.PARAMETER InstallDir
+  Directory for Sysmon binaries and config (default: %ProgramData%\CTG\Sysmon).
+
+.PARAMETER Force
+  Re-download and reinstall even if Sysmon service already exists.
+
+.EXAMPLE
+  .\scripts\windows\install_sysmon.ps1
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+    [string] $InstallDir = (Join-Path $env:ProgramData 'CTG\Sysmon'),
+    [switch] $Force
+)
+
+$ErrorActionPreference = 'Stop'
+
+$SysmonZipUrl = 'https://download.sysinternals.com/files/Sysmon.zip'
+$ConfigUrl = 'https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml'
+
+function Test-SysmonInstalled {
+    $svc = Get-Service -Name 'Sysmon' -ErrorAction SilentlyContinue
+    return ($null -ne $svc)
+}
+
+Write-Host ''
+Write-Host 'CyberThreatGotchi — Sysmon install (defensive / authorized use only)' -ForegroundColor Cyan
+Write-Host 'Host: ' -NoNewline; Write-Host $env:COMPUTERNAME -ForegroundColor Gray
+Write-Host ''
+
+if ((Test-SysmonInstalled) -and -not $Force) {
+    Write-Host 'Sysmon service already present. Use -Force to reinstall.' -ForegroundColor Yellow
+    & (Join-Path $InstallDir 'Sysmon64.exe') -c 2>$null | Out-String | Write-Host
+    return
+}
+
+if (-not $PSCmdlet.ShouldProcess($InstallDir, 'Download and install Sysmon')) {
+    return
+}
+
+New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+$zipPath = Join-Path $InstallDir 'Sysmon.zip'
+$configPath = Join-Path $InstallDir 'sysmonconfig-export.xml'
+
+Write-Host 'Downloading Sysmon...' -ForegroundColor Gray
+Invoke-WebRequest -Uri $SysmonZipUrl -OutFile $zipPath -UseBasicParsing
+
+Write-Host 'Extracting...' -ForegroundColor Gray
+Expand-Archive -Path $zipPath -DestinationPath $InstallDir -Force
+
+Write-Host 'Downloading SwiftOnSecurity config...' -ForegroundColor Gray
+Invoke-WebRequest -Uri $ConfigUrl -OutFile $configPath -UseBasicParsing
+
+$sysmonExe = Join-Path $InstallDir 'Sysmon64.exe'
+if (-not (Test-Path $sysmonExe)) {
+    throw "Sysmon64.exe not found after extract: $sysmonExe"
+}
+
+if (Test-SysmonInstalled) {
+    Write-Host 'Updating Sysmon configuration...' -ForegroundColor Gray
+    & $sysmonExe -c $configPath
+} else {
+    Write-Host 'Installing Sysmon (accept EULA)...' -ForegroundColor Gray
+    & $sysmonExe -accepteula -i $configPath
+}
+
+if (-not (Test-SysmonInstalled)) {
+    throw 'Sysmon service not found after install.'
+}
+
+Write-Host ''
+Write-Host 'Sysmon installed. Verify:' -ForegroundColor Green
+Write-Host "  Get-Service Sysmon"
+Write-Host "  & '$sysmonExe' -c"
+Write-Host ''

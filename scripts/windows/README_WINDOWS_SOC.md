@@ -1,0 +1,152 @@
+# Windows SOC stack — free hardening, IDS, IPS, SIEM
+
+**Hacker Planet LLC / CyberThreatGotchi** — defensive automation for systems you **own** or are **explicitly authorized** to administer. Do not run these scripts against third-party networks without written permission.
+
+## What you get (free tier)
+
+| Layer | Tool | Role |
+|-------|------|------|
+| Hardening | [Harden-Windows-Security](https://github.com/Harden-Windows-Security/Module) | CIS-aligned baselines, GPO-style settings |
+| Host IDS | [Sysmon](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon) + [SwiftOnSecurity config](https://github.com/SwiftOnSecurity/sysmon-config) | Process/network/file telemetry |
+| SIEM | [Wazuh](https://wazuh.com/) | Agent → manager, rules, dashboards, FIM |
+| Network IPS | [OPNsense](https://opnsense.org/) + Suricata | Perimeter IDS/IPS (separate appliance) |
+| Endpoint AV | Microsoft Defender | ASR rules (audit before enforce) |
+
+Scripts live in `scripts/windows/`. They contain **no secrets** — set your Wazuh manager IP via environment variables only.
+
+## Recommended install order
+
+1. **Document & backup** — restore point, snapshot VM, or gold image.
+2. **Sysmon** — host telemetry before heavy policy changes.
+3. **Harden-Windows-Security** — audit/report first, then apply.
+4. **Wazuh agent** — point at your manager (lab VM or homelab SIEM).
+5. **Defender ASR** — audit mode, review Event Viewer, then enforce.
+6. **OPNsense/Suricata** — network edge (not installed by these scripts).
+
+## Environment variables
+
+| Variable | Purpose |
+|----------|---------|
+| `CTG_WAZUH_MANAGER` | Preferred Wazuh manager IP or hostname |
+| `WAZUH_MANAGER` | Alternate name (same meaning) |
+
+Never commit manager credentials or enrollment passwords to git. Use Wazuh dashboard enrollment for production.
+
+## Quick start (Andy)
+
+Open **PowerShell as Administrator**, then run **one command per block** from the repo root.
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Review the orchestrator (guidance only — no hardening until you add flags):
+
+```powershell
+.\scripts\windows\harden_windows.ps1
+```
+
+Install Sysmon + SwiftOnSecurity config:
+
+```powershell
+.\scripts\windows\harden_windows.ps1 -InstallSysmon
+```
+
+Set Wazuh manager (your lab SIEM IP — example only):
+
+```powershell
+$env:CTG_WAZUH_MANAGER = '192.168.1.50'
+```
+
+Install Wazuh agent:
+
+```powershell
+.\scripts\windows\harden_windows.ps1 -SetupWazuhAgent
+```
+
+Optional: Harden-Windows-Security module (audit first):
+
+```powershell
+.\scripts\windows\harden_windows.ps1 -RunHardenWindowsSecurity -HardenWindowsSecurityAuditOnly
+```
+
+Optional: Defender ASR audit mode:
+
+```powershell
+.\scripts\windows\harden_windows.ps1 -DefenderASRAudit
+```
+
+## Individual scripts
+
+| Script | Purpose |
+|--------|---------|
+| `harden_windows.ps1` | Orchestrator; flags control each step |
+| `install_sysmon.ps1` | Download Sysmon + SwiftOnSecurity XML |
+| `wazuh_agent_setup.ps1` | MSI/winget/choco agent install |
+
+Check Wazuh without installing:
+
+```powershell
+.\scripts\windows\harden_windows.ps1 -CheckWazuhAgent
+```
+
+Sysmon only:
+
+```powershell
+.\scripts\windows\install_sysmon.ps1
+```
+
+## Wazuh manager (SIEM)
+
+These scripts install the **agent** only. You need a Wazuh **manager** (Linux VM, Docker, or cloud trial):
+
+- [Wazuh quickstart](https://documentation.wazuh.com/current/quickstart.html)
+- Default agent port: **1514/TCP** to manager
+- After install, confirm agent **Active** in the Wazuh dashboard
+
+## OPNsense / Suricata (network IPS)
+
+Not automated here. Typical homelab path:
+
+1. Install OPNsense on a spare NIC/VM.
+2. Enable **Intrusion Detection → Suricata**.
+3. Send alerts to Wazuh or syslog (optional integration).
+
+Use for **your** perimeter/lab VLANs only.
+
+## Harden-Windows-Security notes
+
+- Module: `Install-Module Harden-Windows-Security`
+- Run **audit/report** before enforce on daily-driver PCs.
+- Some settings require reboot; test on a VM first.
+
+## Verification checklist
+
+```powershell
+Get-Service Sysmon
+```
+
+```powershell
+Get-Service WazuhSvc
+```
+
+```powershell
+Get-MpComputerStatus | Select AMServiceEnabled, AntispywareEnabled
+```
+
+```powershell
+Test-NetConnection -ComputerName $env:CTG_WAZUH_MANAGER -Port 1514
+```
+
+## Authorized use
+
+- Corporate or personal devices you administer
+- Cyber range / CTG lab VMs
+- MSP customer hosts **with contract and scope**
+
+**Not authorized:** unauthorized scanning, “red team” on systems you do not own, or evasion of monitoring on networks you do not control.
+
+## Related docs
+
+- [docs/SECURITY_HARDENING.md](../../docs/SECURITY_HARDENING.md) — project-wide env vars and API hardening
+- [docs/FIREWALL_BASELINE.md](../../docs/FIREWALL_BASELINE.md) — Linux/BPI-R3 firewall (complements Windows stack)
