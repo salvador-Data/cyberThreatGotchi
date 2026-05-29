@@ -25,6 +25,9 @@
 .PARAMETER DefenderASRAudit
   Set common Attack Surface Reduction rules to Audit mode (Defender AV required).
 
+.PARAMETER CloudBackup
+  Run cloud_backup.ps1 after local/SSD backup (OneDrive staging).
+
 .PARAMETER SkipRestorePoint
   Skip system restore point prompt.
 
@@ -46,6 +49,7 @@ param(
     [switch] $SetupWazuhAgent,
     [switch] $DefenderASRAudit,
     [switch] $SkipRestorePoint
+    , [switch] $CloudBackup
 )
 
 $ErrorActionPreference = 'Stop'
@@ -54,7 +58,7 @@ $ScriptDir = $PSScriptRoot
 function Write-Banner {
     Write-Host ''
     Write-Host '========================================' -ForegroundColor Cyan
-    Write-Host ' CyberThreatGotchi — Windows SOC hardening' -ForegroundColor Cyan
+    Write-Host ' CyberThreatGotchi â€” Windows SOC hardening' -ForegroundColor Cyan
     Write-Host ' Authorized defensive use on systems you own' -ForegroundColor Cyan
     Write-Host ' or are explicitly permitted to administer.' -ForegroundColor Cyan
     Write-Host '========================================' -ForegroundColor Cyan
@@ -118,7 +122,7 @@ function Invoke-HardenWindowsSecurityModule {
         return
     }
     if ($HardenWindowsSecurityAuditOnly) {
-        Write-Host 'Running Invoke-Hardening (audit/report — confirm module parameters in README)...' -ForegroundColor Gray
+        Write-Host 'Running Invoke-Hardening (audit/report â€” confirm module parameters in README)...' -ForegroundColor Gray
         try {
             Invoke-Hardening -Mode 'Audit'
         } catch {
@@ -126,7 +130,7 @@ function Invoke-HardenWindowsSecurityModule {
             Invoke-Hardening
         }
     } else {
-        Write-Host 'Running Invoke-Hardening — review changes before applying on production.' -ForegroundColor Yellow
+        Write-Host 'Running Invoke-Hardening â€” review changes before applying on production.' -ForegroundColor Yellow
         Invoke-Hardening
     }
 }
@@ -177,7 +181,7 @@ function Set-DefenderASRAuditMode {
         Write-Host 'Windows Defender status unavailable. Is Defender enabled?' -ForegroundColor Yellow
         return
     }
-    # Common ASR rule GUIDs — audit only (log, do not block)
+    # Common ASR rule GUIDs â€” audit only (log, do not block)
     $valid = @(
         '75668C1F-73B5-4CF0-BB93-3EC8755A2549',
         'D4F940AB-401B-4EFC-AADC-AD5F3C50688A',
@@ -201,10 +205,19 @@ function Set-DefenderASRAuditMode {
     }
 }
 
+
+function Invoke-CloudBackupHelper {
+    $cloud = Join-Path $ScriptDir 'cloud_backup.ps1'
+    if (-not (Test-Path $cloud)) {
+        throw "Missing: $cloud"
+    }
+    Write-Host '--- Microsoft OneDrive cloud staging ---' -ForegroundColor Cyan
+    & $cloud
+}
 function Show-UsageIfNoFlags {
-    $any = $InstallSysmon -or $RunHardenWindowsSecurity -or $CheckWazuhAgent -or $SetupWazuhAgent -or $DefenderASRAudit
+    $any = $InstallSysmon -or $RunHardenWindowsSecurity -or $CheckWazuhAgent -or $SetupWazuhAgent -or $DefenderASRAudit -or $CloudBackup
     if ($any) { return $false }
-    Write-Host 'No action flags passed — guidance only (no hardening applied).' -ForegroundColor Yellow
+    Write-Host 'No action flags passed â€” guidance only (no hardening applied).' -ForegroundColor Yellow
     Write-Host ''
     Write-Host 'Suggested order (see scripts/windows/README_WINDOWS_SOC.md):'
     Write-Host '  1. Restore point (prompt below)'
@@ -212,6 +225,7 @@ function Show-UsageIfNoFlags {
     Write-Host '  3. -RunHardenWindowsSecurity [-HardenWindowsSecurityAuditOnly]'
     Write-Host '  4. Set manager IP, then -SetupWazuhAgent or -CheckWazuhAgent'
     Write-Host '  5. -DefenderASRAudit (tune ASR before enforce)'
+    Write-Host '  6. -CloudBackup (OneDrive manifest staging)'
     Write-Host ''
     Write-Host 'Examples:'
     Write-Host '  .\scripts\windows\harden_windows.ps1 -InstallSysmon'
@@ -234,6 +248,7 @@ if ($RunHardenWindowsSecurity) { Invoke-HardenWindowsSecurityModule }
 if ($CheckWazuhAgent) { Invoke-WazuhCheck }
 if ($SetupWazuhAgent) { Invoke-WazuhSetup }
 if ($DefenderASRAudit) { Set-DefenderASRAuditMode }
+if ($CloudBackup) { Invoke-CloudBackupHelper }
 
 if ($guidanceOnly) {
     Invoke-RestorePointPrompt

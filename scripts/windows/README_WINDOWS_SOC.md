@@ -150,3 +150,54 @@ Test-NetConnection -ComputerName $env:CTG_WAZUH_MANAGER -Port 1514
 
 - [docs/SECURITY_HARDENING.md](../../docs/SECURITY_HARDENING.md) — project-wide env vars and API hardening
 - [docs/FIREWALL_BASELINE.md](../../docs/FIREWALL_BASELINE.md) — Linux/BPI-R3 firewall (complements Windows stack)
+
+## Microsoft Windows cloud (OneDrive + Defender)
+
+Interpretation: **on Windows cloud services** — Microsoft OneDrive sync, Windows Backup settings, Defender for Cloud (CSPM), and Entra ID sign-in security. Not IONOS or third-party "Ion" products.
+
+### Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `selective_ssd_backup.ps1` | SSD/local selective backup + manifest |
+| `cloud_backup.ps1` | Copy manifest + critical files to OneDrive `\Backups\Andy-PC-YYYY-MM-DD` |
+
+Orchestrator flag:
+
+```powershell
+.\scripts\windows\harden_windows.ps1 -CloudBackup
+```
+
+### Andy manual steps (required once)
+
+1. **Microsoft account** — Settings → Accounts → sign in with your Microsoft account.
+2. **OneDrive** — Install or open OneDrive; confirm folder `C:\Users\Owner\OneDrive` (or `%OneDriveCommercial%`). Allow sync for `Backups\Andy-PC-*`.
+3. **Windows Backup (Win11)** — Settings → Accounts → Windows backup → enable where offered (settings sync, OneDrive folders, File History if you use it).
+4. **Microsoft Defender for Cloud** — [Azure portal](https://portal.azure.com) → Microsoft Defender for Cloud → enable **Foundational CSPM** (free tier) on your subscription; review Secure Score recommendations.
+5. **Entra ID (personal/work)** — [Microsoft Entra admin center](https://entra.microsoft.com) → Protection → enable MFA and review sign-in risk for your account.
+6. **Optional CTG alert** — Set user/machine env vars `CTG_WEBHOOK_URL` and `CTG_WEBHOOK_SECRET` (never commit); `cloud_backup.ps1` posts a non-secret JSON event when both are set.
+
+### Backup flow (recommended)
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\selective_ssd_backup.ps1
+```
+
+```powershell
+.\scripts\windows\cloud_backup.ps1
+```
+
+SSD default: drive **D:** (volume label **SSD**) → `D:\Backups\Andy-PC-YYYY-MM-DD\`.
+
+### Environment variables (cloud / CTG)
+
+| Variable | Purpose |
+|----------|---------|
+| `OneDrive` / `OneDriveCommercial` | Set by OneDrive client; script auto-detects |
+| `CTG_WEBHOOK_URL` | Optional HTTPS endpoint for backup-complete ping |
+| `CTG_WEBHOOK_SECRET` | Sent as `X-CTG-Secret` header (env only) |
+
