@@ -1,0 +1,45 @@
+﻿# CTG one-shot SOC run (elevated). Logs to Desktop + D:\Backups if writable.
+$ErrorActionPreference = 'Continue'
+$Repo = 'C:\Users\Owner\Projects\cyberThreatGotchi'
+$Win = Join-Path $Repo 'scripts\windows'
+. (Join-Path $Win 'CTG-AdminCommon.ps1')
+$script:CtgIsAdmin = Test-CtgIsAdmin
+$LogDesktop = Join-Path ([Environment]::GetFolderPath('Desktop')) 'ctg-soc-run-log.txt'
+$LogSsd = 'D:\Backups\ctg-soc-run-log.txt'
+function Write-Log([string]$m) {
+    $line = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $m"
+    Add-Content -Path $LogDesktop -Value $line -Encoding utf8
+    Write-Host $line
+}
+Write-Log '=== Elevated CTG SOC run started ==='
+Write-Log ('Running as Admin: ' + $script:CtgIsAdmin)
+Write-Log "Computer=$env:COMPUTERNAME User=$env:USERNAME Running as Admin: $script:CtgIsAdmin"
+try {
+    Write-Log '--- Restore point (Checkpoint-Computer) ---'
+    Checkpoint-Computer -Description 'CTG-Windows-Hardening' -RestorePointType MODIFY_SETTINGS
+    Write-Log 'Restore point: OK'
+} catch {
+    Write-Log "Restore point: FAILED - $($_.Exception.Message)"
+}
+Write-Log '--- Selective SSD backup ---'
+& (Join-Path $Win 'selective_ssd_backup.ps1') *>&1 | ForEach-Object { Write-Log $_ }
+if (Test-Path (Join-Path $Win 'cloud_backup.ps1')) {
+    Write-Log '--- cloud_backup.ps1 ---'
+    & (Join-Path $Win 'cloud_backup.ps1') *>&1 | ForEach-Object { Write-Log $_ }
+}
+Write-Log '--- Sysmon install ---'
+& (Join-Path $Win 'harden_windows.ps1') -InstallSysmon -SkipRestorePoint *>&1 | ForEach-Object { Write-Log $_ }
+if ($LASTEXITCODE -eq 0 -or $null -eq $LASTEXITCODE) { $sysmonOk = $true } else { $sysmonOk = $false }
+Write-Log "Sysmon phase last exit: $LASTEXITCODE"
+Write-Log '--- Harden-Windows-Security (audit only) ---'
+& (Join-Path $Win 'harden_windows.ps1') -RunHardenWindowsSecurity -HardenWindowsSecurityAuditOnly -SkipRestorePoint *>&1 | ForEach-Object { Write-Log $_ }
+Write-Log '--- Defender ASR audit ---'
+& (Join-Path $Win 'harden_windows.ps1') -DefenderASRAudit -SkipRestorePoint *>&1 | ForEach-Object { Write-Log $_ }
+if ($env:CTG_WAZUH_MANAGER -or $env:WAZUH_MANAGER) {
+    Write-Log '--- Wazuh setup (env set) ---'
+    & (Join-Path $Win 'harden_windows.ps1') -SetupWazuhAgent -SkipRestorePoint *>&1 | ForEach-Object { Write-Log $_ }
+} else {
+    Write-Log 'Wazuh: SKIPPED (CTG_WAZUH_MANAGER / WAZUH_MANAGER not set)'
+}
+Write-Log '=== Elevated CTG SOC run finished ==='
+try { Copy-Item $LogDesktop $LogSsd -Force; Write-Log "Copied log to $LogSsd" } catch { Write-Log "SSD log copy failed: $($_.Exception.Message)" }
