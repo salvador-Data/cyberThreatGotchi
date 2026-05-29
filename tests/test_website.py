@@ -29,6 +29,7 @@ def test_website_structure():
         "js/main.js",
         "js/payments.js",
         "js/payments.config.js",
+        "js/cart.js",
         "js/catalog.js",
         "js/catalog.config.js",
         "js/direct.js",
@@ -48,6 +49,8 @@ def test_website_structure():
 def test_shop_page_payments():
     html = (WEB / "shop.html").read_text(encoding="utf-8")
     assert "product-checkout" in html
+    assert "cart.js" in html
+    assert "shop-cart" in html
     assert "payments.config.js" in html
     assert "catalog.config.js" in html
     assert "dropship-catalog" in html
@@ -509,6 +512,27 @@ def test_contact_page_content():
     assert "salvador-Data" in html
     assert "SalvadorData" in html
     assert "email routing" in html.lower() or "mx records" in html.lower()
+
+
+def test_shop_cart_pci_safe():
+    """Cart must exist and never collect PAN/CVV on-site."""
+    html = (WEB / "shop.html").read_text(encoding="utf-8")
+    cart_js = (WEB / "js" / "cart.js").read_text(encoding="utf-8")
+    assert "HPL_CART" in cart_js
+    assert "HPL_buildStripeCheckoutUrl" in cart_js
+    assert "PCI-safe" in cart_js or "PCI-safe" in html
+    forbidden = (
+        "cardNumber",
+        "card-number",
+        "cvv",
+        "cvc",
+        'autocomplete="cc-',
+        'type="password"',
+        "card_number",
+    )
+    combined = (html + cart_js).lower()
+    for token in forbidden:
+        assert token.lower() not in combined, f"forbidden payment pattern {token!r} in shop/cart"
 
 
 def test_no_dropship_phrasing_on_public_html():
