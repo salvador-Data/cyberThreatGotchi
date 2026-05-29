@@ -4,8 +4,26 @@
  */
 window.HPL_FIRMWARE = {
   intro:
-    "Flash M5 OS on the Cardputer first, then sideload app packages from this table or via the M5 OS Wi-Fi manifest. " +
-    "Philadelphia SKUs ship pre-flashed. Verify SHA-256 digests in the manifest before OTA download.",
+    "One place to grab M5 Cardputer firmware for the Hacker Planet ecosystem. Philadelphia SKUs ship pre-flashed.",
+  steps: [
+    {
+      num: "1",
+      title: "Flash M5 OS",
+      detail: "Install the Cardputer launcher first (USB recovery or tagged GitHub release).",
+    },
+    {
+      num: "2",
+      title: "Download app .bin",
+      detail: "Grab Remote Possibility or BLE Bot below, or pull from the M5 OS Wi-Fi manifest.",
+    },
+    {
+      num: "3",
+      title: "Verify & flash",
+      detail: "Match SHA-256 in manifest.example.json before OTA or SD sideload.",
+    },
+  ],
+  trustLine:
+    "Verify every package SHA-256 digest in the M5 OS manifest before download or flash.",
   manifestUrl:
     "https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/data/manifest.example.json",
   securityUrl: "https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/SECURITY.md",
@@ -16,12 +34,13 @@ window.HPL_FIRMWARE = {
       name: "M5 OS Cardputer",
       device: "M5 Cardputer",
       role: "Launcher, SD catalog, OTA hub",
-      asset: "Build from source or tagged release",
+      asset: "Tagged release .bin",
       downloadUrl: "",
       releasesUrl: "https://github.com/salvador-Data/M5_OS-Cardputer/releases",
       repoUrl: "https://github.com/salvador-Data/M5_OS-Cardputer",
-      sdName: "m5_os (recovery flash)",
+      sdName: "Recovery flash via USB",
       accent: "m5",
+      ctaLabel: "M5 OS releases",
     },
     {
       id: "remote-possibility",
@@ -35,6 +54,7 @@ window.HPL_FIRMWARE = {
       repoUrl: "https://github.com/salvador-Data/Remote-Possibility",
       sdName: "remote_possibility.bin",
       accent: "m5",
+      ctaLabel: "Download firmware.bin",
     },
     {
       id: "ble-bot",
@@ -48,6 +68,7 @@ window.HPL_FIRMWARE = {
       repoUrl: "https://github.com/salvador-Data/BLE-Bot-Cardputer",
       sdName: "ble_bot.bin",
       accent: "m5",
+      ctaLabel: "Download ble_bot.bin",
     },
   ],
 };

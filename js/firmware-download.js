@@ -1,11 +1,13 @@
 /**
- * Hacker Planet LLC - unified firmware download table (about.html)
+ * Hacker Planet LLC - Bruce-style firmware download hub (about.html)
  */
 (function () {
   function cfg() {
     return (
       window.HPL_FIRMWARE || {
         intro: "",
+        steps: [],
+        trustLine: "",
         manifestUrl: "",
         securityUrl: "",
         cardputerDocsUrl: "",
@@ -21,24 +23,60 @@
     return node;
   }
 
-  function downloadCell(pkg) {
+  function renderSteps(root, steps) {
+    var row = el("ol", "firmware-steps");
+    (steps || []).forEach(function (step) {
+      var item = el("li", "firmware-step");
+      item.appendChild(el("span", "firmware-step-num", step.num));
+      var body = el("div", "firmware-step-body");
+      body.appendChild(el("strong", "firmware-step-title", step.title));
+      body.appendChild(el("span", "firmware-step-detail", step.detail));
+      item.appendChild(body);
+      row.appendChild(item);
+    });
+    root.appendChild(row);
+  }
+
+  function renderCard(pkg) {
+    var card = el("article", "card card-compact firmware-card");
+    card.appendChild(el("div", "card-icon card-accent-" + (pkg.accent || "m5"), "FW"));
+    card.appendChild(el("h3", "", pkg.name));
+    card.appendChild(el("p", "firmware-card-role", pkg.role || ""));
+    card.appendChild(
+      el(
+        "p",
+        "firmware-card-meta muted-inline",
+        "Device: <strong>" +
+          (pkg.device || "M5 Cardputer") +
+          "</strong><br>SD / manifest: <code>" +
+          (pkg.sdName || pkg.asset || "") +
+          "</code>"
+      )
+    );
+
+    var actions = el("div", "firmware-card-actions");
     if (pkg.downloadUrl) {
-      var a = el("a", "firmware-dl-link", "Download " + pkg.asset + " ->");
-      a.href = pkg.downloadUrl;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      return a;
-    }
-    var span = el("span", "muted-inline", "Tagged releases on GitHub");
-    if (pkg.releasesUrl) {
-      var rel = el("a", "", "Releases ->");
+      var dl = el("a", "btn btn-primary", (pkg.ctaLabel || "Download") + " ->");
+      dl.href = pkg.downloadUrl;
+      dl.target = "_blank";
+      dl.rel = "noopener noreferrer";
+      actions.appendChild(dl);
+    } else if (pkg.releasesUrl) {
+      var rel = el("a", "btn btn-primary", (pkg.ctaLabel || "GitHub releases") + " ->");
       rel.href = pkg.releasesUrl;
       rel.target = "_blank";
       rel.rel = "noopener noreferrer";
-      span.appendChild(document.createTextNode(" "));
-      span.appendChild(rel);
+      actions.appendChild(rel);
     }
-    return span;
+    if (pkg.repoUrl) {
+      var repo = el("a", "btn btn-ghost", "Source ->");
+      repo.href = pkg.repoUrl;
+      repo.target = "_blank";
+      repo.rel = "noopener noreferrer";
+      actions.appendChild(repo);
+    }
+    card.appendChild(actions);
+    return card;
   }
 
   function render(root) {
@@ -49,10 +87,23 @@
     intro.style.maxWidth = "42rem";
     root.appendChild(intro);
 
+    renderSteps(root, data.steps);
+
+    var grid = el("div", "card-grid card-grid-tight firmware-card-grid");
+    (data.packages || []).forEach(function (pkg) {
+      grid.appendChild(renderCard(pkg));
+    });
+    root.appendChild(grid);
+
+    if (data.trustLine) {
+      var trust = el("p", "firmware-trust muted-inline", data.trustLine);
+      root.appendChild(trust);
+    }
+
     var links = el(
       "p",
       "section-sub muted-inline firmware-meta",
-      'M5 OS manifest template: <a href="' +
+      'Manifest: <a href="' +
         data.manifestUrl +
         '" target="_blank" rel="noopener">manifest.example.json</a> | ' +
         '<a href="' +
@@ -60,56 +111,10 @@
         '" target="_blank" rel="noopener">SECURITY.md</a> | ' +
         '<a href="' +
         data.cardputerDocsUrl +
-        '">Cardputer flash guide</a>'
+        '">Full Cardputer flash guide</a>'
     );
     links.style.maxWidth = "42rem";
     root.appendChild(links);
-
-    var scroll = el("div", "table-scroll");
-    var table = el("table", "pricing-table firmware-table");
-    table.innerHTML =
-      "<thead><tr>" +
-      "<th>Package</th>" +
-      "<th>Device</th>" +
-      "<th>SD / manifest name</th>" +
-      "<th>Download</th>" +
-      "<th>Source</th>" +
-      "</tr></thead>";
-    var tbody = el("tbody");
-
-    (data.packages || []).forEach(function (pkg) {
-      var tr = el("tr");
-      tr.appendChild(
-        el(
-          "td",
-          "",
-          "<strong>" +
-            pkg.name +
-            "</strong><br><span class=\"muted-inline\">" +
-            (pkg.role || "") +
-            "</span>"
-        )
-      );
-      tr.appendChild(el("td", "", pkg.device || ""));
-      tr.appendChild(el("td", "", "<code>" + (pkg.sdName || pkg.asset || "") + "</code>"));
-      var dlTd = el("td", "");
-      dlTd.appendChild(downloadCell(pkg));
-      tr.appendChild(dlTd);
-      var src = el("td", "");
-      if (pkg.repoUrl) {
-        var repo = el("a", "", "GitHub ->");
-        repo.href = pkg.repoUrl;
-        repo.target = "_blank";
-        repo.rel = "noopener noreferrer";
-        src.appendChild(repo);
-      }
-      tr.appendChild(src);
-      tbody.appendChild(tr);
-    });
-
-    table.appendChild(tbody);
-    scroll.appendChild(table);
-    root.appendChild(scroll);
   }
 
   document.addEventListener("DOMContentLoaded", function () {
