@@ -278,9 +278,11 @@ def test_hero_headline_descender_room():
     index = (WEB / "index.html").read_text(encoding="utf-8")
     assert "title-stack-main" in index
     assert "title-stack-layer" in index
-    assert "doesn't hide behind glass" in index
-    assert "logo-tagline" in index
+    assert "Philadelphia cybersecurity lab" in index
+    assert "logo-brand" in index
+    assert "Hacker Planet LLC" in index
     assert "logo-mark" not in index
+    assert "doesn't hide behind glass" not in index
 
 
 def test_hero_copy_stacks_above_visual():
@@ -458,12 +460,15 @@ def test_about_page_content():
     html = (WEB / "about.html").read_text(encoding="utf-8")
     assert "Cipherhorn" in html or "CypherTek" in html
     assert "Salvador Data" in html
+    assert "Andy Klwal" in html
     assert "salvadorData@proton.me" in html
     assert "(215) 839-8738" in html
     assert "Andrew Kowal" not in html
-    assert "linkedin.com" not in html.lower()
+    assert "linkedin.com/in/andy-klwal" in html.lower()
     assert "Nucamp" not in html
-    assert "Pat" in html
+    assert " student" not in html.lower()
+    assert ">Pat<" not in html
+    assert " co-founder" not in html.lower() or "Founder" in html
     assert "Philadelphia" in html
     assert "Mr. CrackBot" in html or "CrackBot" in html
     assert "Hacker Planet LLC" in html
@@ -520,6 +525,7 @@ def test_shop_cart_pci_safe():
     cart_js = (WEB / "js" / "cart.js").read_text(encoding="utf-8")
     assert "HPL_CART" in cart_js
     assert "HPL_buildStripeCheckoutUrl" in cart_js
+    assert "HPL_showBuyModal" in cart_js
     assert "PCI-safe" in cart_js or "PCI-safe" in html
     forbidden = (
         "cardNumber",

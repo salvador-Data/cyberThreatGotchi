@@ -624,6 +624,10 @@
     var hasPayPalSdk = !!(c.paypal && c.paypal.clientId);
     var portal = customerPortalUrl();
     var recurring = isRecurringProduct(product);
+    var cartEligible =
+      !recurring &&
+      product.stripeKey &&
+      typeof window.HPL_showBuyModal === "function";
 
     if (recurring) {
       container.appendChild(
@@ -633,7 +637,14 @@
 
     var methods = el("div", "pay-methods");
 
-    if (hasStripe) {
+    if (cartEligible) {
+      var buyBtn = el("button", "pay-btn pay-btn-buy btn btn-primary", "Buy");
+      buyBtn.type = "button";
+      buyBtn.addEventListener("click", function () {
+        window.HPL_showBuyModal(product);
+      });
+      methods.appendChild(buyBtn);
+    } else if (hasStripe) {
       var label = recurring
         ? "Subscribe (Stripe)"
         : "Card | Debit | Apple Pay | Save for next time";
@@ -646,15 +657,15 @@
       methods.appendChild(payBtn("Manage subscription", portal, "portal"));
     }
 
-    if (hasPayPalMe && !recurring) {
+    if (hasPayPalMe && !recurring && !cartEligible) {
       methods.appendChild(payBtn("PayPal", paypalMeUrl(product.price), "paypal"));
     }
 
-    if (hasVenmo && !recurring) {
+    if (hasVenmo && !recurring && !cartEligible) {
       methods.appendChild(payBtn("Venmo", venmoUrl(product.price, product.name), "venmo"));
     }
 
-    if (hasCash && !recurring) {
+    if (hasCash && !recurring && !cartEligible) {
       var ca = cashAppUrl(product.price, product.name);
       if (ca) methods.appendChild(payBtn("Cash App", ca, "cashapp"));
     }

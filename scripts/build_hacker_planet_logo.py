@@ -22,10 +22,11 @@ if not SRC_FALLBACK.is_file():
 OUT = ROOT / "website" / "images" / "hacker-planet-logo.png"
 
 # website/css/style.css :root
-ACCENT = (0, 180, 140)  # #00b48c
-ACCENT_HI = (0, 217, 168)  # brighter teal for former cyan neon
-INK = (230, 237, 243)  # #e6edf3 highlights on mask/face
+ACCENT = (0, 200, 158)  # lighter teal for dark nav backgrounds
+ACCENT_HI = (64, 232, 192)  # bright accent highlights
+INK = (248, 252, 255)  # high-luminance ink for nav readability
 LABEL = "Hacker Planet LLC"
+LABEL_FILL = (0, 217, 168)  # bright label on dark headers
 
 
 def _recolor_pixel(r: int, g: int, b: int) -> tuple[int, int, int, int]:
@@ -42,7 +43,7 @@ def _recolor_pixel(r: int, g: int, b: int) -> tuple[int, int, int, int]:
             base = ACCENT_HI
         else:
             base = ACCENT
-        mix = min(1.0, 0.35 + 0.65 * v)
+        mix = min(1.0, 0.55 + 0.45 * v)
         nr = int(base[0] * mix + r * (1 - mix))
         ng = int(base[1] * mix + g * (1 - mix))
         nb = int(base[2] * mix + b * (1 - mix))
@@ -121,7 +122,7 @@ def add_label_below(im: Image.Image) -> Image.Image:
     draw = ImageDraw.Draw(out)
     tx = (out.width - tw) // 2
     ty = im.height + pad_y
-    draw.text((tx, ty), LABEL, font=font, fill=(*ACCENT, 255))
+    draw.text((tx, ty), LABEL, font=font, fill=(*LABEL_FILL, 255))
     return out
 
 

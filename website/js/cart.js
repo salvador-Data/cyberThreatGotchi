@@ -162,6 +162,7 @@
     function openNext() {
       if (idx >= queue.length) {
         clearCart();
+        closeCartPanel();
         return;
       }
       window.open(queue[idx].url, "_blank", "noopener,noreferrer");
@@ -169,10 +170,33 @@
       if (idx < queue.length) {
         window.setTimeout(openNext, 600);
       } else {
-        window.setTimeout(clearCart, 800);
+        window.setTimeout(function () {
+          clearCart();
+          closeCartPanel();
+        }, 800);
       }
     }
     openNext();
+  }
+
+  function openCartPanel() {
+    var panel = document.getElementById("hpl-cart-panel");
+    if (panel) {
+      panel.hidden = false;
+      panel.setAttribute("aria-hidden", "false");
+    }
+    var backdrop = document.getElementById("hpl-cart-backdrop");
+    if (backdrop) backdrop.hidden = false;
+  }
+
+  function closeCartPanel() {
+    var panel = document.getElementById("hpl-cart-panel");
+    if (panel) {
+      panel.hidden = true;
+      panel.setAttribute("aria-hidden", "true");
+    }
+    var backdrop = document.getElementById("hpl-cart-backdrop");
+    if (backdrop) backdrop.hidden = true;
   }
 
   function renderCartPanel() {
@@ -181,7 +205,15 @@
     var items = readCart();
     panel.innerHTML = "";
 
-    panel.appendChild(el("h2", "hpl-cart-title", "Your cart"));
+    var header = el("div", "hpl-cart-header");
+    header.appendChild(el("h2", "hpl-cart-title", "Your cart"));
+    var closeBtn = el("button", "hpl-cart-close", "Close");
+    closeBtn.type = "button";
+    closeBtn.setAttribute("aria-label", "Close cart");
+    closeBtn.addEventListener("click", closeCartPanel);
+    header.appendChild(closeBtn);
+    panel.appendChild(header);
+
     panel.appendChild(
       el(
         "p",
@@ -191,7 +223,10 @@
     );
 
     if (!items.length) {
-      panel.appendChild(el("p", "hpl-cart-empty", "Cart is empty. Add partner or direct-ship SKUs below."));
+      panel.appendChild(el("p", "hpl-cart-empty", "Cart is empty. Add partner or Philadelphia direct-ship SKUs from the shop."));
+      var shopLink = el("a", "btn btn-primary hpl-cart-shop-link", "Browse shop");
+      shopLink.href = "shop.html";
+      panel.appendChild(shopLink);
       return;
     }
 
@@ -256,7 +291,7 @@
       el(
         "p",
         "hpl-cart-note",
-        "Partner fulfillment and Philadelphia direct-ship items may complete as separate Stripe checkouts. Subscriptions use Buy Now on each card."
+        "Partner fulfillment and Philadelphia direct-ship items may complete as separate Stripe checkouts. Subscriptions use Subscribe on each product card."
       )
     );
 
@@ -276,71 +311,171 @@
 
   function renderCartUi() {
     var count = cartCount();
-    var toggle = document.getElementById("hpl-cart-toggle");
-    if (toggle) {
-      toggle.setAttribute("aria-label", count ? "Open cart (" + count + " items)" : "Open cart");
-      var badge = toggle.querySelector(".hpl-cart-badge");
-      if (badge) {
-        badge.textContent = String(count);
-        badge.hidden = count === 0;
-      }
-    }
+    document.querySelectorAll(".hpl-cart-badge").forEach(function (badge) {
+      badge.textContent = String(count);
+      badge.hidden = count === 0;
+    });
+    document.querySelectorAll(".hpl-nav-cart").forEach(function (btn) {
+      btn.setAttribute("aria-label", count ? "Open cart (" + count + " items)" : "Open cart");
+    });
     renderCartPanel();
   }
 
-  function attachAddToCart(host, stripeKey) {
-    if (!host || !canAddToCart(stripeKey)) return;
-    if (host.querySelector(".cart-add-btn")) return;
-    var btn = el("button", "cart-add-btn btn btn-ghost", "Add to cart");
-    btn.type = "button";
-    btn.addEventListener("click", function () {
-      addItem(stripeKey, 1);
-      var panel = document.getElementById("hpl-cart-panel");
-      if (panel) panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    });
-    host.appendChild(btn);
+  function closeBuyModal() {
+    var modal = document.getElementById("hpl-buy-modal");
+    if (modal) {
+      modal.hidden = true;
+      modal.setAttribute("aria-hidden", "true");
+    }
+    var backdrop = document.getElementById("hpl-buy-backdrop");
+    if (backdrop) backdrop.hidden = true;
   }
 
-  function scanProductCards() {
-    document.querySelectorAll(".shop-card").forEach(function (card) {
-      var checkoutHost = card.querySelector(".catalog-checkout") || card.querySelector(".product-checkout");
-      if (!checkoutHost) return;
-      var keyHost = card.querySelector("[data-product]");
-      var key = keyHost && keyHost.getAttribute("data-product");
-      if (!key) return;
-      attachAddToCart(checkoutHost, key);
+  function mountBuyModal() {
+    if (document.getElementById("hpl-buy-modal")) return;
+
+    var backdrop = el("div", "hpl-modal-backdrop");
+    backdrop.id = "hpl-buy-backdrop";
+    backdrop.hidden = true;
+    backdrop.addEventListener("click", closeBuyModal);
+
+    var modal = el("div", "hpl-buy-modal");
+    modal.id = "hpl-buy-modal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "hpl-buy-modal-title");
+    modal.hidden = true;
+
+    modal.appendChild(el("h2", "hpl-buy-modal-title", "Add to cart"));
+    var productLine = el("p", "hpl-buy-modal-product");
+    productLine.id = "hpl-buy-modal-product-name";
+    modal.appendChild(productLine);
+    var bodyHost = el("div", "hpl-buy-modal-body");
+    bodyHost.id = "hpl-buy-modal-body";
+    modal.appendChild(bodyHost);
+    var actions = el("div", "hpl-buy-modal-actions");
+    actions.id = "hpl-buy-modal-actions";
+    modal.appendChild(actions);
+
+    document.body.appendChild(backdrop);
+    document.body.appendChild(modal);
+
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") closeBuyModal();
     });
+  }
+
+  function showBuyModal(product) {
+    if (!product || !product.stripeKey) return;
+    mountBuyModal();
+
+    var modal = document.getElementById("hpl-buy-modal");
+    var body = document.getElementById("hpl-buy-modal-body");
+    var nameEl = document.getElementById("hpl-buy-modal-product-name");
+    if (!modal || !body || !nameEl) return;
+
+    nameEl.innerHTML = "<strong>" + escapeHtml(product.name) + "</strong>";
+
+    var priceLabel = "$" + Number(product.price || 0).toFixed(2);
+    if (product.period && product.period !== "one-time") priceLabel += product.period;
+
+    body.innerHTML =
+      "<p class=\"hpl-buy-modal-price\">" +
+      escapeHtml(priceLabel) +
+      "</p>" +
+      (product.desc ? "<p class=\"hpl-buy-modal-desc\">" + escapeHtml(product.desc) + "</p>" : "") +
+      "<p class=\"hpl-buy-modal-note\">Partner fulfillment and Philadelphia direct-ship SKUs queue in your cart. Card data stays on Stripe hosted checkout only.</p>";
+
+    var actions = document.getElementById("hpl-buy-modal-actions");
+    if (!actions) return;
+    actions.innerHTML = "";
+
+    var addBtn = el("button", "btn btn-primary", "Add to cart");
+    addBtn.type = "button";
+    addBtn.addEventListener("click", function () {
+      if (addItem(product.stripeKey, 1)) {
+        closeBuyModal();
+        openCartPanel();
+      }
+    });
+    actions.appendChild(addBtn);
+
+    var stripeUrl = stripeCheckoutUrl(product.stripeKey);
+    if (stripeUrl) {
+      var stripeBtn = el("a", "btn btn-ghost", "Checkout now (Stripe)");
+      stripeBtn.href = stripeUrl;
+      stripeBtn.target = "_blank";
+      stripeBtn.rel = "noopener noreferrer";
+      actions.appendChild(stripeBtn);
+    } else if (cfg().demoMode !== false) {
+      actions.appendChild(
+        el(
+          "span",
+          "pay-placeholder",
+          "Stripe Payment Link pending - email " +
+            escapeHtml(cfg().supportEmail || "salvadorData@proton.me")
+        )
+      );
+    }
+
+    var cancelBtn = el("button", "btn btn-ghost hpl-buy-cancel", "Continue shopping");
+    cancelBtn.type = "button";
+    cancelBtn.addEventListener("click", closeBuyModal);
+    actions.appendChild(cancelBtn);
+
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    var backdrop = document.getElementById("hpl-buy-backdrop");
+    if (backdrop) backdrop.hidden = false;
+    addBtn.focus();
   }
 
   function mountCartChrome() {
-    if (document.getElementById("hpl-cart-root")) return;
+    if (!document.getElementById("hpl-cart-panel")) {
+      var backdrop = el("div", "hpl-cart-backdrop");
+      backdrop.id = "hpl-cart-backdrop";
+      backdrop.hidden = true;
+      backdrop.addEventListener("click", closeCartPanel);
 
-    var root = el("div", "hpl-cart-root");
-    root.id = "hpl-cart-root";
+      var panel = el("aside", "hpl-cart-panel");
+      panel.id = "hpl-cart-panel";
+      panel.hidden = true;
+      panel.setAttribute("aria-hidden", "true");
+      panel.setAttribute("aria-label", "Shopping cart");
 
-    var toggle = el("button", "hpl-cart-toggle");
-    toggle.id = "hpl-cart-toggle";
-    toggle.type = "button";
-    toggle.innerHTML = 'Cart <span class="hpl-cart-badge" hidden>0</span>';
-    toggle.addEventListener("click", function () {
-      var panel = document.getElementById("hpl-cart-panel");
-      if (panel) panel.hidden = !panel.hidden;
-    });
+      document.body.appendChild(backdrop);
+      document.body.appendChild(panel);
+    }
 
-    var panel = el("aside", "hpl-cart-panel reveal");
-    panel.id = "hpl-cart-panel";
-    panel.hidden = true;
+    if (!document.querySelector(".hpl-nav-cart")) {
+      var navLinks = document.querySelector(".nav-links");
+      if (navLinks) {
+        var li = el("li", "nav-cart-item");
+        var btn = el("button", "hpl-nav-cart");
+        btn.type = "button";
+        btn.innerHTML =
+          '<span class="hpl-cart-icon" aria-hidden="true"></span> Cart <span class="hpl-cart-badge" hidden>0</span>';
+        btn.addEventListener("click", function () {
+          var panel = document.getElementById("hpl-cart-panel");
+          if (panel && panel.hidden) openCartPanel();
+          else closeCartPanel();
+        });
+        li.appendChild(btn);
+        var githubLi = navLinks.querySelector(".nav-cta");
+        if (githubLi && githubLi.parentElement) {
+          navLinks.insertBefore(li, githubLi.parentElement);
+        } else {
+          navLinks.appendChild(li);
+        }
+      }
+    }
 
-    root.appendChild(toggle);
-    root.appendChild(panel);
-    document.body.appendChild(root);
     renderCartUi();
   }
 
   function initCart() {
     mountCartChrome();
-    scanProductCards();
-    window.setTimeout(scanProductCards, 300);
+    window.setTimeout(mountCartChrome, 100);
   }
 
   window.HPL_CART = {
@@ -352,8 +487,10 @@
     count: cartCount,
     subtotal: cartSubtotal,
     checkout: checkoutSequential,
+    openPanel: openCartPanel,
+    closePanel: closeCartPanel,
   };
-  window.HPL_attachAddToCart = attachAddToCart;
+  window.HPL_showBuyModal = showBuyModal;
   window.HPL_initCart = initCart;
 
   if (document.readyState === "loading") {
