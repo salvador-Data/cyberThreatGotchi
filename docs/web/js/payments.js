@@ -367,6 +367,20 @@
     return (links[key] || "").trim();
   }
 
+  function hasAnyStripeLink() {
+    var links = cfg().stripePaymentLinks || {};
+    return Object.keys(links).some(function (k) {
+      return stripeLink(k).indexOf("https://buy.stripe.com/") === 0;
+    });
+  }
+
+  function isDemoMode() {
+    var c = cfg();
+    if (c.demoMode === false) return false;
+    if (hasAnyStripeLink()) return false;
+    return c.demoMode !== false;
+  }
+
   function customerPortalUrl() {
     return String(cfg().stripeCustomerPortal || cfg().stripe?.customerPortalUrl || "").trim();
   }
@@ -404,7 +418,7 @@
   }
 
   function buildStripeCheckoutUrl(baseUrl, product) {
-    if (!baseUrl) return "";
+    if (!baseUrl || baseUrl.indexOf("https://buy.stripe.com/") !== 0) return "";
     var url = baseUrl;
     var api = prefillApi();
     var profile = loadCustomerProfile();
@@ -435,7 +449,7 @@
     host.innerHTML = "";
     var profile = loadCustomerProfile();
     var portal = customerPortalUrl();
-    var demo = cfg().demoMode !== false;
+    var demo = isDemoMode();
 
     if (!profile.email && !portal && demo) return;
 
@@ -543,7 +557,7 @@
   function updatePayTrustBar() {
     var bar = document.getElementById("pay-trust-bar");
     if (!bar) return;
-    var demo = cfg().demoMode !== false;
+    var demo = isDemoMode();
     var hasStripe = Object.keys(cfg().stripePaymentLinks || {}).some(function (k) {
       return !!stripeLink(k);
     });
@@ -615,7 +629,7 @@
   function renderCheckout(container, product) {
     container.innerHTML = "";
     var c = cfg();
-    var demo = c.demoMode !== false;
+    var demo = isDemoMode();
     var link = buildStripeCheckoutUrl(stripeLink(product.stripeKey), product);
     var hasStripe = !!link;
     var hasPayPalMe = !!(c.paypalMe && c.paypalMe.username);

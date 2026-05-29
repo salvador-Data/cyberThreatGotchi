@@ -125,14 +125,27 @@
     if (!product || typeof window.HPL_buildStripeCheckoutUrl !== "function") return "";
     var links = cfg().stripePaymentLinks || {};
     var base = String(links[stripeKey] || "").trim();
+    if (base.indexOf("https://buy.stripe.com/") !== 0) return "";
     return window.HPL_buildStripeCheckoutUrl(base, product);
+  }
+
+  function isDemoMode() {
+    var c = cfg();
+    if (c.demoMode === false) return false;
+    var links = c.stripePaymentLinks || {};
+    var hasAny = Object.keys(links).some(function (k) {
+      var url = String(links[k] || "").trim();
+      return url.indexOf("https://buy.stripe.com/") === 0;
+    });
+    if (hasAny) return false;
+    return c.demoMode !== false;
   }
 
   function checkoutSequential() {
     var items = readCart();
     if (!items.length) return;
 
-    var demo = cfg().demoMode !== false;
+    var demo = isDemoMode();
     var queue = [];
     items.forEach(function (row) {
       var url = stripeCheckoutUrl(row.stripeKey);
@@ -144,7 +157,7 @@
     if (!queue.length) {
       alert(
         demo
-          ? "Cart checkout is in demo mode. Configure Stripe Payment Links in payments.config.js first."
+          ? "Cart checkout needs Stripe Payment Links in payments.config.js.\n\nRun:\npython scripts/stripe_bootstrap_payment_links.py --write-config --go-live\n\nSee docs/STRIPE_ADD_LINKS.md"
           : "No Stripe checkout links are configured for items in your cart."
       );
       return;
@@ -407,7 +420,7 @@
       stripeBtn.target = "_blank";
       stripeBtn.rel = "noopener noreferrer";
       actions.appendChild(stripeBtn);
-    } else if (cfg().demoMode !== false) {
+    } else if (isDemoMode()) {
       actions.appendChild(
         el(
           "span",

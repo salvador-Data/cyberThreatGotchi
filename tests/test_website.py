@@ -523,9 +523,15 @@ def test_shop_cart_pci_safe():
     """Cart must exist and never collect PAN/CVV on-site."""
     html = (WEB / "shop.html").read_text(encoding="utf-8")
     cart_js = (WEB / "js" / "cart.js").read_text(encoding="utf-8")
+    pay_js = (WEB / "js" / "payments.js").read_text(encoding="utf-8")
+    cfg_js = (WEB / "js" / "payments.config.js").read_text(encoding="utf-8")
     assert "HPL_CART" in cart_js
     assert "HPL_buildStripeCheckoutUrl" in cart_js
     assert "HPL_showBuyModal" in cart_js
+    assert "isDemoMode" in cart_js
+    assert "isDemoMode" in pay_js
+    assert "applyStripeLiveMode" in cfg_js
+    assert "stripe_bootstrap_payment_links.py" in cfg_js
     assert "PCI-safe" in cart_js or "PCI-safe" in html
     forbidden = (
         "cardNumber",
