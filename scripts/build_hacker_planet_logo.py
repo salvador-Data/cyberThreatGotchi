@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tint Hacker Planet LLC logo for website nav (--accent teal palette)."""
+"""Build compact Hacker Planet LLC nav wordmark (horizontal, dark-nav palette)."""
 
 from __future__ import annotations
 
@@ -21,12 +21,17 @@ if not SRC_FALLBACK.is_file():
     SRC_FALLBACK = ASSETS_REPO / "hacker-planet-llc-logo.png"
 OUT = ROOT / "website" / "images" / "hacker-planet-logo.png"
 
-# website/css/style.css :root
-ACCENT = (0, 200, 158)  # lighter teal for dark nav backgrounds
-ACCENT_HI = (64, 232, 192)  # bright accent highlights
-INK = (248, 252, 255)  # high-luminance ink for nav readability
+# website/css/style.css :root + .logo-img max-height: 52px
+ACCENT = (0, 200, 158)
+ACCENT_HI = (64, 232, 192)
+INK = (248, 252, 255)
 LABEL = "Hacker Planet LLC"
-LABEL_FILL = (0, 217, 168)  # bright label on dark headers
+LABEL_FILL = (0, 217, 168)
+
+NAV_HEIGHT = 44
+NAV_MAX_WIDTH = 140
+EMBLEM_HEIGHT = 36
+GAP = 6
 
 
 def _recolor_pixel(r: int, g: int, b: int) -> tuple[int, int, int, int]:
@@ -108,29 +113,46 @@ def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     return ImageFont.load_default()
 
 
-def add_label_below(im: Image.Image) -> Image.Image:
-    """Flat company line under mask — no 'by salvadorData'."""
-    font = _load_font(max(11, im.width // 14))
+def _scale_emblem(emblem: Image.Image, height: int) -> Image.Image:
+    w, h = emblem.size
+    scale = height / h
+    new_w = max(1, int(w * scale))
+    return emblem.resize((new_w, height), Image.Resampling.LANCZOS)
+
+
+def compose_nav_wordmark(emblem: Image.Image) -> Image.Image:
+    """Horizontal lockup: compact mask emblem + company name (no slogan)."""
+    emblem = _scale_emblem(emblem, EMBLEM_HEIGHT)
+
+    font_size = 13
+    font = _load_font(font_size)
     draw_probe = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
     bbox = draw_probe.textbbox((0, 0), LABEL, font=font)
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
-    pad_y = 6
-    out = Image.new("RGBA", (max(im.width, tw + 8), im.height + th + pad_y + 4), (0, 0, 0, 0))
-    ox = (out.width - im.width) // 2
-    out.paste(im, (ox, 0), im)
+
+    total_w = emblem.width + GAP + tw
+    total_h = max(emblem.height, th)
+    if total_w > NAV_MAX_WIDTH:
+        scale = NAV_MAX_WIDTH / total_w
+        emblem = _scale_emblem(emblem, max(24, int(EMBLEM_HEIGHT * scale)))
+        font_size = max(10, int(font_size * scale))
+        font = _load_font(font_size)
+        bbox = draw_probe.textbbox((0, 0), LABEL, font=font)
+        tw = bbox[2] - bbox[0]
+        th = bbox[3] - bbox[1]
+        total_w = emblem.width + GAP + tw
+        total_h = max(emblem.height, th)
+
+    out_h = min(NAV_HEIGHT, total_h)
+    out = Image.new("RGBA", (total_w, out_h), (0, 0, 0, 0))
+    ey = (out_h - emblem.height) // 2
+    out.paste(emblem, (0, ey), emblem)
     draw = ImageDraw.Draw(out)
-    tx = (out.width - tw) // 2
-    ty = im.height + pad_y
+    tx = emblem.width + GAP
+    ty = (out_h - th) // 2 - bbox[1]
     draw.text((tx, ty), LABEL, font=font, fill=(*LABEL_FILL, 255))
     return out
-
-
-def resize_nav(im: Image.Image, height: int = 112) -> Image.Image:
-    w, h = im.size
-    scale = height / h
-    new_w = max(1, int(w * scale))
-    return im.resize((new_w, height), Image.Resampling.LANCZOS)
 
 
 def main() -> None:
@@ -139,10 +161,8 @@ def main() -> None:
         raise SystemExit(f"Logo source not found: {src}")
 
     im = recolor(src)
-    im = crop_emblem(im)
-    im = crop_logo(im)
-    im = add_label_below(im)
-    im = resize_nav(im, height=112)
+    emblem = crop_logo(crop_emblem(im))
+    im = compose_nav_wordmark(emblem)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     im.save(OUT, format="PNG", optimize=True)
     print(f"Wrote {OUT} ({im.size[0]}x{im.size[1]}, {OUT.stat().st_size // 1024} KB)")

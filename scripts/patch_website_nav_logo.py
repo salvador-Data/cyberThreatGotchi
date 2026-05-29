@@ -11,7 +11,7 @@ WEB = ROOT / "website"
 
 LOGO_OLD = re.compile(
     r'<a class="logo" href="index\.html">\s*'
-    r'<img class="logo-img" src="images/hacker-planet-logo\.png" width="131" height="112" '
+    r'<img class="logo-img" src="images/hacker-planet-logo\.png" width="134" height="32" '
     r'alt="Hacker Planet LLC" decoding="async" />\s*'
     r'<span class="logo-text">\s*'
     r'<span class="logo-brand">Hacker Planet</span>\s*'
@@ -22,7 +22,7 @@ LOGO_OLD = re.compile(
 
 LOGO_NEW = (
     '<a class="logo" href="index.html" aria-label="Hacker Planet LLC home">\n'
-    '        <img class="logo-img" src="images/hacker-planet-logo.png" width="131" height="112" '
+    '        <img class="logo-img" src="images/hacker-planet-logo.png" width="134" height="32" '
     'alt="Hacker Planet LLC" decoding="async" />\n'
     '        <span class="logo-brand">Hacker Planet LLC</span>\n'
     "      </a>"
