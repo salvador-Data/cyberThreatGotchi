@@ -35,6 +35,8 @@ def test_website_structure():
         "js/direct.config.js",
         "js/shipping.js",
         "js/shipping.config.js",
+        "js/firmware.config.js",
+        "js/firmware-download.js",
         "README.md",
         "robots.txt",
         "sitemap.xml",
@@ -302,6 +304,8 @@ def test_public_site_copy_is_ascii():
             "payments.js",
             "shipping.js",
             "shipping.config.js",
+            "firmware.config.js",
+            "firmware-download.js",
             "main.js",
         )
     )
@@ -445,6 +449,25 @@ def test_about_page_content():
     assert "Hacker Planet LLC" in html
     assert "ecosystem.html" in html
     assert "shop.html" in html
+    assert 'id="firmware-downloads"' in html
+    assert "firmware.config.js" in html
+    assert "firmware-download.js" in html
+
+
+def test_firmware_config_download_urls():
+    text = (WEB / "js" / "firmware.config.js").read_text(encoding="utf-8")
+    assert "Remote-Possibility/releases/latest/download/firmware.bin" in text
+    assert "BLE-Bot-Cardputer/releases/latest/download/ble_bot.bin" in text
+    assert "M5_OS-Cardputer" in text
+    assert "remote_possibility.bin" in text
+    assert "dropship" not in text.lower()
+
+
+def test_about_firmware_section_static_shell():
+    html = (WEB / "about.html").read_text(encoding="utf-8")
+    assert "Ecosystem firmware downloads" in html
+    assert 'id="firmware-download-root"' in html
+    assert "cardputer.html#firmware" in html
 
 
 def test_contact_page_content():

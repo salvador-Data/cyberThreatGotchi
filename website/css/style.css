@@ -1437,6 +1437,28 @@ section {
   max-width: 28rem;
 }
 
+.firmware-table code {
+  font-size: 0.82rem;
+}
+
+.firmware-dl-link {
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.firmware-dl-link:hover {
+  text-decoration: underline;
+}
+
+.firmware-intro {
+  margin-bottom: 0.5rem;
+}
+
+.firmware-meta {
+  margin-bottom: 1rem;
+}
+
 .pricing-note {
   font-size: 0.82rem;
   color: var(--muted);
