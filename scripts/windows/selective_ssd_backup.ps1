@@ -88,6 +88,9 @@ if ($free -and $free -lt 5GB) {
 }
 
 $robolog = Join-Path $root 'robocopy.log'
+$oneDriveRoot = $env:OneDrive
+if (-not $oneDriveRoot) { $oneDriveRoot = Join-Path $env:USERPROFILE 'OneDrive' }
+$backupOnOneDrive = $oneDriveRoot -and ($root.StartsWith($oneDriveRoot, [StringComparison]::OrdinalIgnoreCase))
 $sources = @(
     @{ Name = 'Documents'; Path = [Environment]::GetFolderPath('MyDocuments') },
     @{ Name = 'Desktop'; Path = [Environment]::GetFolderPath('Desktop') },
@@ -104,6 +107,11 @@ $manifest += "BackupRoot: $root"
 $manifest += ""
 
 foreach ($item in $sources) {
+    if ($item.Name -in @('Documents','Desktop','Pictures') -and $oneDriveRoot -and $item.Path.StartsWith($oneDriveRoot, [StringComparison]::OrdinalIgnoreCase)) {
+        Add-Log "SKIP $($item.Name) (path under OneDrive — cloud sync, no local duplicate: $($item.Path))"
+        $manifest += "CLOUD_SYNC (skip duplicate): $($item.Name) at $($item.Path)"
+        continue
+    }
     $src = $item.Path
     if (-not (Test-Path $src)) {
         Add-Log "SKIP missing: $src"
@@ -121,7 +129,7 @@ foreach ($item in $sources) {
     $dest = Join-Path $root $item.Name
     Add-Log "Robocopy: $src -> $dest"
     $manifest += "COPIED: $($item.Name) from $src to $dest"
-    & robocopy $src $dest /MIR /R:2 /W:5 /XJ /FFT /Z /NP /NDL /NFL /LOG+:$robolog | Out-Null
+    & robocopy $src $dest /E /R:2 /W:5 /XJ /FFT /Z /NP /NDL /NFL /MAX:524288000 /XD node_modules .git __pycache__ venv .venv /XF *.iso /LOG+:$robolog /R:2 /W:5 /XJ /FFT /Z /NP /NDL /NFL /LOG+:$robolog | Out-Null
 }
 
 $progList = Join-Path $root 'installed_programs.txt'

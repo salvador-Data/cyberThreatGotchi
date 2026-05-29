@@ -11,7 +11,7 @@
   Local or SSD backup folder (default: newest D:\Backups\Andy-PC-* or today).
 
 .PARAMETER WhatIf
-  Show paths only; no copy.
+  Show paths only; no copy (PreviewOnly).
 
 .EXAMPLE
   .\scripts\windows\cloud_backup.ps1
@@ -22,7 +22,7 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [string] $SourceBackupRoot = '',
-    [switch] $WhatIf
+    [switch] $PreviewOnly
 )
 
 $ErrorActionPreference = 'Stop'
@@ -83,7 +83,7 @@ if (-not (Test-Path $src)) {
     exit 3
 }
 
-if ($WhatIf) { return }
+if ($PreviewOnly) { return }
 
 if (-not $PSCmdlet.ShouldProcess($dest, 'Copy backup subset to OneDrive')) { return }
 
@@ -151,3 +151,4 @@ if ($webhookUrl -and $webhookSecret) {
 
 Write-Host ''
 Write-Host "Done. OneDrive will sync when signed in: $dest" -ForegroundColor Green
+
