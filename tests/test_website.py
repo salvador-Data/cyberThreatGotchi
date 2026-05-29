@@ -268,6 +268,7 @@ def test_hero_headline_descender_room():
     assert "padding-bottom: 0.14em" in hero_h1
     assert "overflow: visible" in hero_h1
     assert "background-clip" not in hero_h1
+    assert "z-index: 2" in hero_h1
     assert "line-height: 1.22" in page_h1 or "letter-spacing" in page_h1
     layer = css.split(".title-stack-layer {", 1)[1].split("}", 1)[0]
     assert "padding-bottom: 0.08em" in layer
@@ -277,6 +278,22 @@ def test_hero_headline_descender_room():
     assert "doesn't hide behind glass" in index
     assert "logo-tagline" in index
     assert "logo-mark" not in index
+
+
+def test_hero_copy_stacks_above_visual():
+    """Hero titles must paint above hero-visual images (reveal transform stacking)."""
+    css = (WEB / "css" / "style.css").read_text(encoding="utf-8")
+    page_hero = css.split(".page-hero {", 1)[1].split("}", 1)[0]
+    hero = css.split(".hero {", 1)[1].split("}", 1)[0]
+    hero_visual = css.split(".hero-visual {", 1)[1].split("}", 1)[0]
+    assert "z-index: 3" in page_hero
+    assert "isolation: isolate" in page_hero
+    assert "z-index: 3" in hero
+    assert "isolation: isolate" in hero
+    assert "z-index: 1" in hero_visual
+    for name in ("index.html", "cardputer.html", "ecosystem.html", "shop.html", "about.html"):
+        html = (WEB / name).read_text(encoding="utf-8")
+        assert "page-hero" in html or 'class="hero"' in html, name
 
 
 def test_public_html_avoids_repo_jargon():
@@ -465,9 +482,15 @@ def test_firmware_config_download_urls():
 
 def test_about_firmware_section_static_shell():
     html = (WEB / "about.html").read_text(encoding="utf-8")
-    assert "Ecosystem firmware downloads" in html
+    assert "Cardputer firmware hub" in html
     assert 'id="firmware-download-root"' in html
     assert "cardputer.html#firmware" in html
+    config = (WEB / "js" / "firmware.config.js").read_text(encoding="utf-8")
+    assert "steps:" in config
+    assert "trustLine:" in config
+    renderer = (WEB / "js" / "firmware-download.js").read_text(encoding="utf-8")
+    assert "firmware-card-grid" in renderer
+    assert "firmware-steps" in renderer
 
 
 def test_contact_page_content():

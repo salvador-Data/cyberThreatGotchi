@@ -195,12 +195,17 @@ img {
 
 /* Hero */
 .hero {
+  position: relative;
+  z-index: 3;
+  isolation: isolate;
   padding: 1.25rem 0 0.75rem;
   text-align: center;
   overflow: visible;
 }
 
 .hero-badge {
+  position: relative;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -263,6 +268,8 @@ img {
 }
 
 .hero-lead {
+  position: relative;
+  z-index: 2;
   font-size: 1.1rem;
   color: var(--muted);
   max-width: 36rem;
@@ -271,6 +278,8 @@ img {
 }
 
 .hero-actions {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
@@ -313,6 +322,7 @@ img {
 
 .hero-visual {
   position: relative;
+  z-index: 1;
   max-width: 720px;
   margin: 0 auto;
   border-radius: var(--radius);
@@ -556,10 +566,20 @@ section {
 
 /* Page header (inner pages) */
 .page-hero {
+  position: relative;
+  z-index: 3;
+  isolation: isolate;
   padding: 1.1rem 0 0.95rem;
   border-bottom: 1px solid var(--panel-border);
   margin-bottom: 0.75rem;
   overflow: visible;
+}
+
+.page-hero .section-label,
+.page-hero .lead,
+.page-hero .hero-actions {
+  position: relative;
+  z-index: 2;
 }
 
 .page-hero h1.title-stack {
@@ -1457,6 +1477,96 @@ section {
 
 .firmware-meta {
   margin-bottom: 1rem;
+}
+
+.firmware-steps {
+  list-style: none;
+  margin: 0 0 1.25rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  max-width: 42rem;
+}
+
+.firmware-step {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  padding: 0.85rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+}
+
+.firmware-step-num {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--bg);
+  background: var(--accent);
+}
+
+.firmware-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.firmware-step-title {
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+
+.firmware-step-detail {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.firmware-card-grid {
+  margin-top: 0.5rem;
+}
+
+.firmware-card .firmware-card-role {
+  margin: 0 0 0.5rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.firmware-card-meta {
+  margin: 0 0 0.85rem;
+  font-size: 0.88rem;
+}
+
+.firmware-card-meta code {
+  font-size: 0.82rem;
+}
+
+.firmware-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.firmware-trust {
+  margin: 1rem 0 0.5rem;
+  max-width: 42rem;
+  padding: 0.75rem 0.85rem;
+  border-left: 3px solid var(--accent);
+  background: rgba(0, 180, 140, 0.06);
+}
+
+@media (max-width: 768px) {
+  .firmware-steps {
+    grid-template-columns: 1fr;
+  }
 }
 
 .pricing-note {
