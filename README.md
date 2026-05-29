@@ -31,7 +31,7 @@ Built for the **Banana Pi BPI-R3 Mini** (2× 2.5GbE, Wi-Fi 6) and dev machines. 
   <br/><sub><strong>CypherTek Rache</strong> — Tamagotchi-style edge IPS shell (BPI-R3 Mini + 2.13″ e-ink). STLs → <a href="hardware/README.md">hardware/</a></sub>
 </p>
 
-Full story → **[docs/ABOUT.md](docs/ABOUT.md)** · Company → **[docs/ABOUT_HACKER_PLANET.md](docs/ABOUT_HACKER_PLANET.md)** · **Website** → **[website/](website/)** ([GitHub Pages](https://salvador-Data.github.io/cyberThreatGotchi/)) · Web UI → **[docs/WEB.md](docs/WEB.md)** · Export → **[docs/EXPORT.md](docs/EXPORT.md)** · Cardputer → **[docs/CARDPUTER.md](docs/CARDPUTER.md)** · **Launch kit** → **[docs/social/LAUNCH.md](docs/social/LAUNCH.md)** · Integrations → **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)** · CISO playbook → **[docs/CISO_PLAYBOOK.md](docs/CISO_PLAYBOOK.md)** · Hardware → **[hardware/README.md](hardware/README.md)** · Ecosystem → **[docs/ECOSYSTEM.md](docs/ECOSYSTEM.md)**
+Full story → **[docs/ABOUT.md](docs/ABOUT.md)** · Company → **[docs/ABOUT_HACKER_PLANET.md](docs/ABOUT_HACKER_PLANET.md)** · **Website** → **[website/](website/)** ([GitHub Pages](https://salvador-Data.github.io/cyberThreatGotchi/)) · Web UI → **[docs/WEB.md](docs/WEB.md)** · Export → **[docs/EXPORT.md](docs/EXPORT.md)** · Cardputer → **[docs/CARDPUTER.md](docs/CARDPUTER.md)** · **Launch kit** → **[docs/social/LAUNCH.md](docs/social/LAUNCH.md)** · Integrations → **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)** · CISO playbook → **[docs/CISO_PLAYBOOK.md](docs/CISO_PLAYBOOK.md)** · Hardware → **[hardware/README.md](hardware/README.md)** · Ecosystem → **[docs/ECOSYSTEM.md](docs/ECOSYSTEM.md)** · Security → **[docs/SECURITY_HARDENING.md](docs/SECURITY_HARDENING.md)** · iPhone hardening → **[docs/IPHONE_HARDENING.md](docs/IPHONE_HARDENING.md)**
 
 ## Features
 
@@ -143,7 +143,7 @@ cyberThreatGotchi/
 
 ## Hacker Planet LLC
 
-Defensive security program alignment: risk register, IPS, AV pipeline, executive-friendly status, and logged evidence for incidents.
+Defensive security program alignment: risk register, IPS, AV pipeline, executive-friendly status, and logged evidence for incidents. Personal phone checklist: **[docs/IPHONE_HARDENING.md](docs/IPHONE_HARDENING.md)** · Windows lab SOC: **[scripts/windows/README_WINDOWS_SOC.md](scripts/windows/README_WINDOWS_SOC.md)**.
 
 **Author:** [salvador-Data](https://github.com/salvador-Data)
 

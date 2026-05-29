@@ -26,6 +26,10 @@ Defensive coding and deployment practices for Hacker Planet LLC projects.
 
 Free stack orchestration: `scripts/windows/README_WINDOWS_SOC.md`. Scripts use env vars only — no embedded manager secrets. Run PowerShell **as Administrator** on systems you own; use explicit flags on `harden_windows.ps1` (default is guidance-only).
 
+## iPhone (personal device hardening)
+
+iOS has **no traditional filesystem AV** — App Store “antivirus” apps cannot scan other apps like Windows Defender. Prefer Settings hardening plus reputable DNS/Safari/SMS tools. Step-by-step for iPhone 15 Pro Max (iOS 17/18): [IPHONE_HARDENING.md](IPHONE_HARDENING.md).
+
 ## Firewall baseline (BPI-R3 / Linux)
 
 Static default-deny **iptables** allow-list: `scripts/firewall-baseline.sh`. CTG **IPS** (`core/ips.py`) inserts dynamic `iptables -I INPUT -s <ip> -j DROP` rules **above** this baseline.
