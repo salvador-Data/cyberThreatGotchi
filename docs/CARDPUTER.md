@@ -56,21 +56,27 @@ Field apps ship through **[M5_OS-Cardputer](https://github.com/salvador-Data/M5_
 
 ### Flash M5 OS (PlatformIO)
 
-**M5 OS** is its own repo. Clone it as a sibling of `cyberThreatGotchi`, not inside it:
+**M5 OS** is its own repo. Recommended clone: `C:\Users\Owner\Projects\M5_OS-Cardputer` (sibling of `cyberThreatGotchi`).
+
+If you already work from `cyberThreatGotchi\M5_OS-Cardputer`, that is a **nested duplicate clone** (not tracked by the CTG repo). It still builds — `platformio.ini` is at that folder root. Run `git pull` there, or switch to the sibling path below.
 
 ```text
-C:\Users\Owner\Projects\M5_OS-Cardputer\
-├── platformio.ini    ← project root (no platformio/ subfolder)
-├── src\
-└── include\
+C:\Users\Owner\Projects\M5_OS-Cardputer\     ← recommended
+  platformio.ini    ← project root (no platformio/ subfolder)
+  src\
+  include\
+
+C:\Users\Owner\Projects\cyberThreatGotchi\M5_OS-Cardputer\   ← nested duplicate (also valid)
+  platformio.ini
+  src\
 ```
 
 BLE Bot and Remote Possibility use a `platformio/` subfolder in *their* repos — do not copy that path for M5 OS.
 
-PowerShell (VS Code PlatformIO extension installs `pio` here):
+PowerShell from **either** M5_OS-Cardputer root (where `platformio.ini` lives):
 
 ```powershell
-cd C:\Users\Owner\Projects\M5_OS-Cardputer
+cd C:\Users\Owner\Projects\cyberThreatGotchi\M5_OS-Cardputer
 ```
 
 ```powershell
