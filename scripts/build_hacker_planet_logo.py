@@ -6,18 +6,26 @@ from __future__ import annotations
 import colorsys
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSETS = Path.home() / ".cursor" / "projects" / "c-Users-Owner-Projects-cyberThreatGotchi" / "assets"
-SRC_MASK = ASSETS / "hacker-planet-llc-logo-mask.png"
-SRC_FALLBACK = ASSETS / "hacker-planet-llc-logo.png"
+ASSETS_CURSOR = (
+    Path.home() / ".cursor" / "projects" / "c-Users-Owner-Projects-cyberThreatGotchi" / "assets"
+)
+ASSETS_REPO = ROOT / "assets"
+SRC_MASK = ASSETS_CURSOR / "hacker-planet-llc-logo-mask.png"
+SRC_FALLBACK = ASSETS_CURSOR / "hacker-planet-llc-logo.png"
+if not SRC_MASK.is_file():
+    SRC_MASK = ASSETS_REPO / "hacker-planet-llc-logo-mask.png"
+if not SRC_FALLBACK.is_file():
+    SRC_FALLBACK = ASSETS_REPO / "hacker-planet-llc-logo.png"
 OUT = ROOT / "website" / "images" / "hacker-planet-logo.png"
 
 # website/css/style.css :root
 ACCENT = (0, 180, 140)  # #00b48c
 ACCENT_HI = (0, 217, 168)  # brighter teal for former cyan neon
 INK = (230, 237, 243)  # #e6edf3 highlights on mask/face
+LABEL = "Hacker Planet LLC"
 
 
 def _recolor_pixel(r: int, g: int, b: int) -> tuple[int, int, int, int]:
@@ -60,6 +68,23 @@ def recolor(src: Path) -> Image.Image:
     return out
 
 
+def crop_emblem(im: Image.Image) -> Image.Image:
+    """Center badge (mask + ring), drop bar scene and curved bottom tagline area."""
+    w, h = im.size
+    fw = int(w * 0.40)
+    fh = int(h * 0.56)
+    x0 = (w - fw) // 2
+    y0 = int(h * 0.10)
+    emblem = im.crop((x0, y0, x0 + fw, y0 + fh))
+    ew, eh = emblem.size
+    px = emblem.load()
+    cut = int(eh * 0.80)
+    for y in range(cut, eh):
+        for x in range(ew):
+            px[x, y] = (0, 0, 0, 0)
+    return emblem
+
+
 def crop_logo(im: Image.Image) -> Image.Image:
     bbox = im.getbbox()
     if not bbox:
@@ -73,7 +98,34 @@ def crop_logo(im: Image.Image) -> Image.Image:
     return im.crop((x0, y0, x1, y1))
 
 
-def resize_nav(im: Image.Image, height: int = 96) -> Image.Image:
+def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    for name in ("segoeui.ttf", "arial.ttf", "DejaVuSans.ttf"):
+        try:
+            return ImageFont.truetype(name, size)
+        except OSError:
+            continue
+    return ImageFont.load_default()
+
+
+def add_label_below(im: Image.Image) -> Image.Image:
+    """Flat company line under mask — no 'by salvadorData'."""
+    font = _load_font(max(11, im.width // 14))
+    draw_probe = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
+    bbox = draw_probe.textbbox((0, 0), LABEL, font=font)
+    tw = bbox[2] - bbox[0]
+    th = bbox[3] - bbox[1]
+    pad_y = 6
+    out = Image.new("RGBA", (max(im.width, tw + 8), im.height + th + pad_y + 4), (0, 0, 0, 0))
+    ox = (out.width - im.width) // 2
+    out.paste(im, (ox, 0), im)
+    draw = ImageDraw.Draw(out)
+    tx = (out.width - tw) // 2
+    ty = im.height + pad_y
+    draw.text((tx, ty), LABEL, font=font, fill=(*ACCENT, 255))
+    return out
+
+
+def resize_nav(im: Image.Image, height: int = 112) -> Image.Image:
     w, h = im.size
     scale = height / h
     new_w = max(1, int(w * scale))
@@ -86,8 +138,10 @@ def main() -> None:
         raise SystemExit(f"Logo source not found: {src}")
 
     im = recolor(src)
+    im = crop_emblem(im)
     im = crop_logo(im)
-    im = resize_nav(im, height=96)
+    im = add_label_below(im)
+    im = resize_nav(im, height=112)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     im.save(OUT, format="PNG", optimize=True)
     print(f"Wrote {OUT} ({im.size[0]}x{im.size[1]}, {OUT.stat().st_size // 1024} KB)")

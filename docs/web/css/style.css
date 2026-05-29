@@ -132,7 +132,8 @@ img {
 .logo-img {
   flex-shrink: 0;
   width: auto;
-  height: 2.25rem;
+  height: 3.25rem;
+  max-height: 52px;
   object-fit: contain;
   display: block;
 }
@@ -345,7 +346,7 @@ img {
 
 .hero-visual {
   position: relative;
-  z-index: 1;
+  z-index: 0;
   max-width: 720px;
   margin: 0 auto;
   border-radius: var(--radius);
@@ -372,7 +373,12 @@ img {
 
 /* Inner pages: hero image below page-hero (replaces inline margin-bottom) */
 .wrap > .hero-visual {
+  z-index: 0;
   margin-bottom: 1.25rem;
+}
+
+.hero .hero-visual {
+  margin-top: 1rem;
 }
 
 .page-hero .hero-actions {
@@ -600,9 +606,10 @@ section {
 
 .page-hero .section-label,
 .page-hero .lead,
-.page-hero .hero-actions {
+.page-hero .hero-actions,
+.page-hero h1.title-stack {
   position: relative;
-  z-index: 2;
+  z-index: 4;
 }
 
 .page-hero h1.title-stack {
