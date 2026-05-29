@@ -519,6 +519,21 @@ def test_contact_page_content():
     assert "email routing" in html.lower() or "mx records" in html.lower()
 
 
+def test_payment_methods_wired_in_js():
+    pay = (WEB / "js" / "payments.js").read_text(encoding="utf-8")
+    cart = (WEB / "js" / "cart.js").read_text(encoding="utf-8")
+    cfg = (WEB / "js" / "payments.config.js").read_text(encoding="utf-8")
+    assert "HPL_buildAltPaymentLinks" in pay
+    assert "HPL_hasAnyCheckoutMethod" in pay
+    assert "HPL_isDemoMode" in pay
+    assert "paypalMeUrl" in pay
+    assert "venmoUrl" in pay
+    assert "cashAppUrl" in pay
+    assert "Apple Pay" in pay
+    assert "HPL_buildAltPaymentLinks" in cart
+    assert "altPaymentsConfigured" in cfg
+
+
 def test_shop_cart_pci_safe():
     """Cart must exist and never collect PAN/CVV on-site."""
     html = (WEB / "shop.html").read_text(encoding="utf-8")

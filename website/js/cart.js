@@ -130,6 +130,7 @@
   }
 
   function isDemoMode() {
+    if (typeof window.HPL_isDemoMode === "function") return window.HPL_isDemoMode();
     var c = cfg();
     if (c.demoMode === false) return false;
     var links = c.stripePaymentLinks || {};
@@ -138,6 +139,8 @@
       return url.indexOf("https://buy.stripe.com/") === 0;
     });
     if (hasAny) return false;
+    if ((c.paypal || {}).clientId || (c.paypalMe || {}).username) return false;
+    if ((c.cashapp || {}).cashtag || (c.venmo || {}).username) return false;
     return c.demoMode !== false;
   }
 
@@ -420,7 +423,35 @@
       stripeBtn.target = "_blank";
       stripeBtn.rel = "noopener noreferrer";
       actions.appendChild(stripeBtn);
-    } else if (isDemoMode()) {
+    }
+
+    if (typeof window.HPL_buildAltPaymentLinks === "function") {
+      var alt = window.HPL_buildAltPaymentLinks(product);
+      if (alt.paypal) {
+        var paypalBtn = el("a", "btn btn-ghost pay-btn-paypal", "PayPal");
+        paypalBtn.href = alt.paypal;
+        paypalBtn.target = "_blank";
+        paypalBtn.rel = "noopener noreferrer";
+        actions.appendChild(paypalBtn);
+      }
+      if (alt.venmo) {
+        var venmoBtn = el("a", "btn btn-ghost pay-btn-venmo", "Venmo");
+        venmoBtn.href = alt.venmo;
+        venmoBtn.target = "_blank";
+        venmoBtn.rel = "noopener noreferrer";
+        actions.appendChild(venmoBtn);
+      }
+      if (alt.cashapp) {
+        var cashBtn = el("a", "btn btn-ghost pay-btn-cashapp", "Cash App");
+        cashBtn.href = alt.cashapp;
+        cashBtn.target = "_blank";
+        cashBtn.rel = "noopener noreferrer";
+        actions.appendChild(cashBtn);
+      }
+    }
+
+    if (!stripeUrl && isDemoMode() && typeof window.HPL_hasAnyCheckoutMethod === "function" &&
+        !window.HPL_hasAnyCheckoutMethod()) {
       actions.appendChild(
         el(
           "span",

@@ -374,10 +374,20 @@
     });
   }
 
+  function hasAnyCheckoutMethod() {
+    var c = cfg();
+    if (hasAnyStripeLink()) return true;
+    if ((c.paypal || {}).clientId) return true;
+    if ((c.paypalMe || {}).username) return true;
+    if ((c.cashapp || {}).cashtag) return true;
+    if ((c.venmo || {}).username) return true;
+    return false;
+  }
+
   function isDemoMode() {
     var c = cfg();
     if (c.demoMode === false) return false;
-    if (hasAnyStripeLink()) return false;
+    if (hasAnyCheckoutMethod()) return false;
     return c.demoMode !== false;
   }
 
@@ -600,6 +610,18 @@
     return "https://account.venmo.com/pay?" + params.toString();
   }
 
+  function buildAltPaymentLinks(product) {
+    var links = {};
+    if (!product || isRecurringProduct(product)) return links;
+    var paypal = paypalMeUrl(product.price);
+    if (paypal) links.paypal = paypal;
+    var venmo = venmoUrl(product.price, product.name);
+    if (venmo) links.venmo = venmo;
+    var cash = cashAppUrl(product.price, product.name);
+    if (cash) links.cashapp = cash;
+    return links;
+  }
+
   function paypalMeUrl(amount) {
     var user = (cfg().paypalMe || {}).username || "";
     if (!user) return "";
@@ -663,7 +685,7 @@
         ? "Subscribe (Stripe)"
         : "Card | Debit | Apple Pay | Save for next time";
       methods.appendChild(payBtn(label, link, "stripe"));
-    } else if (demo) {
+    } else if (demo && !hasPayPalMe && !hasVenmo && !hasCash && !hasPayPalSdk) {
       methods.appendChild(el("span", "pay-placeholder", "Stripe link - see docs/PAYMENTS.md"));
     }
 
@@ -849,6 +871,9 @@
   window.HPL_saveCustomerProfile = saveCustomerProfile;
   window.HPL_clearCustomerProfile = clearCustomerProfile;
   window.HPL_buildStripeCheckoutUrl = buildStripeCheckoutUrl;
+  window.HPL_buildAltPaymentLinks = buildAltPaymentLinks;
+  window.HPL_hasAnyCheckoutMethod = hasAnyCheckoutMethod;
+  window.HPL_isDemoMode = isDemoMode;
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initShop);
