@@ -54,6 +54,35 @@ Configure `CTG_HOST` in `platformio.ini` and Wi-Fi credentials in `src/main.cpp`
 
 Field apps ship through **[M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer)** — SD layout, manifest download, and flash-from-SD workflow. Security details (HTTPS-only manifest URLs, SHA-256 verify before flash, Wi-Fi password handling): [M5 OS SECURITY.md](https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/SECURITY.md).
 
+### Flash M5 OS (PlatformIO)
+
+**M5 OS** is its own repo. Clone it as a sibling of `cyberThreatGotchi`, not inside it:
+
+```text
+C:\Users\Owner\Projects\M5_OS-Cardputer\
+├── platformio.ini    ← project root (no platformio/ subfolder)
+├── src\
+└── include\
+```
+
+BLE Bot and Remote Possibility use a `platformio/` subfolder in *their* repos — do not copy that path for M5 OS.
+
+PowerShell (VS Code PlatformIO extension installs `pio` here):
+
+```powershell
+cd C:\Users\Owner\Projects\M5_OS-Cardputer
+```
+
+```powershell
+& "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e m5stack-cardputer
+```
+
+```powershell
+& "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e m5stack-cardputer -t upload
+```
+
+In VS Code: **File → Open Folder** → `M5_OS-Cardputer`, pick env `m5stack-cardputer`, click **Build** / **Upload**.
+
 Host-side manifest validation:
 
 ```bash

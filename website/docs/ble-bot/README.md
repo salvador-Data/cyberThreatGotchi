@@ -17,6 +17,8 @@ Philadelphia-assembled units ship pre-flashed. DIY builders build from this repo
 
 ## Build (Windows / macOS / Linux)
 
+> **Not M5 OS:** [M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer) keeps `platformio.ini` at the **repo root** (no `platformio/` folder). Only BLE Bot and Remote Possibility use the layout below.
+
 Install [PlatformIO](https://platformio.org/), then:
 
 ```bash
