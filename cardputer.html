@@ -283,6 +283,13 @@
         <a href="https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/SECURITY.md" target="_blank" rel="noopener">M5 OS SECURITY.md -></a>.
       </p>
       <h3 class="section-title" style="font-size:1.15rem;margin:1.5rem 0 0.75rem">M5 OS (Cardputer base)</h3>
+      <p class="section-sub muted-inline" style="max-width:42rem;margin-bottom:0.75rem">
+        <code>platformio.ini</code> is at the <strong>M5_OS-Cardputer repo root</strong> — there is no <code>platformio/</code> subfolder.
+        BLE Bot and Remote Possibility use <code>platformio/</code> in their own repos; do not <code>cd platformio</code> for M5 OS.
+      </p>
+      <pre class="code-block" style="max-width:42rem;margin-bottom:1rem"><code>cd C:\Users\Owner\Projects\M5_OS-Cardputer
+&amp; "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e m5stack-cardputer
+&amp; "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e m5stack-cardputer -t upload</code></pre>
       <ul class="feature-list" style="max-width:42rem">
         <li>
           <a href="https://github.com/salvador-Data/M5_OS-Cardputer" target="_blank" rel="noopener">M5_OS-Cardputer on GitHub -></a>

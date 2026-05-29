@@ -25,6 +25,8 @@ build_flags =
 
 ## Build & flash
 
+> **Not M5 OS:** [M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer) keeps `platformio.ini` at the **repo root** (no `platformio/` folder). This README is for BLE Bot only.
+
 ```bash
 cd platformio
 pio run -e m5stack-cardputer

@@ -9,7 +9,8 @@ window.HPL_FIRMWARE = {
     {
       num: "1",
       title: "Flash M5 OS",
-      detail: "Install the Cardputer launcher first (USB recovery or tagged GitHub release).",
+      detail:
+        "Clone M5_OS-Cardputer to Projects\\M5_OS-Cardputer (repo root has platformio.ini — no platformio\\ subfolder). Build env m5stack-cardputer, then USB upload.",
     },
     {
       num: "2",
