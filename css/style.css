@@ -120,13 +120,36 @@ img {
 
 .logo {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.12rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.65rem;
   font-family: var(--font-display);
   text-decoration: none;
   line-height: 1.15;
-  max-width: min(16rem, 42vw);
+  max-width: min(22rem, 52vw);
+}
+
+.logo-img {
+  flex-shrink: 0;
+  width: auto;
+  height: 2.25rem;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.m5-os-brand img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--panel-border);
 }
 
 .logo:hover {
