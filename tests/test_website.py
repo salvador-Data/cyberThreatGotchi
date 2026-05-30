@@ -464,7 +464,7 @@ def test_about_page_content():
     assert "salvadorData@proton.me" in html
     assert "(215) 839-8738" in html
     assert "Andrew Kowal" not in html
-    assert "linkedin.com/in/andy-klwal" in html.lower()
+    assert "linkedin.com/in/andy-kowal" in html.lower()
     assert "Nucamp" not in html
     assert " student" not in html.lower()
     assert ">Pat<" not in html
