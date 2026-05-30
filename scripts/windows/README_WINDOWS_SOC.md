@@ -84,7 +84,8 @@ Optional: Defender ASR audit mode:
 | `install_sysmon.ps1` | Download Sysmon + SwiftOnSecurity XML |
 | `wazuh_agent_setup.ps1` | MSI/winget/choco agent install |
 | `iphone_usb_check.ps1` | Log-only: iPhone USB attached → run `IPHONE_RUN_NOW` USB steps (no device modification) |
-| `iphone_hardening_assist.ps1` | Guided Phase 1+2 assist: USB check, checklist + Settings deep links, `-OpenRunbook` / `-LogOnly` |
+| `iphone_hardening_automate.ps1` | **Primary:** interactive 21-step Phase 1+2 orchestrator — USB check, deep links, `-Resume`, `-LogOnly`, `-OpenGuide`, `-ServeOnLan` |
+| `iphone_hardening_assist.ps1` | Deprecated alias — forwards to `iphone_hardening_automate.ps1` (`-OpenRunbook` still works) |
 
 Check Wazuh without installing:
 
@@ -161,22 +162,36 @@ When the **iPhone 15 Pro Max** is on USB-C to this PC, hardening is done **on th
 | Item | Detail |
 |------|--------|
 | **Runbook** | [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) Phase 2 § 2.3 · [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) |
-| **Guided assist** | `iphone_hardening_assist.ps1` — Phase 1+2 checklist, Settings deep links, DuckDuckGo preserve warnings; [iphone_hardening_shortcuts.md](../../docs/iphone_hardening_shortcuts.md) for iOS Shortcuts |
+| **Automate (primary)** | `iphone_hardening_automate.ps1` — 21-step interactive flow, Settings deep links, DuckDuckGo preserve warnings; [iphone_hardening_shortcuts.md](../../docs/iphone_hardening_shortcuts.md) for iOS **CTG iPhone Harden** Shortcut |
+| **Guided HTML wizard** | [docs/iphone_hardening_guide.html](../../docs/iphone_hardening_guide.html) — Prev/Next/Mark done; sync via `?step=N` with automate script |
+| **Assist (alias)** | `iphone_hardening_assist.ps1` — forwards to automate for backward compatibility |
 | **Tap-friendly web** | [iphone-run-now.html](https://salvador-Data.github.io/cyberThreatGotchi/iphone-run-now.html) — open on phone |
 | **Preserve VPN/DNS** | Do not install a second DNS VPN on the phone; verify **Settings → VPN** after hardening (DuckDuckGo/NextDNS/1.1.1.1 unchanged) |
 | **Encrypted backup** | Apple Devices → **Encrypt local backup**; align with `D:\Backups\Andy-PC-*`, `C:\Users\Owner\Backups\`, OneDrive `Backups\Andy-PC-*` (see `cloud_backup.ps1`) |
 | **Log stub** | `iphone_usb_check.ps1` — writes `Backups\logs\iphone_usb_check.log`; reminder only |
-| **Assist log** | `iphone_hardening_assist.ps1` — writes `Backups\logs\iphone_hardening_assist.log` |
+| **Assist log** | `iphone_hardening_automate.ps1` — writes `Backups\logs\iphone_hardening_automate.log` (legacy assist log name deprecated) |
 
 ### Automated assist (Windows + Shortcuts)
 
-Best-effort **guided** automation — full Settings hardening on stock iOS is impossible without MDM. The assist script prints numbered steps and `prefs:` / App Store URLs; you complete toggles on the phone.
+Best-effort **guided** automation — full Settings hardening on stock iOS is impossible without MDM. The automate script walks all 21 steps interactively; you complete toggles on the phone.
 
 ```powershell
 cd C:\Users\Owner\Projects\cyberThreatGotchi
 ```
 
-Interactive assist + open runbook:
+Full 21-step flow + HTML wizard (recommended):
+
+```powershell
+.\scripts\windows\iphone_hardening_automate.ps1 -OpenGuide
+```
+
+Resume after interruption:
+
+```powershell
+.\scripts\windows\iphone_hardening_automate.ps1 -Resume -OpenGuide
+```
+
+Interactive assist + open runbook (legacy alias):
 
 ```powershell
 .\scripts\windows\iphone_hardening_assist.ps1 -OpenRunbook
@@ -185,7 +200,7 @@ Interactive assist + open runbook:
 Log-only check (CI-style, no prompts):
 
 ```powershell
-.\scripts\windows\iphone_hardening_assist.ps1 -LogOnly
+.\scripts\windows\iphone_hardening_automate.ps1 -LogOnly
 ```
 
 USB reminder only:

@@ -123,7 +123,9 @@
     border: 1px solid var(--border);
   }
   .btn-nav.primary { background: var(--accent); color: #0a0e14; border-color: var(--accent); }
+  .btn-nav.done { background: #1a3d2e; color: var(--accent); border-color: var(--accent); font-size: 0.9rem; flex: 0.8; }
   .btn-nav:disabled { opacity: 0.35; cursor: not-allowed; }
+  .done-badge { font-size: 0.75rem; color: var(--accent); margin-left: 0.35rem; }
   .intro-note {
     font-size: 0.88rem;
     color: var(--muted);
@@ -158,6 +160,7 @@
 
 <nav class="footer-nav" aria-label="Step navigation">
   <button type="button" class="btn btn-nav" id="btnPrev" disabled>Previous</button>
+  <button type="button" class="btn btn-nav done" id="btnDone" title="Mark this step complete">Mark done</button>
   <button type="button" class="btn btn-nav primary" id="btnNext">Next</button>
 </nav>
 
@@ -370,7 +373,10 @@
     }
   ];
 
+  var STORAGE_STEP = 'ctg_iphone_guide_step';
+  var STORAGE_DONE = 'ctg_iphone_guide_done';
   var idx = 0;
+  var doneSet = {};
   var card = document.getElementById('stepCard');
   var content = document.getElementById('stepContent');
   var openActions = document.getElementById('openActions');
@@ -378,6 +384,53 @@
   var progressFill = document.getElementById('progressFill');
   var btnPrev = document.getElementById('btnPrev');
   var btnNext = document.getElementById('btnNext');
+  var btnDone = document.getElementById('btnDone');
+
+  function loadDoneSet() {
+    try {
+      var raw = localStorage.getItem(STORAGE_DONE);
+      if (raw) {
+        var arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          arr.forEach(function (id) { doneSet[id] = true; });
+        }
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  function saveDoneSet() {
+    try {
+      localStorage.setItem(STORAGE_DONE, JSON.stringify(Object.keys(doneSet)));
+    } catch (e) { /* private mode */ }
+  }
+
+  function countDone() {
+    return Object.keys(doneSet).length;
+  }
+
+  function postStepSync() {
+    var step = STEPS[idx];
+    var payload = { type: 'ctg_iphone_step', index: idx, id: step.id, done: !!doneSet[step.id] };
+    try {
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(payload, '*');
+      }
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage(payload, '*');
+      }
+    } catch (e) { /* cross-origin */ }
+  }
+
+  function parseQueryStep() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var q = parseInt(params.get('step'), 10);
+      if (!isNaN(q) && q >= 0 && q < STEPS.length) {
+        return q;
+      }
+    } catch (e) { /* ignore */ }
+    return null;
+  }
 
   function phaseClass(group) {
     if (group === 'baseline') return 'phase-baseline';
@@ -389,12 +442,17 @@
   function render() {
     var step = STEPS[idx];
     var n = STEPS.length;
-    progressLabel.textContent = 'Step ' + (idx + 1) + ' of ' + n + ' · ' + step.groupLabel;
-    progressFill.style.width = ((idx + 1) / n * 100) + '%';
+    var doneCount = countDone();
+    progressLabel.textContent = 'Step ' + (idx + 1) + ' of ' + n + ' · ' + step.groupLabel + ' · ' + doneCount + ' marked done';
+    progressFill.style.width = ((doneCount / n) * 100) + '%';
 
     var html = '';
     html += '<span class="phase-badge ' + phaseClass(step.group) + '">' + escapeHtml(step.groupLabel) + '</span>';
-    html += '<p class="step-id">Step ' + escapeHtml(step.id) + '</p>';
+    html += '<p class="step-id">Step ' + escapeHtml(step.id);
+    if (doneSet[step.id]) {
+      html += '<span class="done-badge">✓ done</span>';
+    }
+    html += '</p>';
     html += '<h2 class="step-title">' + escapeHtml(step.title) + '</h2>';
     html += '<div class="step-body">' + step.body + '</div>';
     html += '<div class="fallback"><strong>Manual path (always works)</strong>' + escapeHtml(step.manual) + '</div>';
@@ -431,9 +489,11 @@
 
     btnPrev.disabled = idx === 0;
     btnNext.textContent = idx === n - 1 ? 'Finish' : 'Next';
+    btnDone.textContent = doneSet[step.id] ? 'Unmark' : 'Mark done';
     try {
-      localStorage.setItem('ctg_iphone_guide_step', String(idx));
+      localStorage.setItem(STORAGE_STEP, String(idx));
     } catch (e) { /* private mode */ }
+    postStepSync();
   }
 
   function escapeHtml(s) {
@@ -452,16 +512,43 @@
       render();
       window.scrollTo(0, 0);
     } else {
-      alert('Walkthrough complete. Re-run Step 0 checks anytime. CyberThreatGotchi — Hacker Planet LLC.');
+      alert('Walkthrough complete (' + countDone() + '/' + STEPS.length + ' marked done). Re-run Step 0 checks anytime. CyberThreatGotchi — Hacker Planet LLC.');
     }
   });
 
-  try {
-    var saved = parseInt(localStorage.getItem('ctg_iphone_guide_step'), 10);
-    if (!isNaN(saved) && saved >= 0 && saved < STEPS.length) {
-      idx = saved;
+  btnDone.addEventListener('click', function () {
+    var step = STEPS[idx];
+    if (doneSet[step.id]) {
+      delete doneSet[step.id];
+    } else {
+      doneSet[step.id] = true;
     }
-  } catch (e) { /* ignore */ }
+    saveDoneSet();
+    render();
+  });
+
+  window.addEventListener('message', function (ev) {
+    if (!ev.data || ev.data.type !== 'ctg_iphone_goto') return;
+    var target = parseInt(ev.data.index, 10);
+    if (!isNaN(target) && target >= 0 && target < STEPS.length) {
+      idx = target;
+      render();
+      window.scrollTo(0, 0);
+    }
+  });
+
+  loadDoneSet();
+  var queryStep = parseQueryStep();
+  if (queryStep !== null) {
+    idx = queryStep;
+  } else {
+    try {
+      var saved = parseInt(localStorage.getItem(STORAGE_STEP), 10);
+      if (!isNaN(saved) && saved >= 0 && saved < STEPS.length) {
+        idx = saved;
+      }
+    } catch (e) { /* ignore */ }
+  }
 
   render();
 })();

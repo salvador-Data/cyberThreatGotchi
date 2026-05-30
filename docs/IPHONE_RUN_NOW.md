@@ -6,14 +6,50 @@
 
 ---
 
-## Guided walkthrough (recommended)
+## One command — full automated assist (recommended)
+
+From repo root — interactive orchestrator for all **21 steps** (Step 0 → Phase 1 → Phase 2 → verify). Logs progress, shows Settings deep links, preserves DuckDuckGo VPN/DNS/Password Manager warnings.
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\iphone_hardening_automate.ps1 -OpenGuide
+```
+
+Resume where you left off:
+
+```powershell
+.\scripts\windows\iphone_hardening_automate.ps1 -Resume -OpenGuide
+```
+
+Validate URLs without prompts (dry-run):
+
+```powershell
+.\scripts\windows\iphone_hardening_automate.ps1 -LogOnly
+```
+
+Same Wi-Fi LAN URL for phone (optional):
+
+```powershell
+.\scripts\windows\iphone_hardening_automate.ps1 -OpenGuide -ServeOnLan
+```
+
+**Honest limit:** Stock iOS cannot auto-toggle Settings from Windows — you tap each change; the script guides, copies deep links, and logs to `%USERPROFILE%\Backups\logs\iphone_hardening_automate.log`.
+
+Legacy alias (same behavior): `iphone_hardening_assist.ps1` forwards to `iphone_hardening_automate.ps1`.
+
+---
+
+## Guided walkthrough (Safari on phone)
 
 Use the **step-by-step wizard** on your iPhone — **Previous / Next**, progress bar, and **Open Settings** deep links per step (with manual fallback on every screen). Preserves DuckDuckGo VPN/DNS and DuckDuckGo Password Manager warnings throughout.
 
 | Resource | Use when |
 |----------|----------|
 | **[iphone_hardening_guide.html](iphone_hardening_guide.html)** | Primary: AirDrop or Files → open in **Safari** on the phone |
-| **Windows:** `.\scripts\windows\iphone_hardening_assist.ps1 -OpenGuide` | Opens the same HTML on the laptop + prints AirDrop/LAN instructions |
+| **Windows:** `.\scripts\windows\iphone_hardening_automate.ps1 -OpenGuide` | Full 21-step orchestrator + opens HTML wizard (sync via `?step=N`) |
 | **[iphone_hardening_shortcuts.md](iphone_hardening_shortcuts.md)** | Optional iOS **Shortcuts** routine (open URL → wait → next pane) |
 | [iphone-run-now.html](../website/iphone-run-now.html) | Static tap list on GitHub Pages (no Prev/Next wizard) |
 
@@ -35,33 +71,10 @@ Manual checklist below — **no CTG automation can change iPhone Settings** with
 
 | Tool | What it does |
 |------|----------------|
-| **`scripts/windows/iphone_hardening_assist.ps1`** | On Windows: verify repo, run `iphone_usb_check.ps1`, log to `Backups\logs\`, print Phase 1+2 checklist with Settings deep-link URLs. `-OpenRunbook` opens this doc + [GitHub Pages runbook](https://salvador-Data.github.io/cyberThreatGotchi/iphone-run-now.html). `-LogOnly` for a no-prompt check. |
-| **[iphone_hardening_shortcuts.md](iphone_hardening_shortcuts.md)** | Build an iOS **Shortcuts** routine that opens each Settings pane in order (you tap through). |
-| **[iphone-run-now.html](../website/iphone-run-now.html)** | Tap-friendly page with `prefs:` / App Store links — open on the phone. |
-
-From repo root (one command per block):
-
-```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
-```
-
-Guided wizard on laptop + phone transfer instructions:
-
-```powershell
-.\scripts\windows\iphone_hardening_assist.ps1 -OpenGuide
-```
-
-Optional same-Wi-Fi URL (Python; confirms before starting):
-
-```powershell
-.\scripts\windows\iphone_hardening_assist.ps1 -OpenGuide -ServeOnLan
-```
-
-Interactive assist + markdown runbook in browser:
-
-```powershell
-.\scripts\windows\iphone_hardening_assist.ps1 -OpenRunbook
-```
+| **`scripts/windows/iphone_hardening_automate.ps1`** | Primary: interactive 21-step flow, USB check at start, deep-link clipboard, `-Resume`, `-LogOnly`, `-OpenGuide`, `-ServeOnLan`. Log: `Backups\logs\iphone_hardening_automate.log`. |
+| **`scripts/windows/iphone_hardening_assist.ps1`** | Deprecated alias — forwards to `iphone_hardening_automate.ps1` (`-OpenRunbook` still works). |
+| **[iphone_hardening_shortcuts.md](iphone_hardening_shortcuts.md)** | Importable **CTG iPhone Harden** Shortcuts recipe (open URL → wait → next). |
+| **[iphone-run-now.html](../website/iphone-run-now.html)** | Static tap list on GitHub Pages (no Prev/Next wizard). |
 
 **Cannot automate:** passcode/Face ID, Trust This Computer, Malwarebytes permissions, encrypted backup password, or replacing DuckDuckGo VPN/DNS/Password Manager without your intent.
 
