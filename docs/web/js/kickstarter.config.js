@@ -12,4 +12,27 @@ window.HPL_KICKSTARTER = {
    */
   kickstarterProjectUrl:
     "https://www.kickstarter.com/projects/hackerplanet/cyberthreatgotchi-edge-ips-tamagotchi",
+
+  /** Slug substring while project is still a draft / not yet approved on kickstarter.com */
+  placeholderSlug: "hackerplanet/cyberthreatgotchi-edge-ips-tamagotchi",
+
+  /** UTM params appended to every outbound campaign link from hackerplanet.dev */
+  utm: {
+    source: "hackerplanet",
+    medium: "site",
+    campaign: "cta",
+  },
+
+  /**
+   * Shop stripeKey values that map to Kickstarter reward tiers when the campaign is live.
+   * Checkout on hackerplanet.dev redirects to kickstarter.com — pledges are never Stripe here.
+   */
+  kickstarterSkus: [
+    "digital",
+    "coreKit",
+    "fieldPack",
+    "crackbotBench",
+    "remotePossibility",
+    "bleBot",
+  ],
 };

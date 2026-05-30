@@ -177,14 +177,35 @@
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
     },
     "kickstarter.html": {
-      "title": "Hacker Planet | CyberThreatGotchi Kickstarter Preview",
-      "description": "Hacker Planet Kickstarter preview  -  CyberThreatGotchi edge IPS kits from Philadelphia. Early Bird Core and Field Pack tiers. Defensive use only.",
-      "keywords": "Hacker Planet, CyberThreatGotchi Kickstarter, edge IPS kit, homelab security, Philadelphia",
+      "title": "Hacker Planet | CyberThreatGotchi Kickstarter — Edge IPS Kits Philadelphia",
+      "description": "Back CyberThreatGotchi on Kickstarter — Philadelphia edge IPS kits with Cipherhorn e-ink. Early Bird Core $149, Field Pack $279. Pledge on kickstarter.com; hackerplanet.dev never collects card data.",
+      "keywords": "CyberThreatGotchi Kickstarter, edge IPS kit, homelab security, Banana Pi BPI-R3 Mini, Philadelphia hardware, Cipherhorn, defensive cybersecurity, Hacker Planet",
       "ogType": "website",
       "ogImage": "/images/products/direct-core-kit.jpg",
-      "jsonLd": ["organization", "localBusiness", "breadcrumb"],
-      "sitemapPriority": "0.85",
-      "kickstarterProjectUrl": "https://www.kickstarter.com/projects/hackerplanet/cyberthreatgotchi-edge-ips-tamagotchi"
+      "jsonLd": [
+        "organization",
+        "localBusiness",
+        "breadcrumb",
+        "webPage",
+        "kickstarterProduct",
+        "faq"
+      ],
+      "sitemapPriority": "0.9",
+      "kickstarterProjectUrl": "https://www.kickstarter.com/projects/hackerplanet/cyberthreatgotchi-edge-ips-tamagotchi",
+      "faqs": [
+        {
+          "question": "Where do I pay for a CyberThreatGotchi Kickstarter pledge?",
+          "answer": "Payment happens on kickstarter.com only. hackerplanet.dev preview pages link out with UTM parameters and never collect card numbers for campaign tiers."
+        },
+        {
+          "question": "What is the Early Bird Core reward tier?",
+          "answer": "Early Bird Core is $149 for 50 units and includes the Cipherhorn core kit ($219 shop value) plus three months of the CTG Pro threat feed."
+        },
+        {
+          "question": "Is CyberThreatGotchi authorized for defensive use only?",
+          "answer": "Yes. CyberThreatGotchi is a defensive edge sensor for networks you own or are explicitly authorized to monitor. IPS blocks and wardrive tools require written scope."
+        }
+      ]
     }
   },
   "kickstarter": {

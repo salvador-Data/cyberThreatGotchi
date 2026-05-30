@@ -650,6 +650,14 @@
 
   function renderCheckout(container, product) {
     container.innerHTML = "";
+    if (
+      product &&
+      product.stripeKey &&
+      typeof window.HPL_KICKSTARTER_renderCheckout === "function" &&
+      window.HPL_KICKSTARTER_renderCheckout(container, product.stripeKey)
+    ) {
+      return;
+    }
     var c = cfg();
     var demo = isDemoMode();
     var link = buildStripeCheckoutUrl(stripeLink(product.stripeKey), product);

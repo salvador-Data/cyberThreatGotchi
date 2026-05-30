@@ -153,6 +153,57 @@ def _faq_ld(page: dict[str, Any]) -> dict[str, Any] | None:
     }
 
 
+def _webpage_ld(
+    cfg: dict[str, Any], page: dict[str, Any], base: str, filename: str
+) -> dict[str, Any]:
+    path = "" if filename == "index.html" else filename
+    url = _abs(base, path)
+    block: dict[str, Any] = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": page["title"],
+        "description": page["description"],
+        "url": url,
+        "inLanguage": cfg.get("locale", "en_US").replace("_", "-"),
+        "isPartOf": {
+            "@type": "WebSite",
+            "name": cfg["siteName"],
+            "url": base.rstrip("/") + "/",
+        },
+        "publisher": {"@type": "Organization", "name": cfg["siteName"]},
+    }
+    ks_url = (page.get("kickstarterProjectUrl") or "").strip()
+    if ks_url:
+        block["relatedLink"] = ks_url
+    return block
+
+
+def _kickstarter_product_ld(
+    cfg: dict[str, Any], page: dict[str, Any], base: str
+) -> dict[str, Any]:
+    ks_url = (page.get("kickstarterProjectUrl") or _abs(base, "kickstarter.html")).strip()
+    return {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "CyberThreatGotchi Edge IPS Kit",
+        "description": page.get("description", ""),
+        "brand": {"@type": "Brand", "name": "CyberThreatGotchi"},
+        "manufacturer": {"@type": "Organization", "name": cfg["siteName"]},
+        "category": "Network security hardware",
+        "image": _abs(base, page.get("ogImage", cfg["defaultOgImage"])),
+        "offers": {
+            "@type": "AggregateOffer",
+            "priceCurrency": "USD",
+            "lowPrice": "15",
+            "highPrice": "2499",
+            "offerCount": "9",
+            "url": ks_url,
+            "availability": "https://schema.org/PreOrder",
+            "seller": {"@type": "Organization", "name": cfg["siteName"]},
+        },
+    }
+
+
 def _breadcrumb_ld(base: str, filename: str, site_name: str) -> dict[str, Any]:
     path = "" if filename == "index.html" else filename
     url = _abs(base, path)
@@ -197,6 +248,10 @@ def _json_ld_blocks(
             faq = _faq_ld(page)
             if faq:
                 blocks.append(faq)
+        elif kind == "webPage":
+            blocks.append(_webpage_ld(cfg, page, base, filename))
+        elif kind == "kickstarterProduct":
+            blocks.append(_kickstarter_product_ld(cfg, page, base))
     return blocks
 
 

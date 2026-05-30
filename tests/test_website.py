@@ -609,6 +609,8 @@ def test_kickstarter_config():
     assert "kickstarterProjectUrl" in config
     assert "kickstarter.com" in config
     assert "hackerplanet/cyberthreatgotchi-edge-ips-tamagotchi" in config
+    assert "utm" in config
+    assert "kickstarterSkus" in config
     site = (WEB / "seo" / "site.json").read_text(encoding="utf-8")
     assert '"kickstarterProjectUrl"' in site
 
@@ -629,8 +631,24 @@ def test_kickstarter_preview_page():
     assert "kickstarter.com" in html
     assert "BUSINESS_PROJECTIONS.md" in html
     assert "KICKSTARTER_LAUNCH_PLAN.md" in html
+    assert "ks-payment" in html
+    assert "kickstarter.com only" in html.lower() or "kickstarter.com</strong> only" in html
+    assert "FAQPage" in html
+    assert "WebPage" in html
+    assert "Product" in html
     js = (WEB / "js" / "kickstarter.js").read_text(encoding="utf-8")
-    assert "kickstarter.com" in js or "Back this project on Kickstarter" in js
+    assert "utm_source" in js
+    assert "HPL_KICKSTARTER_buildCampaignUrl" in js
+    shop = (WEB / "shop.html").read_text(encoding="utf-8")
+    assert "shop-kickstarter-bar" in shop
+    assert "kickstarter.config.js" in shop
+
+
+def test_kickstarter_seo_doc():
+    doc = (ROOT / "docs" / "KICKSTARTER_SEO.md").read_text(encoding="utf-8")
+    assert "utm_source=hackerplanet" in doc
+    assert "60 characters" in doc or "60 character" in doc
+    assert "Never embed Stripe" in doc
 
 
 def test_sync_website_to_docs():

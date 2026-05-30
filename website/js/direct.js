@@ -32,9 +32,15 @@
   }
 
   function renderStripeCheckout(host, product) {
-    if (typeof window.HPL_renderCheckout !== "function") return;
     host.className = "product-checkout";
     host.setAttribute("data-product", product.stripeKey);
+    if (
+      typeof window.HPL_KICKSTARTER_renderCheckout === "function" &&
+      window.HPL_KICKSTARTER_renderCheckout(host, product.stripeKey)
+    ) {
+      return;
+    }
+    if (typeof window.HPL_renderCheckout !== "function") return;
     var payProduct = window.HPL_PRODUCTS && window.HPL_PRODUCTS[product.stripeKey];
     if (payProduct) window.HPL_renderCheckout(host, payProduct);
   }
