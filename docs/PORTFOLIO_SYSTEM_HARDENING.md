@@ -172,7 +172,9 @@ For Hacker Planet **Year 1 kits**, the narrative is: reproducible scripts + runb
 
 **Preserve VPN/DNS:** Step 0 documents existing VPN profiles and Wi‑Fi Manual DNS before any app install. Malwarebytes free tier = **SMS filtering + Safari content blocking**—compatible with DuckDuckGo/NextDNS/Private Relay because it does not install a competing system DNS VPN. Optional Cloudflare/NextDNS apps are documented as **mutually exclusive** with other DNS VPN strategies.
 
-**USB to Windows SOC:** USB Restricted Mode, trust-only-laptop, encrypted backup via Apple Devices to SSD/OneDrive backup trees, optional `scripts/windows/iphone_usb_check.ps1` log reminder—no MDM push from PC. Runbook Step 5 in `IPHONE_RUN_NOW.md`.
+**Phase model:** **Phase 1** = Settings baseline (preserves DuckDuckGo VPN/DNS). **Phase 2** = Malwarebytes free, USB hardening, optional Lockdown Mode, verify VPN unchanged. Consolidated runbook: [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md).
+
+**USB to Windows SOC:** USB Restricted Mode, trust-only-laptop, encrypted backup via Apple Devices to SSD/OneDrive backup trees, optional `scripts/windows/iphone_usb_check.ps1` log reminder—no MDM push from PC. Phase 2 § 2.3 in `IPHONE_RUN_NOW.md`.
 
 ---
 

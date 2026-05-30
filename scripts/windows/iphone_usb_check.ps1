@@ -7,7 +7,7 @@
   APIs for arbitrary PowerShell without MDM/Apple Business Manager.
 
   Detects common Apple USB identifiers (Espressif not used here — Cardputer is separate)
-  and writes a one-line reminder to run docs/IPHONE_RUN_NOW.md USB steps.
+  and writes a one-line reminder to run docs/IPHONE_RUN_NOW.md Phase 2 § 2.3 (USB).
 
 .PARAMETER LogDir
   Directory for iphone_usb_check.log (default: user Backups\logs).
@@ -53,11 +53,11 @@ $detail = if ($detected) {
     'no Apple USB PnP match (device may be Wi‑Fi only or cable unplugged)'
 }
 
-$runbook = 'docs/IPHONE_RUN_NOW.md — USB section (preserve VPN/DNS)'
+$runbook = 'docs/IPHONE_RUN_NOW.md — Phase 2 § 2.3 USB (preserve VPN/DNS)'
 $usbDoc = 'docs/IPHONE_USB_HARDENING.md'
 
 if ($detected) {
-    $line = "[$stamp] iPhone attached - run IPHONE_RUN_NOW USB section | $runbook | $usbDoc | PnP: $detail"
+    $line = "[$stamp] iPhone attached - run IPHONE_RUN_NOW Phase 2 USB | $runbook | $usbDoc | PnP: $detail"
 } else {
     $line = "[$stamp] iphone_usb_check: $detail | Runbook: $runbook"
 }

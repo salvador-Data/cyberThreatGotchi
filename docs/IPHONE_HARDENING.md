@@ -26,14 +26,74 @@ What actually protects iPhone users:
 
 **What you cannot do from a Windows PC:** Install App Store apps on your iPhone remotely without Apple Business Manager / MDM enrollment. Andy must install apps **on the phone** (see [Manual install steps](#what-andy-must-do-manually-on-the-iphone) below).
 
-**Action runbook:** [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) — step-by-step checklist including VPN/DNS verification.  
+**Action runbook:** [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) — consolidated **Phase 1 + Phase 2** checklist (manual steps only).  
 **USB focus:** [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md) — Trust This Computer, encrypted backup to SSD/OneDrive paths, Windows laptop reminders.
 
 ---
 
-## Preserve your existing VPN and DNS (read before installing apps)
+## Phase 1 and Phase 2 — run order
 
-**Do not replace** a VPN profile or DNS setup that is already working. Hardening in **Settings** (Face ID, Find My, Safari, updates, Stolen Device Protection) does **not** change VPN or DNS — run those steps regardless.
+Complete **Phase 1** first (Settings only — safe with any VPN/DNS). Then **Phase 2** (apps, USB, optional Lockdown). **Do not replace** Andy’s existing **DuckDuckGo VPN/DNS** or **DuckDuckGo Password Manager** (or any working VPN/DNS profile).
+
+| Phase | What it covers | Changes VPN/DNS? |
+|-------|----------------|------------------|
+| **Phase 1 — Baseline hardening** | Document VPN/DNS baseline → iOS updates → passcode/Face ID/Stolen Device Protection → Find My → Apple ID 2FA → Safari/Mail/privacy → lock screen → USB Restricted Mode → AirDrop → audit profiles | **No** — Settings only |
+| **Phase 2 — Advanced layers** | Malwarebytes free (SMS + Safari) → skip DNS VPN apps if baseline already set → USB + Trust This Computer → optional Lockdown Mode → verify VPN/DNS unchanged → optional Windows encrypted backup | **No** if you skip new DNS VPN apps and Malwarebytes paid VPN |
+
+**On-device today:** [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) · **UTMS / free AV honesty:** [§ Free security apps & UTMS-like layers](#free-security-apps--utms-like-layers-keep-vpndns).
+
+### Phase 1 checklist (baseline — do all)
+
+Run in order. Check each box on the phone.
+
+```
+[ ] 1.0  Document VPN + Wi‑Fi DNS + DuckDuckGo Password Manager (Step 0) — screenshot or write down; KEEP DuckDuckGo VPN/DNS + Password Manager / existing profile
+[ ] 1.1  Settings → General → Software Update — latest iOS; Automatic Updates ON
+[ ] 1.2  Settings → Face ID & Passcode — strong passcode; Stolen Device Protection ON (iOS 17.3+)
+[ ] 1.3  Settings → [your name] → Find My → Find My iPhone ON (+ network / last location if shown)
+[ ] 1.4  Settings → [your name] → Sign-In & Security — 2FA ON; remove unknown devices
+[ ] 1.5  Settings → Apps → Safari — fraud warning, cross-site tracking, hide IP as preferred
+[ ] 1.6  Settings → Apps → Mail → Protect Mail Activity ON
+[ ] 1.7  Settings → Privacy & Security — audit Bluetooth + Local Network; Tracking denied
+[ ] 1.8  Settings → Face ID & Passcode → Allow Access When Locked — restrict lock-screen leaks
+[ ] 1.9  Settings → Face ID & Passcode → USB Accessories OFF when locked
+[ ] 1.10 Settings → General → AirDrop → Contacts Only (or Receiving Off in public)
+[ ] 1.11 Settings → General → VPN & Device Management — remove unknown profiles only
+[ ] 1.12 (Recommended) Location, Analytics, Messages filter unknown senders — see [§ 14](#14-additional-hardening-recommended)
+[ ] 1.V  VERIFY: Settings → VPN — unchanged; Wi‑Fi ⓘ → Configure DNS — unchanged
+```
+
+### Phase 2 checklist (advanced layers — do after Phase 1)
+
+```
+[ ] 2.1  App Store → Malwarebytes Mobile Security — install; onboarding complete
+[ ] 2.2  Settings → Apps → Messages → Unknown & Spam → Malwarebytes ON
+[ ] 2.3  Settings → Apps → Safari → Extensions → Malwarebytes blockers ON (if offered)
+[ ] 2.4  Do NOT enable Malwarebytes paid VPN — keep DuckDuckGo / existing VPN/DNS
+[ ] 2.5  DNS VPN apps (Cloudflare / NextDNS) — SKIP if Step 0 already had VPN or Manual DNS
+[ ] 2.6  USB: Trust only Andy’s laptop; USB Restricted Mode confirmed; trusted cable / data blocker in public
+[ ] 2.7  Settings → Privacy & Security → Developer Mode OFF (unless dev week)
+[ ] 2.8  (Optional) Lockdown Mode — only if credible targeted threat; see [§ 8](#8-lockdown-mode-optional--high-threat-profile)
+[ ] 2.9  (When USB to Windows) Apple Devices → encrypted local backup — password in password manager
+[ ] 2.V  VERIFY: VPN profile + Wi‑Fi DNS match Phase 1 baseline — browse a familiar site
+```
+
+**No fake automation:** Apple does not allow CTG or Windows scripts to change iPhone Settings remotely without MDM. Every step above is **manual on the device** (Windows backup step is optional when cabled).
+
+---
+
+## Preserve your existing VPN, DNS, and password manager (read before installing apps)
+
+**Do not replace** a VPN profile, DNS setup, or password manager that is already working. Hardening in **Settings** (Face ID, Find My, Safari, updates, Stolen Device Protection) does **not** change VPN, DNS, or AutoFill — run those steps regardless.
+
+### Keep DuckDuckGo Password Manager (Andy’s preference)
+
+Andy uses **DuckDuckGo** for **VPN + Password Manager (Autofill)**. Hardening must **preserve** both — **do not migrate away** to Apple Keychain or another password manager unless Andy explicitly chooses to.
+
+1. Keep the **DuckDuckGo** app installed (VPN + Password Manager).
+2. **Settings** → **General** → **AutoFill & Passwords** → ensure **DuckDuckGo Passwords** / **DuckDuckGo Autofill** is **On**.
+3. **Do not** disable DuckDuckGo autofill during hardening — Malwarebytes SMS/Safari filtering and Safari fraud/tracking settings are **compatible** with DuckDuckGo Password Manager.
+4. **iCloud Keychain** can coexist (e.g. for Apple ID, Wi‑Fi passwords) — leave **On** if already synced, but **keep DuckDuckGo as primary autofill** for sites and apps Andy uses today. Do **not** treat hardening as a reason to switch PMs.
 
 ### Check what you have first
 
@@ -48,6 +108,7 @@ Screenshot or write down both screens if you might need to restore them.
 
 | Existing setup | What to do |
 |----------------|------------|
+| **DuckDuckGo VPN / Privacy Pro** (Andy’s typical stack) | **Keep it.** **Do not** install Cloudflare, NextDNS, or AdGuard DNS VPN apps. Phase 1 Settings + Phase 2 Malwarebytes (SMS/Safari only) — **no** Malwarebytes paid VPN. |
 | **Corporate / school VPN** | Keep it. **Do not** install Cloudflare or NextDNS unless IT approves — only one system VPN slot is practical at a time. |
 | **iCloud Private Relay** | Keep it. Skip DNS VPN apps; they conflict or duplicate filtering. Use Malwarebytes for SMS/Safari only. |
 | **NextDNS profile or app already connected** | Keep it. **Skip** Cloudflare 1.1.1.1. Harden via Settings + Malwarebytes Safari filter. |
@@ -233,7 +294,7 @@ Full USB + Windows backup checklist: [§ USB connection hardening](#usb-connecti
 
 Use this when the iPhone 15 Pro Max is on **USB-C** to Andy’s Windows SOC laptop or when you charge in public. **These steps do not change VPN or DNS** — complete them in addition to [Preserve your existing VPN and DNS](#preserve-your-existing-vpn-and-dns-read-before-installing-apps).
 
-**Focused runbook:** [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md) · tap-through on device: [IPHONE_RUN_NOW.md § USB](IPHONE_RUN_NOW.md#step-5--usb-connection-hardening-preserve-vpndns).
+**Focused runbook:** [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md) · Phase 2 on device: [IPHONE_RUN_NOW.md § 2.3](IPHONE_RUN_NOW.md#23--usb-connection-hardening).
 
 ### Keep VPN/DNS while hardening USB (repeat)
 
@@ -424,28 +485,39 @@ Same principle everywhere: **reduce attack surface**, **log and detect on infras
 
 ---
 
-## Quick reference card
+## Quick reference card (Phase 1 + Phase 2)
+
+**Phase 1 — baseline (Settings only; preserves DuckDuckGo / existing VPN/DNS):**
 
 ```
-[ ] Documented VPN (Settings → VPN) + Wi‑Fi DNS (Configure DNS) BEFORE app installs
-[ ] iOS updated + automatic security updates ON
-[ ] Strong passcode + Face ID + Stolen Device Protection ON
-[ ] Find My iPhone ON
-[ ] Apple ID 2FA ON + unknown devices removed
-[ ] Safari fraud warning + cross-site tracking + hide IP
-[ ] Mail Privacy Protection ON
-[ ] Bluetooth / Local Network permissions audited
-[ ] Lock screen previews restricted
-[ ] USB Restricted Mode (accessories when locked OFF)
-[ ] USB: Trust only Andy's laptop; encrypted backup when plugged into Windows
-[ ] USB-C trusted cable; data blocker for untrusted public ports
-[ ] Free layers: Malwarebytes (SMS/Safari) OR existing DNS VPN = UTMS-like DNS (not both DNS apps)
-[ ] No scam "virus cleaner" / booster apps
-[ ] Malwarebytes installed + SMS/Safari features enabled (safe with existing VPN/DNS)
-[ ] DNS VPN app ONLY if none already: Cloudflare 1.1.1.1 OR NextDNS — else SKIP
-[ ] Cardputer UTMS on M5 — separate from iPhone stack
-[ ] Post-hardening: VPN + Wi‑Fi DNS unchanged from baseline
-[ ] No unknown configuration profiles
+[ ] 1.0 Documented VPN (Settings → VPN) + Wi‑Fi DNS (Configure DNS) BEFORE any Phase 2 apps
+[ ] 1.1 iOS updated + automatic security updates ON
+[ ] 1.2 Strong passcode + Face ID + Stolen Device Protection ON
+[ ] 1.3 Find My iPhone ON
+[ ] 1.4 Apple ID 2FA ON + unknown devices removed
+[ ] 1.5 Safari fraud warning + cross-site tracking + hide IP
+[ ] 1.6 Mail Privacy Protection ON
+[ ] 1.7 Bluetooth / Local Network permissions audited
+[ ] 1.8 Lock screen previews restricted
+[ ] 1.9 USB Restricted Mode (accessories when locked OFF)
+[ ] 1.10 AirDrop Contacts Only (or Receiving Off in public)
+[ ] 1.11 No unknown configuration profiles
+[ ] 1.V Phase 1 verify: VPN + Wi‑Fi DNS unchanged from baseline
+```
+
+**Phase 2 — advanced layers (after Phase 1):**
+
+```
+[ ] 2.1 Malwarebytes installed + SMS/Safari features enabled (safe with DuckDuckGo / existing VPN/DNS)
+[ ] 2.2 Malwarebytes paid VPN OFF — do not replace existing VPN/DNS
+[ ] 2.3 DNS VPN app ONLY if none already: Cloudflare 1.1.1.1 OR NextDNS — else SKIP
+[ ] 2.4 USB: Trust only Andy's laptop; encrypted backup when plugged into Windows
+[ ] 2.5 USB-C trusted cable; data blocker for untrusted public ports
+[ ] 2.6 Developer Mode OFF (unless dev week)
+[ ] 2.7 Free layers: Malwarebytes (SMS/Safari) + existing DNS VPN = UTMS-like DNS (not two DNS apps)
+[ ] 2.8 No scam "virus cleaner" / booster apps
+[ ] 2.9 Cardputer UTMS on M5 — separate from iPhone stack
+[ ] 2.V Phase 2 verify: VPN + Wi‑Fi DNS unchanged from Phase 1 baseline
 [ ] (Optional) Lockdown Mode if high-threat
 [ ] (Optional) Wi‑Fi Manual DNS only — if no DNS VPN and you want home-Wi‑Fi filtering
 ```

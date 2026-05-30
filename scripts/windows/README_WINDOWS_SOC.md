@@ -159,7 +159,7 @@ When the **iPhone 15 Pro Max** is on USB-C to this PC, hardening is done **on th
 
 | Item | Detail |
 |------|--------|
-| **Runbook** | [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) Step 5 · [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) |
+| **Runbook** | [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) Phase 2 § 2.3 · [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) |
 | **Preserve VPN/DNS** | Do not install a second DNS VPN on the phone; verify **Settings → VPN** after hardening (DuckDuckGo/NextDNS/1.1.1.1 unchanged) |
 | **Encrypted backup** | Apple Devices → **Encrypt local backup**; align with `D:\Backups\Andy-PC-*`, `C:\Users\Owner\Backups\`, OneDrive `Backups\Andy-PC-*` (see `cloud_backup.ps1`) |
 | **Log stub** | `iphone_usb_check.ps1` — writes `Backups\logs\iphone_usb_check.log`; reminder only |

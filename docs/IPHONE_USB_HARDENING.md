@@ -1,18 +1,19 @@
 # iPhone USB connection hardening — iPhone 15 Pro Max, iOS 17 / 18
 
-**Hacker Planet LLC / CyberThreatGotchi** — defensive guidance for USB-C and **Trust This Computer** when you connect your iPhone to Andy’s Windows SOC laptop. Use with the full mobile runbook: [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) · [IPHONE_HARDENING.md](IPHONE_HARDENING.md).
+**Hacker Planet LLC / CyberThreatGotchi** — defensive guidance for USB-C and **Trust This Computer** when you connect your iPhone to Andy’s Windows SOC laptop. Use with the full mobile runbook: [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) (Phase 2 § 2.3) · [IPHONE_HARDENING.md](IPHONE_HARDENING.md).
 
 **Windows companion:** [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md) · stub `scripts/windows/iphone_usb_check.ps1` (log-only reminder).
 
 ---
 
-## Keep VPN and DNS (do not break while hardening USB)
+## Keep VPN, DNS, and DuckDuckGo Password Manager (do not break while hardening USB)
 
-Hardening USB settings and Windows backup habits **does not** require changing VPN or DNS. Repeat these rules every time you plug in:
+Hardening USB settings and Windows backup habits **does not** require changing VPN, DNS, or password autofill. Repeat these rules every time you plug in:
 
 | Rule | Why |
 |------|-----|
 | **Do not** install a second DNS VPN app if **DuckDuckGo**, **NextDNS**, **Cloudflare 1.1.1.1**, or **Wi‑Fi Manual DNS** is already working | iOS allows only one DNS-capturing VPN profile at a time |
+| **Keep DuckDuckGo Password Manager** — **Settings** → **General** → **AutoFill & Passwords** → DuckDuckGo Autofill **On** | Hardening is not a reason to migrate to Apple Keychain; Malwarebytes/Safari layers are compatible |
 | **Malwarebytes** SMS/Safari only — **no** Malwarebytes paid VPN if you keep existing VPN/DNS | Avoids a competing system VPN profile |
 | After any Settings change, verify **Settings** → **General** → **VPN & Device Management** → **VPN** — profile unchanged |
 | Re-check **Settings** → **Wi‑Fi** → **ⓘ** → **Configure DNS** — still Automatic / Manual / Off as before |
