@@ -55,5 +55,5 @@ Write-Host '2. Enable Npcap during setup (WinPcap legacy not recommended)'
 Write-Host '3. For USB WiFi monitor mode, use Kali VM with Realtek passthrough per KALI_LAB_ARCHITECTURE.md'
 
 if ($NpcapLoopback) {
-    Write-Host 'Optional: Npcap loopback adapter for localhost capture — enable in Npcap installer advanced options.'
+    Write-Host 'Optional: Npcap loopback adapter for localhost capture - enable in Npcap installer advanced options.'
 }
