@@ -13,6 +13,15 @@
 .PARAMETER OpenRunbook
   Open docs/IPHONE_RUN_NOW.md locally and the tap-friendly GitHub Pages runbook in browser.
 
+.PARAMETER OpenGuide
+  Open docs/iphone_hardening_guide.html in the default browser and print paths to open the same
+  guided wizard on the iPhone (AirDrop, email, Files, or optional LAN URL).
+
+.PARAMETER ServeOnLan
+  With -OpenGuide only: start a short-lived Python http.server on port 8765 serving docs/ so the
+  phone can open http://<laptop-lan-ip>:8765/iphone_hardening_guide.html. Requires approval on
+  the same Wi-Fi; binds 0.0.0.0 (LAN only — stop server when done).
+
 .PARAMETER LogOnly
   CI-style check: verify repo, run USB check, write log, exit without interactive prompts.
 
@@ -26,11 +35,19 @@
   .\scripts\windows\iphone_hardening_assist.ps1 -OpenRunbook
 
 .EXAMPLE
+  .\scripts\windows\iphone_hardening_assist.ps1 -OpenGuide
+
+.EXAMPLE
+  .\scripts\windows\iphone_hardening_assist.ps1 -OpenGuide -ServeOnLan
+
+.EXAMPLE
   .\scripts\windows\iphone_hardening_assist.ps1 -LogOnly
 #>
 [CmdletBinding()]
 param(
     [switch] $OpenRunbook,
+    [switch] $OpenGuide,
+    [switch] $ServeOnLan,
     [switch] $LogOnly,
     [string] $LogDir = ''
 )
@@ -40,10 +57,12 @@ $ScriptDir = $PSScriptRoot
 $RepoRoot = Split-Path (Split-Path $ScriptDir -Parent) -Parent
 
 $RunbookLocal = Join-Path $RepoRoot 'docs\IPHONE_RUN_NOW.md'
+$GuideHtml = Join-Path $RepoRoot 'docs\iphone_hardening_guide.html'
 $RunbookWeb = 'https://salvador-Data.github.io/cyberThreatGotchi/iphone-run-now.html'
 $RunbookGitHub = 'https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/IPHONE_RUN_NOW.md'
 $ShortcutsDoc = Join-Path $RepoRoot 'docs\iphone_hardening_shortcuts.md'
 $MalwarebytesAppStore = 'https://apps.apple.com/us/app/malwarebytes-mobile-security/id1327105431'
+$LanGuidePort = 8765
 
 if (-not $LogDir) {
     $LogDir = Join-Path $env:USERPROFILE 'Backups\logs'
@@ -65,6 +84,7 @@ function Test-CtgRepo {
     $markers = @(
         (Join-Path $RepoRoot 'docs\IPHONE_HARDENING.md'),
         (Join-Path $RepoRoot 'docs\IPHONE_RUN_NOW.md'),
+        (Join-Path $RepoRoot 'docs\iphone_hardening_guide.html'),
         (Join-Path $ScriptDir 'iphone_usb_check.ps1')
     )
     foreach ($m in $markers) {
@@ -289,10 +309,126 @@ function Show-CtgChecklist {
         }
     }
     Write-Host ''
-    Write-Host 'Deep links: AirDrop this output, email yourself, or open on phone:' -ForegroundColor Cyan
-    Write-Host "  $RunbookWeb" -ForegroundColor Cyan
-    Write-Host 'Shortcuts routine: docs/iphone_hardening_shortcuts.md' -ForegroundColor Cyan
+    Write-Host 'Guided wizard (Prev/Next on phone):' -ForegroundColor Cyan
+    Write-Host "  file: $GuideHtml" -ForegroundColor Cyan
+    Write-Host '  run:  .\scripts\windows\iphone_hardening_assist.ps1 -OpenGuide' -ForegroundColor Cyan
+    Write-Host 'Shortcuts: docs/iphone_hardening_shortcuts.md' -ForegroundColor Cyan
+    Write-Host "Static list: $RunbookWeb" -ForegroundColor Cyan
     Write-Host ''
+}
+
+function Get-CtgLanIPv4 {
+    $addrs = @()
+    try {
+        $addrs = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction Stop |
+            Where-Object {
+                $_.IPAddress -notmatch '^127\.' -and
+                $_.IPAddress -notmatch '^169\.254\.' -and
+                $_.PrefixOrigin -ne 'WellKnown'
+            } |
+            Select-Object -ExpandProperty IPAddress -Unique
+    } catch {
+        $addrs = @()
+    }
+    if ($addrs.Count -eq 0) {
+        try {
+            $hostEntry = [System.Net.Dns]::GetHostEntry($env:COMPUTERNAME)
+            $addrs = $hostEntry.AddressList |
+                Where-Object { $_.AddressFamily -eq 'InterNetwork' -and $_.ToString() -notmatch '^127\.' } |
+                ForEach-Object { $_.ToString() }
+        } catch {
+            $addrs = @()
+        }
+    }
+    return @($addrs | Select-Object -First 3)
+}
+
+function Start-CtgGuideLanServer {
+    param([string] $DocsDir, [int] $Port)
+    $exe = $null
+    if (Get-Command python -ErrorAction SilentlyContinue) {
+        $exe = (Get-Command python).Source
+    } elseif (Get-Command py -ErrorAction SilentlyContinue) {
+        $exe = (Get-Command py).Source
+    }
+    if (-not $exe) {
+        Write-Host 'Python not found - skip -ServeOnLan or install Python 3.' -ForegroundColor Yellow
+        return $null
+    }
+    $argList = @('-m', 'http.server', "$Port", '--bind', '0.0.0.0')
+    Write-Host "Starting LAN guide server on port $Port (docs root)..." -ForegroundColor Cyan
+    Write-Host 'Stop with: Get-Job | Stop-Job; Get-Job | Remove-Job' -ForegroundColor Yellow
+    $job = Start-Job -ScriptBlock {
+        param($PythonExe, $Args, $WorkDir)
+        Set-Location $WorkDir
+        & $PythonExe @Args 2>&1
+    } -ArgumentList $exe, $argList, $DocsDir
+    Start-Sleep -Seconds 1
+    return $job
+}
+
+function Show-CtgGuidePhoneInstructions {
+    param(
+        [string] $GuidePath,
+        [int] $Port,
+        [bool] $LanStarted,
+        [string[]] $LanIps
+    )
+    Write-Host ''
+    Write-Host '========================================' -ForegroundColor Green
+    Write-Host ' Open guided wizard ON YOUR IPHONE' -ForegroundColor Green
+    Write-Host '========================================' -ForegroundColor Green
+    Write-Host ''
+    Write-Host 'Simplest (recommended):' -ForegroundColor White
+    Write-Host '  1. AirDrop docs\iphone_hardening_guide.html to iPhone' -ForegroundColor Gray
+    Write-Host '  2. Tap file -> Open in Safari -> use Previous / Next' -ForegroundColor Gray
+    Write-Host ''
+    Write-Host 'Alternatives:' -ForegroundColor White
+    Write-Host '  - Email the HTML to yourself; open attachment in Safari' -ForegroundColor Gray
+    Write-Host '  - Files app: copy from iCloud/OneDrive project folder' -ForegroundColor Gray
+    Write-Host "  - Windows path (AirDrop/USB share): $GuidePath" -ForegroundColor DarkCyan
+    Write-Host ''
+    if ($LanStarted -and $LanIps.Count -gt 0) {
+        Write-Host 'LAN (same Wi-Fi; firewall may prompt - allow Private network):' -ForegroundColor Yellow
+        foreach ($ip in $LanIps) {
+            Write-Host "  http://${ip}:${Port}/iphone_hardening_guide.html" -ForegroundColor Cyan
+        }
+    } elseif ($LanStarted) {
+        Write-Host "LAN server on port $Port but no LAN IPv4 found - check ipconfig." -ForegroundColor Yellow
+    } else {
+        Write-Host 'Optional LAN: re-run with -OpenGuide -ServeOnLan (Python, port 8765).' -ForegroundColor DarkGray
+    }
+    Write-Host ''
+    Write-Host 'Limit: cannot auto-enable Face ID or toggles - Open Settings only opens the pane.' -ForegroundColor Yellow
+    Write-Host ''
+}
+
+function Open-CtgGuide {
+    param([bool] $StartLan)
+    if (-not (Test-Path $GuideHtml)) {
+        throw "Guide not found: $GuideHtml"
+    }
+    $docsDir = Join-Path $RepoRoot 'docs'
+    $lanJob = $null
+    $lanIps = @()
+    if ($StartLan) {
+        $confirm = Read-Host "Start LAN server on port $LanGuidePort for phone access? (y/N)"
+        if ($confirm -match '^[yY]') {
+            $lanIps = Get-CtgLanIPv4
+            $lanJob = Start-CtgGuideLanServer -DocsDir $docsDir -Port $LanGuidePort
+        } else {
+            Write-Host 'LAN server skipped.' -ForegroundColor Gray
+        }
+    }
+    try {
+        Start-Process $GuideHtml
+    } catch {
+        Write-Host "Could not open browser: $GuideHtml" -ForegroundColor Yellow
+    }
+    Show-CtgGuidePhoneInstructions -GuidePath $GuideHtml -Port $LanGuidePort -LanStarted ($null -ne $lanJob) -LanIps $lanIps
+    if ($lanJob) {
+        Write-Host "LAN server job Id: $($lanJob.Id) (serving $docsDir)" -ForegroundColor DarkCyan
+    }
 }
 
 function Open-CtgRunbook {
@@ -310,11 +446,16 @@ function Open-CtgRunbook {
 
 try {
     Test-CtgRepo
-    Write-AssistLog "repo OK | LogOnly=$LogOnly | OpenRunbook=$OpenRunbook"
+    Write-AssistLog "repo OK | LogOnly=$LogOnly | OpenRunbook=$OpenRunbook | OpenGuide=$OpenGuide | ServeOnLan=$ServeOnLan"
 
     $usbScript = Join-Path $ScriptDir 'iphone_usb_check.ps1'
     $usbLine = & $usbScript -LogDir $LogDir 2>&1 | Select-Object -Last 1
     Write-AssistLog "usb_check: $usbLine"
+
+    if ($OpenGuide) {
+        Open-CtgGuide -StartLan:$ServeOnLan
+        Write-AssistLog "OpenGuide displayed phone instructions guide=$GuideHtml"
+    }
 
     if ($OpenRunbook) {
         Open-CtgRunbook
@@ -323,7 +464,7 @@ try {
     $checklist = Get-CtgHardeningChecklist
 
     if ($LogOnly) {
-        Write-AssistLog "checklist_items=$($checklist.Count) | runbook=$RunbookGitHub | shortcuts=$ShortcutsDoc"
+        Write-AssistLog "checklist_items=$($checklist.Count) | guide=$GuideHtml | runbook=$RunbookGitHub | shortcuts=$ShortcutsDoc"
         Write-AssistLog 'LogOnly complete - no device modification from PC'
         exit 0
     }

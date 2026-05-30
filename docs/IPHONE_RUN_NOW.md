@@ -4,7 +4,26 @@
 **Full reference:** [IPHONE_HARDENING.md](IPHONE_HARDENING.md) (Phase definitions, UTMS honesty, Lockdown tradeoffs)  
 **USB detail:** [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md)
 
-Manual steps only — **no CTG automation can change iPhone Settings** without Apple MDM. Run on the phone today in order: **Phase 1 → Phase 2 → verify**.
+---
+
+## Guided walkthrough (recommended)
+
+Use the **step-by-step wizard** on your iPhone — **Previous / Next**, progress bar, and **Open Settings** deep links per step (with manual fallback on every screen). Preserves DuckDuckGo VPN/DNS and DuckDuckGo Password Manager warnings throughout.
+
+| Resource | Use when |
+|----------|----------|
+| **[iphone_hardening_guide.html](iphone_hardening_guide.html)** | Primary: AirDrop or Files → open in **Safari** on the phone |
+| **Windows:** `.\scripts\windows\iphone_hardening_assist.ps1 -OpenGuide` | Opens the same HTML on the laptop + prints AirDrop/LAN instructions |
+| **[iphone_hardening_shortcuts.md](iphone_hardening_shortcuts.md)** | Optional iOS **Shortcuts** routine (open URL → wait → next pane) |
+| [iphone-run-now.html](../website/iphone-run-now.html) | Static tap list on GitHub Pages (no Prev/Next wizard) |
+
+**Simplest on phone:** AirDrop `docs/iphone_hardening_guide.html` from the laptop → tap → **Open in Safari**.
+
+**Honest limit:** Stock iOS cannot auto-enable Face ID, passcodes, or Settings toggles — the guide only opens the right pane; you tap through.
+
+---
+
+Manual checklist below — **no CTG automation can change iPhone Settings** without Apple MDM. Run on the phone today in order: **Phase 1 → Phase 2 → verify**.
 
 **Rule:** **Do not replace** Andy’s existing **DuckDuckGo VPN/DNS** or **DuckDuckGo Password Manager** (or any working VPN/DNS). Phase 1 is Settings-only and safe. Phase 2 adds Malwarebytes and USB layers — **skip** Cloudflare/NextDNS if VPN/DNS is already set. **Keep DuckDuckGo Password Manager** — do not migrate to Apple Keychain during hardening unless Andy chooses to.
 
@@ -26,7 +45,19 @@ From repo root (one command per block):
 cd C:\Users\Owner\Projects\cyberThreatGotchi
 ```
 
-Interactive assist + open runbook in browser:
+Guided wizard on laptop + phone transfer instructions:
+
+```powershell
+.\scripts\windows\iphone_hardening_assist.ps1 -OpenGuide
+```
+
+Optional same-Wi-Fi URL (Python; confirms before starting):
+
+```powershell
+.\scripts\windows\iphone_hardening_assist.ps1 -OpenGuide -ServeOnLan
+```
+
+Interactive assist + markdown runbook in browser:
 
 ```powershell
 .\scripts\windows\iphone_hardening_assist.ps1 -OpenRunbook

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="referrer" content="no-referrer"/>
+<title>CTG iPhone Hardening — Guided Walkthrough</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --card: #141b24;
+    --fg: #e6edf3;
+    --accent: #3dd68c;
+    --warn: #f0b429;
+    --muted: #8b949e;
+    --border: #30363d;
+    --btn: #238636;
+    --btn2: #21262d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    margin: 0;
+    padding: max(1rem, env(safe-area-inset-top)) 1rem max(5.5rem, env(safe-area-inset-bottom));
+    line-height: 1.55;
+    font-size: 1.05rem;
+  }
+  header { margin-bottom: 1rem; }
+  h1 { font-size: 1.25rem; margin: 0 0 0.35rem; }
+  .sub { color: var(--muted); font-size: 0.9rem; margin: 0; }
+  .progress-wrap { margin: 1rem 0; }
+  .progress-label { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.35rem; }
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.25s ease;
+  }
+  .phase-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+  .phase-baseline { background: #1f3a5f; color: #79c0ff; }
+  .phase-1 { background: #1a3d2e; color: var(--accent); }
+  .phase-2 { background: #3d2a1a; color: #f0b429; }
+  .phase-verify { background: #3d1a3d; color: #d2a8ff; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.15rem 1.1rem 1.25rem;
+    min-height: 12rem;
+  }
+  .step-id { font-size: 0.8rem; color: var(--muted); margin: 0 0 0.25rem; }
+  .step-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 0.75rem; color: #fff; }
+  .step-body p { margin: 0 0 0.65rem; }
+  .step-body ul { margin: 0.4rem 0 0.65rem; padding-left: 1.2rem; }
+  .step-body li { margin-bottom: 0.35rem; }
+  .fallback {
+    font-size: 0.88rem;
+    color: var(--muted);
+    border-left: 3px solid var(--border);
+    padding: 0.5rem 0 0.5rem 0.75rem;
+    margin-top: 0.75rem;
+  }
+  .fallback strong { color: var(--fg); display: block; margin-bottom: 0.25rem; font-size: 0.8rem; }
+  .warn, .limit {
+    font-size: 0.88rem;
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    margin-top: 0.75rem;
+  }
+  .warn { background: rgba(240, 180, 41, 0.12); border: 1px solid rgba(240, 180, 41, 0.35); color: #e3b341; }
+  .limit { background: rgba(210, 168, 255, 0.08); border: 1px solid rgba(210, 168, 255, 0.25); color: #d2a8ff; }
+  .actions-top { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.55rem 1rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-open { background: var(--btn); color: #fff; flex: 1 1 auto; min-width: 10rem; }
+  .btn-open.secondary { background: var(--btn2); color: var(--accent); border: 1px solid var(--border); font-size: 0.9rem; min-height: 40px; }
+  nav.footer-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.65rem 1rem max(0.65rem, env(safe-area-inset-bottom));
+    background: rgba(10, 14, 20, 0.96);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+  }
+  .btn-nav {
+    flex: 1;
+    background: var(--btn2);
+    color: var(--fg);
+    border: 1px solid var(--border);
+  }
+  .btn-nav.primary { background: var(--accent); color: #0a0e14; border-color: var(--accent); }
+  .btn-nav:disabled { opacity: 0.35; cursor: not-allowed; }
+  .intro-note {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin-top: 0.75rem;
+    padding: 0.65rem;
+    background: rgba(61, 214, 140, 0.06);
+    border-radius: 8px;
+  }
+  .hidden { display: none !important; }
+  code { font-size: 0.9em; background: #21262d; padding: 0.1em 0.35em; border-radius: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>iPhone 15 Pro Max Hardening</h1>
+  <p class="sub">CyberThreatGotchi · Phase 1 + 2 · Guided walkthrough</p>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-label" id="progressLabel">Step 1 of 21</div>
+  <div class="progress-bar" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<article class="card" id="stepCard" aria-live="polite">
+  <div id="stepContent"></div>
+  <div class="actions-top" id="openActions"></div>
+</article>
+
+<p class="intro-note" id="globalNote">
+  <strong>Preserve:</strong> Keep DuckDuckGo VPN/DNS and DuckDuckGo Password Manager. This guide opens Settings panes — you tap toggles. iOS 17/18 may block some deep links; use the manual path on each step.
+</p>
+
+<nav class="footer-nav" aria-label="Step navigation">
+  <button type="button" class="btn btn-nav" id="btnPrev" disabled>Previous</button>
+  <button type="button" class="btn btn-nav primary" id="btnNext">Next</button>
+</nav>
+
+<script>
+(function () {
+  'use strict';
+
+  var MALWAREBYTES = 'https://apps.apple.com/us/app/malwarebytes-mobile-security/id1327105431';
+
+  var STEPS = [
+    {
+      id: '0a',
+      group: 'baseline',
+      groupLabel: 'Step 0 — Baseline',
+      title: 'Document VPN (do not change)',
+      body: '<p>Before changing anything, open VPN and write down profile name(s) and Connected / Not Connected.</p><ul><li><strong>Do not</strong> disconnect DuckDuckGo VPN or any working VPN.</li><li>Phase 2 must not add a second DNS-capturing VPN on top.</li></ul>',
+      manual: 'Settings → General → VPN & Device Management → VPN',
+      links: ['prefs:root=General&path=ManagedConfigurationList', 'App-Prefs:root=General&path=ManagedConfigurationList'],
+      warn: 'KEEP DuckDuckGo VPN/DNS. Do not install Cloudflare or NextDNS on top of an active DNS VPN.'
+    },
+    {
+      id: '0b',
+      group: 'baseline',
+      groupLabel: 'Step 0 — Baseline',
+      title: 'Document Wi‑Fi DNS (do not change)',
+      body: '<p>On your home Wi‑Fi, note Configure DNS: Automatic, Manual (which servers), or Off.</p><ul><li>Do not switch to Manual unless you intend to.</li></ul>',
+      manual: 'Settings → Wi‑Fi → ⓘ on home network → Configure DNS',
+      links: ['prefs:root=WIFI', 'App-Prefs:root=WIFI']
+    },
+    {
+      id: '0c',
+      group: 'baseline',
+      groupLabel: 'Step 0 — Baseline',
+      title: 'DuckDuckGo Password Manager — keep On',
+      body: '<p>Confirm DuckDuckGo Passwords / DuckDuckGo Autofill is <strong>On</strong>. Confirm the DuckDuckGo app is installed.</p><ul><li>Do not migrate to Apple Keychain during this session unless you choose to.</li><li>iCloud Keychain may coexist; DuckDuckGo stays primary for autofill.</li></ul>',
+      manual: 'Settings → General → AutoFill & Passwords → DuckDuckGo Autofill → On',
+      links: ['prefs:root=PASSWORDS', 'App-Prefs:root=PASSWORDS'],
+      warn: 'Do NOT turn off DuckDuckGo Autofill during hardening.'
+    },
+    {
+      id: '1.1',
+      group: 'phase1',
+      groupLabel: 'Phase 1',
+      title: 'Software Update',
+      body: '<p>Install the latest <strong>iOS 17</strong> or <strong>18</strong>.</p><ul><li><strong>Automatic Updates</strong> → On (iOS Updates + Security Responses & System Files).</li></ul>',
+      manual: 'Settings → General → Software Update → Automatic Updates',
+      links: ['prefs:root=General&path=SOFTWARE_UPDATE_LINK', 'App-Prefs:root=General&path=SOFTWARE_UPDATE_LINK']
+    },
+    {
+      id: '1.2',
+      group: 'phase1',
+      groupLabel: 'Phase 1',
+      title: 'Passcode, Face ID, Stolen Device Protection',
+      body: '<p>Set a strong passcode and confirm Face ID for unlock / Apple Pay as you use them.</p><ul><li><strong>Custom Alphanumeric Code</strong> (or strong 6-digit minimum).</li><li><strong>Stolen Device Protection</strong> → On (requires iOS 17.3+).</li></ul>',
+      manual: 'Settings → Face ID & Passcode',
+      links: ['prefs:root=PASSCODE', 'App-Prefs:root=PASSCODE'],
+      limit: 'Cannot auto-enroll Face ID or change passcode — this button only opens the pane; you complete biometrics on device.'
+    },
+    {
+      id: '1.3',
+      group: 'phase1',
+      groupLabel: 'Phase 1',
+      title: 'Find My iPhone',
+      body: '<p>Enable Find My and related options.</p><ul><li><strong>Find My iPhone</strong> → On</li><li><strong>Find My network</strong> and <strong>Send Last Location</strong> → On if shown</li></ul>',
+      manual: 'Settings → [your name] → Find My → Find My iPhone',
+      links: ['prefs:root=APPLE_ACCOUNT', 'App-Prefs:root=APPLE_ACCOUNT']
+    },
+    {
+      id: '1.4',
+      group: 'phase1',
+      groupLabel: 'Phase 1',
+      title: 'Apple ID — 2FA and devices',
+      body: '<ul><li><strong>Two-Factor Authentication</strong> → On</li><li><strong>Sign-In & Security</strong> → <strong>Devices</strong> — remove anything unrecognized</li><li>Use DuckDuckGo Password Manager for your Apple ID password (keep autofill On)</li></ul>',
+      manual: 'Settings → [your name] → Sign-In & Security',
+      links: ['prefs:root=APPLE_ACCOUNT', 'App-Prefs:root=APPLE_ACCOUNT']
+    },
+    {
+      id: '1.5',
+      group: 'phase1',
+      groupLabel: 'Phase 1',
+      title: 'Safari privacy',
+      body: '<ul><li><strong>Fraudulent Website Warning</strong> → On</li><li><strong>Prevent Cross-Site Tracking</strong> → On</li><li><strong>Hide IP Address</strong> → From Trackers and Websites (or Trackers Only)</li><li>Optional: <strong>Block Pop-ups</strong> → On</li></ul>',
+      manual: 'Settings → Apps → Safari (or Settings → Safari on older layouts)',
+      links: ['App-prefs:com.apple.mobilesafari', 'prefs:root=SAFARI']
+    },
+    {
+      id: '1.6',
+      group: 'phase1',
+      groupLabel: 'Phase 1',
+      title: 'Mail — Protect Mail Activity',
+      body: '<p>Enable mail privacy protection.</p><ul><li><strong>Privacy Protection</strong> → <strong>Protect Mail Activity</strong> → On</li></ul>',
+      manual: 'Settings → Apps → Mail → Privacy Protection',
+      links: ['prefs:root=MAIL', 'App-Prefs:root=MAIL']
+    },
+    {
+      id: '1.7',
+      group: 'phase1',
+      groupLabel: 'Phase 1',
+      title: 'Privacy permissions',
+      body: '<ul><li><strong>Bluetooth</strong> — revoke apps that do not need Bluetooth</li><li><strong>Local Network</strong> — revoke unnecessary LAN access</li><li><strong>Tracking</strong> — deny cross-app tracking</li><li>Optional: <strong>Location Services</strong> — per-app minimum</li></ul>',
+      manual: 'Settings → Privacy & Security → Bluetooth / Local Network / Tracking',
+      links: ['prefs:root=Privacy', 'App-Prefs:root=Privacy']
+    },
+    {
+      id: '1.8',
+      group: 'phase1',
+      groupLabel: 'Phase 1',
+      title: 'Lock screen & notifications',
+      body: '<ul><li><strong>Face ID & Passcode</strong> → <strong>Allow Access When Locked</strong> — turn off unneeded items</li><li><strong>Notifications</strong> → sensitive apps → <strong>Show Previews</strong> → When Unlocked or Never</li></ul>',
+      manual: 'Settings → Face ID & Passcode; Settings → Notifications',
+      links: ['prefs:root=PASSCODE', 'prefs:root=NOTIFICATIONS_ID']
+    },
+    {
+      id: '1.9',
+      group: 'phase1',
+      groupLabel: 'Phase 1',
+      title: 'USB Restricted Mode',
+      body: '<p>Block USB accessories when the device is locked (also used in Phase 2 USB hardening).</p><ul><li><strong>USB Accessories</strong> (or <strong>Allow Accessories When Locked</strong>) → <strong>Off</strong></li></ul>',
+      manual: 'Settings → Face ID & Passcode → USB Accessories',
+      links: ['prefs:root=PASSCODE', 'App-Prefs:root=PASSCODE']
+    },
+    {
+      id: '1.10',
+      group: 'phase1',
+      groupLabel: 'Phase 1',
+      title: 'AirDrop & profiles',
+      body: '<ul><li><strong>AirDrop</strong> → Contacts Only (or Receiving Off in public)</li><li><strong>VPN & Device Management</strong> — remove only profiles you did not install from known work/school MDM</li></ul>',
+      manual: 'Settings → General → AirDrop; Settings → General → VPN & Device Management',
+      links: ['prefs:root=General&path=AIRDROP_LINK', 'prefs:root=General&path=ManagedConfigurationList']
+    },
+    {
+      id: '1.11',
+      group: 'phase1',
+      groupLabel: 'Phase 1',
+      title: 'Verify DuckDuckGo Autofill (extras)',
+      body: '<ul><li>Re-confirm <strong>DuckDuckGo Autofill</strong> → On</li><li>Optional: Messages → Filter Unknown Senders; Analytics off; iCloud Passwords security recommendations</li></ul>',
+      manual: 'Settings → General → AutoFill & Passwords',
+      links: ['prefs:root=PASSWORDS', 'App-Prefs:root=PASSWORDS'],
+      warn: 'Do not turn off DuckDuckGo Password Manager during hardening.'
+    },
+    {
+      id: '1.V',
+      group: 'verify',
+      groupLabel: 'Phase 1 verify',
+      title: 'Verify VPN, DNS, Autofill unchanged',
+      body: '<p>Re-check all three baseline items. They must match what you wrote in Step 0.</p><ul><li>VPN profile still Connected (if it was before)</li><li>Wi‑Fi Configure DNS unchanged</li><li>DuckDuckGo Autofill still On</li></ul><p><strong>Do not start Phase 2 until this passes.</strong></p>',
+      manual: 'VPN → Wi‑Fi ⓘ → Configure DNS → AutoFill & Passwords',
+      links: ['prefs:root=General&path=ManagedConfigurationList', 'prefs:root=WIFI', 'prefs:root=PASSWORDS']
+    },
+    {
+      id: '2.1',
+      group: 'phase2',
+      groupLabel: 'Phase 2',
+      title: 'Install Malwarebytes Mobile Security',
+      body: '<p>Free tier: SMS filtering + Safari content blocking. Does <strong>not</strong> replace your DNS VPN.</p><ol><li>Open App Store via button below → Get</li><li>Complete onboarding in the Malwarebytes app</li></ol>',
+      manual: 'App Store → Search → Malwarebytes Mobile Security → Get',
+      links: [MALWAREBYTES],
+      limit: 'App install and onboarding require on-device taps in App Store and Malwarebytes.',
+      openLabel: 'Open App Store'
+    },
+    {
+      id: '2.2',
+      group: 'phase2',
+      groupLabel: 'Phase 2',
+      title: 'DNS VPN apps — usually SKIP',
+      body: '<p>If Step 0 showed DuckDuckGo, corporate VPN, Private Relay, NextDNS, Cloudflare, or Manual DNS you want to keep — <strong>skip</strong> installing Cloudflare 1.1.1.1 or NextDNS.</p><ul><li>Only one DNS-capturing VPN at a time on iOS.</li><li>Do <strong>not</strong> enable Malwarebytes paid VPN.</li></ul>',
+      manual: 'No action if VPN/DNS already set — proceed to next step',
+      links: ['prefs:root=General&path=ManagedConfigurationList'],
+      warn: 'SKIP Cloudflare/NextDNS when DuckDuckGo or existing VPN/DNS is already configured.',
+      hideOpen: true
+    },
+    {
+      id: '2.3',
+      group: 'phase2',
+      groupLabel: 'Phase 2',
+      title: 'Malwarebytes SMS & Safari',
+      body: '<ul><li><strong>Messages</strong> → Unknown & Spam → enable <strong>Malwarebytes</strong></li><li><strong>Safari</strong> → Extensions → enable Malwarebytes blockers if offered</li></ul>',
+      manual: 'Settings → Apps → Messages; Settings → Apps → Safari → Extensions',
+      links: ['App-prefs:com.apple.MobileSMS', 'App-prefs:com.apple.mobilesafari'],
+      warn: 'Do NOT enable Malwarebytes paid VPN — keep DuckDuckGo VPN/DNS.'
+    },
+    {
+      id: '2.4',
+      group: 'phase2',
+      groupLabel: 'Phase 2',
+      title: 'USB hardening',
+      body: '<ul><li>Confirm USB Accessories <strong>Off</strong> when locked (step 1.9)</li><li><strong>Trust This Computer</strong> — only Andy\'s laptop; reset Location & Privacy if unsure</li><li><strong>Developer Mode</strong> → Off (unless dev week)</li><li>When cabled to Windows: Apple Devices → Encrypt local backup (password in DuckDuckGo PM — never git)</li></ul>',
+      manual: 'Settings → Face ID & Passcode; Settings → Privacy & Security → Developer Mode',
+      links: ['prefs:root=PASSCODE', 'prefs:root=Privacy'],
+      limit: 'Trust This Computer and encrypted backup password cannot be automated from this guide.'
+    },
+    {
+      id: '2.5',
+      group: 'phase2',
+      groupLabel: 'Phase 2',
+      title: 'Lockdown Mode (optional)',
+      body: '<p>Use only for a <strong>credible targeted threat</strong>. Normal daily use: skip.</p><ul><li><strong>Lockdown Mode</strong> → Turn On — only if you accept tradeoffs (websites, messages, shared albums)</li></ul>',
+      manual: 'Settings → Privacy & Security → Lockdown Mode',
+      links: ['prefs:root=Privacy', 'App-Prefs:root=Privacy'],
+      hideOpen: false
+    },
+    {
+      id: '2.V',
+      group: 'verify',
+      groupLabel: 'Phase 2 verify',
+      title: 'Final verify — VPN & DNS',
+      body: '<ul><li>VPN and Wi‑Fi DNS match Step 0 baseline</li><li>VPN status icon behaves as before</li><li>Browse a familiar site — no captive portal surprises</li></ul><p>If broken: disconnect any <strong>new</strong> VPN from Phase 2; restore DuckDuckGo / original profile.</p>',
+      manual: 'Settings → VPN; Settings → Wi‑Fi → ⓘ → Configure DNS',
+      links: ['prefs:root=General&path=ManagedConfigurationList', 'prefs:root=WIFI']
+    }
+  ];
+
+  var idx = 0;
+  var card = document.getElementById('stepCard');
+  var content = document.getElementById('stepContent');
+  var openActions = document.getElementById('openActions');
+  var progressLabel = document.getElementById('progressLabel');
+  var progressFill = document.getElementById('progressFill');
+  var btnPrev = document.getElementById('btnPrev');
+  var btnNext = document.getElementById('btnNext');
+
+  function phaseClass(group) {
+    if (group === 'baseline') return 'phase-baseline';
+    if (group === 'phase1') return 'phase-1';
+    if (group === 'phase2') return 'phase-2';
+    return 'phase-verify';
+  }
+
+  function render() {
+    var step = STEPS[idx];
+    var n = STEPS.length;
+    progressLabel.textContent = 'Step ' + (idx + 1) + ' of ' + n + ' · ' + step.groupLabel;
+    progressFill.style.width = ((idx + 1) / n * 100) + '%';
+
+    var html = '';
+    html += '<span class="phase-badge ' + phaseClass(step.group) + '">' + escapeHtml(step.groupLabel) + '</span>';
+    html += '<p class="step-id">Step ' + escapeHtml(step.id) + '</p>';
+    html += '<h2 class="step-title">' + escapeHtml(step.title) + '</h2>';
+    html += '<div class="step-body">' + step.body + '</div>';
+    html += '<div class="fallback"><strong>Manual path (always works)</strong>' + escapeHtml(step.manual) + '</div>';
+    if (step.warn) {
+      html += '<div class="warn">' + escapeHtml(step.warn) + '</div>';
+    }
+    if (step.limit) {
+      html += '<div class="limit">' + escapeHtml(step.limit) + '</div>';
+    }
+    content.innerHTML = html;
+
+    openActions.innerHTML = '';
+    if (!step.hideOpen && step.links && step.links.length) {
+      var label = step.openLabel || 'Open Settings';
+      var primary = step.links[0];
+      var a = document.createElement('a');
+      a.className = 'btn btn-open';
+      a.href = primary;
+      a.textContent = label;
+      a.setAttribute('rel', 'noopener');
+      openActions.appendChild(a);
+
+      for (var i = 1; i < step.links.length && i < 3; i++) {
+        var link = step.links[i];
+        if (link === primary) continue;
+        var b = document.createElement('a');
+        b.className = 'btn btn-open secondary';
+        b.href = link;
+        b.textContent = (link.indexOf('http') === 0) ? 'Alt link' : 'Alt deep link';
+        b.setAttribute('rel', 'noopener');
+        openActions.appendChild(b);
+      }
+    }
+
+    btnPrev.disabled = idx === 0;
+    btnNext.textContent = idx === n - 1 ? 'Finish' : 'Next';
+    try {
+      localStorage.setItem('ctg_iphone_guide_step', String(idx));
+    } catch (e) { /* private mode */ }
+  }
+
+  function escapeHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  btnPrev.addEventListener('click', function () {
+    if (idx > 0) { idx -= 1; render(); window.scrollTo(0, 0); }
+  });
+
+  btnNext.addEventListener('click', function () {
+    if (idx < STEPS.length - 1) {
+      idx += 1;
+      render();
+      window.scrollTo(0, 0);
+    } else {
+      alert('Walkthrough complete. Re-run Step 0 checks anytime. CyberThreatGotchi — Hacker Planet LLC.');
+    }
+  });
+
+  try {
+    var saved = parseInt(localStorage.getItem('ctg_iphone_guide_step'), 10);
+    if (!isNaN(saved) && saved >= 0 && saved < STEPS.length) {
+      idx = saved;
+    }
+  } catch (e) { /* ignore */ }
+
+  render();
+})();
+</script>
+</body>
+</html>

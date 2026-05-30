@@ -1,6 +1,6 @@
 # iPhone hardening — iOS Shortcuts guided routine
 
-**Hacker Planet LLC / CyberThreatGotchi** — defensive, authorized-use only. This complements [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) and the Windows assistant `scripts/windows/iphone_hardening_assist.ps1`.
+**Hacker Planet LLC / CyberThreatGotchi** — defensive, authorized-use only. This complements [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md), the guided wizard **[iphone_hardening_guide.html](iphone_hardening_guide.html)** (Prev/Next on Safari), and the Windows assistant `scripts/windows/iphone_hardening_assist.ps1 -OpenGuide`.
 
 **Honest limit:** Stock iOS does not allow Shortcuts (or Windows scripts) to flip Settings toggles, enroll Face ID, set passcodes, trust a PC, or install App Store apps without **you** tapping through each screen. This routine **opens each Settings pane in order** so you spend less time hunting menus.
 
@@ -84,6 +84,12 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 ```
 
 ```powershell
+.\scripts\windows\iphone_hardening_assist.ps1 -OpenGuide
+```
+
+Markdown runbook + GitHub Pages:
+
+```powershell
 .\scripts\windows\iphone_hardening_assist.ps1 -OpenRunbook
 ```
 
@@ -95,4 +101,4 @@ Log-only check (no prompts):
 
 ---
 
-**See also:** [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) · [IPHONE_HARDENING.md](IPHONE_HARDENING.md) · [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md) · tap-friendly [iphone-run-now.html](../website/iphone-run-now.html) on GitHub Pages.
+**See also:** [iphone_hardening_guide.html](iphone_hardening_guide.html) (recommended wizard) · [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) · [IPHONE_HARDENING.md](IPHONE_HARDENING.md) · [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md) · static [iphone-run-now.html](../website/iphone-run-now.html) on GitHub Pages.
