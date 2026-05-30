@@ -60,6 +60,23 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\Owner\Projects\cyb
 
 Log: Desktop `ctg-soc-run-log.txt` and copy to `D:\Backups\` when D: is writable.
 
+## Keep DuckDuckGo VPN (do not replace)
+
+Your PC uses **DuckDuckGo VPN** (WireGuard). CTG SOC scripts are written to **preserve** it:
+
+| Safe (keeps DDG VPN) | Avoid (can break or replace VPN) |
+|----------------------|----------------------------------|
+| `ctg_soc_run_once.ps1` (Sysmon + **audit-only** hardening) | Installing Cloudflare 1.1.1.1 / NextDNS / second VPN app |
+| `Preserve-DuckDuckGoVpn.ps1` (Defender exclusions for DDG) | `harden_windows.ps1` **full apply** without `-HardenWindowsSecurityAuditOnly` until you review |
+| Cardputer USB flash (`M5_OS-Cardputer`) | Removing DuckDuckGo VPN profile in Windows Settings |
+
+Before/after SOC, confirm VPN in the **DuckDuckGo** app (Connected) or tray icon. Manual preserve step:
+
+```powershell
+. "C:\Users\Owner\Projects\cyberThreatGotchi\scripts\windows\Preserve-DuckDuckGoVpn.ps1"
+Invoke-CtgPreserveDuckDuckGoVpn
+```
+
 ## What works **without** Admin
 
 - `selective_ssd_backup.ps1` (falls back when D: is missing — often `C:\Users\Owner\Backups\...`)

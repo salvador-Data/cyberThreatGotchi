@@ -58,7 +58,7 @@ $ScriptDir = $PSScriptRoot
 function Write-Banner {
     Write-Host ''
     Write-Host '========================================' -ForegroundColor Cyan
-    Write-Host ' CyberThreatGotchi â€” Windows SOC hardening' -ForegroundColor Cyan
+    Write-Host ' CyberThreatGotchi - Windows SOC hardening' -ForegroundColor Cyan
     Write-Host ' Authorized defensive use on systems you own' -ForegroundColor Cyan
     Write-Host ' or are explicitly permitted to administer.' -ForegroundColor Cyan
     Write-Host '========================================' -ForegroundColor Cyan
@@ -122,7 +122,7 @@ function Invoke-HardenWindowsSecurityModule {
         return
     }
     if ($HardenWindowsSecurityAuditOnly) {
-        Write-Host 'Running Invoke-Hardening (audit/report â€” confirm module parameters in README)...' -ForegroundColor Gray
+        Write-Host 'Running Invoke-Hardening (audit/report - confirm module parameters in README)...' -ForegroundColor Gray
         try {
             Invoke-Hardening -Mode 'Audit'
         } catch {
@@ -130,7 +130,7 @@ function Invoke-HardenWindowsSecurityModule {
             Invoke-Hardening
         }
     } else {
-        Write-Host 'Running Invoke-Hardening â€” review changes before applying on production.' -ForegroundColor Yellow
+        Write-Host 'Running Invoke-Hardening - review changes before applying on production.' -ForegroundColor Yellow
         Invoke-Hardening
     }
 }
@@ -181,7 +181,7 @@ function Set-DefenderASRAuditMode {
         Write-Host 'Windows Defender status unavailable. Is Defender enabled?' -ForegroundColor Yellow
         return
     }
-    # Common ASR rule GUIDs â€” audit only (log, do not block)
+    # Common ASR rule GUIDs - audit only (log, do not block)
     $valid = @(
         '75668C1F-73B5-4CF0-BB93-3EC8755A2549',
         'D4F940AB-401B-4EFC-AADC-AD5F3C50688A',
@@ -217,7 +217,7 @@ function Invoke-CloudBackupHelper {
 function Show-UsageIfNoFlags {
     $any = $InstallSysmon -or $RunHardenWindowsSecurity -or $CheckWazuhAgent -or $SetupWazuhAgent -or $DefenderASRAudit -or $CloudBackup
     if ($any) { return $false }
-    Write-Host 'No action flags passed â€” guidance only (no hardening applied).' -ForegroundColor Yellow
+    Write-Host 'No action flags passed - guidance only (no hardening applied).' -ForegroundColor Yellow
     Write-Host ''
     Write-Host 'Suggested order (see scripts/windows/README_WINDOWS_SOC.md):'
     Write-Host '  1. Restore point (prompt below)'

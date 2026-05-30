@@ -14,6 +14,8 @@ function Write-Log([string]$m) {
 Write-Log '=== Elevated CTG SOC run started ==='
 Write-Log ('Running as Admin: ' + $script:CtgIsAdmin)
 Write-Log "Computer=$env:COMPUTERNAME User=$env:USERNAME Running as Admin: $script:CtgIsAdmin"
+. (Join-Path $Win 'Preserve-DuckDuckGoVpn.ps1')
+Invoke-CtgPreserveDuckDuckGoVpn -LogAction { param($m) Write-Log $m }
 try {
     Write-Log '--- Restore point (Checkpoint-Computer) ---'
     Checkpoint-Computer -Description 'CTG-Windows-Hardening' -RestorePointType MODIFY_SETTINGS
@@ -41,5 +43,6 @@ if ($env:CTG_WAZUH_MANAGER -or $env:WAZUH_MANAGER) {
 } else {
     Write-Log 'Wazuh: SKIPPED (CTG_WAZUH_MANAGER / WAZUH_MANAGER not set)'
 }
+Invoke-CtgPreserveDuckDuckGoVpn -LogAction { param($m) Write-Log $m }
 Write-Log '=== Elevated CTG SOC run finished ==='
 try { Copy-Item $LogDesktop $LogSsd -Force; Write-Log "Copied log to $LogSsd" } catch { Write-Log "SSD log copy failed: $($_.Exception.Message)" }
