@@ -7,8 +7,12 @@
   become: true
   vars:
     ctg_wifi_profile: "{{ lookup('env', 'CTG_WIFI_PROFILE') | default('company-lab', true) }}"
+    ctg_preserve_ddg_dns: "{{ lookup('env', 'CTG_PRESERVE_DDG_DNS') | default('true', true) | bool }}"
+    ctg_ddg_dns_only: "{{ lookup('env', 'CTG_DDG_DNS_ONLY') | default('false', true) | bool }}"
   roles:
     - harden
+    - role: ddg-dns
+      when: ctg_preserve_ddg_dns | bool or ctg_ddg_dns_only | bool
     - clamav
     - role: snort-ids
       when: not (skip_snort | default(false) | bool)

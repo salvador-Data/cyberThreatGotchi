@@ -14,6 +14,13 @@ WIFI_PROFILE="${WIFI_PROFILE:-company-lab}"
 SKIP_SNORT=false
 SKIP_REALTEK=false
 DRY_RUN=false
+PRESERVE_DDG_DNS=true
+DDG_DNS_ONLY=false
+
+DDG_DNS_PRIMARY="94.140.14.14"
+DDG_DNS_SECONDARY="94.140.15.15"
+DDG_DOH_URL="https://dns.duckduckgo.com/dns-query"
+IPHONE_HARDENING_DOC="docs/IPHONE_HARDENING.md"
 
 usage() {
     cat <<'EOF'
@@ -21,10 +28,16 @@ Usage: kali-lab-bootstrap.sh [OPTIONS]
 
 Options:
   --wifi-profile=PROFILE   company-lab (default) | home-conservative
+  --preserve-ddg-dns       Respect existing DuckDuckGo DNS in resolv.conf (default ON)
+  --no-preserve-ddg-dns    Allow overwriting resolv.conf without DDG check
+  --ddg-dns-only           Set resolv.conf + optional Unbound stub to DuckDuckGo only
   --skip-snort             Skip passive Snort install
   --skip-realtek           Skip Realtek USB driver detection/install
   --dry-run                Print planned actions only
   -h, --help               Show this help
+
+DuckDuckGo DNS: $DDG_DNS_PRIMARY / $DDG_DNS_SECONDARY (DoH: $DDG_DOH_URL).
+Preserve rules match $IPHONE_HARDENING_DOC — do NOT stack NextDNS/Cloudflare on host or phone.
 
 Authorized use: systems and RF you own or have written scope to test (Hacker Planet lab VLAN).
 EOF
@@ -33,6 +46,9 @@ EOF
 for arg in "$@"; do
     case "$arg" in
         --wifi-profile=*) WIFI_PROFILE="${arg#*=}" ;;
+        --preserve-ddg-dns) PRESERVE_DDG_DNS=true ;;
+        --no-preserve-ddg-dns) PRESERVE_DDG_DNS=false ;;
+        --ddg-dns-only) DDG_DNS_ONLY=true; PRESERVE_DDG_DNS=true ;;
         --skip-snort) SKIP_SNORT=true ;;
         --skip-realtek) SKIP_REALTEK=true ;;
         --dry-run) DRY_RUN=true ;;
@@ -64,7 +80,51 @@ run() {
 CTG_ENV="/etc/environment.d/ctg-osint.env"
 CTG_WIFI_BASE="/usr/local/sbin/wifi-lab-baseline.sh"
 
-log "CyberThreatGotchi Kali lab bootstrap — wifi-profile=$WIFI_PROFILE"
+log "CyberThreatGotchi Kali lab bootstrap — wifi-profile=$WIFI_PROFILE preserve-ddg-dns=$PRESERVE_DDG_DNS ddg-dns-only=$DDG_DNS_ONLY"
+log "DuckDuckGo preserve: same rules as $IPHONE_HARDENING_DOC — no NextDNS/Cloudflare stack on host/iPhone/router"
+
+resolv_has_ddg() {
+    [[ -f /etc/resolv.conf ]] && grep -qE '94\.140\.(14\.14|15\.15)' /etc/resolv.conf
+}
+
+# --- ddg-dns (preserve / optional upstream) ---
+log "Phase: ddg-dns (DuckDuckGo preserve)"
+if $DDG_DNS_ONLY; then
+    log "Configuring Kali resolv.conf + Unbound stub → DuckDuckGo DNS only"
+    if ! $DRY_RUN; then
+        run DEBIAN_FRONTEND=noninteractive apt-get install -y -qq unbound resolvconf 2>/dev/null || \
+            run DEBIAN_FRONTEND=noninteractive apt-get install -y -qq unbound || true
+        mkdir -p /etc/unbound/unbound.conf.d
+        cat >/etc/unbound/unbound.conf.d/ctg-ddg-forward.conf <<UNBOUNDEOF
+# CTG Kali lab — forward to DuckDuckGo DNS (see docs/OPNSENSE_LAB_DNS.md)
+server:
+  interface: 127.0.0.1
+  access-control: 127.0.0.0/8 allow
+  do-not-query-localhost: no
+forward-zone:
+  name: "."
+  forward-addr: $DDG_DNS_PRIMARY
+  forward-addr: $DDG_DNS_SECONDARY
+UNBOUNDEOF
+        systemctl enable --now unbound 2>/dev/null || true
+        cat >/etc/resolv.conf <<RESOLVEOF
+# CTG Kali lab — DuckDuckGo DNS (ddg-dns-only). Preserve rules: $IPHONE_HARDENING_DOC
+nameserver 127.0.0.1
+nameserver $DDG_DNS_PRIMARY
+nameserver $DDG_DNS_SECONDARY
+RESOLVEOF
+        log "resolv.conf → 127.0.0.1 (Unbound stub) + DDG fallback nameservers"
+    else
+        run echo "[dry-run] configure Unbound stub + resolv.conf for DDG only"
+    fi
+elif $PRESERVE_DDG_DNS && resolv_has_ddg; then
+    log "preserve-ddg-dns: DuckDuckGo DNS already in /etc/resolv.conf — no changes"
+elif $PRESERVE_DDG_DNS; then
+    log "preserve-ddg-dns: resolv.conf has no DDG entries — leaving upstream unchanged (use --ddg-dns-only to set DDG)"
+    log "Optional: point Kali to OPNsense lab LAN Unbound with DDG forwarders (docs/OPNSENSE_LAB_DNS.md)"
+else
+    log "WARNING: --no-preserve-ddg-dns — bootstrap will not protect existing DNS; verify host/iPhone DDG unchanged"
+fi
 
 # --- harden ---
 log "Phase: harden"
@@ -214,3 +274,4 @@ run lynis audit system --quick --quiet || true
 
 log "Bootstrap complete. Next: snapshot VM, attach Realtek USB in VirtualBox, edit $CTG_ENV for OSINT keys."
 log "Maltego CE: manual install from vendor .deb (EULA). Suricata primary IDS belongs on OPNsense, not Kali."
+log "DuckDuckGo: preserve host/iPhone/router DNS per $IPHONE_HARDENING_DOC — OPNsense lab forwarders: docs/OPNSENSE_LAB_DNS.md"

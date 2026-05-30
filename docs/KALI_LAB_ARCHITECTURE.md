@@ -3,8 +3,8 @@
 **Author:** Andy Kowal · **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
 **GitHub:** [salvador-Data](https://github.com/salvador-Data) · **Repo:** [CyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi)
 
-**Status:** Architecture + **bootstrap scripts landed** — run `Deploy-KaliLab.ps1` from Windows; Kali-side `kali-lab-bootstrap.sh` with default **`--wifi-profile=company-lab` (Option 2)**. No edge/firewall replacement unless `-EdgeMode` on OPNsense (blocked by default).  
-**Companion:** [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) (Windows SOC, iPhone, Cardputer UTMS) · [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)
+**Status:** Architecture + **bootstrap scripts landed** — run `Deploy-KaliLab.ps1` from Windows (DuckDuckGo preserve **on** by default); Kali-side `kali-lab-bootstrap.sh` with **`--preserve-ddg-dns`** and default **`--wifi-profile=company-lab` (Option 2)**. No edge/firewall replacement unless `-EdgeMode` on OPNsense (blocked by default).  
+**Companion:** [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) (Windows SOC, iPhone, Cardputer UTMS) · [IPHONE_HARDENING.md](IPHONE_HARDENING.md) (DuckDuckGo preserve rules) · [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md) · [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)
 
 **Hacker Planet LLC — company defensive lab (authorized use):** This architecture describes **Hacker Planet LLC**’s authorized security research and defensive engineering lab (Philadelphia, PA). WiFi and RF work stays on **company-owned, lab-isolated** segments with written RF policy sign-off — not on neighbors’, coffee-shop, or client production WLANs without explicit scope.
 
@@ -20,6 +20,32 @@ This lab stack is for **systems and networks you own** or are **explicitly permi
 - Regulatory domain bypass, illegal amplifiers, jamming, or instructions to “disable FCC limits” (documented **nowhere** in this repo — see [What this doc does NOT cover](#what-this-doc-does-not-cover))
 
 **Default WiFi strategy (Andy / Hacker Planet lab):** **Option 2 — company lab** (`--wifi-profile=company-lab`): driver/firmware + link-quality + lab-isolated RF tuning on a **dedicated lab-only AP/VLAN**, within **legal** TX and regdomain. Option 1 remains for home/conservative use only.
+
+**Default DNS strategy:** **Preserve DuckDuckGo VPN/DNS** on Windows host, iPhone, and home router — same rules as [IPHONE_HARDENING.md](IPHONE_HARDENING.md). Kali lab and OPNsense lab VM use DuckDuckGo (`94.140.14.14` / `94.140.15.15` or DoH) as **optional upstream** — do **not** stack NextDNS/Cloudflare/`1.1.1.1` when DDG is already set.
+
+---
+
+## Full feature checklist (docs + scripts)
+
+All items below are documented here and implemented or stubbed with clear phase gates in repo scripts.
+
+| # | Feature | Script / doc | Phase |
+|---|---------|--------------|-------|
+| 1 | Auto Kali hardening (Ansible/bash bootstrap) | `kali-lab-bootstrap.sh`, `ansible/roles/harden` | P1 |
+| 2 | Free IDS/IPS — Suricata (OPNsense) + passive Snort (Kali) | OPNsense UI + bootstrap `snort-ids` role | P3 |
+| 3 | ClamAV | bootstrap `clamav` phase | P1 |
+| 4 | Wireshark + WiFi monitor lab | Kali bootstrap + Windows `Install-WiresharkNpcap.ps1` | P2/P5 |
+| 5 | Snort (passive Kali) | bootstrap `--skip-snort` to opt out | P3 |
+| 6 | Realtek dongle drivers — Kali + Windows notes | bootstrap `realtek-driver`, architecture § Realtek | P2 |
+| 7 | OSINT (Maltego CE manual, theHarvester, Amass, recon-ng) | bootstrap `osint` phase | P4 |
+| 8 | WiFi **Option 2 company lab** profile | `--wifi-profile=company-lab` (default) | P2 |
+| 9 | Production firewall — OPNsense lab VM | `Install-OpnsenseLab.ps1` | P2 |
+| 10 | WiFi range/lab tune module | `wifi-lab-tune` role, `wifi-lab-baseline.sh` | P2 |
+| 11 | Master `Deploy-KaliLab.ps1` + `kali-lab-bootstrap.sh` | Windows + Kali entry points | P1 |
+| 12 | Windows Wireshark/Npcap companion | `Install-WiresharkNpcap.ps1` (called from deploy) | P5 |
+| 13 | Defender pause script (build windows only) | `Pause-DefenderRealtime.ps1` — manual, not auto-deploy | P5 |
+| 14 | Authorized Hacker Planet LLC lab framing | This doc § Authorized use | P0 |
+| 15 | **DuckDuckGo VPN + DNS preserve** | `Deploy-KaliLab.ps1`, `--preserve-ddg-dns`, [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md) | P0–P6 |
 
 ---
 
@@ -214,10 +240,14 @@ ansible-playbook playbooks/site.yml --wifi-profile=company-lab
 |------|---------|---------|
 | `--wifi-profile=company-lab` | Option 2 — driver/firmware, link-quality, lab-isolated RF | **Yes (Andy)** |
 | `--wifi-profile=home-conservative` | Option 1 — regdomain + legal max TX only | Opt-in |
+| `--preserve-ddg-dns` | Skip Kali DNS changes when DDG already in resolv.conf | **Yes** |
+| `--ddg-dns-only` | Kali resolv.conf + Unbound stub → DuckDuckGo only | Opt-in |
+| `--no-preserve-ddg-dns` | Disable DDG guard (warn) | Opt-in |
 
 | Role | Purpose |
 |------|---------|
 | `harden` | fail2ban, lynis, unattended-upgrades, ssh hardening, ufw/nft baseline |
+| `ddg-dns` | DuckDuckGo preserve / optional `--ddg-dns-only` resolv.conf + Unbound |
 | `clamav` | clamav, freshclam, scan paths |
 | `snort-ids` | passive Snort + local rules sync (optional) |
 | `osint` | apt packages: theHarvester, amass, recon-ng, etc. |
@@ -228,10 +258,12 @@ ansible-playbook playbooks/site.yml --wifi-profile=company-lab
 
 | Script | Status |
 |--------|--------|
-| `Deploy-KaliLab.ps1` | **Master** — detect VBox/VMware, SSH, copy/run bootstrap |
+| `Deploy-KaliLab.ps1` | **Master** — DDG preserve, Wireshark companion, detect VBox/VMware, SSH, copy/run bootstrap |
+| `Preserve-DuckDuckGoVpn.ps1` | Defender exclusions; no second VPN — invoked by deploy |
 | `Install-KaliVirtualBox.ps1` | Create unattended Kali VM |
-| `Install-OpnsenseLab.ps1` | Lab OPNsense VM (2 NICs); `-EdgeMode` blocked |
+| `Install-OpnsenseLab.ps1` | Lab OPNsense VM (2 NICs); `-EdgeMode` blocked; DDG DNS template notes |
 | `Install-WiresharkNpcap.ps1` | Windows Wireshark + Npcap companion |
+| `Pause-DefenderRealtime.ps1` | Manual build-window Defender pause — not auto-deploy |
 
 ---
 
@@ -376,12 +408,37 @@ When lab VM rules are stable, migrate OPNsense to:
 
 | Layer | Recommendation |
 |-------|----------------|
-| **OPNsense** | Unbound on LAN; DNS over TLS optional for lab VLAN |
-| **Home phones** | Keep **DuckDuckGo** VPN/DNS per [IPHONE_HARDENING.md](IPHONE_HARDENING.md) — do not double-stack conflicting DNS VPN profiles |
-| **Kali** | Point to OPNsense LAN IP or `1.1.1.1` — document in Ansible |
+| **Windows host** | **Preserve DuckDuckGo VPN** (`Preserve-DuckDuckGoVpn.ps1`) — CTG scripts do **not** install Cloudflare/NextDNS VPN. `Deploy-KaliLab.ps1` detects DDG adapter/DNS before lab changes. |
+| **iPhone / home phones** | Keep **DuckDuckGo VPN/DNS** per [IPHONE_HARDENING.md](IPHONE_HARDENING.md) — do not double-stack conflicting DNS VPN profiles |
+| **Home router** | Do **not** replace DuckDuckGo DNS with NextDNS/Cloudflare during lab rollout — document baseline first |
+| **OPNsense lab VM** | Unbound forwarders → **DuckDuckGo** `94.140.14.14` / `94.140.15.15` (or DoH) — see [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md). **Do not** stack other upstreams when DDG is set. |
+| **Kali VM** | `--preserve-ddg-dns` (default): skip resolv.conf changes if DDG present. `--ddg-dns-only`: resolv.conf + Unbound stub → DDG only. Otherwise use OPNsense lab LAN IP as resolver. |
 | **NTP** | OPNsense → pool.ntp.org; Windows time sync unchanged |
 
-Avoid making OPNsense override phone DNS until Andy explicitly tests without breaking DDG Password Manager / VPN.
+Avoid making OPNsense or Kali bootstrap override phone or Windows DNS until Andy explicitly tests without breaking DDG Password Manager / VPN.
+
+### DuckDuckGo VPN & DNS preserve (mandatory)
+
+Same philosophy as [IPHONE_HARDENING.md](IPHONE_HARDENING.md) and [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md):
+
+| Layer | How preserved |
+|-------|----------------|
+| **Windows** | `Deploy-KaliLab.ps1` calls `Get-CtgDuckDuckGoHostStatus` (VPN adapter + DNS `94.140.14.14`/`94.140.15.15`) and `Preserve-DuckDuckGoVpn.ps1` before VM/bootstrap work. Warns before any host DNS change. |
+| **iPhone / router** | Document-only in Kali lab — **no** automation touches phone or ISP router. Link to IPHONE_HARDENING Step 0 baseline. |
+| **Kali VM** | `kali-lab-bootstrap.sh --preserve-ddg-dns` (default **on**): if `/etc/resolv.conf` already lists DDG, skip. `--ddg-dns-only`: set resolv.conf + Unbound stub forward to DDG only. |
+| **OPNsense lab** | Manual Unbound forward to DuckDuckGo — template in [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md). No NextDNS/Cloudflare/`1.1.1.1` rows when DDG is upstream. |
+
+**Bootstrap flags:**
+
+| Flag | Default | Effect |
+|------|---------|--------|
+| `--preserve-ddg-dns` | **On** | Respect existing DDG in Kali `resolv.conf`; log optional OPNsense upstream path |
+| `--no-preserve-ddg-dns` | Off | Disable guard (warn in logs) |
+| `--ddg-dns-only` | Off | Force Kali resolv.conf + Unbound stub → DDG `94.140.14.14` / `94.140.15.15` |
+
+**Windows deploy parameters:** `-PreserveDdgDns` (default), `-NoPreserveDdgDns`, `-DdgDnsOnly`, `-SkipDdgPreserve` (skip Defender exclusions only).
+
+**DoH upstream (optional):** `https://dns.duckduckgo.com/dns-query` — use on OPNsense or Kali Unbound when encrypted upstream is desired; still **one** resolver family (DDG), not stacked.
 
 ### Incident response when Snort/Suricata fires
 
@@ -453,8 +510,11 @@ scripts/kali/
   ansible/ansible.cfg
   ansible/inventory/localhost.yml
   ansible/playbooks/site.yml
-  ansible/roles/{harden,clamav,snort-ids,osint,realtek-driver,wifi-lab-tune}/
+  ansible/roles/{harden,ddg-dns,clamav,snort-ids,osint,realtek-driver,wifi-lab-tune}/
   ansible/group_vars/realtek.yml.example
+
+docs/
+  OPNSENSE_LAB_DNS.md              # DuckDuckGo Unbound forwarder template
 
 scripts/windows/
   Deploy-KaliLab.ps1              # master deploy
@@ -480,8 +540,9 @@ Backups/opnsense-*.xml
 |--------------|---------|
 | [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) | Full defensive portfolio — Windows, iPhone, Cardputer |
 | [SECURITY_HARDENING.md](SECURITY_HARDENING.md) | CTG env vars, Wazuh, firewall baseline |
-| [IPHONE_HARDENING.md](IPHONE_HARDENING.md) | Mobile tier — separate from Kali |
-| [scripts/windows/Deploy-KaliLab.ps1](../scripts/windows/Deploy-KaliLab.ps1) | Master Kali lab deploy |
+| [IPHONE_HARDENING.md](IPHONE_HARDENING.md) | Mobile tier — DuckDuckGo preserve; separate from Kali |
+| [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md) | OPNsense lab Unbound → DuckDuckGo forwarder template |
+| [scripts/windows/Deploy-KaliLab.ps1](../scripts/windows/Deploy-KaliLab.ps1) | Master Kali lab deploy (DDG preserve default) |
 | [scripts/kali/kali-lab-bootstrap.sh](../scripts/kali/kali-lab-bootstrap.sh) | In-guest bootstrap |
 | [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md) | OPNsense/Suricata notes |
 | [FIREWALL_BASELINE.md](FIREWALL_BASELINE.md) | CTG Linux iptables (appliance, not Kali VM) |

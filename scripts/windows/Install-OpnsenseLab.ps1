@@ -72,3 +72,8 @@ New-Item -ItemType Directory -Path $vmDir -Force | Out-Null
 
 Write-Host "Created $VmName - 2 NICs (WAN NAT + LAN intnet:opn-lab). Start GUI and complete OPNsense installer."
 Write-Host "Backup config to C:\Users\Owner\Backups\opnsense-config-YYYY-MM-DD.xml (gitignored)."
+Write-Host ""
+Write-Host "DNS (mandatory preserve): configure Unbound forwarders to DuckDuckGo only when DDG is your stack."
+Write-Host "  Primary: 94.140.14.14  Secondary: 94.140.15.15  (DoH: https://dns.duckduckgo.com/dns-query)"
+Write-Host "  Do NOT stack NextDNS, Cloudflare 1.1.1.1, or 9.9.9.9 when DuckDuckGo is set."
+Write-Host "  Template: docs/OPNSENSE_LAB_DNS.md  |  iPhone/Windows rules: docs/IPHONE_HARDENING.md"

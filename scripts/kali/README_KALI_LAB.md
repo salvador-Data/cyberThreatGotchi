@@ -4,28 +4,46 @@
 
 ## Quick start
 
-From **Windows** (master deploy):
+From **Windows** (master deploy — DuckDuckGo preserve **on** by default):
 
 ```powershell
 cd C:\Users\Owner\Projects\cyberThreatGotchi
 ```
 
 ```powershell
-.\scripts\windows\Deploy-KaliLab.ps1
+.\scripts\windows\Deploy-KaliLab.ps1 -StartVmIfStopped
+```
+
+Optional: force Kali resolv.conf to DuckDuckGo only:
+
+```powershell
+.\scripts\windows\Deploy-KaliLab.ps1 -StartVmIfStopped -DdgDnsOnly
 ```
 
 From **inside Kali** (after install):
 
 ```bash
-sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=company-lab
+sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=company-lab --preserve-ddg-dns
 ```
+
+```bash
+sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=company-lab --ddg-dns-only
+```
+
+## DuckDuckGo preserve
+
+Same rules as [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md):
+
+- Do **not** replace DuckDuckGo VPN/DNS on Windows, iPhone, or home router.
+- Kali: `--preserve-ddg-dns` (default) skips changes when DDG already in `resolv.conf`.
+- OPNsense lab: [docs/OPNSENSE_LAB_DNS.md](../../docs/OPNSENSE_LAB_DNS.md) — forward to `94.140.14.14` / `94.140.15.15` only; no NextDNS/Cloudflare stack.
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `kali-lab-bootstrap.sh` | Monolithic bootstrap: harden, ClamAV, passive Snort, OSINT apt, Realtek detect, WiFi Option 2 |
-| `ansible/` | Optional Ansible mirror of the same roles (run locally if preferred) |
+| `kali-lab-bootstrap.sh` | Monolithic bootstrap: DDG preserve, harden, ClamAV, passive Snort, OSINT apt, Realtek detect, WiFi Option 2 |
+| `ansible/` | Optional Ansible mirror (includes `ddg-dns` role) |
 
 ## WiFi profiles
 
@@ -45,4 +63,4 @@ Copy and edit locally (gitignored):
 
 ## Architecture
 
-See [docs/KALI_LAB_ARCHITECTURE.md](../../docs/KALI_LAB_ARCHITECTURE.md).
+See [docs/KALI_LAB_ARCHITECTURE.md](../../docs/KALI_LAB_ARCHITECTURE.md) for the full 15-item checklist.

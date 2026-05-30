@@ -1,6 +1,6 @@
 # Deploy CyberThreatGotchi Kali lab bootstrap to VirtualBox or VMware Kali VM.
 # Authorized defensive lab use only — Hacker Planet LLC.
-# Master script: detect hypervisor, start VM, wait for SSH, copy bootstrap, run sudo.
+# Master script: DDG preserve, detect hypervisor, Wireshark/Npcap, OPNsense lab stub, Kali bootstrap.
 param(
     [string[]]$VmNameCandidates = @('kali', 'Kali-Lab', 'Kali', 'kali-linux'),
     [string]$BootstrapScript = '',
@@ -8,14 +8,27 @@ param(
     [string]$WifiProfile = 'company-lab',
     [int]$SshHostPort = 2222,
     [int]$SshWaitSeconds = 300,
+    [switch]$PreserveDdgDns,
+    [switch]$NoPreserveDdgDns,
+    [switch]$DdgDnsOnly,
     [switch]$SkipOpnsense,
+    [switch]$SkipWireshark,
+    [switch]$SkipDdgPreserve,
     [switch]$StartVmIfStopped,
     [switch]$InstallSshServerHint,
     [switch]$WhatIf
 )
 
+# Default: preserve DuckDuckGo DNS (same as IPHONE_HARDENING.md)
+if (-not $NoPreserveDdgDns) {
+    $PreserveDdgDns = $true
+}
+
 $ErrorActionPreference = 'Stop'
 $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$DdgDnsPrimary = '94.140.14.14'
+$DdgDnsSecondary = '94.140.15.15'
+$IphoneHardeningDoc = Join-Path $RepoRoot 'docs\IPHONE_HARDENING.md'
 if (-not $BootstrapScript) {
     $BootstrapScript = Join-Path $RepoRoot 'scripts\kali\kali-lab-bootstrap.sh'
 }
@@ -29,6 +42,131 @@ function Write-CtgLog([string]$Message) {
     $logDir = 'C:\Users\Owner\Backups\logs'
     if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
     Add-Content -Path (Join-Path $logDir 'deploy-kali-lab.log') -Value $line -Encoding UTF8
+}
+
+function Get-CtgDuckDuckGoHostStatus {
+    $status = @{
+        VpnInstalled = $false
+        VpnConnected = $false
+        DnsOnHost = $false
+        DnsAdapters = @()
+        DnsServers = @($DdgDnsPrimary, $DdgDnsSecondary)
+    }
+
+    $ddgProc = Get-Process -Name 'DuckDuckGo.VPN', 'DuckDuckGo.VPN.WireGuard' -ErrorAction SilentlyContinue
+    if ($ddgProc) { $status.VpnInstalled = $true }
+
+    $ddgAdapter = Get-NetAdapter -ErrorAction SilentlyContinue |
+        Where-Object { $_.InterfaceDescription -match 'DuckDuckGo|WireGuard' -and $_.Status -eq 'Up' }
+    if ($ddgAdapter) {
+        $status.VpnConnected = $true
+    }
+
+    $dnsRows = Get-DnsClientServerAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue
+    foreach ($row in $dnsRows) {
+        $match = $false
+        foreach ($srv in $row.ServerAddresses) {
+            if ($srv -eq $DdgDnsPrimary -or $srv -eq $DdgDnsSecondary) {
+                $match = $true
+                break
+            }
+        }
+        if ($match) {
+            $status.DnsOnHost = $true
+            $alias = (Get-NetAdapter -InterfaceIndex $row.InterfaceIndex -ErrorAction SilentlyContinue).Name
+            $status.DnsAdapters += "$alias ($($row.ServerAddresses -join ', '))"
+        }
+    }
+    return $status
+}
+
+function Invoke-CtgDuckDuckGoPreserveCheck {
+    Write-CtgLog '=== DuckDuckGo VPN/DNS preserve (mandatory) ==='
+    Write-CtgLog "Policy: same as $IphoneHardeningDoc — do NOT replace DDG on Windows/iPhone/router"
+    Write-CtgLog 'OPNsense lab: DuckDuckGo forwarders only — do NOT stack NextDNS/Cloudflare/1.1.1.1 when DDG set'
+
+    $ddg = Get-CtgDuckDuckGoHostStatus
+    if ($ddg.VpnInstalled) {
+        $vpnState = if ($ddg.VpnConnected) { 'connected' } else { 'installed (tunnel down)' }
+        Write-CtgLog "Windows DuckDuckGo VPN: $vpnState"
+    } else {
+        Write-CtgLog 'Windows DuckDuckGo VPN: not detected (OK if using DDG DNS only)'
+    }
+    if ($ddg.DnsOnHost) {
+        Write-CtgLog ("Windows DuckDuckGo DNS on adapter(s): " + ($ddg.DnsAdapters -join '; '))
+    } else {
+        Write-CtgLog 'Windows adapter DNS: no 94.140.14.14/15.15 on active interfaces (DDG may be via VPN tunnel only)'
+    }
+
+    if ($PreserveDdgDns) {
+        Write-CtgLog 'Kali bootstrap: --preserve-ddg-dns (default ON)'
+    } else {
+        Write-CtgLog 'WARNING: -NoPreserveDdgDns — Kali may change resolv.conf without DDG guard'
+    }
+    if ($DdgDnsOnly) {
+        Write-CtgLog 'Kali bootstrap: --ddg-dns-only — resolv.conf + Unbound stub → DuckDuckGo only'
+    }
+
+    $preserveScript = Join-Path $PSScriptRoot 'Preserve-DuckDuckGoVpn.ps1'
+    if (-not $SkipDdgPreserve -and (Test-Path $preserveScript)) {
+        Write-CtgLog 'Running Preserve-DuckDuckGoVpn.ps1 (Defender exclusions, no second VPN install)'
+        if (-not $WhatIf) {
+            . $preserveScript
+            Invoke-CtgPreserveDuckDuckGoVpn -LogAction { param($m) Write-CtgLog $m }
+        }
+    }
+}
+
+function Get-CtgBootstrapExtraArgs {
+    $args = @("--wifi-profile=$WifiProfile")
+    if ($PreserveDdgDns) { $args += '--preserve-ddg-dns' }
+    if ($NoPreserveDdgDns) { $args += '--no-preserve-ddg-dns' }
+    if ($DdgDnsOnly) { $args += '--ddg-dns-only' }
+    return ($args -join ' ')
+}
+
+function Invoke-CtgWiresharkCompanion {
+    if ($SkipWireshark) {
+        Write-CtgLog 'Skipping Install-WiresharkNpcap.ps1 (-SkipWireshark)'
+        return
+    }
+    $wsScript = Join-Path $PSScriptRoot 'Install-WiresharkNpcap.ps1'
+    if (-not (Test-Path $wsScript)) {
+        Write-CtgLog 'Install-WiresharkNpcap.ps1 not found — skip Windows Wireshark companion'
+        return
+    }
+    Write-CtgLog 'Windows companion: Wireshark + Npcap (WiFi monitor → Kali VM + USB passthrough)'
+    if ($WhatIf) {
+        Write-CtgLog '[WhatIf] Install-WiresharkNpcap.ps1'
+        return
+    }
+    try {
+        & $wsScript 2>&1 | ForEach-Object { Write-CtgLog "Wireshark: $_" }
+    } catch {
+        Write-CtgLog "Wireshark install skipped or failed: $($_.Exception.Message)"
+    }
+}
+
+function Write-CtgLabChecklistStatus {
+    Write-CtgLog '=== Kali lab feature checklist (docs/KALI_LAB_ARCHITECTURE.md) ==='
+    $items = @(
+        '1 Auto Kali hardening (bootstrap/Ansible)',
+        '2 Free IDS/IPS — Suricata OPNsense + passive Snort Kali',
+        '3 ClamAV',
+        '4 Wireshark + WiFi monitor lab',
+        '5 Snort (passive Kali)',
+        '6 Realtek dongle drivers — Kali + Windows notes',
+        '7 OSINT tier 1/2 (Maltego CE manual)',
+        '8 WiFi Option 2 company-lab profile',
+        '9 Production firewall — OPNsense lab VM',
+        '10 WiFi range/lab tune module',
+        '11 Deploy-KaliLab.ps1 + kali-lab-bootstrap.sh',
+        '12 Windows Wireshark/Npcap companion',
+        '13 Defender pause script (Pause-DefenderRealtime.ps1 — manual for builds)',
+        '14 Authorized Hacker Planet LLC lab framing',
+        '15 DuckDuckGo VPN + DNS preserve (this deploy)'
+    )
+    foreach ($item in $items) { Write-CtgLog "  [doc+script] $item" }
 }
 
 function Get-CtgKaliCredentials {
@@ -159,26 +297,25 @@ function Invoke-CtgPlinkBootstrap {
         [string]$Password,
         [int]$Port,
         [string]$LocalScript,
-        [string]$Profile
+        [string]$ExtraArgs
     )
     $plink = Get-Command plink -ErrorAction SilentlyContinue
     $pscp = Get-Command pscp -ErrorAction SilentlyContinue
     if (-not $plink -or -not $pscp) {
         Write-CtgLog 'PuTTY plink/pscp not in PATH - falling back to OpenSSH (password auth may prompt/fail on Windows)'
-        return Invoke-CtgOpenSshBootstrap -User $User -Password $Password -Port $Port -LocalScript $LocalScript -Profile $Profile
+        return Invoke-CtgOpenSshBootstrap -User $User -Password $Password -Port $Port -LocalScript $LocalScript -ExtraArgs $ExtraArgs
     }
 
     $remote = "${User}@127.0.0.1"
-    $hostKey = '-batch -hostkey *'
     if ($WhatIf) {
         Write-CtgLog "[WhatIf] pscp bootstrap to $remote port $Port"
-        Write-CtgLog "[WhatIf] plink sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=$Profile"
+        Write-CtgLog "[WhatIf] plink sudo bash /tmp/kali-lab-bootstrap.sh $ExtraArgs"
         return $false
     }
 
     & $pscp.Source -P $Port -pw $Password $LocalScript "${remote}:/tmp/kali-lab-bootstrap.sh"
     if ($LASTEXITCODE -ne 0) { return $false }
-    & $plink.Source -P $Port -pw $Password $remote "echo '$Password' | sudo -S bash /tmp/kali-lab-bootstrap.sh --wifi-profile=$Profile"
+    & $plink.Source -P $Port -pw $Password $remote "echo '$Password' | sudo -S bash /tmp/kali-lab-bootstrap.sh $ExtraArgs"
     return ($LASTEXITCODE -eq 0)
 }
 
@@ -188,10 +325,10 @@ function Invoke-CtgOpenSshBootstrap {
         [string]$Password,
         [int]$Port,
         [string]$LocalScript,
-        [string]$Profile
+        [string]$ExtraArgs
     )
     if ($WhatIf) {
-        Write-CtgLog "[WhatIf] scp/ssh bootstrap port $Port user $User"
+        Write-CtgLog "[WhatIf] scp/ssh bootstrap port $Port user $User args: $ExtraArgs"
         return $false
     }
 
@@ -199,7 +336,7 @@ function Invoke-CtgOpenSshBootstrap {
     & scp @sshOpts $LocalScript "${User}@127.0.0.1:/tmp/kali-lab-bootstrap.sh"
     if ($LASTEXITCODE -ne 0) { return $false }
 
-    $cmd = "echo '$($Password.Replace("'", "'\\''"))' | sudo -S bash /tmp/kali-lab-bootstrap.sh --wifi-profile=$Profile"
+    $cmd = "echo '$($Password.Replace("'", "'\\''"))' | sudo -S bash /tmp/kali-lab-bootstrap.sh $ExtraArgs"
     & ssh @sshOpts "${User}@127.0.0.1" $cmd
     return ($LASTEXITCODE -eq 0)
 }
@@ -241,6 +378,12 @@ function Copy-CtgBootstrapToSharedFolder {
 # --- main ---
 Write-CtgLog '=== Deploy-KaliLab.ps1 start ==='
 Write-CtgLog "Repo: $RepoRoot | WiFi profile: $WifiProfile"
+Write-CtgLabChecklistStatus
+Invoke-CtgDuckDuckGoPreserveCheck
+Invoke-CtgWiresharkCompanion
+
+$bootstrapExtra = Get-CtgBootstrapExtraArgs
+Write-CtgLog "Kali bootstrap args: $bootstrapExtra"
 
 $vbox = Find-CtgVirtualBoxKali -Names @($VmNameCandidates)
 $vmware = Find-CtgVmwareKali -Names @($VmNameCandidates)
@@ -298,11 +441,11 @@ if ($sshReady) {
         $tryCreds = @{ User = $tryUser; Password = $creds.Password }
         Write-CtgLog "Trying SSH user: $tryUser"
         $deployed = Invoke-CtgPlinkBootstrap -User $tryUser -Password $creds.Password -Port $SshHostPort `
-            -LocalScript $BootstrapScript -Profile $WifiProfile
+            -LocalScript $BootstrapScript -ExtraArgs $bootstrapExtra
         if ($deployed) { break }
         if ($tryUser -eq 'kali' -and $creds.Password -ne 'kali') {
             $deployed = Invoke-CtgPlinkBootstrap -User 'kali' -Password 'kali' -Port $SshHostPort `
-                -LocalScript $BootstrapScript -Profile $WifiProfile
+                -LocalScript $BootstrapScript -ExtraArgs $bootstrapExtra
             if ($deployed) { break }
         }
     }
@@ -336,7 +479,10 @@ if (-not $SkipOpnsense) {
 Write-CtgLog '=== Deploy-KaliLab.ps1 summary ==='
 Write-CtgLog "Hypervisor: $($target.Hypervisor) | VM: $($target.Name)"
 Write-CtgLog "SSH ready: $sshReady | Bootstrap deployed via SSH: $deployed"
+Write-CtgLog "DDG preserve: $PreserveDdgDns | ddg-dns-only: $DdgDnsOnly"
 Write-CtgLog "Fallback script: $sharedPath"
+Write-CtgLog "OPNsense DNS template: docs/OPNSENSE_LAB_DNS.md"
+Write-CtgLog "iPhone/Windows DDG rules: docs/IPHONE_HARDENING.md"
 if (-not $deployed) {
     Write-CtgLog 'MANUAL: Finish Kali install if needed, enable SSH, then re-run this script.'
     exit 1

@@ -1,0 +1,60 @@
+---
+# DuckDuckGo DNS preserve — mirrors kali-lab-bootstrap.sh ddg-dns phase.
+# See docs/KALI_LAB_ARCHITECTURE.md and docs/IPHONE_HARDENING.md preserve rules.
+- name: Check existing resolv.conf for DuckDuckGo DNS
+  ansible.builtin.slurp:
+    src: /etc/resolv.conf
+  register: resolv_slurp
+  failed_when: false
+
+- name: Detect DDG in resolv.conf
+  ansible.builtin.set_fact:
+    ctg_ddg_present: "{{ (resolv_slurp.content | default('') | b64decode) is search('94.140.14.14') or (resolv_slurp.content | default('') | b64decode) is search('94.140.15.15') }}"
+
+- name: Skip DNS changes when preserve and DDG already configured
+  ansible.builtin.debug:
+    msg: "preserve-ddg-dns: DuckDuckGo DNS already in resolv.conf — no changes"
+  when:
+    - ctg_preserve_ddg_dns | default(true) | bool
+    - ctg_ddg_present | default(false) | bool
+    - not (ctg_ddg_dns_only | default(false) | bool)
+
+- name: Configure DuckDuckGo DNS only (resolv.conf)
+  ansible.builtin.copy:
+    dest: /etc/resolv.conf
+    mode: "0644"
+    content: |
+      # CTG Kali lab — DuckDuckGo DNS only (see IPHONE_HARDENING.md preserve rules)
+      nameserver 94.140.14.14
+      nameserver 94.140.15.15
+  when: ctg_ddg_dns_only | default(false) | bool
+
+- name: Install unbound for DDG stub (ddg-dns-only)
+  ansible.builtin.apt:
+    name: unbound
+    state: present
+  when: ctg_ddg_dns_only | default(false) | bool
+
+- name: Unbound stub forward to DuckDuckGo
+  ansible.builtin.copy:
+    dest: /etc/unbound/unbound.conf.d/ctg-ddg-forward.conf
+    mode: "0644"
+    content: |
+      server:
+        interface: 127.0.0.1
+        access-control: 127.0.0.0/8 allow
+        do-not-query-localhost: no
+      forward-zone:
+        name: "."
+        forward-addr: 94.140.14.14
+        forward-addr: 94.140.15.15
+  when: ctg_ddg_dns_only | default(false) | bool
+  notify: Restart unbound
+
+- name: Point resolv.conf at local Unbound stub
+  ansible.builtin.copy:
+    dest: /etc/resolv.conf
+    mode: "0644"
+    content: |
+      nameserver 127.0.0.1
+  when: ctg_ddg_dns_only | default(false) | bool

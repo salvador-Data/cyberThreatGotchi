@@ -1,0 +1,6 @@
+---
+- name: Restart unbound
+  ansible.builtin.service:
+    name: unbound
+    state: restarted
+    enabled: true
