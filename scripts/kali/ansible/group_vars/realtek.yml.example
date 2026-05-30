@@ -1,0 +1,4 @@
+# Copy to realtek.yml and set VID:PID for your dongle (gitignored).
+# Example:
+# realtek_vidpid: "0bda:8812"
+realtek_vidpid: ""

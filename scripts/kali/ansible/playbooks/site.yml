@@ -1,0 +1,18 @@
+---
+# CyberThreatGotchi Kali lab — optional Ansible entry (authorized lab use only).
+# Prefer kali-lab-bootstrap.sh for first run; this mirrors the same roles.
+- name: CTG Kali lab bootstrap
+  hosts: localhost
+  connection: local
+  become: true
+  vars:
+    ctg_wifi_profile: "{{ lookup('env', 'CTG_WIFI_PROFILE') | default('company-lab', true) }}"
+  roles:
+    - harden
+    - clamav
+    - role: snort-ids
+      when: not (skip_snort | default(false) | bool)
+    - osint
+    - role: realtek-driver
+      when: not (skip_realtek | default(false) | bool)
+    - wifi-lab-tune

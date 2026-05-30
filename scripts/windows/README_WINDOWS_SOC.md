@@ -88,6 +88,10 @@ Optional: Defender ASR audit mode:
 | `iphone_hardening_assist.ps1` | Deprecated alias — forwards to `iphone_hardening_automate.ps1` (`-OpenRunbook` still works) |
 | `Pause-DefenderRealtime.ps1` | **Admin:** pause/resume Defender real-time during PlatformIO builds |
 | `Pause-DefenderRealtime.bat` | Double-click UAC shim — toggles realtime pause/resume |
+| `Deploy-KaliLab.ps1` | Kali lab master deploy (VBox/VMware, SSH bootstrap) |
+| `Install-KaliVirtualBox.ps1` | Create Kali VM from installer ISO |
+| `Install-OpnsenseLab.ps1` | OPNsense lab VM (2 NICs) |
+| `Install-WiresharkNpcap.ps1` | Wireshark + Npcap on Windows |
 
 Check Wazuh without installing:
 
@@ -109,11 +113,39 @@ These scripts install the **agent** only. You need a Wazuh **manager** (Linux VM
 - Default agent port: **1514/TCP** to manager
 - After install, confirm agent **Active** in the Wazuh dashboard
 
+## Kali lab (VirtualBox / VMware)
+
+Authorized analyst VM bootstrap — harden, ClamAV, passive Snort, OSINT apt, Realtek detect, WiFi **Option 2 company-lab** default.
+
+| Script | Purpose |
+|--------|---------|
+| `Deploy-KaliLab.ps1` | **Master:** detect hypervisor, NAT SSH forward, copy/run `kali-lab-bootstrap.sh` |
+| `Install-KaliVirtualBox.ps1` | Create unattended Kali VM (credentials → `Backups\kali-vm-credentials.txt`) |
+| `Install-OpnsenseLab.ps1` | Optional lab OPNsense VM (2 NICs; not edge by default) |
+| `Install-WiresharkNpcap.ps1` | Windows Wireshark + Npcap |
+
+Architecture: [docs/KALI_LAB_ARCHITECTURE.md](../../docs/KALI_LAB_ARCHITECTURE.md) · Kali scripts: [scripts/kali/README_KALI_LAB.md](../kali/README_KALI_LAB.md)
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\Deploy-KaliLab.ps1 -StartVmIfStopped -InstallSshServerHint
+```
+
+If SSH is not ready, finish Kali install and run inside the guest:
+
+```bash
+sudo apt install -y openssh-server && sudo systemctl enable --now ssh
+sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=company-lab
+```
+
 ## OPNsense / Suricata (network IPS)
 
-Not automated here. Typical homelab path:
+Lab VM helper: `Install-OpnsenseLab.ps1`. Typical homelab path:
 
-1. Install OPNsense on a spare NIC/VM.
+1. Install OPNsense on a spare NIC/VM (script creates `OPNsense-Lab` in VirtualBox when ISO present).
 2. Enable **Intrusion Detection → Suricata**.
 3. Send alerts to Wazuh or syslog (optional integration).
 

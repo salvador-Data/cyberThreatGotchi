@@ -1,0 +1,11 @@
+---
+- name: Install passive Snort
+  ansible.builtin.apt:
+    name:
+      - snort
+      - snort-rules-default
+    state: present
+
+- name: Snort not enabled inline (lab passive only)
+  ansible.builtin.debug:
+    msg: "Snort installed for SPAN/tap lab — primary IDS is Suricata on OPNsense"

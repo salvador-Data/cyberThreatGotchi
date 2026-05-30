@@ -1,0 +1,38 @@
+---
+- name: WiFi tools
+  ansible.builtin.apt:
+    name:
+      - wireless-tools
+      - iw
+      - wpasupplicant
+      - wireshark
+      - tshark
+    state: present
+
+- name: WiFi profile env
+  ansible.builtin.copy:
+    dest: /etc/environment.d/ctg-wifi.conf
+    content: |
+      CTG_WIFI_REGDOMAIN=US
+      CTG_WIFI_PROFILE={{ ctg_wifi_profile | default('company-lab') }}
+
+- name: Deploy wifi-lab-baseline script
+  ansible.builtin.copy:
+    dest: /usr/local/sbin/wifi-lab-baseline.sh
+    mode: "0755"
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      REG="${CTG_WIFI_REGDOMAIN:-US}"
+      iw reg set "$REG"
+      for dev in $(iw dev 2>/dev/null | awk '/Interface/ {print $2}'); do
+        ip link set "$dev" up 2>/dev/null || true
+        iw dev "$dev" set power_save off 2>/dev/null || true
+      done
+      iw reg get
+
+- name: Run baseline (legal regdomain only)
+  ansible.builtin.command: /usr/local/sbin/wifi-lab-baseline.sh
+  environment:
+    CTG_WIFI_REGDOMAIN: US
+    CTG_WIFI_PROFILE: "{{ ctg_wifi_profile | default('company-lab') }}"

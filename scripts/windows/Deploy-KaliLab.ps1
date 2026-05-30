@@ -1,0 +1,344 @@
+# Deploy CyberThreatGotchi Kali lab bootstrap to VirtualBox or VMware Kali VM.
+# Authorized defensive lab use only — Hacker Planet LLC.
+# Master script: detect hypervisor, start VM, wait for SSH, copy bootstrap, run sudo.
+param(
+    [string[]]$VmNameCandidates = @('kali', 'Kali-Lab', 'Kali', 'kali-linux'),
+    [string]$BootstrapScript = '',
+    [string]$CredentialsFile = 'C:\Users\Owner\Backups\kali-vm-credentials.txt',
+    [string]$WifiProfile = 'company-lab',
+    [int]$SshHostPort = 2222,
+    [int]$SshWaitSeconds = 300,
+    [switch]$SkipOpnsense,
+    [switch]$StartVmIfStopped,
+    [switch]$InstallSshServerHint,
+    [switch]$WhatIf
+)
+
+$ErrorActionPreference = 'Stop'
+$RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+if (-not $BootstrapScript) {
+    $BootstrapScript = Join-Path $RepoRoot 'scripts\kali\kali-lab-bootstrap.sh'
+}
+if (-not (Test-Path $BootstrapScript)) {
+    throw "Bootstrap script not found: $BootstrapScript"
+}
+
+function Write-CtgLog([string]$Message) {
+    $line = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message"
+    Write-Host $line
+    $logDir = 'C:\Users\Owner\Backups\logs'
+    if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
+    Add-Content -Path (Join-Path $logDir 'deploy-kali-lab.log') -Value $line -Encoding UTF8
+}
+
+function Get-CtgKaliCredentials {
+    param([string]$Path)
+    $result = @{
+        User = 'kali'
+        Password = 'kali'
+        Source = 'default kali/kali'
+    }
+    if (Test-Path $Path) {
+        $text = Get-Content -Path $Path -Raw
+        if ($text -match '(?m)^User:\s*(.+)$') { $result.User = $Matches[1].Trim() }
+        if ($text -match '(?m)^Password:\s*(.+)$') { $result.Password = $Matches[1].Trim() }
+        $result.Source = $Path
+    }
+    return $result
+}
+
+function Find-CtgVirtualBoxKali {
+    param([string[]]$Names)
+    $VBoxManage = Join-Path ${env:ProgramFiles} 'Oracle\VirtualBox\VBoxManage.exe'
+    if (-not (Test-Path $VBoxManage)) { return $null }
+    try {
+        $vmsRaw = (& $VBoxManage list vms 2>&1 | Out-String).Trim()
+    } catch {
+        Write-CtgLog "VirtualBox list vms failed: $($_.Exception.Message)"
+        return $null
+    }
+    if (-not $vmsRaw) { return $null }
+    foreach ($n in $Names) {
+        $pattern = '"' + [regex]::Escape($n) + '"'
+        if ($vmsRaw -match $pattern) {
+            return @{ Hypervisor = 'VirtualBox'; Name = $n; Tool = $VBoxManage }
+        }
+    }
+    return $null
+}
+
+function Find-CtgVmwareKali {
+    param([string[]]$Names)
+    $vmrunPaths = @(
+        'C:\Program Files (x86)\VMware\VMware Workstation\vmrun.exe',
+        'C:\Program Files\VMware\VMware Workstation\vmrun.exe'
+    )
+    $vmrun = $vmrunPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+    if (-not $vmrun) { return $null }
+
+    $searchRoots = @(
+        (Join-Path $env:USERPROFILE 'Documents\Virtual Machines'),
+        (Join-Path $env:USERPROFILE 'vmware'),
+        'C:\VMware',
+        'D:\VMware'
+    )
+    foreach ($root in $searchRoots) {
+        if (-not (Test-Path $root)) { continue }
+        $vmxFiles = Get-ChildItem -Path $root -Filter '*.vmx' -Recurse -ErrorAction SilentlyContinue
+        foreach ($vmx in $vmxFiles) {
+            $base = [System.IO.Path]::GetFileNameWithoutExtension($vmx.Name)
+            foreach ($n in $Names) {
+                if ($base -ieq $n -or $vmx.Name -match [regex]::Escape($n)) {
+                    return @{ Hypervisor = 'VMware'; Name = $base; VmxPath = $vmx.FullName; Tool = $vmrun }
+                }
+            }
+        }
+    }
+    return $null
+}
+
+function Get-CtgVmStateVirtualBox {
+    param([string]$Name, [string]$VBoxManage)
+    $infoRaw = (& $VBoxManage showvminfo $Name --machinereadable 2>&1 | Out-String)
+    $state = 'unknown'
+    if ($infoRaw -match 'VMState="([^"]+)"') { $state = $Matches[1] }
+    $guestIp = ((& $VBoxManage guestproperty get $Name '/VirtualBox/GuestInfo/Net/0/V4/IP' 2>&1 | Out-String) -replace '(?s).*Value:\s*', '').Trim()
+    if ($guestIp -match 'No value set') { $guestIp = '' }
+    $loggedIn = ((& $VBoxManage guestproperty get $Name '/VirtualBox/GuestInfo/OS/LoggedInUsersList' 2>&1 | Out-String) -replace '(?s).*Value:\s*', '').Trim()
+    if ($loggedIn -match 'No value set') { $loggedIn = '' }
+    return @{ State = $state; GuestIp = $guestIp; LoggedInUser = $loggedIn }
+}
+
+function Ensure-CtgVBoxNatSsh {
+    param([string]$Name, [string]$VBoxManage, [int]$HostPort)
+    $rules = & $VBoxManage showvminfo $Name 2>$null | Select-String -Pattern 'Rule.*ssh|2222'
+    if ($rules) { return }
+    Write-CtgLog "Adding NAT port forward ${HostPort}->22 on $Name"
+    if ($WhatIf) { return }
+    $state = (Get-CtgVmStateVirtualBox -Name $Name -VBoxManage $VBoxManage).State
+    if ($state -eq 'running') {
+        & $VBoxManage controlvm $Name natpf1 "ssh,tcp,,$HostPort,,22" 2>$null
+    } else {
+        & $VBoxManage modifyvm $Name --natpf1 "ssh,tcp,,$HostPort,,22"
+    }
+}
+
+function Start-CtgVirtualBoxVm {
+    param([string]$Name, [string]$VBoxManage)
+    $state = (Get-CtgVmStateVirtualBox -Name $Name -VBoxManage $VBoxManage).State
+    if ($state -eq 'running') { return }
+    if (-not $StartVmIfStopped) {
+        Write-CtgLog "VM $Name is $state - pass -StartVmIfStopped to power on"
+        return
+    }
+    Write-CtgLog "Starting VirtualBox VM: $Name"
+    if (-not $WhatIf) { & $VBoxManage startvm $Name --type headless }
+}
+
+function Wait-CtgSshReady {
+    param(
+        [string]$HostName = '127.0.0.1',
+        [int]$Port,
+        [int]$TimeoutSec
+    )
+    $deadline = (Get-Date).AddSeconds($TimeoutSec)
+    while ((Get-Date) -lt $deadline) {
+        $tcp = Test-NetConnection -ComputerName $HostName -Port $Port -WarningAction SilentlyContinue
+        if ($tcp.TcpTestSucceeded) {
+            Start-Sleep -Seconds 2
+            return $true
+        }
+        Start-Sleep -Seconds 5
+    }
+    return $false
+}
+
+function Invoke-CtgPlinkBootstrap {
+    param(
+        [string]$User,
+        [string]$Password,
+        [int]$Port,
+        [string]$LocalScript,
+        [string]$Profile
+    )
+    $plink = Get-Command plink -ErrorAction SilentlyContinue
+    $pscp = Get-Command pscp -ErrorAction SilentlyContinue
+    if (-not $plink -or -not $pscp) {
+        Write-CtgLog 'PuTTY plink/pscp not in PATH - falling back to OpenSSH (password auth may prompt/fail on Windows)'
+        return Invoke-CtgOpenSshBootstrap -User $User -Password $Password -Port $Port -LocalScript $LocalScript -Profile $Profile
+    }
+
+    $remote = "${User}@127.0.0.1"
+    $hostKey = '-batch -hostkey *'
+    if ($WhatIf) {
+        Write-CtgLog "[WhatIf] pscp bootstrap to $remote port $Port"
+        Write-CtgLog "[WhatIf] plink sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=$Profile"
+        return $false
+    }
+
+    & $pscp.Source -P $Port -pw $Password $LocalScript "${remote}:/tmp/kali-lab-bootstrap.sh"
+    if ($LASTEXITCODE -ne 0) { return $false }
+    & $plink.Source -P $Port -pw $Password $remote "echo '$Password' | sudo -S bash /tmp/kali-lab-bootstrap.sh --wifi-profile=$Profile"
+    return ($LASTEXITCODE -eq 0)
+}
+
+function Invoke-CtgOpenSshBootstrap {
+    param(
+        [string]$User,
+        [string]$Password,
+        [int]$Port,
+        [string]$LocalScript,
+        [string]$Profile
+    )
+    if ($WhatIf) {
+        Write-CtgLog "[WhatIf] scp/ssh bootstrap port $Port user $User"
+        return $false
+    }
+
+    $sshOpts = @('-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=NUL', '-p', "$Port")
+    & scp @sshOpts $LocalScript "${User}@127.0.0.1:/tmp/kali-lab-bootstrap.sh"
+    if ($LASTEXITCODE -ne 0) { return $false }
+
+    $cmd = "echo '$($Password.Replace("'", "'\\''"))' | sudo -S bash /tmp/kali-lab-bootstrap.sh --wifi-profile=$Profile"
+    & ssh @sshOpts "${User}@127.0.0.1" $cmd
+    return ($LASTEXITCODE -eq 0)
+}
+
+function Enable-CtgVBoxSharedBootstrap {
+    param(
+        [string]$Name,
+        [string]$VBoxManage,
+        [string]$HostFolder = 'C:\Users\Owner\Backups',
+        [string]$ShareName = 'ctg-backups'
+    )
+    if (-not (Test-Path $HostFolder)) { return $false }
+    Write-CtgLog "Ensuring VirtualBox shared folder $ShareName -> $HostFolder"
+    if ($WhatIf) { return $true }
+    $state = (Get-CtgVmStateVirtualBox -Name $Name -VBoxManage $VBoxManage).State
+    try {
+        if ($state -eq 'running') {
+            & $VBoxManage controlvm $Name sharedfolder add $ShareName --hostpath $HostFolder --automount 2>&1 | Out-Null
+        } else {
+            & $VBoxManage sharedfolder add $Name --name $ShareName --hostpath $HostFolder --automount 2>&1 | Out-Null
+        }
+    } catch {
+        Write-CtgLog "Shared folder add skipped (may already exist): $($_.Exception.Message)"
+    }
+    Write-CtgLog "In Kali: sudo mkdir -p /mnt/ctg; sudo mount -t vboxsf $ShareName /mnt/ctg"
+    Write-CtgLog "Then: sudo bash /mnt/ctg/kali-lab-bootstrap.sh --wifi-profile=$WifiProfile"
+    return $true
+}
+
+function Copy-CtgBootstrapToSharedFolder {
+    param([string]$LocalScript)
+    $dest = 'C:\Users\Owner\Backups\kali-lab-bootstrap.sh'
+    Copy-Item -Path $LocalScript -Destination $dest -Force
+    Write-CtgLog "Bootstrap copied to $dest - run inside Kali after install:"
+    Write-CtgLog "  sudo bash /path/to/kali-lab-bootstrap.sh --wifi-profile=$WifiProfile"
+    return $dest
+}
+
+# --- main ---
+Write-CtgLog '=== Deploy-KaliLab.ps1 start ==='
+Write-CtgLog "Repo: $RepoRoot | WiFi profile: $WifiProfile"
+
+$vbox = Find-CtgVirtualBoxKali -Names @($VmNameCandidates)
+$vmware = Find-CtgVmwareKali -Names @($VmNameCandidates)
+
+$target = $null
+if ($vbox) {
+    $target = $vbox
+    Write-CtgLog "Hypervisor: Oracle VirtualBox - VM $($vbox.Name)"
+} elseif ($vmware) {
+    $target = $vmware
+    Write-CtgLog "Hypervisor: VMware Workstation - VM $($vmware.Name) at $($vmware.VmxPath)"
+} else {
+    Write-CtgLog 'No Kali VM found in VirtualBox or VMware. Run Install-KaliVirtualBox.ps1 or create VMware VM first.'
+    Copy-CtgBootstrapToSharedFolder -LocalScript $BootstrapScript | Out-Null
+    exit 2
+}
+
+$creds = Get-CtgKaliCredentials -Path $CredentialsFile
+Write-CtgLog "Credentials source: $($creds.Source) (user: $($creds.User))"
+
+$deployed = $false
+$sshReady = $false
+
+if ($target.Hypervisor -eq 'VirtualBox') {
+    $vbState = Get-CtgVmStateVirtualBox -Name $target.Name -VBoxManage $target.Tool
+    Write-CtgLog "VM state: $($vbState.State) | guest IP: $($vbState.GuestIp) | logged in: $($vbState.LoggedInUser)"
+
+    if ($vbState.State -ne 'running') {
+        Start-CtgVirtualBoxVm -Name $target.Name -VBoxManage $target.Tool
+        Start-Sleep -Seconds 10
+        $vbState = Get-CtgVmStateVirtualBox -Name $target.Name -VBoxManage $target.Tool
+    }
+
+    if ($vbState.State -eq 'running') {
+        Ensure-CtgVBoxNatSsh -Name $target.Name -VBoxManage $target.Tool -HostPort $SshHostPort
+        Write-CtgLog "Waiting up to ${SshWaitSeconds}s for SSH on 127.0.0.1:$SshHostPort ..."
+        $sshReady = Wait-CtgSshReady -Port $SshHostPort -TimeoutSec $SshWaitSeconds
+    }
+} else {
+    Write-CtgLog 'VMware path: ensure VM is running and SSH reachable (NAT port forward or bridged IP).'
+    if (-not $WhatIf) {
+        $list = & $target.Tool list 2>$null
+        $running = $list -match [regex]::Escape($target.VmxPath)
+        if (-not $running -and $StartVmIfStopped) {
+            & $target.Tool start $target.VmxPath nogui
+            Start-Sleep -Seconds 15
+        }
+    }
+    $sshReady = Wait-CtgSshReady -Port $SshHostPort -TimeoutSec $SshWaitSeconds
+}
+
+if ($sshReady) {
+    Write-CtgLog 'SSH port open — attempting bootstrap deploy'
+    foreach ($tryUser in @($creds.User, 'kali', 'sal')) {
+        $tryCreds = @{ User = $tryUser; Password = $creds.Password }
+        Write-CtgLog "Trying SSH user: $tryUser"
+        $deployed = Invoke-CtgPlinkBootstrap -User $tryUser -Password $creds.Password -Port $SshHostPort `
+            -LocalScript $BootstrapScript -Profile $WifiProfile
+        if ($deployed) { break }
+        if ($tryUser -eq 'kali' -and $creds.Password -ne 'kali') {
+            $deployed = Invoke-CtgPlinkBootstrap -User 'kali' -Password 'kali' -Port $SshHostPort `
+                -LocalScript $BootstrapScript -Profile $WifiProfile
+            if ($deployed) { break }
+        }
+    }
+} else {
+    Write-CtgLog "SSH not ready - Kali may need openssh-server enabled or NAT rule applied after reboot."
+    if ($InstallSshServerHint) {
+        Write-CtgLog "Inside Kali terminal: sudo apt update; sudo apt install -y openssh-server; sudo systemctl enable --now ssh"
+    }
+}
+
+$sharedPath = Copy-CtgBootstrapToSharedFolder -LocalScript $BootstrapScript
+
+if (-not $deployed -and $target.Hypervisor -eq 'VirtualBox') {
+    Enable-CtgVBoxSharedBootstrap -Name $target.Name -VBoxManage $target.Tool | Out-Null
+}
+
+if (-not $SkipOpnsense) {
+    $opnScript = Join-Path $PSScriptRoot 'Install-OpnsenseLab.ps1'
+    if (Test-Path $opnScript) {
+        Write-CtgLog 'Launching OPNsense lab VM setup (non-blocking)...'
+        if (-not $WhatIf) {
+            try {
+                & $opnScript -WhatIf:$false 2>&1 | ForEach-Object { Write-CtgLog "OPNsense: $_" }
+            } catch {
+                Write-CtgLog "OPNsense setup skipped or failed: $($_.Exception.Message)"
+            }
+        }
+    }
+}
+
+Write-CtgLog '=== Deploy-KaliLab.ps1 summary ==='
+Write-CtgLog "Hypervisor: $($target.Hypervisor) | VM: $($target.Name)"
+Write-CtgLog "SSH ready: $sshReady | Bootstrap deployed via SSH: $deployed"
+Write-CtgLog "Fallback script: $sharedPath"
+if (-not $deployed) {
+    Write-CtgLog 'MANUAL: Finish Kali install if needed, enable SSH, then re-run this script.'
+    exit 1
+}
+exit 0

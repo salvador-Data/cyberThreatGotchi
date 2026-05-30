@@ -1,0 +1,24 @@
+---
+- name: OSINT tier 1 packages
+  ansible.builtin.apt:
+    name:
+      - theharvester
+      - amass
+      - recon-ng
+      - whois
+      - dnsutils
+      - curl
+      - jq
+    state: present
+
+- name: OSINT env template
+  ansible.builtin.copy:
+    dest: /etc/environment.d/ctg-osint.env
+    mode: "0600"
+    content: |
+      # CTG OSINT API placeholders — set locally; never commit secrets.
+      # CTG_SHODAN_API_KEY=
+      # CTG_CENSYS_API_ID=
+      # CTG_CENSYS_API_SECRET=
+      # CTG_VT_API_KEY=
+  force: false

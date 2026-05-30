@@ -3,7 +3,7 @@
 **Author:** Andy Kowal · **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
 **GitHub:** [salvador-Data](https://github.com/salvador-Data) · **Repo:** [CyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi)
 
-**Status:** Architecture and phased rollout plan only — **no VM install, no firewall replacement, and no destructive automation** until Andy explicitly runs each phase.  
+**Status:** Architecture + **bootstrap scripts landed** — run `Deploy-KaliLab.ps1` from Windows; Kali-side `kali-lab-bootstrap.sh` with default **`--wifi-profile=company-lab` (Option 2)**. No edge/firewall replacement unless `-EdgeMode` on OPNsense (blocked by default).  
 **Companion:** [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) (Windows SOC, iPhone, Cardputer UTMS) · [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)
 
 **Hacker Planet LLC — company defensive lab (authorized use):** This architecture describes **Hacker Planet LLC**’s authorized security research and defensive engineering lab (Philadelphia, PA). WiFi and RF work stays on **company-owned, lab-isolated** segments with written RF policy sign-off — not on neighbors’, coffee-shop, or client production WLANs without explicit scope.
@@ -114,7 +114,7 @@ Kali VM: ClamAV (files) | optional passive Snort | OSINT | USB Realtek monitor (
 
 ### Kali VM (hardened analyst workstation)
 
-- **Hypervisor:** Oracle VirtualBox on Windows (existing reference: `scripts/windows/Install-KaliVirtualBox.ps1`).
+- **Hypervisor:** Oracle VirtualBox **or** VMware Workstation on Windows — `Deploy-KaliLab.ps1` auto-detects whichever hosts the Kali VM (`kali`, `Kali-Lab`, etc.). Reference: `Install-KaliVirtualBox.ps1`.
 - **Default sizing (recommended):** 8 GB RAM, 2–4 vCPU, 40–60 GB disk — **not** 34 GB RAM or oversized VDI on a daily-driver laptop.
 - **Install path:** Official Kali **installer** ISO (not the VirtualBox-only OVA if you want repeatable preseed/Ansible).
 - **Post-install hardening (Ansible `harden` role):** non-root sudo, SSH key-only (if SSH enabled at all), `fail2ban`, `lynis` audit, `unattended-upgrades`, firewall default-deny with explicit allow for lab work, remove unnecessary services.
@@ -201,7 +201,7 @@ The following are **intentionally excluded** from architecture, Ansible roles, a
 
 ### Auto bootstrap (target state)
 
-**Preferred:** Ansible playbook applied **inside** Kali (or via `ansible localhost`) after first boot.
+**Preferred:** Monolithic `scripts/kali/kali-lab-bootstrap.sh` (copied and run by `Deploy-KaliLab.ps1`). Optional Ansible mirror: `scripts/kali/ansible/playbooks/site.yml`.
 
 **Default invocation (Andy / Hacker Planet lab):**
 
@@ -224,10 +224,14 @@ ansible-playbook playbooks/site.yml --wifi-profile=company-lab
 | `realtek-driver` | chipset-conditional Realtek **out-of-tree** DKMS (88xxau / 8812au family) |
 | `wifi-lab-tune` | Profile-aware: Option 2 = `power_save off`, fixed channel vars, scan baseline, legal regdomain + driver TX where supported; Option 1 = regdomain + legal TX only |
 
-**Windows reference scripts (no destructive default):**
+**Windows reference scripts:**
 
-- `scripts/windows/Install-KaliVirtualBox.ps1` — exists
-- `scripts/windows/Install-OpnsenseLab.ps1` — proposed; lab VM only, `-EdgeMode` switch gated
+| Script | Status |
+|--------|--------|
+| `Deploy-KaliLab.ps1` | **Master** — detect VBox/VMware, SSH, copy/run bootstrap |
+| `Install-KaliVirtualBox.ps1` | Create unattended Kali VM |
+| `Install-OpnsenseLab.ps1` | Lab OPNsense VM (2 NICs); `-EdgeMode` blocked |
+| `Install-WiresharkNpcap.ps1` | Windows Wireshark + Npcap companion |
 
 ---
 
@@ -444,28 +448,23 @@ Answer **before** running automation beyond P0. Record choices in a private lab 
 
 ```text
 scripts/kali/
-  README_KALI_LAB.md              # Quick index → this doc
-  ansible.cfg
-  inventory/localhost.yml
-  playbooks/site.yml              # imports all roles; --wifi-profile default company-lab
-  group_vars/wifi_profile.yml     # company-lab | home-conservative
-  roles/harden/tasks/main.yml
-  roles/clamav/tasks/main.yml
-  roles/snort-ids/tasks/main.yml
-  roles/osint/tasks/main.yml
-  roles/realtek-driver/tasks/main.yml
-  roles/wifi-lab-tune/tasks/main.yml
-  group_vars/realtek.yml.example  # VID:PID — copy to realtek.yml (gitignored)
-  files/wifi-lab-baseline.sh
+  README_KALI_LAB.md
+  kali-lab-bootstrap.sh           # primary (--wifi-profile=company-lab default)
+  ansible/ansible.cfg
+  ansible/inventory/localhost.yml
+  ansible/playbooks/site.yml
+  ansible/roles/{harden,clamav,snort-ids,osint,realtek-driver,wifi-lab-tune}/
+  ansible/group_vars/realtek.yml.example
 
 scripts/windows/
-  Install-KaliVirtualBox.ps1        # exists
-  Install-OpnsenseLab.ps1         # proposed — lab VM; -EdgeMode gated
-  Install-WiresharkNpcap.ps1      # proposed — optional helper
-  README_WINDOWS_SOC.md           # exists — link Kali lab section
+  Deploy-KaliLab.ps1              # master deploy
+  Install-KaliVirtualBox.ps1
+  Install-OpnsenseLab.ps1
+  Install-WiresharkNpcap.ps1
+  README_WINDOWS_SOC.md
 ```
 
-**Secrets gitignore additions (when scripts land):**
+**Secrets gitignore (in repo `.gitignore`):**
 
 ```gitignore
 scripts/kali/group_vars/realtek.yml
@@ -482,7 +481,8 @@ Backups/opnsense-*.xml
 | [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) | Full defensive portfolio — Windows, iPhone, Cardputer |
 | [SECURITY_HARDENING.md](SECURITY_HARDENING.md) | CTG env vars, Wazuh, firewall baseline |
 | [IPHONE_HARDENING.md](IPHONE_HARDENING.md) | Mobile tier — separate from Kali |
-| [scripts/windows/Install-KaliVirtualBox.ps1](../scripts/windows/Install-KaliVirtualBox.ps1) | Kali VM bootstrap |
+| [scripts/windows/Deploy-KaliLab.ps1](../scripts/windows/Deploy-KaliLab.ps1) | Master Kali lab deploy |
+| [scripts/kali/kali-lab-bootstrap.sh](../scripts/kali/kali-lab-bootstrap.sh) | In-guest bootstrap |
 | [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md) | OPNsense/Suricata notes |
 | [FIREWALL_BASELINE.md](FIREWALL_BASELINE.md) | CTG Linux iptables (appliance, not Kali VM) |
 

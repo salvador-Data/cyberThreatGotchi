@@ -1,0 +1,19 @@
+---
+- name: Build deps for Realtek DKMS
+  ansible.builtin.apt:
+    name:
+      - dkms
+      - build-essential
+      - "linux-headers-{{ ansible_kernel }}"
+      - git
+      - usbutils
+    state: present
+
+- name: Detect Realtek USB
+  ansible.builtin.shell: lsusb | grep -iE 'realtek|0bda:' || true
+  register: realtek_lsusb
+  changed_when: false
+
+- name: Realtek driver note
+  ansible.builtin.debug:
+    msg: "{{ realtek_lsusb.stdout_lines | default(['No Realtek USB — attach dongle via VirtualBox']) }}"
