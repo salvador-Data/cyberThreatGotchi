@@ -69,10 +69,10 @@ window.HPL_SHIPPING_TRACKER = {
       ratingNote: "Pre-flashed NetHunter hardware - authorized testing only",
     },
     AliExpressVetted: { channel: "aliexpress", region: "CN->US", ratingNote: "Operator picks vetted seller per SKU" },
-    eBayVetted: { channel: "ebay", region: "US", ratingNote: "Operator picks vetted US seller per SKU — manual checkout only" },
+    eBayVetted: { channel: "ebay", region: "US", ratingNote: "Operator picks vetted US seller per SKU - manual checkout only" },
     LilyGO: { channel: "direct_store", region: "CN", ratingNote: "T-Beam boards" },
-    Hak5: { channel: "direct_store", region: "US", ratingNote: "WiFi Pineapple, LAN Tap, USB Rubber Ducky — authorized lab framing" },
-    NooElec: { channel: "direct_store", region: "US/CA", ratingNote: "RTL-SDR bundles — receive-only lab" },
+    Hak5: { channel: "direct_store", region: "US", ratingNote: "WiFi Pineapple, LAN Tap, USB Rubber Ducky - authorized lab framing" },
+    NooElec: { channel: "direct_store", region: "US/CA", ratingNote: "RTL-SDR bundles - receive-only lab" },
     RTL-SDR Blog: { channel: "amazon", region: "US", ratingNote: "Official dongles via SparkFun / Amazon storefront" },
     RAKwireless: { channel: "direct_store", region: "US", ratingNote: "WisBlock Meshtastic kits" },
   },
@@ -282,7 +282,7 @@ window.HPL_SHIPPING_TRACKER = {
       supplierUrl: "https://www.banana-pi.org/",
       ebaySearchUrl: "https://www.ebay.com/sch/i.html?_nkw=banana+pi+bpi-r3+mini+2gb",
       orderChecklist: [
-        "Ops spare board only — CTG coreKit component",
+        "Ops spare board only - CTG coreKit component",
         "Confirm 2 GB RAM / 8 GB eMMC Mini variant",
         "Reject gray-market <$100 listings for customer-facing orders",
       ],
@@ -298,7 +298,7 @@ window.HPL_SHIPPING_TRACKER = {
       ebaySearchUrl: "https://www.ebay.com/sch/i.html?_nkw=rtl-sdr+blog+v3+dipole",
       orderChecklist: [
         "Prefer SparkFun or RTL-SDR Blog Amazon seller",
-        "Receive-only lab — document authorized scope in shipment email",
+        "Receive-only lab - document authorized scope in shipment email",
       ],
     },
     dsNesdrSmart: {
@@ -321,7 +321,7 @@ window.HPL_SHIPPING_TRACKER = {
       supplierUrl: "https://shop.hak5.org/products/throwing-star-lan-tap-pro",
       amazonSearchUrl: "https://www.amazon.com/s?k=hak5+lan+tap+pro",
       orderChecklist: [
-        "Passive tap only — customer must own monitored network segment",
+        "Passive tap only - customer must own monitored network segment",
         "Include Wireshark/tcpdump quick-start link",
       ],
     },
@@ -332,7 +332,7 @@ window.HPL_SHIPPING_TRACKER = {
       leadTimeDays: { min: 5, max: 12 },
       supplierCostUsd: 20,
       supplierUrl: "https://shop.hak5.org/products/throwing-star-lan-tap",
-      orderChecklist: ["Customer soldered kit — confirm they accept DIY assembly"],
+      orderChecklist: ["Customer soldered kit - confirm they accept DIY assembly"],
     },
     dsEsp32WifiLab: {
       supplier: "Adafruit",
@@ -353,7 +353,7 @@ window.HPL_SHIPPING_TRACKER = {
       supplierUrl: "https://shop.hak5.org/products/usb-rubber-ducky",
       amazonSearchUrl: "https://www.amazon.com/s?k=hak5+usb+rubber+ducky",
       orderChecklist: [
-        "Training injector — owned systems / written scope only",
+        "Training injector - owned systems / written scope only",
         "Never ship pre-loaded offensive payloads without customer sign-off",
       ],
     },

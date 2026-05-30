@@ -1,4 +1,4 @@
-/** Hacker Planet LLC — Kickstarter campaign URL + CTA wiring (UTM-safe redirects) */
+/** Hacker Planet LLC - Kickstarter campaign URL + CTA wiring (UTM-safe redirects) */
 
 (function () {
   var NOTIFY_MAIL =
@@ -116,14 +116,14 @@
     } else {
       if (badge) badge.hidden = true;
       if (label) label.textContent = "Kickstarter preview | Philadelphia PA";
-      wireAnchor(primary, url, false, "", "Notify me at launch");
+      wireAnchor(primary, url, false, "Notify me at launch");
       if (secondary) {
         secondary.textContent = "Preview reward tiers";
         secondary.href = "#ks-rewards";
         secondary.removeAttribute("target");
         secondary.removeAttribute("rel");
       }
-      wireAnchor(footerPrimary, url, false, "", "Email notify me");
+      wireAnchor(footerPrimary, url, false, "Email notify me");
       if (banner) banner.hidden = false;
       if (paymentNote) paymentNote.hidden = true;
     }
@@ -161,7 +161,7 @@
       btn.rel = "noopener noreferrer";
       if (note) {
         note.textContent =
-          "Pledge on kickstarter.com — card data never touches hackerplanet.dev. Direct shop checkout stays available for non-campaign SKUs.";
+          "Pledge on kickstarter.com - card data never touches hackerplanet.dev. Direct shop checkout stays available for non-campaign SKUs.";
       }
     } else if (btn) {
       btn.textContent = "Kickstarter preview & reward tiers";
@@ -190,7 +190,7 @@
       var note = document.createElement("p");
       note.className = "pay-kickstarter-note";
       note.textContent =
-        "Pledge this tier on kickstarter.com. Payment is handled by Kickstarter — not Stripe on this site.";
+        "Pledge this tier on kickstarter.com. Payment is handled by Kickstarter - not Stripe on this site.";
       host.appendChild(note);
       return true;
     }
@@ -204,7 +204,7 @@
       var pre = document.createElement("p");
       pre.className = "pay-kickstarter-note";
       pre.innerHTML =
-        'Campaign preview — email <a href="' +
+        'Campaign preview - email <a href="' +
         NOTIFY_MAIL +
         '">salvadorData@proton.me</a> or visit <a href="kickstarter.html">reward tiers</a>.';
       host.appendChild(pre);

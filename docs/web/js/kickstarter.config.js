@@ -1,5 +1,5 @@
 /**
- * Hacker Planet LLC — Kickstarter configuration (publishable only)
+ * Hacker Planet LLC - Kickstarter configuration (publishable only)
  *
  * Safe to commit. No secrets.
  * After you create and approve your project on kickstarter.com, replace
@@ -25,7 +25,7 @@ window.HPL_KICKSTARTER = {
 
   /**
    * Shop stripeKey values that map to Kickstarter reward tiers when the campaign is live.
-   * Checkout on hackerplanet.dev redirects to kickstarter.com — pledges are never Stripe here.
+   * Checkout on hackerplanet.dev redirects to kickstarter.com - pledges are never Stripe here.
    */
   kickstarterSkus: [
     "digital",

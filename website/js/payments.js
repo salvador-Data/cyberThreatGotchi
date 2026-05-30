@@ -488,7 +488,7 @@
     var actions = el("div", "returning-customer-actions");
     if (portal) {
       actions.appendChild(
-        payBtn("Manage billing & saved cards", portal, "portal", "")
+        payBtn("Manage billing & saved cards", portal, "portal")
       );
     }
     if (profile.email) {

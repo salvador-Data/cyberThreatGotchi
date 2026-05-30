@@ -8,7 +8,7 @@
  *    python scripts/stripe_bootstrap_payment_links.py --write-config --go-live
  * 3. Or manual: create Payment Links in Dashboard, paste https://buy.stripe.com/... below.
  * 4. Apple Pay / Google Pay: enable in Stripe Dashboard -> Settings -> Payment methods (auto on Payment Links).
- * 5. PayPal / Venmo / Cash App (hosted — no secrets in this file):
+ * 5. PayPal / Venmo / Cash App (hosted - no secrets in this file):
  *    paypal.clientId OR paypalMe.username | venmo.username | cashapp.cashtag
  * 6. When every stripePaymentLinks key is non-empty, demoMode auto-flips to false below.
  * 7. Sync site: python scripts/sync_website_to_docs.py

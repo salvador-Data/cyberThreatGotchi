@@ -177,8 +177,8 @@
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
     },
     "kickstarter.html": {
-      "title": "Hacker Planet | CyberThreatGotchi Kickstarter — Edge IPS Kits Philadelphia",
-      "description": "Back CyberThreatGotchi on Kickstarter — Philadelphia edge IPS kits with Cipherhorn e-ink. Early Bird Core $149, Field Pack $279. Pledge on kickstarter.com; hackerplanet.dev never collects card data.",
+      "title": "Hacker Planet | CyberThreatGotchi Kickstarter - Edge IPS Kits Philadelphia",
+      "description": "Back CyberThreatGotchi on Kickstarter - Philadelphia edge IPS kits with Cipherhorn e-ink. Early Bird Core $149, Field Pack $279. Pledge on kickstarter.com; hackerplanet.dev never collects card data.",
       "keywords": "CyberThreatGotchi Kickstarter, edge IPS kit, homelab security, Banana Pi BPI-R3 Mini, Philadelphia hardware, Cipherhorn, defensive cybersecurity, Hacker Planet",
       "ogType": "website",
       "ogImage": "/images/products/direct-core-kit.jpg",

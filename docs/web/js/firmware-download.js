@@ -40,7 +40,7 @@
   function renderCard(pkg) {
     var card = el("article", "card card-compact firmware-card");
     card.appendChild(el("div", "card-icon card-accent-" + (pkg.accent || "m5"), "FW"));
-    card.appendChild(el("h3", "", pkg.name));
+    card.appendChild(el("h3", pkg.name));
     card.appendChild(el("p", "firmware-card-role", pkg.role || ""));
     card.appendChild(
       el(

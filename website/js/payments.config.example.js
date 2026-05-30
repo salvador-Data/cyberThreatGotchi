@@ -13,7 +13,7 @@ window.HPL_PAYMENTS = {
 
   /**
    * Stripe Customer Portal (Dashboard -> Settings -> Billing -> Customer portal).
-   * Returning subscribers manage cards, invoices, and cancellations here — not on our site.
+   * Returning subscribers manage cards, invoices, and cancellations here - not on our site.
    */
   stripeCustomerPortal: "",
 
@@ -100,7 +100,7 @@ window.HPL_PAYMENTS = {
 
   /**
    * PayPal subscription plan IDs (Dashboard -> Subscriptions -> Plans).
-   * Optional — when set, shop renders hosted PayPal subscription buttons.
+   * Optional - when set, shop renders hosted PayPal subscription buttons.
    */
   paypalSubscriptions: {
     proMonthly: { planId: "" },
@@ -128,13 +128,13 @@ window.HPL_PAYMENTS = {
   supportEmail: "salvadorData@proton.me",
 
   /**
-   * Kickstarter project URL — also in js/kickstarter.config.js (authoritative for kickstarter.html).
+   * Kickstarter project URL - also in js/kickstarter.config.js (authoritative for kickstarter.html).
    * Replace placeholder after creating project on kickstarter.com.
    */
   kickstarterProjectUrl:
     "https://www.kickstarter.com/projects/hackerplanet/cyberthreatgotchi-edge-ips-tamagotchi",
 
-  /** Returning customer localStorage (browser only — never PAN). */
+  /** Returning customer localStorage (browser only - never PAN). */
   returningCustomer: {
     maxAgeDays: 365,
   },

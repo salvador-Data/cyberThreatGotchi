@@ -315,7 +315,7 @@
         try {
           payload = JSON.parse(raw);
         } catch (err) {
-          setStatus("Invalid JSON — check paste from Stripe Dashboard.", true);
+          setStatus("Invalid JSON - check paste from Stripe Dashboard.", true);
           return;
         }
         setStatus("Importing...");
