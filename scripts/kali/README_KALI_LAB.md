@@ -20,6 +20,8 @@ Optional: force Kali resolv.conf to DuckDuckGo only:
 .\scripts\windows\Deploy-KaliLab.ps1 -StartVmIfStopped -DdgDnsOnly
 ```
 
+**Blank screen after login?** See [docs/CTG_LAB_AUTORUN.md](../../docs/CTG_LAB_AUTORUN.md) § Blank screen. Windows: `.\scripts\windows\Fix-KaliBlankScreen.ps1`. In-guest TTY: `sudo bash /mnt/ctg/fix-kali-blank-screen.sh`.
+
 From **inside Kali** (after install):
 
 ```bash

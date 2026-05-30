@@ -134,6 +134,51 @@ Scripts are also copied to `C:\Users\Owner\Backups\` on every autorun.
 
 ---
 
+## Blank screen after login (VirtualBox + GNOME)
+
+**Symptoms:** User `sal` logs in; desktop is black/blank. SSH may still work.
+
+**Common causes on the `kali` VM:**
+
+| Cause | Evidence |
+|-------|----------|
+| VRAM too low (5 MiB default on some VMs) | `VBox.log`: `crtc set config failed`; `kali.vbox` `VRAMSize="5"` |
+| GNOME on Wayland in VirtualBox | Fix forces `WaylandEnable=false` in GDM |
+| Legacy CTG `profile.d` login `read` prompt | Hangs non-interactive GNOME session |
+| Guest Additions X11 partial | `SVGA X11 display` / `Service is not availabe` in `VBox.log` |
+
+**Windows (host, VM powered off):**
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\Fix-KaliBlankScreen.ps1
+```
+
+Sets **128 MiB VRAM**, **VMSVGA**, **3D off**, stages `C:\Users\Owner\Backups\fix-kali-blank-screen.sh`.
+
+**Kali (TTY recovery — Ctrl+Alt+F2):**
+
+```bash
+sudo bash /mnt/ctg/fix-kali-blank-screen.sh
+```
+
+Or from staged copy:
+
+```bash
+sudo bash /mnt/ctg-backups/fix-kali-blank-screen.sh
+```
+
+(Adjust mount path for your VirtualBox shared folder name.)
+
+Then switch back to graphical session (Ctrl+Alt+F1) or `sudo reboot`.
+
+**CTG scrambler after recovery:** launch manually from **CTG .TOR/HTTP Scrambler** or `python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py` — not via `/etc/profile.d/`.
+
+---
+
 ## Related docs
 
 - [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md)

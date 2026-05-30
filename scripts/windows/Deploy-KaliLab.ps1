@@ -393,6 +393,12 @@ function Copy-CtgBootstrapToSharedFolder {
         Write-CtgLog "Autorun copied to $(Join-Path $backupRoot 'ctg-lab-autorun.sh')"
     }
 
+    $blankFix = Join-Path $RepoRoot 'scripts\kali\fix-kali-blank-screen.sh'
+    if (Test-Path $blankFix) {
+        Copy-Item -Path $blankFix -Destination (Join-Path $backupRoot 'fix-kali-blank-screen.sh') -Force
+        Write-CtgLog "Blank-screen fix copied to $(Join-Path $backupRoot 'fix-kali-blank-screen.sh')"
+    }
+
     $scramblerSrc = Join-Path $RepoRoot 'scripts\kali\tor-http-scrambler'
     if (Test-Path $scramblerSrc) {
         $scramblerDest = Join-Path $backupRoot 'tor-http-scrambler'
@@ -446,6 +452,18 @@ $deployed = $false
 $sshReady = $false
 
 if ($target.Hypervisor -eq 'VirtualBox') {
+    $blankFixPs1 = Join-Path $PSScriptRoot 'Fix-KaliBlankScreen.ps1'
+    if ((Test-Path $blankFixPs1) -and $target.Name -eq 'kali') {
+        Write-CtgLog 'Kali VM: ensuring VRAM/graphics via Fix-KaliBlankScreen.ps1 (when powered off)'
+        if (-not $WhatIf) {
+            try {
+                & $blankFixPs1 -VmName $target.Name 2>&1 | ForEach-Object { Write-CtgLog "BlankScreen: $_" }
+            } catch {
+                Write-CtgLog "Blank-screen VM tweak skipped: $($_.Exception.Message)"
+            }
+        }
+    }
+
     $vbState = Get-CtgVmStateVirtualBox -Name $target.Name -VBoxManage $target.Tool
     Write-CtgLog "VM state: $($vbState.State) | guest IP: $($vbState.GuestIp) | logged in: $($vbState.LoggedInUser)"
 

@@ -51,22 +51,16 @@ DESK
     fi
 done
 
-# Optional login offer (daemon — not forced GUI)
-cat >/etc/profile.d/ctg-scrambler-autostart.sh <<'PROFILE'
-# CTG scrambler — offer daemon on interactive login (authorized lab only)
-if [[ -z "${CTG_SCRAMBLER_AUTOSTART_OFF:-}" && -x /opt/ctg/tor-http-scrambler/scrambler-daemon.sh ]]; then
-  if ! /opt/ctg/tor-http-scrambler/scrambler-daemon.sh status 2>/dev/null | grep -q 'running pid='; then
-    echo "[CTG] Start Tor/HTTP scrambler daemon? [y/N]"
-    read -r -t 8 _ctg_scram || _ctg_scram="n"
-    if [[ "${_ctg_scram,,}" == "y" || "${_ctg_scram,,}" == "yes" ]]; then
-      sudo /opt/ctg/tor-http-scrambler/scrambler-daemon.sh start 2>/dev/null || true
-    fi
-  fi
+# Do NOT hook login shells (profile.d read prompts can blank GNOME in VirtualBox).
+# Remove legacy autostart if upgrading an existing lab VM.
+if [[ -f /etc/profile.d/ctg-scrambler-autostart.sh ]]; then
+    mv -f /etc/profile.d/ctg-scrambler-autostart.sh \
+        "/etc/profile.d/ctg-scrambler-autostart.sh.disabled-$(date +%Y%m%d)" 2>/dev/null || true
+    log "Disabled legacy /etc/profile.d/ctg-scrambler-autostart.sh (use GUI/desktop entry only)"
 fi
-PROFILE
-chmod 644 /etc/profile.d/ctg-scrambler-autostart.sh
 
 log "Installed to $INSTALL_ROOT"
-log "Start: sudo $INSTALL_ROOT/scrambler-daemon.sh start"
-log "GUI:   python3 $INSTALL_ROOT/ctg-scrambler-gui.py"
+log "Daemon (manual): sudo $INSTALL_ROOT/scrambler-daemon.sh start"
+log "GUI (manual):    python3 $INSTALL_ROOT/ctg-scrambler-gui.py"
+log "Desktop:         CTG .TOR/HTTP Scrambler"
 log "SIEM:  sudo $INSTALL_ROOT/siem-hook.sh"

@@ -355,8 +355,8 @@ if $INSTALL_SCRAMBLER; then
         if ! $DRY_RUN; then
             run bash "$SCRAMBLER_SRC"
             run /opt/ctg/tor-http-scrambler/scrambler-daemon.sh set-mode tor || true
-            log "Scrambler daemon: offer on login via /etc/profile.d/ctg-scrambler-autostart.sh"
-            log "GUI: python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py"
+            log "Scrambler: manual launch only (desktop CTG .TOR/HTTP Scrambler or ctg-scrambler-gui.py)"
+            log "No profile.d login hook — avoids VirtualBox GNOME blank screen"
         else
             run echo "[dry-run] install-scrambler.sh from $SCRAMBLER_SRC"
         fi
