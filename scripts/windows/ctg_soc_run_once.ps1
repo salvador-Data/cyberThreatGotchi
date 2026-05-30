@@ -4,11 +4,24 @@ $Repo = 'C:\Users\Owner\Projects\cyberThreatGotchi'
 $Win = Join-Path $Repo 'scripts\windows'
 . (Join-Path $Win 'CTG-AdminCommon.ps1')
 $script:CtgIsAdmin = Test-CtgIsAdmin
+$LogLocal = Join-Path $Win 'ctg-soc-run-log-elevated.txt'
 $LogDesktop = Join-Path ([Environment]::GetFolderPath('Desktop')) 'ctg-soc-run-log.txt'
 $LogSsd = 'D:\Backups\ctg-soc-run-log.txt'
 function Write-Log([string]$m) {
     $line = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $m"
-    Add-Content -Path $LogDesktop -Value $line -Encoding utf8
+    Add-Content -Path $LogLocal -Value $line -Encoding utf8 -ErrorAction SilentlyContinue
+    foreach ($attempt in 1..3) {
+        try {
+            Add-Content -Path $LogDesktop -Value $line -Encoding utf8 -ErrorAction Stop
+            break
+        } catch {
+            if ($attempt -eq 3) {
+                Write-Warning "Desktop log locked (OneDrive?): $($_.Exception.Message)"
+            } else {
+                Start-Sleep -Milliseconds 250
+            }
+        }
+    }
     Write-Host $line
 }
 Write-Log '=== Elevated CTG SOC run started ==='
@@ -45,4 +58,15 @@ if ($env:CTG_WAZUH_MANAGER -or $env:WAZUH_MANAGER) {
 }
 Invoke-CtgPreserveDuckDuckGoVpn -LogAction { param($m) Write-Log $m }
 Write-Log '=== Elevated CTG SOC run finished ==='
-try { Copy-Item $LogDesktop $LogSsd -Force; Write-Log "Copied log to $LogSsd" } catch { Write-Log "SSD log copy failed: $($_.Exception.Message)" }
+try { Copy-Item $LogLocal $LogDesktop -Force -ErrorAction Stop } catch { Write-Log "Desktop log mirror failed: $($_.Exception.Message)" }
+if (Test-Path 'D:\') {
+    try {
+        New-Item -ItemType Directory -Path (Split-Path $LogSsd -Parent) -Force | Out-Null
+        Copy-Item $LogLocal $LogSsd -Force
+        Write-Log "Copied log to $LogSsd"
+    } catch {
+        Write-Log "SSD log copy failed: $($_.Exception.Message)"
+    }
+} else {
+    Write-Log 'D: missing — skip SSD log copy'
+}

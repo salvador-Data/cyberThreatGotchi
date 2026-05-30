@@ -66,12 +66,36 @@ if (-not (Test-Path $sysmonExe)) {
     throw "Sysmon64.exe not found after extract: $sysmonExe"
 }
 
+function Invoke-SysmonNative {
+    param([Parameter(Mandatory = $true)][string[]] $NativeArgs)
+    $prevEap = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    $output = & $sysmonExe @NativeArgs 2>&1
+    $exitCode = $LASTEXITCODE
+    $ErrorActionPreference = $prevEap
+    foreach ($line in $output) {
+        if ($line -is [System.Management.Automation.ErrorRecord]) {
+            Write-Host $line.ToString()
+        } else {
+            Write-Host $line
+        }
+    }
+    return $exitCode
+}
+
 if (Test-SysmonInstalled) {
     Write-Host 'Updating Sysmon configuration...' -ForegroundColor Gray
-    & $sysmonExe -c $configPath
+    $exitCode = Invoke-SysmonNative -NativeArgs @('-c', $configPath)
 } else {
     Write-Host 'Installing Sysmon (accept EULA)...' -ForegroundColor Gray
-    & $sysmonExe -accepteula -i $configPath
+    $exitCode = Invoke-SysmonNative -NativeArgs @('-accepteula', '-i', $configPath)
+}
+
+if ($exitCode -eq 740) {
+    throw 'Sysmon requires Administrator. Re-run ctg_soc_run_once.ps1 from an elevated PowerShell session.'
+}
+if ($exitCode -ne 0 -and -not (Test-SysmonInstalled)) {
+    throw "Sysmon install failed (exit code $exitCode). Check config at $configPath"
 }
 
 if (-not (Test-SysmonInstalled)) {
