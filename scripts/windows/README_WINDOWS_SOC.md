@@ -29,8 +29,12 @@ Scripts live in `scripts/windows/`. They contain **no secrets** — set your Waz
 |----------|---------|
 | `CTG_WAZUH_MANAGER` | Preferred Wazuh manager IP or hostname |
 | `WAZUH_MANAGER` | Alternate name (same meaning) |
+| `TWILIO_ACCOUNT_SID` | Twilio SMS (see `Send-CtgSmsAlert.ps1`; `.env` only) |
+| `TWILIO_AUTH_TOKEN` | Twilio auth token |
+| `TWILIO_FROM_NUMBER` | Twilio from number (E.164) |
+| `CTG_ALERT_SMS_TO` | SMS destination (E.164; `.env` only) |
 
-Never commit manager credentials or enrollment passwords to git. Use Wazuh dashboard enrollment for production.
+Never commit manager credentials, Twilio secrets, or phone numbers to git. Use Wazuh dashboard enrollment for production.
 
 ## Quick start (Andy)
 
@@ -93,6 +97,9 @@ Optional: Defender ASR audit mode:
 | `Install-KaliVirtualBox.ps1` | Create Kali VM from installer ISO |
 | `Install-OpnsenseLab.ps1` | OPNsense lab VM (2 NICs) |
 | `Install-WiresharkNpcap.ps1` | Wireshark + Npcap on Windows |
+| `Start-CTGWiresharkIDS.ps1` | **Wireshark IDS** — tshark ring capture, heuristics, JSON alerts, optional SMS |
+| `Send-CtgSmsAlert.ps1` | Twilio SMS alerts (env only; rate-limited) |
+| `ctg_wireshark_ids_loop.ps1` | Continuous Wireshark IDS monitoring loop |
 | `Repair-WindowsSignIn.ps1` | **Read-only** Sign-in options diagnostic (Password/PIN/Hello); safe service fixes with `-ApplySafeFixes` — never sets password |
 | `Harden-DDoSRogueWifi.ps1` | **DDoS / rogue WiFi** — `-DiagnoseOnly` (any user) or `-ApplyHardening` (Admin); see [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md) |
 
@@ -198,6 +205,52 @@ Lab VM helper: `Install-OpnsenseLab.ps1`. Typical homelab path:
 
 Use for **your** perimeter/lab VLANs only.
 
+## Wireshark IDS + SMS (Windows host)
+
+Lab-oriented packet capture and basic anomaly detection — **not** a substitute for OPNsense Suricata inline IPS. Full guide: [docs/WIRESHARK_IDS_SMS.md](../../docs/WIRESHARK_IDS_SMS.md).
+
+Install capture stack:
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\Install-WiresharkNpcap.ps1
+```
+
+Diagnose (safe anytime):
+
+```powershell
+.\scripts\windows\Start-CTGWiresharkIDS.ps1 -DiagnoseOnly
+```
+
+Run a 10-minute capture cycle:
+
+```powershell
+.\scripts\windows\Start-CTGWiresharkIDS.ps1 -CaptureMinutes 10
+```
+
+Continuous loop:
+
+```powershell
+.\scripts\windows\ctg_wireshark_ids_loop.ps1 -CycleMinutes 15
+```
+
+Optional inbound block for repeat offenders (**Administrator**, lab only):
+
+```powershell
+.\scripts\windows\Start-CTGWiresharkIDS.ps1 -CaptureMinutes 10 -BlockRepeatOffenders
+```
+
+Set Twilio + `CTG_ALERT_SMS_TO` in local `.env` (never commit). Test SMS when configured:
+
+```powershell
+.\scripts\windows\Send-CtgSmsAlert.ps1 -TestMessage
+```
+
+Logs: `%USERPROFILE%\Backups\logs\wireshark-ids.log`, `wireshark-alerts.json` · pcaps: `Backups\pcap\ctg-YYYY-MM-DD.pcapng`
+
 ## Harden-Windows-Security notes
 
 - Module: `Install-Module Harden-Windows-Security`
@@ -266,6 +319,7 @@ Logs: `%USERPROFILE%\Backups\logs\harden-ddos-rogue.log`, `firewall.log`
 
 ## Related docs
 
+- [docs/WIRESHARK_IDS_SMS.md](../../docs/WIRESHARK_IDS_SMS.md) — Wireshark IDS, Twilio SMS, honest IPS scope
 - [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md) — DDoS, deauth, rogue captive portal layers
 - [docs/SECURITY_HARDENING.md](../../docs/SECURITY_HARDENING.md) — project-wide env vars and API hardening
 - [docs/FIREWALL_BASELINE.md](../../docs/FIREWALL_BASELINE.md) — Linux/BPI-R3 firewall (complements Windows stack)

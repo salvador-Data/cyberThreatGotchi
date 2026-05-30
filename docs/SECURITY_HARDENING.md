@@ -21,10 +21,16 @@ Defensive coding and deployment practices for Hacker Planet LLC projects.
 | `CTG_SSH_LAN_ONLY` | Set `1` to restrict SSH to RFC1918/link-local in firewall baseline |
 | `CTG_FIREWALL_BASELINE` | Set `1` on `scripts/install.sh` to apply default-deny iptables after install |
 | `CTG_WAZUH_MANAGER` | Wazuh SIEM manager IP/hostname for `scripts/windows/wazuh_agent_setup.ps1` (alias: `WAZUH_MANAGER`) |
+| `TWILIO_ACCOUNT_SID` | Twilio account SID for `Send-CtgSmsAlert.ps1` (local `.env` only — never commit) |
+| `TWILIO_AUTH_TOKEN` | Twilio auth token for SMS alerts |
+| `TWILIO_FROM_NUMBER` | Twilio sender number (E.164) |
+| `CTG_ALERT_SMS_TO` | Destination mobile for CTG SOC SMS (E.164; set in local `.env` only) |
 
 ## Windows SOC (lab / authorized hosts)
 
 Free stack orchestration: `scripts/windows/README_WINDOWS_SOC.md`. Scripts use env vars only — no embedded manager secrets. Run PowerShell **as Administrator** on systems you own; use explicit flags on `harden_windows.ps1` (default is guidance-only).
+
+Wireshark IDS + Twilio SMS: [WIRESHARK_IDS_SMS.md](WIRESHARK_IDS_SMS.md) — capture and heuristics on Windows; full IPS remains OPNsense Suricata.
 
 ## iPhone (personal device hardening)
 
