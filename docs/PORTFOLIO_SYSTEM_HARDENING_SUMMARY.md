@@ -8,4 +8,4 @@ Built a **layered defensive stack** for a founder workstation and homelab: Power
 
 **Repos:** [cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) · [M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer)
 
-**Deep dive:** [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) · Firmware/OS companion: [PORTFOLIO_FIRMWARE_OS.md](PORTFOLIO_FIRMWARE_OS.md)
+**Deep dive:** [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) · Firmware/OS: [PORTFOLIO_FIRMWARE_OS.md](PORTFOLIO_FIRMWARE_OS.md) · Nightly automation: [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md)

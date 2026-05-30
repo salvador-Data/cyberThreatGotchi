@@ -145,6 +145,8 @@ cyberThreatGotchi/
 
 Defensive security program alignment: risk register, IPS, AV pipeline, executive-friendly status, and logged evidence for incidents. Personal phone checklist: **[docs/IPHONE_HARDENING.md](docs/IPHONE_HARDENING.md)** · Windows lab SOC: **[scripts/windows/README_WINDOWS_SOC.md](scripts/windows/README_WINDOWS_SOC.md)**.
 
+**Portfolio (Andy Kowal / Hacker Planet LLC):** [System hardening](docs/PORTFOLIO_SYSTEM_HARDENING.md) · [Nightly automation & SOC](docs/PORTFOLIO_AUTOMATION_SOC.md) · [Firmware/OS (Cardputer)](docs/PORTFOLIO_FIRMWARE_OS.md)
+
 **Author:** [salvador-Data](https://github.com/salvador-Data)
 
 ---

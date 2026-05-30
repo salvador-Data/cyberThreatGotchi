@@ -203,6 +203,8 @@ SSD default: drive **D:** (volume label **SSD**) → `D:\Backups\Andy-PC-YYYY-MM
 
 ## Nightly 4 AM automation
 
+> **Portfolio deep dive:** [docs/PORTFOLIO_AUTOMATION_SOC.md](../../docs/PORTFOLIO_AUTOMATION_SOC.md) · LinkedIn blurb: [PORTFOLIO_AUTOMATION_SOC_SUMMARY.md](../../docs/PORTFOLIO_AUTOMATION_SOC_SUMMARY.md)
+
 > **Windows laptop + [hackerplanet.dev](https://hackerplanet.dev/) only — Andy's PC.**
 >
 > Every run includes **ctg_website_nightly.ps1** (website backup, sync, portfolio export, health check). Does not flash or schedule anything on M5 Cardputer — that is separate manual dev work.

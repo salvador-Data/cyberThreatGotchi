@@ -3,7 +3,7 @@
 **Author:** Andy Kowal · **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
 **GitHub:** [salvador-Data](https://github.com/salvador-Data) · **Firmware repo:** [M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer)
 
-**Companion:** [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) — Windows SOC, iPhone hardening, backups, Wazuh/Sysmon stack.
+**Companions:** [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) — Windows SOC, iPhone hardening, backups, Wazuh/Sysmon stack · [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md) — nightly 4 AM backup, website, and SOC logging (Windows laptop only).
 
 ---
 
@@ -133,6 +133,7 @@ Guy Fawkes boot intro, six theme presets, Stamp-S3 **SK6812** glow (GPIO 21), ba
 | CyberThreatGotchi | https://github.com/salvador-Data/cyberThreatGotchi |
 | Product page | https://salvador-Data.github.io/cyberThreatGotchi/cardputer.html |
 | System hardening portfolio | [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) |
+| Nightly automation portfolio | [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md) |
 
 ---
 
