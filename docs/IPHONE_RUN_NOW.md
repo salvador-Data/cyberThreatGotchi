@@ -10,6 +10,32 @@ Manual steps only — **no CTG automation can change iPhone Settings** without A
 
 ---
 
+## Automated assist (Windows + Shortcuts)
+
+**Best-effort guided automation** — not full remote hardening. Stock iOS still requires **you** to tap toggles, enroll Face ID, trust USB, and install App Store apps.
+
+| Tool | What it does |
+|------|----------------|
+| **`scripts/windows/iphone_hardening_assist.ps1`** | On Windows: verify repo, run `iphone_usb_check.ps1`, log to `Backups\logs\`, print Phase 1+2 checklist with Settings deep-link URLs. `-OpenRunbook` opens this doc + [GitHub Pages runbook](https://salvador-Data.github.io/cyberThreatGotchi/iphone-run-now.html). `-LogOnly` for a no-prompt check. |
+| **[iphone_hardening_shortcuts.md](iphone_hardening_shortcuts.md)** | Build an iOS **Shortcuts** routine that opens each Settings pane in order (you tap through). |
+| **[iphone-run-now.html](../website/iphone-run-now.html)** | Tap-friendly page with `prefs:` / App Store links — open on the phone. |
+
+From repo root (one command per block):
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Interactive assist + open runbook in browser:
+
+```powershell
+.\scripts\windows\iphone_hardening_assist.ps1 -OpenRunbook
+```
+
+**Cannot automate:** passcode/Face ID, Trust This Computer, Malwarebytes permissions, encrypted backup password, or replacing DuckDuckGo VPN/DNS/Password Manager without your intent.
+
+---
+
 ## Order of operations (today)
 
 | Order | Phase | Time (approx.) | What |

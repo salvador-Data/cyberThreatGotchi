@@ -84,6 +84,7 @@ Optional: Defender ASR audit mode:
 | `install_sysmon.ps1` | Download Sysmon + SwiftOnSecurity XML |
 | `wazuh_agent_setup.ps1` | MSI/winget/choco agent install |
 | `iphone_usb_check.ps1` | Log-only: iPhone USB attached → run `IPHONE_RUN_NOW` USB steps (no device modification) |
+| `iphone_hardening_assist.ps1` | Guided Phase 1+2 assist: USB check, checklist + Settings deep links, `-OpenRunbook` / `-LogOnly` |
 
 Check Wazuh without installing:
 
@@ -153,26 +154,47 @@ Test-NetConnection -ComputerName $env:CTG_WAZUH_MANAGER -Port 1514
 - [docs/FIREWALL_BASELINE.md](../../docs/FIREWALL_BASELINE.md) — Linux/BPI-R3 firewall (complements Windows stack)
 - [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md) · [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) · [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) — iPhone Settings + USB (preserve VPN/DNS)
 
-## iPhone USB (Windows SOC laptop)
+## iPhone USB + hardening assist (Windows SOC laptop)
 
 When the **iPhone 15 Pro Max** is on USB-C to this PC, hardening is done **on the device** (USB Restricted Mode, Trust This Computer, Find My). CTG scripts do **not** push MDM or change iPhone Settings without Apple Business Manager.
 
 | Item | Detail |
 |------|--------|
 | **Runbook** | [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) Phase 2 § 2.3 · [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) |
+| **Guided assist** | `iphone_hardening_assist.ps1` — Phase 1+2 checklist, Settings deep links, DuckDuckGo preserve warnings; [iphone_hardening_shortcuts.md](../../docs/iphone_hardening_shortcuts.md) for iOS Shortcuts |
+| **Tap-friendly web** | [iphone-run-now.html](https://salvador-Data.github.io/cyberThreatGotchi/iphone-run-now.html) — open on phone |
 | **Preserve VPN/DNS** | Do not install a second DNS VPN on the phone; verify **Settings → VPN** after hardening (DuckDuckGo/NextDNS/1.1.1.1 unchanged) |
 | **Encrypted backup** | Apple Devices → **Encrypt local backup**; align with `D:\Backups\Andy-PC-*`, `C:\Users\Owner\Backups\`, OneDrive `Backups\Andy-PC-*` (see `cloud_backup.ps1`) |
 | **Log stub** | `iphone_usb_check.ps1` — writes `Backups\logs\iphone_usb_check.log`; reminder only |
+| **Assist log** | `iphone_hardening_assist.ps1` — writes `Backups\logs\iphone_hardening_assist.log` |
+
+### Automated assist (Windows + Shortcuts)
+
+Best-effort **guided** automation — full Settings hardening on stock iOS is impossible without MDM. The assist script prints numbered steps and `prefs:` / App Store URLs; you complete toggles on the phone.
 
 ```powershell
 cd C:\Users\Owner\Projects\cyberThreatGotchi
 ```
 
+Interactive assist + open runbook:
+
+```powershell
+.\scripts\windows\iphone_hardening_assist.ps1 -OpenRunbook
+```
+
+Log-only check (CI-style, no prompts):
+
+```powershell
+.\scripts\windows\iphone_hardening_assist.ps1 -LogOnly
+```
+
+USB reminder only:
+
 ```powershell
 .\scripts\windows\iphone_usb_check.ps1
 ```
 
-Nightly `ctg_nightly_4am.ps1` does not run Apple backup (phone must be unlocked and trusted).
+Nightly `ctg_nightly_4am.ps1` does not run Apple backup or iPhone hardening assist (phone must be unlocked and trusted; assist is manual).
 
 ## Microsoft Windows cloud (OneDrive + Defender)
 
