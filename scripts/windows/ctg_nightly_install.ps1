@@ -1,12 +1,12 @@
 <#
-Windows laptop automation only — does not flash or schedule anything on M5 Cardputer.
+Windows laptop + hackerplanet.dev automation only (Andy PC).
 
 .SYNOPSIS
   One-shot installer: register HackerPlanet-CTG-Nightly-4AM scheduled task (run as Admin).
 
 .DESCRIPTION
-  Registers a Windows Scheduled Task on Andy's laptop only. Does NOT touch COM13,
-  PlatformIO, or M5Stack Cardputer flash/upload workflows.
+  Registers daily 4 AM task on Andy's laptop: backup, hackerplanet.dev website sync/health,
+  SOC scans, and logging.
 
 .EXAMPLE
   powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows\ctg_nightly_install.ps1
@@ -23,7 +23,7 @@ if (-not (Test-Path $register)) {
 }
 
 Write-Host '=== CTG Nightly 4 AM installer ==='
-Write-Host 'Windows laptop automation only — does not flash or schedule anything on M5 Cardputer.'
+Write-Host 'Windows laptop + hackerplanet.dev — backup, website sync/health, SOC scans nightly at 4 AM.'
 & $register
 if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) { exit $LASTEXITCODE }
 Write-Host ''

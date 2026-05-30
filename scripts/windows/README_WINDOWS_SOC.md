@@ -203,11 +203,11 @@ SSD default: drive **D:** (volume label **SSD**) → `D:\Backups\Andy-PC-YYYY-MM
 
 ## Nightly 4 AM automation
 
-> **Windows laptop automation only — does not flash or schedule anything on M5 Cardputer.**
+> **Windows laptop + [hackerplanet.dev](https://hackerplanet.dev/) only — Andy's PC.**
 >
-> This task runs on Andy's Windows PC only (backup, SOC scans, [hackerplanet.dev](https://hackerplanet.dev/) sync). **M5Stack Cardputer** firmware (COM13, PlatformIO, microSD apps) is separate manual dev work — never part of the 4 AM job.
+> Every run includes **ctg_website_nightly.ps1** (website backup, sync, portfolio export, health check). Does not flash or schedule anything on M5 Cardputer — that is separate manual dev work.
 
-Daily **4:00 AM local** task for backup (SSD + OneDrive), website sync/health, audit scans, and logging — without running disruptive hardening every night. **Harden-Windows-Security** remains a manual or weekly elevated run (`ctg_soc_run_once.ps1` or `harden_windows.ps1`); do not schedule full hardening nightly.
+Daily **4:00 AM local** task for backup (SSD + OneDrive), **mandatory website sync/health**, audit scans, and logging — without running disruptive hardening every night. **Harden-Windows-Security** remains a manual or weekly elevated run (`ctg_soc_run_once.ps1` or `harden_windows.ps1`); do not schedule full hardening nightly.
 
 ### Scripts
 
@@ -220,14 +220,15 @@ Daily **4:00 AM local** task for backup (SSD + OneDrive), website sync/health, a
 
 ### Orchestration order
 
-1. Timestamp + hostname header
+1. Timestamp + hostname header (laptop + hackerplanet.dev scope)
 2. Disk space on **C:** and **D:** (if present) — warn if &lt; 5 GB free
 3. **SSD detection** — Disk 1 / **D:** writable probe; logs `SSD: online|offline|not_ready`; `mount_ssd_d.ps1` if needed (Admin)
-4. **selective_ssd_backup.ps1** — user data + **Projects** (`C:\Users\Owner\Projects`, robocopy caps/exclusions)
-5. **ctg_website_nightly.ps1** — `website/`, `docs/web/`, portfolio → backup tree; `sync_website_to_docs.py`; GET **https://hackerplanet.dev/**
-6. **cloud_backup.ps1** — mirror subset to OneDrive `\Backups\Andy-PC-YYYY-MM-DD` + `\Backups\logs\`
-7. Windows Update audit, Defender QuickScan, Sysmon, Wazuh (status), VPN preserve, Git dry-run
-8. **SOC logs** copied to `D:\Backups\logs\` when SSD online
+4. Resolve nightly backup tree (`D:\Backups\Andy-PC-YYYY-MM-DD` or C: fallback)
+5. **selective_ssd_backup.ps1** — user data + **Projects** (skipped when `-SkipBackup`)
+6. **cloud_backup.ps1** — mirror subset to OneDrive (skipped when `-SkipBackup`)
+7. **ctg_website_nightly.ps1** — **always runs**: `website/`, `docs/web/`, portfolio → backup tree; `sync_website_to_docs.py`; GET **https://hackerplanet.dev/**
+8. Windows Update audit, Defender QuickScan, Sysmon, Wazuh (status), VPN preserve, Git dry-run
+9. **SOC logs** copied to `D:\Backups\logs\` when SSD online
 
 ### Backup matrix
 
@@ -237,6 +238,7 @@ Daily **4:00 AM local** task for backup (SSD + OneDrive), website sync/health, a
 | **Projects** | `C:\Users\Owner\Projects` | `Projects\` (robocopy, size/exclusion caps) | Same | Manifest references |
 | **Website** | `website/` | `website\` | Same | `website\` |
 | **Docs web mirror** | `docs/web/` | `docs-web\` | Same | `docs-web\` |
+| **hackerplanet.dev health** | `ctg_website_nightly.ps1` | Logged nightly | Same log on C: | N/A (live GET) |
 | **Portfolio md** | `docs/PORTFOLIO_*.md` | `portfolio\` | Same | `portfolio\` |
 | **Portfolio HTML** | `export_portfolio_html.py` | `portfolio_export\` | Same | `portfolio_export\` |
 | Registry sample / programs list | selective backup | Root of day folder | Same | Copied by cloud_backup |
@@ -288,7 +290,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows\ctg_nightl
 | Flag | Default | Effect |
 |------|---------|--------|
 | `-ApplyUpdates` | off | Install Windows Updates (may reboot) |
-| `-SkipBackup` | off | Skip selective + website + cloud backup |
+| `-SkipBackup` | off | Skip selective + cloud backup only; **website nightly still runs** |
 | `-DeployWebsite` | off | Commit/push `website/` + `docs/web/` to `main` |
 | `-SyncRepos` | off | `git pull` instead of dry-run log |
 | `-VerboseLog` | off | Echo steps to console |

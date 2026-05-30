@@ -1,22 +1,21 @@
 <#
-Windows laptop automation only — does not flash or schedule anything on M5 Cardputer.
+Windows laptop + hackerplanet.dev automation only (Andy PC).
 
 .SYNOPSIS
-  CyberThreatGotchi nightly 4 AM orchestrator — backup, scan, audit, log (Andy PC only).
+  CyberThreatGotchi nightly 4 AM orchestrator — backup, website, scan, audit, log.
 
 .DESCRIPTION
-  Windows laptop SOC automation only. Does NOT flash, upload, or schedule anything on
-  the M5Stack Cardputer (COM13 / PlatformIO). Cardputer firmware is manual dev work.
-
-  Runs selective SSD backup (when Disk 1 / D: is online and writable), OneDrive
-  staging, Windows Update audit, Defender quick scan, Sysmon/Wazuh checks, VPN
-  preservation, and optional repo sync. Does NOT run Harden-Windows-Security nightly.
+  Runs every night on Andy's Windows laptop. Always includes ctg_website_nightly.ps1
+  (website/ + docs/web/ backup, sync_website_to_docs.py, portfolio export, GET
+  https://hackerplanet.dev). Also runs selective SSD backup (when D: online),
+  OneDrive staging, Windows Update audit, Defender quick scan, Sysmon/Wazuh checks,
+  VPN preservation, and optional repo sync. Does NOT run Harden-Windows-Security nightly.
 
 .PARAMETER ApplyUpdates
   Install pending Windows Updates (may reboot). Default: audit only.
 
 .PARAMETER SkipBackup
-  Skip selective_ssd_backup.ps1 and cloud_backup.ps1.
+  Skip selective_ssd_backup.ps1 and cloud_backup.ps1 only. Website nightly still runs.
 
 .PARAMETER SyncRepos
   git pull in C:\Users\Owner\Projects\cyberThreatGotchi (default: dry-run log only).
@@ -324,7 +323,7 @@ function Invoke-CtgGitRepos {
 
 # --- Run ---
 Write-NightlyLog "=== CTG Nightly 4 AM started === Host=$env:COMPUTERNAME User=$env:USERNAME Admin=$script:CtgIsAdmin ==="
-Write-NightlyLog 'Scope: Windows laptop only — does not flash or schedule anything on M5 Cardputer'
+Write-NightlyLog 'Scope: Windows laptop + hackerplanet.dev website (mandatory every run)'
 
 Write-NightlyLog '--- Disk space ---'
 Test-CtgVolumeFreeSpace -DriveLetter 'C'
@@ -333,30 +332,19 @@ if (Test-Path 'D:\') { Test-CtgVolumeFreeSpace -DriveLetter 'D' }
 $ssd = Get-CtgSsdStatus
 Write-NightlyLog ("SSD: {0} - {1}" -f $ssd.Status, $ssd.Detail)
 
+if ($ssd.Status -eq 'online' -and $ssd.Writable) {
+    $script:LastBackupRoot = "D:\Backups\Andy-PC-$date"
+    Write-NightlyLog "Backup tree (SSD): $script:LastBackupRoot"
+} else {
+    Write-NightlyLog 'SSD unavailable — backup tree uses C:\Users\Owner\Backups fallback path'
+    $script:LastBackupRoot = Join-Path $env:USERPROFILE "Backups\Andy-PC-$date"
+    Write-NightlyLog "Backup tree (fallback): $script:LastBackupRoot"
+}
+
 if (-not $SkipBackup) {
     Write-NightlyLog '--- Selective backup ---'
     $backupScript = Join-Path $Win 'selective_ssd_backup.ps1'
-    if ($ssd.Status -eq 'online' -and $ssd.Writable) {
-        $backupRoot = "D:\Backups\Andy-PC-$date"
-        Write-NightlyLog "Backup target (SSD): $backupRoot"
-        & $backupScript -BackupRoot $backupRoot *>&1 | ForEach-Object { Write-NightlyLog $_ }
-        $script:LastBackupRoot = $backupRoot
-    } else {
-        Write-NightlyLog 'SSD unavailable — fallback C:\Users\Owner\Backups + OneDrive (no failure exit)'
-        $fallbackRoot = Join-Path $env:USERPROFILE "Backups\Andy-PC-$date"
-        Write-NightlyLog "Backup target (fallback): $fallbackRoot"
-        & $backupScript -BackupRoot $fallbackRoot *>&1 | ForEach-Object { Write-NightlyLog $_ }
-        $script:LastBackupRoot = $fallbackRoot
-    }
-
-    $websiteScript = Join-Path $Win 'ctg_website_nightly.ps1'
-    if (Test-Path $websiteScript) {
-        Write-NightlyLog '--- Website nightly (hackerplanet.dev) ---'
-        & $websiteScript -BackupRoot $script:LastBackupRoot -DeployWebsite:$DeployWebsite `
-            -LogAction { param($m) Write-NightlyLog $m }
-    } else {
-        Write-NightlyLog 'ctg_website_nightly.ps1 missing — skipped' 'WARN'
-    }
+    & $backupScript -BackupRoot $script:LastBackupRoot *>&1 | ForEach-Object { Write-NightlyLog $_ }
 
     Write-NightlyLog '--- Cloud backup (OneDrive) ---'
     $cloudScript = Join-Path $Win 'cloud_backup.ps1'
@@ -373,7 +361,17 @@ if (-not $SkipBackup) {
         Write-NightlyLog 'cloud_backup.ps1 missing' 'WARN'
     }
 } else {
-    Write-NightlyLog 'SkipBackup: selective + cloud backup skipped'
+    Write-NightlyLog 'SkipBackup: selective + cloud backup skipped (website nightly still runs)'
+}
+
+$websiteScript = Join-Path $Win 'ctg_website_nightly.ps1'
+if (Test-Path $websiteScript) {
+    Write-NightlyLog '--- Website nightly (hackerplanet.dev) — mandatory ---'
+    & $websiteScript -BackupRoot $script:LastBackupRoot -DeployWebsite:$DeployWebsite `
+        -LogAction { param($m) Write-NightlyLog $m }
+} else {
+    Write-NightlyLog 'ctg_website_nightly.ps1 missing — website step failed' 'WARN'
+    Add-StepError 'website_nightly'
 }
 
 Invoke-CtgWindowsUpdateAudit

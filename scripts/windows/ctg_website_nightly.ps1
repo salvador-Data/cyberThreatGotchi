@@ -1,14 +1,14 @@
 <#
-Windows laptop automation only — does not flash or schedule anything on M5 Cardputer.
+Windows laptop + hackerplanet.dev automation only (Andy PC).
 
 .SYNOPSIS
   Nightly website backup, sync, health check, and optional deploy for hackerplanet.dev.
 
 .DESCRIPTION
-  Andy PC / Windows laptop only — hackerplanet.dev backup and GitHub Pages deploy path.
-  Not used for M5 Cardputer firmware or microSD app installs.
-
-  Backs up website/ and docs/web/ into the nightly backup folder, runs
+  Mandatory step in ctg_nightly_4am.ps1 every night. Backs up website/ and docs/web/
+  into the nightly backup tree (SSD D:, C: fallback, mirrored to OneDrive via cloud_backup),
+  runs sync_website_to_docs.py, portfolio export when applicable, and GETs
+  https://hackerplanet.dev for health.
   sync_website_to_docs.py (canonical website/ -> docs/web/), checks git status,
   optionally commits/pushes to trigger GitHub Pages, and GETs https://hackerplanet.dev.
 
