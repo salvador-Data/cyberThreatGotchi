@@ -399,6 +399,12 @@ function Copy-CtgBootstrapToSharedFolder {
         Write-CtgLog "Blank-screen fix copied to $(Join-Path $backupRoot 'fix-kali-blank-screen.sh')"
     }
 
+    $autopatch = Join-Path $RepoRoot 'scripts\kali\kali-boot-autopatch.sh'
+    if (Test-Path $autopatch) {
+        Copy-Item -Path $autopatch -Destination (Join-Path $backupRoot 'kali-boot-autopatch.sh') -Force
+        Write-CtgLog "Boot autopatch copied to $(Join-Path $backupRoot 'kali-boot-autopatch.sh')"
+    }
+
     $scramblerSrc = Join-Path $RepoRoot 'scripts\kali\tor-http-scrambler'
     if (Test-Path $scramblerSrc) {
         $scramblerDest = Join-Path $backupRoot 'tor-http-scrambler'

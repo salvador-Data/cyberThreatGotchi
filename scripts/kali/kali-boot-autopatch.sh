@@ -1,0 +1,303 @@
+#!/usr/bin/env bash
+# CTG Kali boot autopatch — fix common VirtualBox/GNOME boot errors on every boot.
+# Authorized lab use only — Hacker Planet LLC · Philadelphia, PA
+#
+# Usage:
+#   sudo bash kali-boot-autopatch.sh              # fix-only (default)
+#   sudo bash kali-boot-autopatch.sh --upgrade      # apt full-upgrade
+#   sudo bash kali-boot-autopatch.sh --firmware     # firmware-linux-nonfree if driver errors
+#   sudo bash kali-boot-autopatch.sh --install      # install systemd unit for boot
+set -euo pipefail
+
+LOG_FILE="/var/log/ctg-boot-autopatch.log"
+MARKER="/var/lib/ctg/kali-boot-autopatch.done"
+DDG_PRIMARY="94.140.14.14"
+DDG_SECONDARY="94.140.15.15"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SERVICE_NAME="ctg-kali-autopatch.service"
+UNIT_DEST="/etc/systemd/system/${SERVICE_NAME}"
+
+DO_UPGRADE=false
+DO_FIRMWARE=false
+DO_INSTALL=false
+
+log() {
+    local msg="[$(date -Iseconds)] [ctg-boot-autopatch] $*"
+    printf '%s\n' "$msg"
+    printf '%s\n' "$msg" >>"$LOG_FILE"
+}
+
+usage() {
+    cat <<EOF
+CTG Kali boot autopatch — authorized defensive lab use only.
+
+  sudo bash $0                 Fix common boot errors (default)
+  sudo bash $0 --upgrade       Also run apt update && apt full-upgrade -y
+  sudo bash $0 --firmware      Install firmware-linux-nonfree if driver errors seen
+  sudo bash $0 --install       Install ${SERVICE_NAME} for boot-time runs
+  sudo bash $0 --help
+
+Log: ${LOG_FILE}
+DuckDuckGo DNS: preserved when 94.140.14.14/15.15 already in resolv.conf
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --upgrade) DO_UPGRADE=true ;;
+        --firmware) DO_FIRMWARE=true ;;
+        --install) DO_INSTALL=true ;;
+        --help|-h) usage; exit 0 ;;
+        *) log "Unknown option: $1"; usage; exit 1 ;;
+    esac
+    shift
+done
+
+if [[ "$(id -u)" -ne 0 ]]; then
+    echo "Run as root: sudo $0" >&2
+    exit 1
+fi
+
+mkdir -p /var/lib/ctg "$(dirname "$LOG_FILE")"
+touch "$LOG_FILE"
+chmod 644 "$LOG_FILE"
+
+log "=== CTG Kali boot autopatch start (upgrade=$DO_UPGRADE firmware=$DO_FIRMWARE) ==="
+
+resolv_has_ddg() {
+    [[ -f /etc/resolv.conf ]] && grep -qE '94\.140\.(14\.14|15\.15)' /etc/resolv.conf
+}
+
+preserve_ddg_dns() {
+    if resolv_has_ddg; then
+        log "DDG preserve: DuckDuckGo DNS in /etc/resolv.conf — no DNS changes"
+        return 0
+    fi
+    if [[ -f /etc/unbound/unbound.conf.d/ctg-ddg-forward.conf ]]; then
+        log "DDG preserve: Unbound ctg-ddg-forward.conf present — no DNS changes"
+        return 0
+    fi
+    log "DDG preserve: no DDG in resolv.conf — leaving upstream unchanged"
+}
+
+disable_broken_ctg_profiled() {
+    log "Phase: disable broken CTG profile.d autostart hooks"
+    local f disabled=0
+    for f in /etc/profile.d/ctg-scrambler-autostart.sh /etc/profile.d/ctg-lab-autorun.sh; do
+        if [[ -f "$f" ]] && [[ ! "$f" =~ \.disabled- ]]; then
+            mv -f "$f" "${f}.disabled-$(date +%Y%m%d)"
+            log "Disabled login hook: $f"
+            disabled=$((disabled + 1))
+        fi
+    done
+    if [[ $disabled -eq 0 ]]; then
+        log "No active CTG profile.d hooks found (OK)"
+    fi
+    mkdir -p /etc/ctg
+    touch /etc/ctg/scrambler-manual-only
+    chmod 644 /etc/ctg/scrambler-manual-only
+}
+
+fix_virtualbox_guest_packages() {
+    log "Phase: VirtualBox guest packages (x11, utils, dkms)"
+    export DEBIAN_FRONTEND=noninteractive
+    local missing=()
+    for pkg in virtualbox-guest-x11 virtualbox-guest-utils dkms; do
+        if ! dpkg -s "$pkg" >/dev/null 2>&1; then
+            missing+=("$pkg")
+        fi
+    done
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        log "Installing missing: ${missing[*]}"
+        apt-get update -qq
+        apt-get install -y --no-install-recommends \
+            virtualbox-guest-x11 virtualbox-guest-utils dkms \
+            build-essential "linux-headers-$(uname -r)" 2>/dev/null || \
+            apt-get install -y --no-install-recommends \
+                virtualbox-guest-x11 virtualbox-guest-utils dkms build-essential
+    else
+        log "VirtualBox guest packages present"
+    fi
+}
+
+fix_gdm_wayland_blank_screen() {
+    log "Phase: GDM WaylandEnable=false (VirtualBox blank screen)"
+    install -d -m 0755 /etc/gdm3
+    local gdm_custom=/etc/gdm3/custom.conf
+    if [[ -f "$gdm_custom" ]]; then
+        if grep -q '^WaylandEnable=' "$gdm_custom"; then
+            if ! grep -q '^WaylandEnable=false' "$gdm_custom"; then
+                sed -i 's/^WaylandEnable=.*/WaylandEnable=false/' "$gdm_custom"
+                log "Updated WaylandEnable=false in $gdm_custom"
+            else
+                log "WaylandEnable=false already set"
+            fi
+        elif grep -q '^\[daemon\]' "$gdm_custom"; then
+            sed -i '/^\[daemon\]/a WaylandEnable=false' "$gdm_custom"
+            log "Added WaylandEnable=false under [daemon]"
+        else
+            printf '\n[daemon]\nWaylandEnable=false\n' >>"$gdm_custom"
+            log "Appended [daemon] WaylandEnable=false"
+        fi
+    else
+        cat >"$gdm_custom" <<'EOF'
+[daemon]
+WaylandEnable=false
+EOF
+        log "Created $gdm_custom with WaylandEnable=false"
+    fi
+    chmod 644 "$gdm_custom"
+}
+
+ensure_ctg_backups_mount_hint() {
+    log "Phase: ctg-backups shared folder mount hint"
+    if mountpoint -q /mnt/ctg 2>/dev/null; then
+        log "/mnt/ctg mounted (OK)"
+        return 0
+    fi
+    if [[ -d /media/sf_ctg-backups ]]; then
+        log "VirtualBox auto-mount at /media/sf_ctg-backups — symlink hint only"
+        mkdir -p /mnt
+        if [[ ! -e /mnt/ctg ]]; then
+            ln -sf /media/sf_ctg-backups /mnt/ctg 2>/dev/null || true
+            log "Linked /mnt/ctg -> /media/sf_ctg-backups"
+        fi
+        return 0
+    fi
+    if grep -q vboxsf /etc/fstab 2>/dev/null; then
+        log "vboxsf in fstab — attempting mount -a"
+        mount -a 2>/dev/null || true
+    else
+        log "ctg-backups not mounted — manual: sudo mkdir -p /mnt/ctg && sudo mount -t vboxsf ctg-backups /mnt/ctg"
+    fi
+}
+
+scan_journal_boot_errors() {
+    log "Phase: journalctl scan (last boot errors/failed)"
+    local journal_tmp
+    journal_tmp="$(mktemp)"
+    {
+        echo "--- systemctl --failed ---"
+        systemctl --failed --no-legend 2>/dev/null || true
+        echo "--- journalctl -b -p err..alert (last 80) ---"
+        journalctl -b -p err..alert --no-pager -n 80 2>/dev/null || true
+        echo "--- journalctl -b -u gdm3 -p warning..alert (last 40) ---"
+        journalctl -b -u gdm3 -p warning..alert --no-pager -n 40 2>/dev/null || true
+    } >"$journal_tmp"
+    cat "$journal_tmp" >>"$LOG_FILE"
+    if grep -qiE 'firmware|driver|module.*fail|nouveau|i915|realtek' "$journal_tmp"; then
+        log "Driver/firmware errors detected in journal"
+        echo "DRIVER_ERRORS=1" >>"$journal_tmp"
+    fi
+    rm -f "$journal_tmp"
+}
+
+safe_reset_failed_units() {
+    log "Phase: systemctl failed units — safe reset/restart"
+    local units=() unit base
+    mapfile -t units < <(systemctl --failed --no-legend --plain 2>/dev/null | awk '{print $1}' || true)
+    if [[ ${#units[@]} -eq 0 ]]; then
+        log "No failed systemd units"
+        return 0
+    fi
+    local skip_re='^(dbus|systemd-|network|NetworkManager|ssh|sshd|gdm|gdm3|lightdm|display-manager|getty@|user@|session-|polkit|rsyslog|cron|tor)\.'
+    for unit in "${units[@]}"; do
+        [[ -z "$unit" ]] && continue
+        base="${unit%%.service}"
+        if [[ "$unit" =~ $skip_re ]]; then
+            log "Skip restart (critical): $unit"
+            continue
+        fi
+        log "Attempting restart: $unit"
+        systemctl restart "$unit" 2>/dev/null || log "Restart failed for $unit (logged only)"
+    done
+    systemctl reset-failed 2>/dev/null || true
+    log "systemctl reset-failed completed"
+}
+
+maybe_install_firmware() {
+    if ! $DO_FIRMWARE; then
+        if journalctl -b -p err..alert --no-pager 2>/dev/null | grep -qiE 'firmware|driver|module.*fail'; then
+            log "Driver errors in journal — run with --firmware to install firmware-linux-nonfree"
+        fi
+        return 0
+    fi
+    log "Phase: firmware-linux-nonfree (--firmware)"
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -qq
+    apt-get install -y --no-install-recommends firmware-linux-nonfree 2>/dev/null || \
+        log "firmware-linux-nonfree install skipped or unavailable"
+}
+
+run_optional_upgrade() {
+    if ! $DO_UPGRADE; then
+        log "Skipping apt full-upgrade (pass --upgrade to enable)"
+        return 0
+    fi
+    log "Phase: apt update && apt full-upgrade -y"
+    preserve_ddg_dns
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -qq
+    apt-get full-upgrade -y
+    preserve_ddg_dns
+}
+
+install_systemd_unit() {
+    log "Phase: install ${SERVICE_NAME}"
+    local script_src="$SCRIPT_DIR/kali-boot-autopatch.sh"
+    if [[ ! -f "$script_src" ]]; then
+        for candidate in /mnt/ctg/kali-boot-autopatch.sh /media/sf_ctg-backups/kali-boot-autopatch.sh; do
+            if [[ -f "$candidate" ]]; then
+                script_src="$candidate"
+                break
+            fi
+        done
+    fi
+    install -d -m 0755 /opt/ctg
+    if [[ -f "$script_src" ]]; then
+        install -m 0755 "$script_src" /opt/ctg/kali-boot-autopatch.sh
+        log "Installed /opt/ctg/kali-boot-autopatch.sh"
+    else
+        log "WARNING: source script not found — unit will reference /opt/ctg/kali-boot-autopatch.sh"
+    fi
+    cat >"$UNIT_DEST" <<'UNITEOF'
+[Unit]
+Description=CTG Kali boot autopatch (VirtualBox/GNOME fixes)
+After=network-online.target vboxadd-service.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/ctg/kali-boot-autopatch.sh
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+UNITEOF
+    chmod 644 "$UNIT_DEST"
+    systemctl daemon-reload
+    systemctl enable "$SERVICE_NAME"
+    log "Enabled ${SERVICE_NAME} — runs on every boot"
+}
+
+# --- main ---
+preserve_ddg_dns
+disable_broken_ctg_profiled
+fix_virtualbox_guest_packages
+fix_gdm_wayland_blank_screen
+ensure_ctg_backups_mount_hint
+run_optional_upgrade
+scan_journal_boot_errors
+maybe_install_firmware
+safe_reset_failed_units
+
+if $DO_INSTALL; then
+    install_systemd_unit
+fi
+
+date -Iseconds >"$MARKER"
+log "=== CTG Kali boot autopatch complete ==="
+log "GUI scrambler (manual): python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py"
+log "One-shot lab: sudo bash /mnt/ctg/ctg-lab-autorun.sh"
