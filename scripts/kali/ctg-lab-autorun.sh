@@ -8,6 +8,8 @@ set -euo pipefail
 MARKER="/var/lib/ctg/kali-bootstrap.done"
 BOOTSTRAP="/mnt/ctg/kali-lab-bootstrap.sh"
 REPO_BOOT="$(dirname "$0")/kali-lab-bootstrap.sh"
+AUTOPATCH="/mnt/ctg/kali-boot-autopatch.sh"
+REPO_AUTOPATCH="$(dirname "$0")/kali-boot-autopatch.sh"
 SCRAMBLER_INSTALL="/mnt/ctg/tor-http-scrambler/install-scrambler.sh"
 AUTORUN_WIFI="${CTG_WIFI_PROFILE:-company-lab}"
 
@@ -19,6 +21,16 @@ if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
 fi
 
 mkdir -p /var/lib/ctg /mnt/ctg 2>/dev/null || true
+
+if [[ ! -f "$AUTOPATCH" && -f "$REPO_AUTOPATCH" ]]; then
+    AUTOPATCH="$REPO_AUTOPATCH"
+fi
+if [[ -f "$AUTOPATCH" ]]; then
+    log "Running boot autopatch: $AUTOPATCH"
+    bash "$AUTOPATCH" || log "Autopatch returned non-zero (continuing lab autorun)"
+else
+    log "Autopatch script not found (optional) — mount ctg-backups share for kali-boot-autopatch.sh"
+fi
 
 if [[ ! -f "$BOOTSTRAP" && -f "$REPO_BOOT" ]]; then
     BOOTSTRAP="$REPO_BOOT"
@@ -64,6 +76,7 @@ log "=== CTG Lab autorun complete ==="
 log "GUI:  python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py"
 log "      (or desktop: CTG .TOR/HTTP Scrambler)"
 log "SIEM: sudo /opt/ctg/tor-http-scrambler/siem-hook.sh"
+log "Shield: sudo /opt/ctg/tor-http-scrambler/ctg-shield-rotate.sh status"
 log "Tor Browser: launch manually (torbrowser-launcher) — browser-only Tor default"
 log "Targets: /etc/ctg/lab-targets.conf (from lab-targets.example)"
 log "DDG preserve: --preserve-ddg-dns ON by default — see docs/IPHONE_HARDENING.md"

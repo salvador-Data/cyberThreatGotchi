@@ -3,13 +3,12 @@
 CTG Tor/HTTP Scrambler — local Tkinter GUI (authorized lab use only).
 Hacker Planet LLC · Philadelphia, PA · CyberThreatGotchi
 
-Modes: tor (default), http, auto. MAC rotate: USB wlan only (stub).
+Modes: tor (default), http, auto. Shield: USB wlan IP/MAC display + rotate.
 Does not automate attacks against third parties.
 """
 from __future__ import annotations
 
 import os
-import socket
 import subprocess
 import sys
 import tkinter as tk
@@ -19,6 +18,8 @@ CTG_ROOT = os.environ.get("CTG_SCRAMBLER_ROOT", "/opt/ctg/tor-http-scrambler")
 DAEMON = os.path.join(CTG_ROOT, "scrambler-daemon.sh")
 MODE_FILE = os.environ.get("CTG_SCRAMBLER_MODE_FILE", "/var/lib/ctg/scrambler-mode")
 SIEM_HOOK = os.path.join(CTG_ROOT, "siem-hook.sh")
+SHIELD = os.environ.get("CTG_SHIELD_SCRIPT", os.path.join(CTG_ROOT, "ctg-shield-rotate.sh"))
+LAST_ALERT = "/var/lib/ctg/shield/last-alert.txt"
 
 
 def run_cmd(args: list[str], timeout: int = 15) -> str:
@@ -51,35 +52,38 @@ def write_mode(mode: str) -> None:
             f.write(mode)
 
 
-def local_ip_mac() -> tuple[str, str]:
-    ip = "—"
-    mac = "—"
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("10.0.2.2", 1))
-        ip = s.getsockname()[0]
-        s.close()
-    except OSError:
-        pass
-    out = run_cmd(["ip", "link", "show"])
-    for line in out.splitlines():
-        if "link/ether" in line:
-            parts = line.split()
-            if len(parts) >= 2:
-                mac = parts[1]
-                break
-    return ip, mac
+def parse_shield_status(text: str) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for line in text.splitlines():
+        if "=" in line and not line.startswith("---"):
+            k, _, v = line.partition("=")
+            out[k.strip()] = v.strip()
+    return out
+
+
+def shield_status() -> dict[str, str]:
+    if os.path.isfile(SHIELD):
+        raw = run_cmd(["sudo", SHIELD, "status"], timeout=20)
+        return parse_shield_status(raw)
+    return {"iface": "—", "ip": "—", "mac": "—", "usb_wlan": "—", "ddg_dns": "—"}
 
 
 def tail_ids_alerts(n: int = 8) -> str:
     for path in (
         "/var/log/snort/alert",
         "/var/log/snort/snort.log",
+        "/var/log/suricata/fast.log",
         "/var/log/syslog",
     ):
         if os.path.isfile(path):
             return run_cmd(["tail", "-n", str(n), path], timeout=5) or "(empty)"
-    return "(no Snort/syslog yet — run bootstrap)"
+    return "(no Snort/Suricata/syslog yet — run bootstrap)"
+
+
+def last_alert_snippet() -> str:
+    if os.path.isfile(LAST_ALERT):
+        return run_cmd(["tail", "-n", "2", LAST_ALERT], timeout=5) or "(empty)"
+    return "(no high-severity alert recorded — run SIEM hook)"
 
 
 def leak_check_stub() -> str:
@@ -95,13 +99,13 @@ class CtgScramblerApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
         self.title("CTG .TOR/HTTP Scrambler — Hacker Planet LLC (authorized lab)")
-        self.geometry("520x420")
-        self.minsize(480, 380)
+        self.geometry("560x520")
+        self.minsize(500, 460)
 
         hdr = ttk.Label(
             self,
             text="Authorized defensive lab only — no third-party attack automation",
-            wraplength=480,
+            wraplength=520,
         )
         hdr.pack(pady=6)
 
@@ -121,15 +125,34 @@ class CtgScramblerApp(tk.Tk):
                 command=self.on_mode_change,
             ).pack(anchor="w", padx=8)
 
-        shield = ttk.LabelFrame(self, text="Shield status")
+        shield = ttk.LabelFrame(self, text="CTG Shield (USB lab wlan)")
         shield.pack(fill="x", padx=10, pady=4)
-        ip, mac = local_ip_mac()
-        ttk.Label(shield, text=f"Lab IP: {ip}").pack(anchor="w", padx=8)
-        ttk.Label(shield, text=f"MAC (primary): {mac}").pack(anchor="w", padx=8)
+        self.shield_iface = ttk.Label(shield, text="Interface: —")
+        self.shield_iface.pack(anchor="w", padx=8)
+        self.shield_ip = ttk.Label(shield, text="Lab IP: —")
+        self.shield_ip.pack(anchor="w", padx=8)
+        self.shield_mac = ttk.Label(shield, text="MAC: —")
+        self.shield_mac.pack(anchor="w", padx=8)
+        self.shield_ddg = ttk.Label(shield, text="DDG DNS: —")
+        self.shield_ddg.pack(anchor="w", padx=8)
+        self.shield_alert = ttk.Label(
+            shield,
+            text="Last high alert: (none)",
+            wraplength=500,
+        )
+        self.shield_alert.pack(anchor="w", padx=8, pady=2)
+        shield_btns = ttk.Frame(shield)
+        shield_btns.pack(anchor="w", padx=8, pady=4)
+        ttk.Button(shield_btns, text="Refresh Shield", command=self.refresh_shield).pack(
+            side="left", padx=4
+        )
+        ttk.Button(shield_btns, text="Rotate IP/MAC", command=self.rotate_shield).pack(
+            side="left", padx=4
+        )
         ttk.Label(
             shield,
-            text="MAC rotate: USB wlan adapters only (manual — not automated on built-in NIC)",
-            wraplength=460,
+            text="MAC rotate: USB wlan only — v1 requires confirm (SIEM y/n or this button)",
+            wraplength=500,
         ).pack(anchor="w", padx=8)
 
         ids_frame = ttk.LabelFrame(self, text="IDS last alerts (tail)")
@@ -146,8 +169,37 @@ class CtgScramblerApp(tk.Tk):
         ttk.Button(btn_row, text="SIEM rotate prompt", command=self.run_siem).pack(side="left", padx=4)
         ttk.Button(btn_row, text="Start daemon", command=self.start_daemon).pack(side="left", padx=4)
 
+        self.refresh_shield()
+
     def on_mode_change(self) -> None:
         write_mode(self.mode_var.get())
+
+    def refresh_shield(self) -> None:
+        st = shield_status()
+        iface = st.get("iface", "—")
+        usb = st.get("usb_wlan", "?")
+        self.shield_iface.configure(text=f"Interface: {iface} (USB wlan: {usb})")
+        self.shield_ip.configure(text=f"Lab IP: {st.get('ip', '—')}")
+        self.shield_mac.configure(text=f"MAC: {st.get('mac', '—')}")
+        ddg = st.get("ddg_dns", "—")
+        self.shield_ddg.configure(text=f"DDG DNS in resolv.conf: {ddg}")
+        alert = last_alert_snippet()
+        short = alert if len(alert) < 120 else alert[:117] + "..."
+        self.shield_alert.configure(text=f"Last high alert: {short}")
+
+    def rotate_shield(self) -> None:
+        if not os.path.isfile(SHIELD):
+            messagebox.showerror("Shield", f"Not installed: {SHIELD}")
+            return
+        if not messagebox.askyesno(
+            "CTG Shield rotate",
+            "Rotate lab USB wlan IP/MAC now?\n\n"
+            "Authorized lab only. Do not use during production banking without scope.",
+        ):
+            return
+        out = run_cmd(["sudo", SHIELD, "rotate"], timeout=90)
+        messagebox.showinfo("Shield rotate", out or "done")
+        self.refresh_shield()
 
     def refresh_ids(self) -> None:
         self.ids_text.configure(state="normal")

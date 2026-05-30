@@ -18,6 +18,8 @@ log "Installing CTG Tor/HTTP scrambler (authorized defensive lab — Hacker Plan
 mkdir -p "$INSTALL_ROOT" /var/lib/ctg
 install -m 755 "$SCRIPT_DIR/scrambler-daemon.sh" "$INSTALL_ROOT/"
 install -m 755 "$SCRIPT_DIR/siem-hook.sh" "$INSTALL_ROOT/"
+install -m 755 "$SCRIPT_DIR/ctg-shield-rotate.sh" "$INSTALL_ROOT/"
+mkdir -p /var/lib/ctg/shield
 install -m 644 "$SCRIPT_DIR/site-rules.example" "$INSTALL_ROOT/"
 if [[ ! -f "$INSTALL_ROOT/site-rules.conf" ]]; then
     install -m 600 "$SCRIPT_DIR/site-rules.example" "$INSTALL_ROOT/site-rules.conf"
@@ -64,3 +66,5 @@ log "Daemon (manual): sudo $INSTALL_ROOT/scrambler-daemon.sh start"
 log "GUI (manual):    python3 $INSTALL_ROOT/ctg-scrambler-gui.py"
 log "Desktop:         CTG .TOR/HTTP Scrambler"
 log "SIEM:  sudo $INSTALL_ROOT/siem-hook.sh"
+log "Shield: sudo $INSTALL_ROOT/ctg-shield-rotate.sh status"
+log "        sudo $INSTALL_ROOT/ctg-shield-rotate.sh rotate"

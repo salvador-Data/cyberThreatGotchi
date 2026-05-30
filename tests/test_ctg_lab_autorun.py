@@ -24,6 +24,7 @@ def test_kali_autorun_and_scrambler_assets():
         "scrambler-daemon.sh",
         "install-scrambler.sh",
         "ctg-scrambler-gui.py",
+        "ctg-shield-rotate.sh",
         "siem-hook.sh",
         "site-rules.example",
     ):
@@ -38,3 +39,19 @@ def test_ctg_lab_autorun_doc():
     text = doc.read_text(encoding="utf-8")
     assert "Start-CTGLab.ps1" in text
     assert "ctg-lab-autorun.sh" in text
+    assert "ctg-shield-rotate.sh" in text
+    assert "CTG_SHIELD_SIEM_PLAYBOOK" in text
+    assert "kali-boot-autopatch.sh" in text
+    assert "ctg-kali-autopatch.service" in text
+
+
+def test_kali_boot_autopatch_assets():
+    autopatch = ROOT / "scripts" / "kali" / "kali-boot-autopatch.sh"
+    deploy = ROOT / "scripts" / "windows" / "Deploy-KaliBootAutopatch.ps1"
+    assert autopatch.is_file()
+    body = autopatch.read_text(encoding="utf-8")
+    assert "authorized" in body.lower()
+    assert "94.140.14.14" in body
+    assert "WaylandEnable=false" in body
+    assert deploy.is_file()
+    assert "OpenSSH" in deploy.read_text(encoding="utf-8")

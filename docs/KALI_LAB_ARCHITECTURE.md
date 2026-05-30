@@ -606,12 +606,13 @@ Authorized **privacy routing** for the Hacker Planet lab: switch between Tor-bac
 |-----------|------|----------|
 | Daemon | `tor-http-scrambler/scrambler-daemon.sh` | Modes: `tor` (default), `http`, `auto`; y/n prompt on glitch domains |
 | Site rules | `site-rules.example` → `site-rules.conf` | chase.com, bankofamerica.com → http; `.onion` → tor |
-| GUI | `ctg-scrambler-gui.py` | Tkinter: mode toggle, leak check stub, IDS tail, shield IP/MAC |
-| SIEM hook | `siem-hook.sh` | Tail Snort/syslog; rotate prompt y/n v1 (no silent WAN auto-rotate) |
+| GUI | `ctg-scrambler-gui.py` | Tkinter: mode toggle, shield panel, IDS tail, rotate button |
+| Shield | `ctg-shield-rotate.sh` | USB wlan IP/MAC status + rotate; DDG DNS preserve |
+| SIEM hook | `siem-hook.sh` | High-severity IDS → shield y/n v1; SIEM log gzip prompt |
 | Install | `install-scrambler.sh` | `/opt/ctg/tor-http-scrambler`, desktop **CTG .TOR/HTTP Scrambler** |
 | Login offer | `/etc/profile.d/ctg-scrambler-autostart.sh` | Prompt to start daemon on interactive login |
 
-**MAC rotate:** Documented/USB wlan only in GUI — built-in NIC not auto-spoofed.
+**MAC rotate:** USB wlan only via `ctg-shield-rotate.sh` — built-in NIC blocked; v1 SIEM/GUI y/n prompt.
 
 **Orchestration:** Windows `Start-CTGLab.ps1` → Kali `ctg-lab-autorun.sh` — see [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md).
 
