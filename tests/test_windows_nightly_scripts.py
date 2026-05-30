@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import importlib.util
+import shutil
 import subprocess
 from datetime import date
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 WIN = ROOT / "scripts" / "windows"
@@ -19,6 +22,8 @@ NIGHTLY_PS1 = (
 
 
 def _parse_ps1(path: Path) -> None:
+    if shutil.which("powershell") is None:
+        pytest.skip("powershell not available on this runner")
     cmd = (
         f"$e=$null; $null=[System.Management.Automation.Language.Parser]::ParseFile("
         f"'{path}', [ref]$null, [ref]$e); if($e){{$e|ForEach-Object{{$_.ToString()}}; exit 1}}"
