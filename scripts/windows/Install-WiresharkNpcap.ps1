@@ -1,5 +1,5 @@
 # Install Wireshark + Npcap on Windows host (companion to Kali lab).
-# Authorized defensive lab use only — Hacker Planet LLC.
+# Authorized defensive lab use only - Hacker Planet LLC.
 param(
     [switch]$NpcapLoopback,
     [switch]$WhatIf
@@ -32,10 +32,10 @@ if ($winget) {
     }
     & winget install --id WiresharkFoundation.Wireshark -e --accept-source-agreements --accept-package-agreements
     if ($LASTEXITCODE -eq 0) {
-        Write-Host 'Wireshark install complete. WiFi monitor mode on Windows remains limited — use Kali VM + USB passthrough for 802.11 lab.'
+        Write-Host 'Wireshark install complete. WiFi monitor mode on Windows remains limited - use Kali VM + USB passthrough for 802.11 lab.'
         return
     }
-    Write-Warning "winget exit $LASTEXITCODE — try manual download from https://www.wireshark.org/download.html"
+    Write-Warning "winget exit $LASTEXITCODE - try manual download from https://www.wireshark.org/download.html"
 }
 
 $choco = Get-Command choco -ErrorAction SilentlyContinue

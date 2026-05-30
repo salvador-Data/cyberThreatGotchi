@@ -1,0 +1,12 @@
+# CTG Tor/HTTP site rules — authorized lab use only (Hacker Planet LLC).
+# Copy to /opt/ctg/tor-http-scrambler/site-rules.conf (mode 600).
+# banking / financial sites → http (clearnet lab browser; your bank may block Tor)
+# .onion → tor (always)
+
+chase.com http
+www.chase.com http
+bankofamerica.com http
+www.bankofamerica.com http
+wellsfargo.com http
+paypal.com http
+.onion tor

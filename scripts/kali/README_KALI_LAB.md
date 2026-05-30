@@ -23,6 +23,12 @@ Optional: force Kali resolv.conf to DuckDuckGo only:
 From **inside Kali** (after install):
 
 ```bash
+sudo bash /mnt/ctg/ctg-lab-autorun.sh
+```
+
+Or bootstrap only:
+
+```bash
 sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=company-lab --preserve-ddg-dns --lab-anonymity
 ```
 

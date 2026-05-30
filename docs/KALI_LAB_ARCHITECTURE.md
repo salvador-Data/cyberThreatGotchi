@@ -47,6 +47,8 @@ All items below are documented here and implemented or stubbed with clear phase 
 | 14 | Authorized Hacker Planet LLC lab framing | This doc § Authorized use | P0 |
 | 15 | **DuckDuckGo VPN + DNS preserve** | `Deploy-KaliLab.ps1`, `--preserve-ddg-dns`, [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md) | P0–P6 |
 | 16 | **Lab anonymity + authorized pentest** | `kali-lab-bootstrap.sh --lab-anonymity`, `lab-targets.example` | P1 |
+| 17 | **CTG Lab Autorun** | `Start-CTGLab.ps1`, `ctg-lab-autorun.sh`, [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) | P1 |
+| 18 | **CTG Privacy Router (Tor/HTTP scrambler)** | `scripts/kali/tor-http-scrambler/`, `--install-scrambler` | P7 |
 
 ---
 
@@ -594,12 +596,35 @@ Answer **before** running automation beyond P0. Record choices in a private lab 
 
 ---
 
+## Phase 7 — CTG Privacy Router (Tor/HTTP scrambler)
+
+**Status:** Landed in repo — installed by bootstrap `--install-scrambler` (default ON with `--lab-anonymity`).
+
+Authorized **privacy routing** for the Hacker Planet lab: switch between Tor-backed browsing (default), clearnet HTTP for site-rules (e.g. banking domains in `site-rules.example`), and **auto** mode. This is **not** crime tooling, illegal exit-node configuration, or automated attacks against third parties.
+
+| Component | Path | Behavior |
+|-----------|------|----------|
+| Daemon | `tor-http-scrambler/scrambler-daemon.sh` | Modes: `tor` (default), `http`, `auto`; y/n prompt on glitch domains |
+| Site rules | `site-rules.example` → `site-rules.conf` | chase.com, bankofamerica.com → http; `.onion` → tor |
+| GUI | `ctg-scrambler-gui.py` | Tkinter: mode toggle, leak check stub, IDS tail, shield IP/MAC |
+| SIEM hook | `siem-hook.sh` | Tail Snort/syslog; rotate prompt y/n v1 (no silent WAN auto-rotate) |
+| Install | `install-scrambler.sh` | `/opt/ctg/tor-http-scrambler`, desktop **CTG .TOR/HTTP Scrambler** |
+| Login offer | `/etc/profile.d/ctg-scrambler-autostart.sh` | Prompt to start daemon on interactive login |
+
+**MAC rotate:** Documented/USB wlan only in GUI — built-in NIC not auto-spoofed.
+
+**Orchestration:** Windows `Start-CTGLab.ps1` → Kali `ctg-lab-autorun.sh` — see [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md).
+
+---
+
 ## Proposed file layout
 
 ```text
 scripts/kali/
   README_KALI_LAB.md
   kali-lab-bootstrap.sh           # primary (--wifi-profile=company-lab default)
+  ctg-lab-autorun.sh                # in-guest one-shot autorun
+  tor-http-scrambler/               # Phase 7 Privacy Router
   lab-targets.example             # authorized targets template
   lab-targets.conf                # real targets (gitignored)
   ansible/ansible.cfg
@@ -612,6 +637,7 @@ docs/
   OPNSENSE_LAB_DNS.md              # DuckDuckGo Unbound forwarder template
 
 scripts/windows/
+  Start-CTGLab.ps1                # master CTG lab autorun (Windows)
   Deploy-KaliLab.ps1              # master deploy
   Install-KaliVirtualBox.ps1
   Install-OpnsenseLab.ps1
@@ -640,6 +666,9 @@ Backups/opnsense-*.xml
 | [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md) | OPNsense lab Unbound → DuckDuckGo forwarder template |
 | [scripts/windows/Deploy-KaliLab.ps1](../scripts/windows/Deploy-KaliLab.ps1) | Master Kali lab deploy (DDG preserve default) |
 | [scripts/kali/kali-lab-bootstrap.sh](../scripts/kali/kali-lab-bootstrap.sh) | In-guest bootstrap |
+| [docs/CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) | Windows + Kali one-command autorun |
+| [scripts/windows/Start-CTGLab.ps1](../scripts/windows/Start-CTGLab.ps1) | Windows master autorun |
+| [scripts/kali/ctg-lab-autorun.sh](../scripts/kali/ctg-lab-autorun.sh) | Kali one-shot autorun |
 | [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md) | OPNsense/Suricata notes |
 | [FIREWALL_BASELINE.md](FIREWALL_BASELINE.md) | CTG Linux iptables (appliance, not Kali VM) |
 

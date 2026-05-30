@@ -17,6 +17,7 @@ DRY_RUN=false
 PRESERVE_DDG_DNS=true
 DDG_DNS_ONLY=false
 LAB_ANONYMITY=true
+INSTALL_SCRAMBLER=true
 LAB_TARGETS_EXAMPLE="scripts/kali/lab-targets.example"
 LAB_TARGETS_CONF="scripts/kali/lab-targets.conf"
 
@@ -38,6 +39,8 @@ Options:
   --skip-realtek           Skip Realtek USB driver detection/install
   --lab-anonymity          Install Tor, proxychains4, Tor Browser launcher (default ON)
   --no-lab-anonymity       Skip anonymity packages (tor/proxychains/Tor Browser deps)
+  --install-scrambler      Install CTG Tor/HTTP scrambler (default ON with --lab-anonymity)
+  --no-install-scrambler   Skip tor-http-scrambler install
   --dry-run                Print planned actions only
   -h, --help               Show this help
 
@@ -60,6 +63,10 @@ for arg in "$@"; do
         --ddg-dns-only) DDG_DNS_ONLY=true; PRESERVE_DDG_DNS=true ;;
         --skip-snort) SKIP_SNORT=true ;;
         --skip-realtek) SKIP_REALTEK=true ;;
+        --lab-anonymity) LAB_ANONYMITY=true; INSTALL_SCRAMBLER=true ;;
+        --no-lab-anonymity) LAB_ANONYMITY=false; INSTALL_SCRAMBLER=false ;;
+        --install-scrambler) INSTALL_SCRAMBLER=true ;;
+        --no-install-scrambler) INSTALL_SCRAMBLER=false ;;
         --dry-run) DRY_RUN=true ;;
         -h|--help) usage; exit 0 ;;
         *) echo "Unknown option: $arg" >&2; usage; exit 1 ;;
@@ -89,7 +96,7 @@ run() {
 CTG_ENV="/etc/environment.d/ctg-osint.env"
 CTG_WIFI_BASE="/usr/local/sbin/wifi-lab-baseline.sh"
 
-log "CyberThreatGotchi Kali lab bootstrap — wifi-profile=$WIFI_PROFILE preserve-ddg-dns=$PRESERVE_DDG_DNS ddg-dns-only=$DDG_DNS_ONLY lab-anonymity=$LAB_ANONYMITY"
+log "CyberThreatGotchi Kali lab bootstrap — wifi-profile=$WIFI_PROFILE preserve-ddg-dns=$PRESERVE_DDG_DNS ddg-dns-only=$DDG_DNS_ONLY lab-anonymity=$LAB_ANONYMITY install-scrambler=$INSTALL_SCRAMBLER"
 log "DuckDuckGo preserve: same rules as $IPHONE_HARDENING_DOC — no NextDNS/Cloudflare stack on host/iPhone/router"
 log "Authorized pentest: targets only in $LAB_TARGETS_CONF (copy from $LAB_TARGETS_EXAMPLE) — never third parties"
 
@@ -331,6 +338,40 @@ fi
 log "Phase: lynis audit (report only)"
 run lynis audit system --quick --quiet || true
 
+# --- tor-http-scrambler (CTG Privacy Router lab module) ---
+if $INSTALL_SCRAMBLER; then
+    log "Phase: tor-http-scrambler (CTG Privacy Router — browser Tor default, site-rules auto)"
+    SCRAMBLER_SRC=""
+    for candidate in \
+        "$(dirname "$0")/tor-http-scrambler/install-scrambler.sh" \
+        "/mnt/ctg/tor-http-scrambler/install-scrambler.sh" \
+        "/opt/ctg/tor-http-scrambler/install-scrambler.sh"; do
+        if [[ -f "$candidate" ]]; then
+            SCRAMBLER_SRC="$candidate"
+            break
+        fi
+    done
+    if [[ -n "$SCRAMBLER_SRC" ]]; then
+        if ! $DRY_RUN; then
+            run bash "$SCRAMBLER_SRC"
+            run /opt/ctg/tor-http-scrambler/scrambler-daemon.sh set-mode tor || true
+            log "Scrambler daemon: offer on login via /etc/profile.d/ctg-scrambler-autostart.sh"
+            log "GUI: python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py"
+        else
+            run echo "[dry-run] install-scrambler.sh from $SCRAMBLER_SRC"
+        fi
+    else
+        log "install-scrambler.sh not found — copy scripts/kali/tor-http-scrambler to VM and re-run --install-scrambler"
+    fi
+else
+    log "Phase: tor-http-scrambler skipped (--no-install-scrambler or --no-lab-anonymity)"
+fi
+
+if ! $DRY_RUN; then
+    mkdir -p /var/lib/ctg
+    date -Iseconds >/var/lib/ctg/kali-bootstrap.done
+fi
+
 log "Bootstrap complete. Next: snapshot VM, attach Realtek USB in VirtualBox, edit $CTG_ENV for OSINT keys."
 if $LAB_ANONYMITY; then
     log "Anonymity: launch Tor Browser manually; pentest only against /etc/ctg/lab-targets.conf entries"
@@ -338,3 +379,4 @@ fi
 log "Maltego CE: manual install from vendor .deb (EULA). Suricata primary IDS belongs on OPNsense, not Kali."
 log "DuckDuckGo: preserve host/iPhone/router DNS per $IPHONE_HARDENING_DOC — OPNsense lab forwarders: docs/OPNSENSE_LAB_DNS.md"
 log "Pentest (nmap, metasploit, burp, sqlmap): lab-owned VMs and written scope only — see docs/KALI_LAB_ARCHITECTURE.md"
+log "One-shot autorun: sudo bash /mnt/ctg/ctg-lab-autorun.sh — see docs/CTG_LAB_AUTORUN.md"

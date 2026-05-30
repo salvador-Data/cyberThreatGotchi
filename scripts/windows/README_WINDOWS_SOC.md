@@ -88,7 +88,8 @@ Optional: Defender ASR audit mode:
 | `iphone_hardening_assist.ps1` | Deprecated alias — forwards to `iphone_hardening_automate.ps1` (`-OpenRunbook` still works) |
 | `Pause-DefenderRealtime.ps1` | **Admin:** pause/resume Defender real-time during PlatformIO builds |
 | `Pause-DefenderRealtime.bat` | Double-click UAC shim — toggles realtime pause/resume |
-| `Deploy-KaliLab.ps1` | Kali lab master deploy (VBox/VMware, SSH bootstrap) |
+| `Start-CTGLab.ps1` | **Master CTG lab autorun** — DDG, deploy Kali, Wireshark, OPNsense stub |
+| `Deploy-KaliLab.ps1` | Kali lab deploy (VBox/VMware, SSH bootstrap) |
 | `Install-KaliVirtualBox.ps1` | Create Kali VM from installer ISO |
 | `Install-OpnsenseLab.ps1` | OPNsense lab VM (2 NICs) |
 | `Install-WiresharkNpcap.ps1` | Wireshark + Npcap on Windows |
@@ -124,11 +125,19 @@ Authorized analyst VM bootstrap — harden, ClamAV, passive Snort, OSINT apt, Re
 | `Install-OpnsenseLab.ps1` | Optional lab OPNsense VM (2 NICs; not edge by default) |
 | `Install-WiresharkNpcap.ps1` | Windows Wireshark + Npcap |
 
-Architecture: [docs/KALI_LAB_ARCHITECTURE.md](../../docs/KALI_LAB_ARCHITECTURE.md) · Kali scripts: [scripts/kali/README_KALI_LAB.md](../kali/README_KALI_LAB.md)
+Architecture: [docs/KALI_LAB_ARCHITECTURE.md](../../docs/KALI_LAB_ARCHITECTURE.md) · Autorun: [docs/CTG_LAB_AUTORUN.md](../../docs/CTG_LAB_AUTORUN.md) · Kali scripts: [scripts/kali/README_KALI_LAB.md](../kali/README_KALI_LAB.md)
+
+**One-command lab autorun (recommended):**
 
 ```powershell
 cd C:\Users\Owner\Projects\cyberThreatGotchi
 ```
+
+```powershell
+.\scripts\windows\Start-CTGLab.ps1
+```
+
+Deploy only (without full autorun chain):
 
 ```powershell
 .\scripts\windows\Deploy-KaliLab.ps1 -StartVmIfStopped -InstallSshServerHint
@@ -138,6 +147,12 @@ If SSH is not ready, finish Kali install and run inside the guest:
 
 ```bash
 sudo apt install -y openssh-server && sudo systemctl enable --now ssh
+sudo bash /mnt/ctg/ctg-lab-autorun.sh
+```
+
+Or bootstrap only:
+
+```bash
 sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=company-lab
 ```
 

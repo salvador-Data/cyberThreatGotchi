@@ -126,8 +126,10 @@ function Get-CtgBootstrapExtraArgs {
     if ($DdgDnsOnly) { $args += '--ddg-dns-only' }
     if ($NoLabAnonymity) {
         $args += '--no-lab-anonymity'
+        $args += '--no-install-scrambler'
     } else {
         $args += '--lab-anonymity'
+        $args += '--install-scrambler'
     }
     return ($args -join ' ')
 }
@@ -172,7 +174,9 @@ function Write-CtgLabChecklistStatus {
         '13 Defender pause script (Pause-DefenderRealtime.ps1 - manual for builds)',
         '14 Authorized Hacker Planet LLC lab framing',
         '15 DuckDuckGo VPN + DNS preserve (this deploy)',
-        '16 Lab anonymity + authorized pentest (Tor/proxychains; lab-targets.example)'
+        '16 Lab anonymity + authorized pentest (Tor/proxychains; lab-targets.example)',
+        '17 CTG Lab Autorun Start-CTGLab.ps1 + ctg-lab-autorun.sh',
+        '18 CTG Privacy Router tor-http-scrambler (Phase 7)'
     )
     foreach ($item in $items) { Write-CtgLog "  [doc+script] $item" }
 }
@@ -370,16 +374,35 @@ function Enable-CtgVBoxSharedBootstrap {
         Write-CtgLog "Shared folder add skipped (may already exist): $($_.Exception.Message)"
     }
     Write-CtgLog "In Kali: sudo mkdir -p /mnt/ctg; sudo mount -t vboxsf $ShareName /mnt/ctg"
-    Write-CtgLog "Then: sudo bash /mnt/ctg/kali-lab-bootstrap.sh --wifi-profile=$WifiProfile"
+    Write-CtgLog "Then: sudo bash /mnt/ctg/ctg-lab-autorun.sh"
+    Write-CtgLog "  or: sudo bash /mnt/ctg/kali-lab-bootstrap.sh --wifi-profile=$WifiProfile"
     return $true
 }
 
 function Copy-CtgBootstrapToSharedFolder {
     param([string]$LocalScript)
-    $dest = 'C:\Users\Owner\Backups\kali-lab-bootstrap.sh'
+    $backupRoot = 'C:\Users\Owner\Backups'
+    if (-not (Test-Path $backupRoot)) { New-Item -ItemType Directory -Path $backupRoot -Force | Out-Null }
+    $dest = Join-Path $backupRoot 'kali-lab-bootstrap.sh'
     Copy-Item -Path $LocalScript -Destination $dest -Force
-    Write-CtgLog "Bootstrap copied to $dest - run inside Kali after install:"
-    Write-CtgLog "  sudo bash /path/to/kali-lab-bootstrap.sh --wifi-profile=$WifiProfile"
+    Write-CtgLog "Bootstrap copied to $dest"
+
+    $autorun = Join-Path $RepoRoot 'scripts\kali\ctg-lab-autorun.sh'
+    if (Test-Path $autorun) {
+        Copy-Item -Path $autorun -Destination (Join-Path $backupRoot 'ctg-lab-autorun.sh') -Force
+        Write-CtgLog "Autorun copied to $(Join-Path $backupRoot 'ctg-lab-autorun.sh')"
+    }
+
+    $scramblerSrc = Join-Path $RepoRoot 'scripts\kali\tor-http-scrambler'
+    if (Test-Path $scramblerSrc) {
+        $scramblerDest = Join-Path $backupRoot 'tor-http-scrambler'
+        New-Item -ItemType Directory -Path $scramblerDest -Force | Out-Null
+        Copy-Item -Path (Join-Path $scramblerSrc '*') -Destination $scramblerDest -Recurse -Force
+        Write-CtgLog "Scrambler staged: $scramblerDest"
+    }
+
+    Write-CtgLog 'In Kali after mount: sudo bash /mnt/ctg/ctg-lab-autorun.sh'
+    Write-CtgLog "  or: sudo bash /mnt/ctg/kali-lab-bootstrap.sh --wifi-profile=$WifiProfile"
     return $dest
 }
 
