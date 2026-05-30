@@ -86,24 +86,52 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 
 ## Kali boot autopatch (every boot)
 
-Windows deploy (stages scripts to `C:\Users\Owner\Backups`, adds VirtualBox share `ctg-backups`, starts VM, SSH install when ready):
+Fixes common VirtualBox Kali boot errors automatically: Guest Additions packages, GDM Wayland blank screen, broken CTG `profile.d` hooks, failed systemd units, journal error scan, optional `apt full-upgrade`.
+
+**Windows deploy** (stages scripts to `C:\Users\Owner\Backups`, adds VirtualBox share `ctg-backups`, VRAM fix, starts VM, SSH install when ready):
 
 ```powershell
 cd C:\Users\Owner\Projects\cyberThreatGotchi
 ```
 
 ```powershell
-.\scripts\windows\Deploy-KaliBootAutopatch.ps1 -StartVmIfStopped
+.\scripts\windows\Deploy-KaliBootAutopatch.ps1 -RunBlankScreenFix -StartVmIfStopped
 ```
 
 **One-time inside Kali** (if SSH did not finish):
 
 ```bash
-sudo mkdir -p /mnt/ctg && sudo mount -t vboxsf ctg-backups /mnt/ctg
+sudo mkdir -p /mnt/ctg
+sudo mount -t vboxsf ctg-backups /mnt/ctg
 sudo bash /mnt/ctg/kali-boot-autopatch.sh --install
 ```
 
-**Verify:** `systemctl status ctg-kali-autopatch.service` · **Log:** `/var/log/ctg-boot-autopatch.log`
+Optional first run with upgrades:
+
+```bash
+sudo bash /mnt/ctg/kali-boot-autopatch.sh --install --upgrade
+```
+
+**Verify:**
+
+```bash
+systemctl status ctg-kali-autopatch.service
+tail -50 /var/log/ctg-boot-autopatch.log
+```
+
+**Also runs from** `ctg-lab-autorun.sh` (fix-only, no `--upgrade` unless you pass flags manually).
+
+| Error / symptom | Autopatch action |
+|-----------------|------------------|
+| Blank GNOME desktop after login | `WaylandEnable=false` in GDM; disable CTG `profile.d` hooks |
+| Missing Guest Additions X11 | Install `virtualbox-guest-x11`, `virtualbox-guest-utils`, `dkms` |
+| CTG login `read` prompt hang | Disable `/etc/profile.d/ctg-*-autostart.sh` |
+| Failed non-critical systemd units | Safe restart + `systemctl reset-failed` |
+| Boot driver/firmware errors in journal | Logged; `--firmware` installs `firmware-linux-nonfree` |
+| `ctg-backups` share not mounted | Mount hint + `/mnt/ctg` symlink if auto-mount present |
+| DuckDuckGo DNS configured | **Never overwritten** when `94.140.14.14/15.15` in `resolv.conf` |
+
+**Log:** `/var/log/ctg-boot-autopatch.log` · **Service:** `ctg-kali-autopatch.service`
 
 ---
 
@@ -224,59 +252,6 @@ sudo bash /mnt/ctg-backups/fix-kali-blank-screen.sh
 Then switch back to graphical session (Ctrl+Alt+F1) or `sudo reboot`.
 
 **CTG scrambler after recovery:** launch manually from **CTG .TOR/HTTP Scrambler** or `python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py` — not via `/etc/profile.d/`.
-
----
-
-## Boot autopatch (every boot)
-
-Fixes common VirtualBox Kali boot errors automatically: Guest Additions packages, GDM Wayland blank screen, broken CTG `profile.d` hooks, failed systemd units, journal error scan, optional `apt full-upgrade`.
-
-**Windows deploy (shared folder + SSH + VRAM fix):**
-
-```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
-```
-
-```powershell
-.\scripts\windows\Deploy-KaliBootAutopatch.ps1 -RunBlankScreenFix -StartVmIfStopped
-```
-
-Stages scripts to `C:\Users\Owner\Backups\`, adds VirtualBox shared folder **`ctg-backups`**, NAT SSH `127.0.0.1:2222`, prefers **OpenSSH** over PuTTY for remote install.
-
-**One-time install inside Kali:**
-
-```bash
-sudo mkdir -p /mnt/ctg
-sudo mount -t vboxsf ctg-backups /mnt/ctg
-sudo bash /mnt/ctg/kali-boot-autopatch.sh --install
-```
-
-Optional first run with upgrades:
-
-```bash
-sudo bash /mnt/ctg/kali-boot-autopatch.sh --install --upgrade
-```
-
-**Verify:**
-
-```bash
-systemctl status ctg-kali-autopatch.service
-tail -50 /var/log/ctg-boot-autopatch.log
-```
-
-**Also runs from** `ctg-lab-autorun.sh` (fix-only, no `--upgrade` unless you pass flags manually).
-
-| Error / symptom | Autopatch action |
-|-----------------|------------------|
-| Blank GNOME desktop after login | `WaylandEnable=false` in GDM; disable CTG `profile.d` hooks |
-| Missing Guest Additions X11 | Install `virtualbox-guest-x11`, `virtualbox-guest-utils`, `dkms` |
-| CTG login `read` prompt hang | Disable `/etc/profile.d/ctg-*-autostart.sh` |
-| Failed non-critical systemd units | Safe restart + `systemctl reset-failed` |
-| Boot driver/firmware errors in journal | Logged; `--firmware` installs `firmware-linux-nonfree` |
-| `ctg-backups` share not mounted | Mount hint + `/mnt/ctg` symlink if auto-mount present |
-| DuckDuckGo DNS configured | **Never overwritten** when `94.140.14.14/15.15` in `resolv.conf` |
-
-**Log:** `/var/log/ctg-boot-autopatch.log` · **Service:** `ctg-kali-autopatch.service`
 
 ---
 
