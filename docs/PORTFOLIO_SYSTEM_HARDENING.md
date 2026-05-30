@@ -111,7 +111,8 @@ flowchart TB
 | `mount_ssd_d.ps1` | Online Disk 1, clear readonly, assign **D:** without format; handles ghost `D:` |
 | `Preserve-DuckDuckGoVpn.ps1` | Defender path exclusions for DDG WireGuard; **no** second VPN installer |
 | `wazuh_agent_setup.ps1` | Agent MSI/winget path; manager from env |
-| `ADMIN_STEPS.md` | Human runbook: UAC, mount order, VPN preserve matrix |
+| `ADMIN_STEPS.md` | Human runbook: UAC, mount order, VPN preserve matrix, Sign-in options troubleshooting |
+| `Repair-WindowsSignIn.ps1` | Read-only Password/PIN/Hello diagnostic; safe service repair; never stores or changes password |
 
 ### Harden-Windows-Security integration
 
@@ -160,6 +161,7 @@ For Hacker Planet **Year 1 kits**, the narrative is: reproducible scripts + runb
 | **Ghost D: letter** | Size 0 volume blocks assign | `mount_ssd_d.ps1` removes stale access path before reassignment |
 | **OneDrive file lock** | Desktop log write fails | Retry loop in `ctg_soc_run_once.ps1` |
 | **Hardening vs VPN** | Second VPN or aggressive ASR | Audit-only HWS in one-shot; DDG preserve script; no CTG DNS VPN installers |
+| **Sign-in options broken** | Settings → Password greyed out; MSA vs Hello-only policy | `Repair-WindowsSignIn.ps1` (read-only diag); `-ApplySafeFixes` restarts VaultSvc/TokenBroker; manual paths in `ADMIN_STEPS.md` |
 | **C: space** | Restore point + build artifacts | Selective backup; skip huge Pictures; cloud manifest-only tier |
 
 ---

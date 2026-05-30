@@ -77,10 +77,43 @@ Before/after SOC, confirm VPN in the **DuckDuckGo** app (Connected) or tray icon
 Invoke-CtgPreserveDuckDuckGoVpn
 ```
 
+## Windows 11 Sign-in options (Password greyed out / Change broken)
+
+Symptom: **Settings → Accounts → Sign-in options** — Password option inactive, or PIN works but password path fails.
+
+**Read-only diagnostic (no Admin):**
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\Repair-WindowsSignIn.ps1 -OpenSettings
+```
+
+**Safe fixes (Admin — restarts Credential Manager / Web Account Manager; never sets your password):**
+
+```powershell
+.\scripts\windows\Repair-WindowsSignIn.ps1 -ApplySafeFixes -OpenSettings
+```
+
+If PIN is corrupted but password UI still fails, Admin may add `-ResetNgcPinCache` (you must set PIN again afterward).
+
+| Account type | Fix password manually |
+|--------------|----------------------|
+| **Microsoft account** | [account.microsoft.com/security](https://account.microsoft.com/security) → Password; or Sign-in options → **I forgot my PIN** |
+| **Local account** | `Ctrl+Alt+Del` → Change a password; or Admin: `net user YOURUSERNAME *` (you type new password at prompts) |
+| **Azure AD / work** | Company portal or IT — CTG scripts cannot override org policy |
+
+**Did CTG hardening break sign-in?** `ctg_soc_run_once.ps1` uses **audit-only** Harden-Windows-Security. Full `Invoke-Hardening` enforce (without `-HardenWindowsSecurityAuditOnly`) can set **DevicePasswordLess** / Hello-only policies. Revert in **Settings → Sign-in options** (turn off “only allow Windows Hello”) or Group Policy → Windows Hello for Business.
+
+Log: `%USERPROFILE%\Backups\logs\repair-windows-signin.log`
+
 ## What works **without** Admin
 
 - `selective_ssd_backup.ps1` (falls back when D: is missing — often `C:\Users\Owner\Backups\...`)
 - `cloud_backup.ps1` (OneDrive staging)
+- `Repair-WindowsSignIn.ps1` (diagnostic / `-OpenSettings` only)
 - `git status` / read-only checks
 - Cardputer flash: PlatformIO upload to COM13 (no elevation)
 

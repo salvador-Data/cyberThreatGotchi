@@ -93,6 +93,7 @@ Optional: Defender ASR audit mode:
 | `Install-KaliVirtualBox.ps1` | Create Kali VM from installer ISO |
 | `Install-OpnsenseLab.ps1` | OPNsense lab VM (2 NICs) |
 | `Install-WiresharkNpcap.ps1` | Wireshark + Npcap on Windows |
+| `Repair-WindowsSignIn.ps1` | **Read-only** Sign-in options diagnostic (Password/PIN/Hello); safe service fixes with `-ApplySafeFixes` — never sets password |
 
 Check Wazuh without installing:
 
@@ -105,6 +106,36 @@ Sysmon only:
 ```powershell
 .\scripts\windows\install_sysmon.ps1
 ```
+
+## Windows 11 Sign-in options (Password / PIN / Hello)
+
+If **Settings → Accounts → Sign-in options → Password** is greyed out, **Change** does nothing, or PIN works but password path fails:
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+Read-only diagnostic (safe anytime):
+
+```powershell
+.\scripts\windows\Repair-WindowsSignIn.ps1
+```
+
+Open Sign-in options after the report:
+
+```powershell
+.\scripts\windows\Repair-WindowsSignIn.ps1 -OpenSettings
+```
+
+Safe service restart (Administrator — still **no password change**):
+
+```powershell
+.\scripts\windows\Repair-WindowsSignIn.ps1 -ApplySafeFixes -OpenSettings
+```
+
+**Microsoft account:** password is often managed at [account.microsoft.com/security](https://account.microsoft.com/security), not only in Settings. **Local account:** `Ctrl+Alt+Del` → Change a password, or `Win+R` → `netplwiz`. **CTG hardening:** `ctg_soc_run_once.ps1` runs Harden-Windows-Security **audit only** by default; full HWS enforce can enable Hello-only sign-in — see `ADMIN_STEPS.md`.
+
+Log: `%USERPROFILE%\Backups\logs\repair-windows-signin.log`
 
 ## Wazuh manager (SIEM)
 
