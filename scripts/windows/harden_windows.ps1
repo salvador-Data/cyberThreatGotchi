@@ -28,6 +28,12 @@
 .PARAMETER CloudBackup
   Run cloud_backup.ps1 after local/SSD backup (OneDrive staging).
 
+.PARAMETER DDoSRogueWifiDiagnose
+  Run Harden-DDoSRogueWifi.ps1 -DiagnoseOnly (DDoS / rogue WiFi posture; no Admin required).
+
+.PARAMETER DDoSRogueWifiApply
+  Run Harden-DDoSRogueWifi.ps1 -ApplyHardening (Administrator required).
+
 .PARAMETER SkipRestorePoint
   Skip system restore point prompt.
 
@@ -50,6 +56,8 @@ param(
     [switch] $DefenderASRAudit,
     [switch] $SkipRestorePoint
     , [switch] $CloudBackup
+    , [switch] $DDoSRogueWifiDiagnose
+    , [switch] $DDoSRogueWifiApply
 )
 
 $ErrorActionPreference = 'Stop'
@@ -214,8 +222,23 @@ function Invoke-CloudBackupHelper {
     Write-Host '--- Microsoft OneDrive cloud staging ---' -ForegroundColor Cyan
     & $cloud
 }
+function Invoke-DDoSRogueWifiHelper {
+    param([switch] $Apply)
+    $helper = Join-Path $ScriptDir 'Harden-DDoSRogueWifi.ps1'
+    if (-not (Test-Path $helper)) {
+        Write-Host "Missing: $helper" -ForegroundColor Yellow
+        return
+    }
+    Write-Host '--- DDoS / rogue WiFi hardening ---' -ForegroundColor Cyan
+    if ($Apply) {
+        & $helper -ApplyHardening
+    } else {
+        & $helper -DiagnoseOnly
+    }
+}
+
 function Show-UsageIfNoFlags {
-    $any = $InstallSysmon -or $RunHardenWindowsSecurity -or $CheckWazuhAgent -or $SetupWazuhAgent -or $DefenderASRAudit -or $CloudBackup
+    $any = $InstallSysmon -or $RunHardenWindowsSecurity -or $CheckWazuhAgent -or $SetupWazuhAgent -or $DefenderASRAudit -or $CloudBackup -or $DDoSRogueWifiDiagnose -or $DDoSRogueWifiApply
     if ($any) { return $false }
     Write-Host 'No action flags passed - guidance only (no hardening applied).' -ForegroundColor Yellow
     Write-Host ''
@@ -226,6 +249,7 @@ function Show-UsageIfNoFlags {
     Write-Host '  4. Set manager IP, then -SetupWazuhAgent or -CheckWazuhAgent'
     Write-Host '  5. -DefenderASRAudit (tune ASR before enforce)'
     Write-Host '  6. -CloudBackup (OneDrive manifest staging)'
+    Write-Host '  7. -DDoSRogueWifiDiagnose | -DDoSRogueWifiApply (see docs/DEFENSE_DDOS_ROGUE_WIFI.md)'
     Write-Host ''
     Write-Host 'Examples:'
     Write-Host '  .\scripts\windows\harden_windows.ps1 -InstallSysmon'
@@ -249,6 +273,8 @@ if ($CheckWazuhAgent) { Invoke-WazuhCheck }
 if ($SetupWazuhAgent) { Invoke-WazuhSetup }
 if ($DefenderASRAudit) { Set-DefenderASRAuditMode }
 if ($CloudBackup) { Invoke-CloudBackupHelper }
+if ($DDoSRogueWifiDiagnose) { Invoke-DDoSRogueWifiHelper }
+if ($DDoSRogueWifiApply) { Invoke-DDoSRogueWifiHelper -Apply }
 
 if ($guidanceOnly) {
     Invoke-RestorePointPrompt

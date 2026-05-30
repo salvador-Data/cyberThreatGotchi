@@ -94,6 +94,7 @@ Optional: Defender ASR audit mode:
 | `Install-OpnsenseLab.ps1` | OPNsense lab VM (2 NICs) |
 | `Install-WiresharkNpcap.ps1` | Wireshark + Npcap on Windows |
 | `Repair-WindowsSignIn.ps1` | **Read-only** Sign-in options diagnostic (Password/PIN/Hello); safe service fixes with `-ApplySafeFixes` — never sets password |
+| `Harden-DDoSRogueWifi.ps1` | **DDoS / rogue WiFi** — `-DiagnoseOnly` (any user) or `-ApplyHardening` (Admin); see [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md) |
 
 Check Wazuh without installing:
 
@@ -229,8 +230,43 @@ Test-NetConnection -ComputerName $env:CTG_WAZUH_MANAGER -Port 1514
 
 **Not authorized:** unauthorized scanning, “red team” on systems you do not own, or evasion of monitoring on networks you do not control.
 
+## DDoS / rogue WiFi (under attack or hardening)
+
+Client-side posture only — **volumetric DDoS requires your ISP**. Full guide: [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md).
+
+Diagnose (safe without Admin):
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\Harden-DDoSRogueWifi.ps1 -DiagnoseOnly
+```
+
+Apply firewall + LLMNR/NetBIOS + WiFi open-network blocks (**Administrator**):
+
+```powershell
+.\scripts\windows\Harden-DDoSRogueWifi.ps1 -ApplyHardening
+```
+
+Or via orchestrator:
+
+```powershell
+.\scripts\windows\harden_windows.ps1 -DDoSRogueWifiDiagnose
+```
+
+```powershell
+.\scripts\windows\harden_windows.ps1 -DDoSRogueWifiApply
+```
+
+Kali passive scan (inside VM): `sudo bash /mnt/ctg/rogue-ap-guard.sh -k "YourHomeSSID"`
+
+Logs: `%USERPROFILE%\Backups\logs\harden-ddos-rogue.log`, `firewall.log`
+
 ## Related docs
 
+- [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md) — DDoS, deauth, rogue captive portal layers
 - [docs/SECURITY_HARDENING.md](../../docs/SECURITY_HARDENING.md) — project-wide env vars and API hardening
 - [docs/FIREWALL_BASELINE.md](../../docs/FIREWALL_BASELINE.md) — Linux/BPI-R3 firewall (complements Windows stack)
 - [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md) · [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) · [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) — iPhone Settings + USB (preserve VPN/DNS)

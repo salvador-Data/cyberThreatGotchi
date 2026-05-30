@@ -48,6 +48,18 @@ cp lab-targets.example lab-targets.conf
 sudo bash /tmp/kali-lab-bootstrap.sh --no-lab-anonymity
 ```
 
+## Rogue AP guard (passive WiFi)
+
+Detect duplicate SSIDs, open networks, and evil-twin hints — **no deauth, no jamming**.
+
+```bash
+sudo bash /mnt/ctg/rogue-ap-guard.sh -k "YourHomeSSID"
+```
+
+Install copy: `~/Backups/kali-wifi-guard/rogue-ap-guard.sh` · Log: `~/Backups/logs/rogue-ap-guard.log`
+
+See [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md).
+
 ## DuckDuckGo preserve
 
 Same rules as [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md):

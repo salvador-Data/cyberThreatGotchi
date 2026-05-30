@@ -1,0 +1,198 @@
+# Defense: DDoS, deauth, and rogue WiFi
+
+**Hacker Planet LLC / CyberThreatGotchi** — authorized defensive guidance for systems and networks you **own** or are **explicitly permitted** to administer. This document does **not** cover offensive countermeasures (deauth attacks, jamming, “fighting back” on air).
+
+**Related:**
+
+- Windows SOC: [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)
+- iPhone layers: [IPHONE_HARDENING.md](IPHONE_HARDENING.md)
+- CTG API / env: [SECURITY_HARDENING.md](SECURITY_HARDENING.md)
+- Perimeter (homelab): [FIREWALL_BASELINE.md](FIREWALL_BASELINE.md)
+
+---
+
+## Threat model (what you are defending against)
+
+| Threat | What it looks like | Primary defender |
+|--------|-------------------|------------------|
+| **Volumetric DDoS** | Flood to your **public IP** — sites slow/unreachable, modem lights pegged | **ISP** (null route, scrubbing) |
+| **Application / L7 abuse** | HTTP floods, login spam, game/server griefing | Service host + CDN/WAF; client: don’t expose services |
+| **WiFi deauth / disassoc** | Connection drops on WiFi only; captive portal reappears | Router WPA3/802.11w; avoid untrusted open WiFi; VPN |
+| **Evil twin / rogue AP** | Same SSID name, stronger signal, fake captive portal | Verify BSSID; VPN; never creds on unexpected portal |
+| **LAN spoofing (LLMNR/NetBIOS)** | Name-resolution tricks on local network | Disable LLMNR/NetBIOS; firewall inbound |
+
+---
+
+## What a **client** can vs cannot do
+
+### Can (this repo’s scripts)
+
+- Enable Windows Firewall — block inbound by default
+- Block common LAN/WAN probe ports (SMB, RDP, WinRM, etc.)
+- Disable LLMNR and NetBIOS over TCP/IP (reboot may be required)
+- Stop auto-connect to **open** WiFi hotspots
+- Keep CTG web API on **127.0.0.1** only when running locally
+- Turn on **DuckDuckGo VPN** — hides home IP for some attack types and encrypts traffic on untrusted WiFi
+- **Passive** Kali scan for duplicate SSIDs and open networks (`rogue-ap-guard.sh`)
+- iPhone: Private Wi‑Fi Address, VPN, no creds on unexpected portals ([IPHONE_HARDENING.md](IPHONE_HARDENING.md))
+
+### Cannot (honest limits)
+
+- Stop a **large volumetric DDoS** aimed at your residential public IP — only your **ISP** can sinkhole or scrub that traffic
+- Prevent a determined **deauth** against your client radio without proper **802.11w (PMF)** on AP **and** client (partial mitigation)
+- Guarantee detection of every rogue AP without dedicated wireless IDS (WIDS) or enterprise gear
+- “Attack back” legally or safely from a home lab — **do not**
+
+---
+
+## Under active attack — do this first
+
+1. **Volumetric / home internet unusable**
+   - Unplug modem/WAN or disable WiFi on router briefly to confirm it’s network-side
+   - **Call ISP** — report DDoS, request mitigation / IP change
+   - Avoid running **personal hotspot** as a long-term fix ( exposes phone IP )
+   - Document times and symptoms for **police report** if harassment/stalking is suspected
+
+2. **WiFi deauth or rogue portal**
+   - Disconnect from WiFi; use **wired Ethernet** or **cellular + VPN**
+   - Do **not** enter passwords on a captive portal you did not expect
+   - Run Windows diagnose: `Harden-DDoSRogueWifi.ps1 -DiagnoseOnly`
+   - On Kali (authorized lab): `sudo bash rogue-ap-guard.sh -k "YourHomeSSID"`
+
+3. **Suspected credential capture**
+   - Change passwords from a **trusted network** (cellular + VPN)
+   - Revoke sessions (Apple ID, Microsoft, email)
+   - Review [IPHONE_HARDENING.md](IPHONE_HARDENING.md) § verify VPN/DNS unchanged
+
+---
+
+## Layer 1 — Windows laptop
+
+Script: [`scripts/windows/Harden-DDoSRogueWifi.ps1`](../scripts/windows/Harden-DDoSRogueWifi.ps1)
+
+### Diagnose (no Admin required)
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\Harden-DDoSRogueWifi.ps1 -DiagnoseOnly
+```
+
+Log: `%USERPROFILE%\Backups\logs\harden-ddos-rogue.log`
+
+### Apply hardening (Administrator)
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\Harden-DDoSRogueWifi.ps1 -ApplyHardening
+```
+
+Optional aggressive inbound block:
+
+```powershell
+.\scripts\windows\Harden-DDoSRogueWifi.ps1 -ApplyHardening -StrictInbound
+```
+
+**Admin applies:**
+
+- Firewall all profiles ON; default BlockInbound
+- Inbound blocks: 135, 137–139, 445, 3389, 5985–5986, 23, 21, 69, 161, 1900
+- LLMNR off (`EnableMulticast=0`)
+- NetBIOS over TCP/IP off per interface
+- WiFi `AutoConnectOpenNetworks=0`
+- Firewall dropped-connection log: `Backups\logs\firewall.log`
+
+**Reboot** after registry changes if LLMNR/NetBIOS still show enabled.
+
+**DuckDuckGo VPN:** script runs `Preserve-DuckDuckGoVpn.ps1` — Defender exclusions; no second VPN install.
+
+**CTG web API:** when running `python main.py --web`, bind to **127.0.0.1** only; set `CTG_WEB_API_TOKEN` if exposed beyond localhost ([SECURITY_HARDENING.md](SECURITY_HARDENING.md)).
+
+Orchestrator also references this from [`harden_windows.ps1`](../scripts/windows/harden_windows.ps1) (guidance flag `-DDoSRogueWifiDiagnose`).
+
+---
+
+## Layer 2 — Kali WiFi (passive guard)
+
+Script: [`scripts/kali/rogue-ap-guard.sh`](../scripts/kali/rogue-ap-guard.sh)
+
+Installs a copy to `~/Backups/kali-wifi-guard/` (or `CTG_KALI_BACKUPS`).
+
+Inside **Kali VM** (USB WiFi passthrough or lab NIC — authorized networks only):
+
+```bash
+sudo bash /mnt/ctg/rogue-ap-guard.sh -k "YourHomeSSID,YourPhoneHotspot"
+```
+
+Or after copy to Backups:
+
+```bash
+sudo ~/Backups/kali-wifi-guard/rogue-ap-guard.sh -i wlan0 -k "YourHomeSSID"
+```
+
+Log: `~/Backups/logs/rogue-ap-guard.log`
+
+**Exit code 2** = warnings (duplicate SSID, open network, evil-twin hint). **Do not** run deauth tools in response.
+
+---
+
+## Layer 3 — iPhone
+
+Use existing hardening — do **not** replace DuckDuckGo VPN/DNS:
+
+| Control | Where |
+|---------|--------|
+| VPN on untrusted networks | Settings → VPN (DuckDuckGo) |
+| Private Wi‑Fi Address | Settings → Wi‑Fi → ⓘ → Private Address |
+| No open WiFi auto-join | Settings → Wi‑Fi → Ask to Join Networks / forget `xfinitywifi`-style profiles |
+| Captive portal discipline | Never enter creds unless **you** joined that network on purpose |
+| Personal hotspot | Settings → Personal Hotspot — strong password; off when not needed |
+| Lockdown Mode | Optional if targeted — [IPHONE_HARDENING.md § 8](IPHONE_HARDENING.md) |
+
+Full checklist: [IPHONE_HARDENING.md](IPHONE_HARDENING.md) · runbook: [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md)
+
+---
+
+## ISP and law enforcement
+
+Residential DDoS almost always requires:
+
+1. **ISP NOC** — account verification, source IPs if available, mitigation or **new public IP**
+2. **Timestamped logs** — modem lights, `harden-ddos-rogue.log`, `firewall.log`, router logs
+3. **Police / IC3** — if tied to harassment, swatting threats, or extortion (keep ISP ticket number)
+
+---
+
+## Verification checklist
+
+**Windows:**
+
+```powershell
+netsh advfirewall show allprofiles state
+```
+
+```powershell
+Get-NetTCPConnection -State Listen | Where-Object LocalAddress -notin '127.0.0.1','::1'
+```
+
+**Kali:**
+
+```bash
+sudo nmcli dev wifi list
+```
+
+**iPhone:** Settings → VPN connected; Wi‑Fi ⓘ shows expected DNS; no unknown profiles under VPN & Device Management.
+
+---
+
+## Authorized use
+
+- Your home lab, Andy’s laptop, Kali VM on authorized SSIDs
+- MSP customer networks **with contract**
+
+**Not authorized:** scanning or “guard” scripts on coffee-shop or corporate WLAN without permission; any deauth/jamming “counterattack.”
