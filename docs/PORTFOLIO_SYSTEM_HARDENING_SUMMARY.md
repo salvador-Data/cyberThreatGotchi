@@ -1,6 +1,6 @@
 # System Hardening — LinkedIn / About blurb
 
-**Andy Klwal** · Hacker Planet LLC · [salvador-Data](https://github.com/salvador-Data)
+**Andy Kowal** · Hacker Planet LLC · [salvador-Data](https://github.com/salvador-Data)
 
 ---
 

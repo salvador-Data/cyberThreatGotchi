@@ -1,6 +1,6 @@
 # Portfolio — Firmware & Pocket OS (M5 OS Cardputer)
 
-**Author:** Andy Klwal · **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
+**Author:** Andy Kowal · **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
 **GitHub:** [salvador-Data](https://github.com/salvador-Data) · **Firmware repo:** [M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer)
 
 **Companion:** [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) — Windows SOC, iPhone hardening, backups, Wazuh/Sysmon stack.

@@ -22,7 +22,7 @@ Email or DM the maintainer with:
 | Channel | Contact |
 |---------|---------|
 | GitHub (private) | [Security advisories](https://github.com/salvador-Data/cyberThreatGotchi/security/advisories/new) |
-| Maintainer | Andy Klwal · [salvador-Data](https://github.com/salvador-Data) |
+| Maintainer | Andy Kowal · [salvador-Data](https://github.com/salvador-Data) |
 
 We aim to acknowledge reports within **72 hours** and patch critical issues in **7 days**.
 

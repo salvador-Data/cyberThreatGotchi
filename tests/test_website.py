@@ -460,7 +460,7 @@ def test_about_page_content():
     html = (WEB / "about.html").read_text(encoding="utf-8")
     assert "Cipherhorn" in html or "CypherTek" in html
     assert "Salvador Data" in html
-    assert "Andy Klwal" in html
+    assert "Andy Kowal" in html
     assert "salvadorData@proton.me" in html
     assert "(215) 839-8738" in html
     assert "Andrew Kowal" not in html

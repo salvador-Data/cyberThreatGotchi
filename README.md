@@ -110,7 +110,7 @@ Marketing graphics live in **`docs/images/`** (regenerate: `python assets/market
 |----------|-----|------------------|
 | **GitHub** | [salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) | [v1.1.0 release](https://github.com/salvador-Data/cyberThreatGotchi/releases/tag/v1.1.0) · [docs/RELEASE.md](docs/RELEASE.md) |
 | **Reddit** | u/Salvador_Data | [docs/social/REDDIT.md](docs/social/REDDIT.md) |
-| **Facebook** | Andy Klwal · Philadelphia | [docs/social/FACEBOOK.md](docs/social/FACEBOOK.md) |
+| **Facebook** | Andy Kowal · Philadelphia | [docs/social/FACEBOOK.md](docs/social/FACEBOOK.md) |
 | **2600 / meetups** | Local chapter | [docs/social/2600_ONEPAGER.md](docs/social/2600_ONEPAGER.md) |
 | **Kickstarter BOM** | Kit planning | [docs/KICKSTARTER_BOM.md](docs/KICKSTARTER_BOM.md) |
 | **Kickstarter launch** | Campaign + site wiring | [docs/KICKSTARTER_LAUNCH_PLAN.md](docs/KICKSTARTER_LAUNCH_PLAN.md) · [Dashboard paste](docs/kickstarter/KICKSTARTER_DASHBOARD_PASTE.md) · [Create on kickstarter.com](docs/kickstarter/KICKSTARTER_CREATE_ON_KICKSTARTER_COM.md) · [Preview page](https://hackerplanet.dev/kickstarter.html) |
