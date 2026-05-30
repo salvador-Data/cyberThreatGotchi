@@ -128,7 +128,7 @@ In **Apple Devices** / iTunes:
 ## Quick USB checklist
 
 ```
-[ ] VPN + Wi‑Fi DNS documented (unchanged after USB hardening)
+[ ] VPN + Wi‑Fi DNS + DuckDuckGo Password Manager documented (unchanged after USB hardening)
 [ ] USB Accessories OFF when locked (USB Restricted Mode)
 [ ] Only Andy's laptop trusted; Reset Location & Privacy if unknown PCs were trusted
 [ ] Find My ON; Stolen Device Protection ON

@@ -60,7 +60,7 @@ Run in order. Check each box on the phone.
 [ ] 1.10 Settings → General → AirDrop → Contacts Only (or Receiving Off in public)
 [ ] 1.11 Settings → General → VPN & Device Management — remove unknown profiles only
 [ ] 1.12 (Recommended) Location, Analytics, Messages filter unknown senders — see [§ 14](#14-additional-hardening-recommended)
-[ ] 1.V  VERIFY: Settings → VPN — unchanged; Wi‑Fi ⓘ → Configure DNS — unchanged
+[ ] 1.V  VERIFY: Settings → VPN — unchanged; Wi‑Fi ⓘ → Configure DNS — unchanged; AutoFill & Passwords → DuckDuckGo Autofill — On
 ```
 
 ### Phase 2 checklist (advanced layers — do after Phase 1)
@@ -108,7 +108,7 @@ Screenshot or write down both screens if you might need to restore them.
 
 | Existing setup | What to do |
 |----------------|------------|
-| **DuckDuckGo VPN / Privacy Pro** (Andy’s typical stack) | **Keep it.** **Do not** install Cloudflare, NextDNS, or AdGuard DNS VPN apps. Phase 1 Settings + Phase 2 Malwarebytes (SMS/Safari only) — **no** Malwarebytes paid VPN. |
+| **DuckDuckGo VPN / Privacy Pro + Password Manager** (Andy’s typical stack) | **Keep both.** **Do not** install Cloudflare, NextDNS, or AdGuard DNS VPN apps. **Do not** disable DuckDuckGo Autofill or migrate to Apple Keychain during hardening. Phase 1 Settings + Phase 2 Malwarebytes (SMS/Safari only) — **no** Malwarebytes paid VPN. |
 | **Corporate / school VPN** | Keep it. **Do not** install Cloudflare or NextDNS unless IT approves — only one system VPN slot is practical at a time. |
 | **iCloud Private Relay** | Keep it. Skip DNS VPN apps; they conflict or duplicate filtering. Use Malwarebytes for SMS/Safari only. |
 | **NextDNS profile or app already connected** | Keep it. **Skip** Cloudflare 1.1.1.1. Harden via Settings + Malwarebytes Safari filter. |
@@ -140,8 +140,9 @@ After completing Settings hardening and any app installs:
 
 1. **Settings** → **General** → **VPN & Device Management** → **VPN** — same profile(s) as before; corporate/Private Relay still **Connected** if they were before.
 2. **Settings** → **Wi‑Fi** → **ⓘ** → **Configure DNS** — unchanged (**Automatic**, **Manual**, or **Off** as you documented).
-3. Open a site you use daily; if on VPN, confirm VPN icon still shows in status bar when expected.
-4. If something broke, disconnect the **new** app’s VPN profile first — your original profile should return.
+3. **Settings** → **General** → **AutoFill & Passwords** — **DuckDuckGo Autofill** still **On** if it was on at baseline.
+4. Open a site you use daily; if on VPN, confirm VPN icon still shows in status bar when expected.
+5. If something broke, disconnect the **new** app’s VPN profile first — your original profile should return.
 
 ---
 
@@ -192,7 +193,7 @@ Activation Lock ties the device to your Apple ID after erase. This is one of the
 1. **Settings** → **[your name]** → **Sign-In & Security**
 2. **Two-Factor Authentication** → **On** (use trusted phone number + recovery options).
 3. **Sign-In & Security** → review **Devices**; remove anything you do not recognize.
-4. Use a **unique, strong Apple ID password** (iCloud Keychain or a password manager—see [§ Passwords](#13-icloud-keychain--unique-passwords)).
+4. Use a **unique, strong Apple ID password** (keep **DuckDuckGo Password Manager** for autofill — see [§ Passwords](#11-passwords--keep-duckduckgo-password-manager-icloud-keychain-optional)).
 
 ### 5. Safari: fraud, tracking, and IP privacy
 
@@ -251,13 +252,16 @@ Prevent shoulder-surfing and lock-screen data leaks:
 3. **Settings** → **Notifications** → per app: set **Show Previews** to **When Unlocked** (or **Never** for banking, Signal, mail).
 4. **Settings** → **Wallpaper** → customize Lock Screen widgets — avoid widgets that show calendar, health, or finance details at a glance.
 
-### 11. iCloud Keychain and unique passwords
+### 11. Passwords — keep DuckDuckGo Password Manager; iCloud Keychain optional
 
-1. **Settings** → **[your name]** → **iCloud** → **Passwords** → **Sync this iPhone** → **On**
-2. **Settings** → **Apps** → **Passwords** (or **Passwords** app on iOS 18+) — review **Security Recommendations**; change reused or breached passwords.
-3. Enable **AutoFill** only for apps you trust.
+**Andy’s preference:** **Keep DuckDuckGo Password Manager** as primary autofill — **do not migrate away** during hardening.
 
-Unique passwords contain breach blast radius more than any “virus scanner” app could.
+1. **Settings** → **General** → **AutoFill & Passwords** → **DuckDuckGo Passwords** / **DuckDuckGo Autofill** → **On**
+2. Confirm **DuckDuckGo** app is installed and Password Manager is set up in-app.
+3. **Optional coexistence:** **Settings** → **[your name]** → **iCloud** → **Passwords** → **Sync this iPhone** can stay **On** for Apple-ecosystem passwords — it does **not** require replacing DuckDuckGo PM.
+4. **Settings** → **Apps** → **Passwords** (or **Passwords** app on iOS 18+) — review **Security Recommendations** in whichever manager holds each login; change reused or breached passwords.
+
+Unique passwords contain breach blast radius more than any “virus scanner” app could. Malwarebytes Safari hardening does **not** conflict with DuckDuckGo autofill.
 
 ### 12. Avoid unknown configuration profiles
 
@@ -296,9 +300,10 @@ Use this when the iPhone 15 Pro Max is on **USB-C** to Andy’s Windows SOC lapt
 
 **Focused runbook:** [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md) · Phase 2 on device: [IPHONE_RUN_NOW.md § 2.3](IPHONE_RUN_NOW.md#23--usb-connection-hardening).
 
-### Keep VPN/DNS while hardening USB (repeat)
+### Keep VPN/DNS and DuckDuckGo Password Manager while hardening USB (repeat)
 
 - **Do not** install a second DNS VPN if **DuckDuckGo**, **NextDNS**, **Cloudflare 1.1.1.1**, or **Wi‑Fi Manual DNS** is already configured.
+- **Keep DuckDuckGo Password Manager** — **Settings** → **General** → **AutoFill & Passwords** → DuckDuckGo Autofill **On**; do not disable during USB hardening.
 - **Malwarebytes** for SMS/Safari only — **no** Malwarebytes paid VPN alongside your existing profile.
 - After USB hardening: **Settings** → **General** → **VPN & Device Management** → **VPN** — verify the same profile(s) as before (**Connected** if they were before).
 
@@ -326,9 +331,11 @@ Use this when the iPhone 15 Pro Max is on **USB-C** to Andy’s Windows SOC lapt
 
 ---
 
-## Free security apps & UTMS-like layers (keep VPN/DNS)
+## Free security apps & UTMS-like layers (keep VPN/DNS + DuckDuckGo Password Manager)
 
-Andy asked whether **free UTMS or antivirus** can run on the **iPhone 15 Pro Max**. Short answer: **no true UTMS and no filesystem antivirus on iOS** — but several **free layers** stack safely if you **preserve existing VPN/DNS** (DuckDuckGo, NextDNS, Cloudflare, Wi‑Fi Manual DNS, corporate VPN).
+Andy asked whether **free UTMS or antivirus** can run on the **iPhone 15 Pro Max**. Short answer: **no true UTMS and no filesystem antivirus on iOS** — but several **free layers** stack safely if you **preserve existing VPN/DNS and DuckDuckGo Password Manager** (DuckDuckGo VPN, NextDNS, Cloudflare, Wi‑Fi Manual DNS, corporate VPN).
+
+**Do not** treat hardening as a reason to replace **DuckDuckGo Password Manager** with Apple Keychain or another PM — keep DuckDuckGo autofill unless Andy explicitly chooses to migrate.
 
 ### Why there is no “iPhone UTMS” or desktop-style AV
 
@@ -377,8 +384,8 @@ Full optional DNS app steps (only when **no** existing DNS VPN): [Install Malwar
 ### Andy’s stack when VPN/DNS is already configured
 
 ```
-Settings hardening (always)  +  Malwarebytes free (SMS + Safari)  +  existing VPN/DNS (keep)
-NO second DNS VPN app  |  NO "virus cleaner"  |  Cardputer UTMS on pocket device only
+Settings hardening (always)  +  Malwarebytes free (SMS + Safari)  +  existing VPN/DNS (keep)  +  DuckDuckGo Password Manager (keep)
+NO second DNS VPN app  |  NO "virus cleaner"  |  NO PM migration to Keychain unless chosen  |  Cardputer UTMS on pocket device only
 ```
 
 ---
@@ -487,10 +494,10 @@ Same principle everywhere: **reduce attack surface**, **log and detect on infras
 
 ## Quick reference card (Phase 1 + Phase 2)
 
-**Phase 1 — baseline (Settings only; preserves DuckDuckGo / existing VPN/DNS):**
+**Phase 1 — baseline (Settings only; preserves DuckDuckGo VPN/DNS + Password Manager):**
 
 ```
-[ ] 1.0 Documented VPN (Settings → VPN) + Wi‑Fi DNS (Configure DNS) BEFORE any Phase 2 apps
+[ ] 1.0 Documented VPN (Settings → VPN) + Wi‑Fi DNS (Configure DNS) + DuckDuckGo Password Manager (AutoFill & Passwords) BEFORE any Phase 2 apps
 [ ] 1.1 iOS updated + automatic security updates ON
 [ ] 1.2 Strong passcode + Face ID + Stolen Device Protection ON
 [ ] 1.3 Find My iPhone ON

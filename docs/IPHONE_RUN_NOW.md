@@ -14,7 +14,7 @@ Manual steps only — **no CTG automation can change iPhone Settings** without A
 
 | Order | Phase | Time (approx.) | What |
 |-------|-------|------------------|------|
-| **0** | Baseline | 2 min | Document VPN + Wi‑Fi DNS — do not change |
+| **0** | Baseline | 2 min | Document VPN + Wi‑Fi DNS + DuckDuckGo Password Manager — do not change |
 | **1** | Phase 1 | 15–25 min | Settings hardening (no new apps) |
 | **1V** | Verify | 1 min | VPN + DNS unchanged |
 | **2** | Phase 2 | 10–15 min | Malwarebytes, USB, optional Lockdown |
@@ -23,7 +23,7 @@ Manual steps only — **no CTG automation can change iPhone Settings** without A
 
 ---
 
-## Step 0 — Baseline VPN & DNS (before Phase 1)
+## Step 0 — Baseline VPN, DNS & password manager (before Phase 1)
 
 Document current state. **Do not toggle anything off.**
 
@@ -31,8 +31,9 @@ Document current state. **Do not toggle anything off.**
 |-------|------|------------|
 | **VPN profiles** | **Settings** → **General** → **VPN & Device Management** → **VPN** | Profile name(s), Connected / Not Connected |
 | **Wi‑Fi DNS** | **Settings** → **Wi‑Fi** → **ⓘ** on home network → **Configure DNS** | Automatic / Manual (which servers) / Off |
+| **DuckDuckGo Password Manager** | **Settings** → **General** → **AutoFill & Passwords** | **DuckDuckGo Passwords** / **DuckDuckGo Autofill** → **On**; confirm **DuckDuckGo** app installed |
 
-**Andy — keep as-is:** **DuckDuckGo VPN / Privacy Pro**, iCloud Private Relay, corporate VPN, NextDNS, Cloudflare 1.1.1.1, Tailscale, Wi‑Fi Manual DNS.
+**Andy — keep as-is:** **DuckDuckGo VPN / Privacy Pro** + **DuckDuckGo Password Manager (Autofill)**, iCloud Private Relay, corporate VPN, NextDNS, Cloudflare 1.1.1.1, Tailscale, Wi‑Fi Manual DNS. **Do not** disable DuckDuckGo autofill during hardening — Malwarebytes/Safari hardening is compatible.
 
 **iOS rule:** Only **one** DNS-capturing VPN profile at a time. Phase 2 must **not** add Cloudflare **and** NextDNS on top of DuckDuckGo or any active DNS VPN.
 
@@ -62,7 +63,7 @@ These steps **do not** change VPN or DNS. Complete **all** before Phase 2.
 
 - [ ] **Settings** → **[your name]** → **Sign-In & Security** → **Two-Factor Authentication** → **On**
 - [ ] **Sign-In & Security** → **Devices** — remove anything unrecognized
-- [ ] Unique strong Apple ID password (iCloud Keychain / password manager)
+- [ ] Unique strong Apple ID password (**keep DuckDuckGo Password Manager** for autofill; iCloud Keychain may coexist)
 
 ### 1.5 — Safari
 
@@ -101,12 +102,14 @@ These steps **do not** change VPN or DNS. Complete **all** before Phase 2.
 
 - [ ] **Settings** → **Privacy & Security** → **Analytics & Improvements** — disable if minimizing telemetry
 - [ ] **Settings** → **Apps** → **Messages** → **Filter Unknown Senders** → **On**
-- [ ] **Settings** → **[your name]** → **iCloud** → **Passwords** → **Sync this iPhone** → **On**; review Security Recommendations
+- [ ] **Settings** → **General** → **AutoFill & Passwords** → **DuckDuckGo Passwords** / **DuckDuckGo Autofill** → **On** (verify — do not turn off)
+- [ ] Optional: **Settings** → **[your name]** → **iCloud** → **Passwords** → **Sync this iPhone** → **On**; review Security Recommendations (does not replace DuckDuckGo PM)
 
 ### Phase 1 verify (required before Phase 2)
 
 - [ ] **Settings** → **General** → **VPN & Device Management** → **VPN** — **same** as Step 0 (DuckDuckGo / existing profile still **Connected** if it was before)
 - [ ] **Settings** → **Wi‑Fi** → **ⓘ** → **Configure DNS** — **unchanged** from Step 0
+- [ ] **Settings** → **General** → **AutoFill & Passwords** → **DuckDuckGo Autofill** still **On** (unchanged from Step 0)
 
 More detail: [IPHONE_HARDENING.md § Phase 1](IPHONE_HARDENING.md#phase-1-checklist-baseline--do-all).
 
@@ -207,7 +210,7 @@ Pocket UTMS?                        →  M5 Cardputer only — not iPhone App St
 
 ## One-page checkbox (print or Notes app)
 
-**Step 0:** VPN + Wi‑Fi DNS documented — keep DuckDuckGo  
+**Step 0:** VPN + Wi‑Fi DNS + DuckDuckGo Password Manager documented — keep DuckDuckGo VPN + PM  
 **Phase 1:** 1.1–1.11 Settings ✓ → **1.V verify VPN/DNS**  
 **Phase 2:** Malwarebytes ✓ → skip DNS VPN if set ✓ → USB ✓ → (optional Lockdown) → **2.V verify VPN/DNS**
 
