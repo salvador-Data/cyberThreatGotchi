@@ -265,7 +265,66 @@ Use this when the iPhone 15 Pro Max is on **USB-C** to Andy’s Windows SOC lapt
 
 ---
 
+## Free security apps & UTMS-like layers (keep VPN/DNS)
+
+Andy asked whether **free UTMS or antivirus** can run on the **iPhone 15 Pro Max**. Short answer: **no true UTMS and no filesystem antivirus on iOS** — but several **free layers** stack safely if you **preserve existing VPN/DNS** (DuckDuckGo, NextDNS, Cloudflare, Wi‑Fi Manual DNS, corporate VPN).
+
+### Why there is no “iPhone UTMS” or desktop-style AV
+
+| Expectation | iOS reality |
+|-------------|-------------|
+| **UTMS** (micro-AV, threat packs, quarantine on firmware files) | Lives on **M5 Cardputer** — see [pocket UTMS tie-in](#pocket-utms-m5-cardputer--separate-device) below |
+| **Filesystem antivirus** | **Not possible** for third-party apps: sandbox, code signing, no API to scan other apps or system partitions |
+| **App Store “virus cleaner”** | Marketing only — **avoid** (see [§ Apps to avoid](#apps-to-avoid)) |
+
+CyberThreatGotchi **UTMS** on Cardputer scans `/apps/*.bin` and threat packs on SD. Your iPhone uses a **different, honest stack** — Settings plus optional apps that do not steal the **one** DNS VPN slot.
+
+### Free layers that actually count (keep VPN/DNS)
+
+| Layer | What it is | VPN/DNS safe? |
+|-------|------------|---------------|
+| **1. Malwarebytes Mobile Security (free)** | **SMS** scam/junk filter, **Safari** ad/tracker content blocking, security tips — **not** full-device AV | **Yes** — free tier has **no** system DNS VPN; leave **Malwarebytes paid VPN off** if you keep DuckDuckGo/NextDNS/1.1.1.1 |
+| **2. Apple built-in** | **XProtect** (silent malware blocklist updates), **App Store** review + signing, optional **Lockdown Mode**, **Stolen Device Protection**, **Find My** | **Yes** — configure in [Settings checklist](#settings-checklist-iphone-15-pro-max-ios-17--18) |
+| **3. DNS blocklists (“UTMS-like” on network only)** | Cloudflare 1.1.1.1, NextDNS, or AdGuard DNS apps = closest iOS analog to **DNS threat filtering** | **Only if you have NO existing DNS VPN / Manual DNS** — if VPN/DNS is already set, **do not** add Cloudflare or NextDNS; that is your UTMS-like layer already |
+| **4. iCloud Private Relay** (iCloud+) | Encrypts DNS + IP for Safari/Mail in relay mode — **privacy**, not malware scanning | **Yes** if already on — **skip** extra DNS VPN apps; use Malwarebytes SMS/Safari only |
+| **5. No scam “virus cleaner” apps** | “Phone booster,” “memory cleaner,” fake “viruses found” | N/A — **do not install** |
+
+**After any install:** **Settings** → **General** → **VPN & Device Management** → **VPN** — profile unchanged. **Settings** → **Wi‑Fi** → **ⓘ** → **Configure DNS** — same as baseline ([verify](#verify-settings-stayed-intact-after-hardening)).
+
+### Pocket UTMS (M5 Cardputer) — separate device
+
+| Device | Role |
+|--------|------|
+| **M5Stack Cardputer** | [M5_OS-Cardputer UTMS](https://github.com/salvador-Data/M5_OS-Cardputer) — micro-AV on `/apps/*.bin`, OTA threat packs, quarantine, UTMS logs |
+| **iPhone 15 Pro Max** | Layers **1–5** above — no Cardputer app replaces iOS sandbox security |
+
+Same **defense-in-depth mindset**, different platform limits. Portfolio: [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) · [PORTFOLIO_FIRMWARE_OS.md](PORTFOLIO_FIRMWARE_OS.md).
+
+### Install Malwarebytes only (when VPN/DNS already set)
+
+If Step 0 baseline shows **any** active VPN or DNS you want to keep → install **Malwarebytes only**; **skip** Cloudflare/NextDNS in [Free App Store apps](#free-app-store-apps-realistic-expectations) below.
+
+1. **App Store** → **Search** → **Malwarebytes Mobile Security** → **Get**
+2. Open app → complete onboarding
+3. **Settings** → **Apps** → **Messages** → **Unknown & Spam** → enable **Malwarebytes**
+4. **Settings** → **Apps** → **Safari** → **Extensions** → enable Malwarebytes blockers if offered
+5. **Do not** enable Malwarebytes **paid VPN** in the app
+6. Re-check **Settings** → **VPN** and **Wi‑Fi → Configure DNS** — unchanged
+
+Full optional DNS app steps (only when **no** existing DNS VPN): [Install Malwarebytes](#install-malwarebytes-recommended--keeps-your-vpndns) and Cloudflare/NextDNS sections under [What Andy must do manually](#what-andy-must-do-manually-on-the-iphone).
+
+### Andy’s stack when VPN/DNS is already configured
+
+```
+Settings hardening (always)  +  Malwarebytes free (SMS + Safari)  +  existing VPN/DNS (keep)
+NO second DNS VPN app  |  NO "virus cleaner"  |  Cardputer UTMS on pocket device only
+```
+
+---
+
 ## Free App Store apps (realistic expectations)
+
+See also [Free security apps & UTMS-like layers (keep VPN/DNS)](#free-security-apps--utms-like-layers-keep-vpndns) for the UTMS vs iOS honesty summary.
 
 These apps **supplement** Settings—they do **not** replace Apple’s platform security or a hardened network edge (see [Windows SOC stack](../scripts/windows/README_WINDOWS_SOC.md) and CyberThreatGotchi IPS on your LAN).
 
@@ -380,8 +439,11 @@ Same principle everywhere: **reduce attack surface**, **log and detect on infras
 [ ] USB Restricted Mode (accessories when locked OFF)
 [ ] USB: Trust only Andy's laptop; encrypted backup when plugged into Windows
 [ ] USB-C trusted cable; data blocker for untrusted public ports
+[ ] Free layers: Malwarebytes (SMS/Safari) OR existing DNS VPN = UTMS-like DNS (not both DNS apps)
+[ ] No scam "virus cleaner" / booster apps
 [ ] Malwarebytes installed + SMS/Safari features enabled (safe with existing VPN/DNS)
 [ ] DNS VPN app ONLY if none already: Cloudflare 1.1.1.1 OR NextDNS — else SKIP
+[ ] Cardputer UTMS on M5 — separate from iPhone stack
 [ ] Post-hardening: VPN + Wi‑Fi DNS unchanged from baseline
 [ ] No unknown configuration profiles
 [ ] (Optional) Lockdown Mode if high-threat
