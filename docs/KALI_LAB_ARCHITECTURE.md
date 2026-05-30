@@ -6,18 +6,20 @@
 **Status:** Architecture and phased rollout plan only — **no VM install, no firewall replacement, and no destructive automation** until Andy explicitly runs each phase.  
 **Companion:** [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) (Windows SOC, iPhone, Cardputer UTMS) · [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)
 
+**Hacker Planet LLC — company defensive lab (authorized use):** This architecture describes **Hacker Planet LLC**’s authorized security research and defensive engineering lab (Philadelphia, PA). WiFi and RF work stays on **company-owned, lab-isolated** segments with written RF policy sign-off — not on neighbors’, coffee-shop, or client production WLANs without explicit scope.
+
 ---
 
 ## Authorized use (read first)
 
-This lab stack is for **systems and networks you own** or are **explicitly permitted** to test (personal homelab, CTG development, future MSP kit narratives, coursework with written scope). It is **not** for:
+This lab stack is for **systems and networks you own** or are **explicitly permitted** to test (Hacker Planet LLC company lab, personal homelab, CTG development, future MSP kit narratives, coursework with written scope). It is **not** for:
 
 - Scanning or attacking neighbors, coffee-shop, or corporate WiFi without authorization
 - Evading law enforcement or bypassing paywalls/licensing illegally
 - Replacing a family ISP router **without** a rollback plan and household agreement
-- “Boosting” WiFi TX power beyond **legal regulatory limits** for your country
+- Regulatory domain bypass, illegal amplifiers, jamming, or instructions to “disable FCC limits” (documented **nowhere** in this repo — see [What this doc does NOT cover](#what-this-doc-does-not-cover))
 
-**Regulatory WiFi note:** The `wifi-lab-tune` role sets **legal** regdomain, disables counterproductive power-save for lab captures, and documents **baseline** scan parameters — it does **not** implement illegal amplifier/firmware hacks.
+**Default WiFi strategy (Andy / Hacker Planet lab):** **Option 2 — company lab** (`--wifi-profile=company-lab`): driver/firmware + link-quality + lab-isolated RF tuning on a **dedicated lab-only AP/VLAN**, within **legal** TX and regdomain. Option 1 remains for home/conservative use only.
 
 ---
 
@@ -31,7 +33,7 @@ This lab stack is for **systems and networks you own** or are **explicitly permi
 | **Optional host IDS** | Passive Snort on Kali | Lab-only tap/mirror of a span port — **not** inline on home internet day one |
 | **File AV** | ClamAV on Kali | Scan downloads, malware samples, extracted archives — **not** a network UTM replacement |
 | **Packet analysis** | Wireshark (+ tshark) | Windows host for daily capture; Kali for **monitor mode** WiFi with passthrough dongle |
-| **WiFi lab** | Realtek USB dongle + legal tune | Monitor mode, channel surveys, authorized SSIDs only |
+| **WiFi lab** | Realtek USB dongle + **Option 2** tune (default) | Monitor mode, lab-only AP/VLAN, link-quality tuning — authorized SSIDs only |
 | **OSINT** | Tier 1/2 FOSS toolchain | Recon on **permitted** targets (your domains, bug-bounty scope, customer written ROE) |
 | **Windows host** | CTG hardening scripts | Sysmon, HWS audit, Defender, backups, Defender pause for builds, VirtualBox Kali VM |
 | **Bootstrap** | Ansible (Kali) + PowerShell (Windows) | Repeatable roles after gold ISO install — idempotent, reviewable |
@@ -54,6 +56,7 @@ flowchart TB
     IDS[Suricata or Snort IDS/IPS]
     LAN[OPNsense LAN]
     VLAN_LAB[Lab VLAN e.g. 192.168.50.0/24]
+    LAB_AP[Lab-only AP / owned SSID]
     VLAN_HOME[Home LAN e.g. 192.168.1.0/24]
   end
 
@@ -69,7 +72,7 @@ flowchart TB
     K_CLAM[ClamAV]
     K_SNORT[passive Snort optional]
     K_OSINT[OSINT tier 1/2]
-    K_WIFI[wifi-lab-tune + Realtek driver]
+    K_WIFI[wifi-lab-tune Option 2\nRealtek OOT + link-quality]
     K_WSH[Wireshark + monitor WiFi]
   end
 
@@ -84,7 +87,8 @@ flowchart TB
   IDS --> LAN
   LAN --> VLAN_HOME
   LAN --> VLAN_LAB
-  VLAN_LAB --> VBOX
+  VLAN_LAB --> LAB_AP
+  LAB_AP --> VBOX
   VBOX --> kali
   VLAN_HOME --> winhost
   CTG -.->|syslog optional| FW
@@ -99,9 +103,9 @@ flowchart TB
 ```
 [Internet] → OPNsense WAN → [Suricata/Snort] → LAN
                               ├─ Home VLAN  → family WiFi / Windows (CTG scripts)
-                              └─ Lab VLAN   → VirtualBox NAT or bridged → Kali-Lab VM
+                              └─ Lab VLAN   → lab-only AP → VirtualBox → Kali-Lab VM
 Windows: Wireshark/Npcap (limited WiFi promisc) | VirtualBox | Install-KaliVirtualBox.ps1
-Kali VM: ClamAV (files) | optional passive Snort | OSINT | USB Realtek monitor mode
+Kali VM: ClamAV (files) | optional passive Snort | OSINT | USB Realtek monitor (Option 2 default)
 ```
 
 ---
@@ -144,7 +148,36 @@ Kali VM: ClamAV (files) | optional passive Snort | OSINT | USB Realtek monitor m
 
 - **Windows:** Wireshark + Npcap — fine for Ethernet and many USB adapters; **WiFi monitor mode on Windows is limited** (driver/Npcap constraints).
 - **Kali VM:** Primary home for **802.11 monitor mode** when Realtek USB dongle is passed through via VirtualBox.
-- **Legal tune (`wifi-lab-tune` role):** Set `REGDOMAIN` (e.g. `US`), `iw reg set` compliance, disable `power_save` for stable captures, document channel baseline — **no** illegal TX power overrides.
+- **Bootstrap default:** `ansible-playbook site.yml --wifi-profile=company-lab` (Option 2). Use `--wifi-profile=home-conservative` only when intentionally minimizing RF changes on a shared home LAN.
+
+### WiFi lab profiles
+
+| Profile | CLI flag | When to use | What automation does |
+|---------|----------|-------------|----------------------|
+| **Option 1 — Home/conservative** | `--wifi-profile=home-conservative` | Shared home LAN, travel laptop, minimal RF footprint | Reg domain + **max legal TX** for configured country (`iw reg set`), minimal package/driver changes, `power_save` left default unless capture unstable |
+| **Option 2 — Company lab (DEFAULT for Andy)** | `--wifi-profile=company-lab` | Hacker Planet LLC defensive lab — **isolated from production home LAN** | Realtek **out-of-tree** driver role when `lsusb` matches; `power_save off`; **fixed lab channel** on owned AP; `wifi-lab-baseline.sh` scan baseline; attempt **PHY max TX within legal tables** where driver/firmware exposes it (no regdomain bypass); **link-quality** tuning (`iw`/`iwconfig` where applicable); monitor-mode path documented; USB passthrough checklist enforced |
+
+**Option 2 lab RF prerequisites (human, not Ansible):**
+
+1. **Dedicated lab-only AP/VLAN** — e.g. `LAN_LAB` + SSID `HP-LAB-80211` — **no bridge** to family `LAN_HOME` until rules proven.
+2. **Company RF policy sign-off** — written note in lab journal: authorized band, max EIRP per FCC/ETSI for your install, no outdoor omnidirectional “reach the block” tests.
+3. **Shielded / isolated segment** — basement bench, Faraday bag for sensitive captures, or RF-attenuated room when reproducing exploit PoCs.
+4. **Owned lab AP** — spare router flashed with OpenWrt/OPNsense AP mode or VLAN-tied SSID you control — never the neighbor’s SSID.
+
+**Corporate authorized-use header (Option 2 only):** WiFi lab work under this profile is **Hacker Planet LLC defensive security engineering** on company-owned infrastructure. Targets are lab APs, CTG dev SSIDs, and **written-scope** customer ROE — not opportunistic wardriving.
+
+### What this doc does NOT cover
+
+The following are **intentionally excluded** from architecture, Ansible roles, and portfolio links — even for the company lab:
+
+| Excluded | Why |
+|----------|-----|
+| Reg domain bypass / “unlock” country codes | Illegal or ToS-violating in many jurisdictions |
+| Illegal amplifiers, high-gain illegal radiators | FCC/ETSI enforcement risk; out of defensive lab scope |
+| Jamming, deauth floods against third parties | Federal crime; not authorized defensive testing |
+| “Disable FCC limits” firmware or CRDA hacks | Replaced by **legal** driver TX tables + isolated lab RF |
+
+**Instead document and implement:** isolated lab network, company RF policy sign-off, shielded/isolated segment, **owned lab AP**, detect-only IDS before block, and rollback artifacts.
 
 ### Realtek USB WiFi dongle
 
@@ -170,14 +203,26 @@ Kali VM: ClamAV (files) | optional passive Snort | OSINT | USB Realtek monitor m
 
 **Preferred:** Ansible playbook applied **inside** Kali (or via `ansible localhost`) after first boot.
 
+**Default invocation (Andy / Hacker Planet lab):**
+
+```bash
+cd ~/cyberThreatGotchi/scripts/kali   # when playbooks land in repo
+ansible-playbook playbooks/site.yml --wifi-profile=company-lab
+```
+
+| Flag | Maps to | Default |
+|------|---------|---------|
+| `--wifi-profile=company-lab` | Option 2 — driver/firmware, link-quality, lab-isolated RF | **Yes (Andy)** |
+| `--wifi-profile=home-conservative` | Option 1 — regdomain + legal max TX only | Opt-in |
+
 | Role | Purpose |
 |------|---------|
 | `harden` | fail2ban, lynis, unattended-upgrades, ssh hardening, ufw/nft baseline |
 | `clamav` | clamav, freshclam, scan paths |
 | `snort-ids` | passive Snort + local rules sync (optional) |
 | `osint` | apt packages: theHarvester, amass, recon-ng, etc. |
-| `realtek-driver` | chipset-conditional DKMS driver |
-| `wifi-lab-tune` | legal regdomain, power_save off, scan baseline script |
+| `realtek-driver` | chipset-conditional Realtek **out-of-tree** DKMS (88xxau / 8812au family) |
+| `wifi-lab-tune` | Profile-aware: Option 2 = `power_save off`, fixed channel vars, scan baseline, legal regdomain + driver TX where supported; Option 1 = regdomain + legal TX only |
 
 **Windows reference scripts (no destructive default):**
 
@@ -186,16 +231,17 @@ Kali VM: ClamAV (files) | optional passive Snort | OSINT | USB Realtek monitor m
 
 ---
 
-## Phased rollout (P0–P5)
+## Phased rollout (P0–P6)
 
 | Phase | Name | Goals | Automation | Human gates |
 |-------|------|-------|------------|-------------|
-| **P0** | Inventory | Document NICs, disk space, ISOs, dongle `lsusb` ID, current gateway, VLAN plan | None required | Andy confirms legal scope & family impact |
+| **P0** | Inventory | Document NICs, disk space, ISOs, dongle `lsusb` ID, current gateway, VLAN plan, **WiFi profile choice** | None required | Andy confirms legal scope, **company RF policy**, family impact |
 | **P1** | Kali harden | Gold Kali VM, snapshots, Ansible `harden` + `clamav` | `Install-KaliVirtualBox.ps1`, Ansible | Review Lynis report; snapshot before changes |
-| **P2** | Network / WiFi | Lab VLAN on OPNsense; Realtek passthrough; `wifi-lab-tune` | `Install-OpnsenseLab.ps1` (lab), Ansible roles | **Do not** move family DHCP day one |
+| **P2** | Network / WiFi | Lab VLAN + **lab-only AP** on OPNsense; Realtek passthrough; `wifi-lab-tune` with **`--wifi-profile=company-lab`** | `Install-OpnsenseLab.ps1` (lab), Ansible roles | **Do not** move family DHCP day one; confirm isolated RF segment |
 | **P3** | IDS | Suricata on OPNsense detect-only; syslog to Wazuh/CTG logs | OPNsense UI + export playbook doc | Tune rules 1–2 weeks before block mode |
 | **P4** | OSINT | Tier 1 apt; Maltego CE manual; API keys in env | Ansible `osint` partial | Maltego EULA, Shodan/Censys ToS |
 | **P5** | Windows companion | Wireshark/Npcap verify, CTG SOC syslog target, backup manifests | Existing CTG scripts + doc | Align nightly backup with OPNsense XML export |
+| **P6** | Production edge & SOC maturity | Optional mini-PC OPNsense edge; Security Onion evaluation; MSP kit narrative export | Documented XML migration; syslog fan-in | `-EdgeMode` only after P3+P5 stable; spouse/ISP rollback rehearsed |
 
 ---
 
@@ -203,8 +249,9 @@ Kali VM: ClamAV (files) | optional passive Snort | OSINT | USB Realtek monitor m
 
 ### Separate lab VLAN vs production home LAN
 
-- Create **`LAN_LAB`** (e.g. `192.168.50.0/24`) with its own SSID or isolated switch port.
+- Create **`LAN_LAB`** (e.g. `192.168.50.0/24`) with its own **lab-only AP** SSID (owned hardware) or isolated switch port — **production home LAN stays on `LAN_HOME`**.
 - Keep **`LAN_HOME`** on current subnet until P3/P5 prove stable.
+- Run Ansible WiFi roles with **`--wifi-profile=company-lab`** only when Kali is on **lab VLAN / lab AP** — switch to `home-conservative` if you must sniff from a shared home SSID (discouraged).
 - VirtualBox Kali can use **NAT** (simplest) or **bridged to lab VLAN only** (better for realistic sniffing) — never bridge Kali to home VLAN until hardening complete.
 
 ### Backup & rollback artifacts
@@ -344,7 +391,7 @@ Avoid making OPNsense override phone DNS until Andy explicitly tests without bre
 
 ---
 
-## Decision checklist for Andy (consolidated 1–15)
+## Decision checklist for Andy (consolidated 1–17)
 
 Answer **before** running automation beyond P0. Record choices in a private lab journal (not git).
 
@@ -354,15 +401,17 @@ Answer **before** running automation beyond P0. Record choices in a private lab 
 4. **Kali install path** — VirtualBox unattended (`Install-KaliVirtualBox.ps1`) vs manual ISO?
 5. **Kali RAM** — 8 GB target (adjust script default 4096 → 8192)?
 6. **Ansible controller** — Run from Kali localhost vs WSL/Ansible on Windows?
-7. **USB WiFi chipset** — Documented VID/PID and driver role match?
-8. **IDS primary** — Suricata on OPNsense only, or also passive Snort on Kali?
-9. **IPS mode** — Detect-only for how many days (suggest 14) before block?
-10. **Syslog destination** — Wazuh manager IP (`CTG_WAZUH_MANAGER`) or file-only initially?
-11. **OSINT APIs** — Which keys (Shodan, etc.) and budget for paid transforms?
-12. **Maltego** — CE manual install accepted (Java + EULA)?
-13. **Family LAN** — SSID/VLAN isolation plan so spouse/kids WiFi unaffected in P1–P2?
-14. **Backup path** — `C:\Users\Owner\Backups` + OneDrive when SSD **D:** offline?
-15. **Production hardware** — Stay VM for 6 months or budget mini-PC for OPNsense edge?
+7. **WiFi profile** — Default `company-lab` (Option 2) on isolated AP, or `home-conservative` (Option 1) only?
+8. **USB WiFi chipset** — Documented VID/PID and driver role match?
+9. **IDS primary** — Suricata on OPNsense only, or also passive Snort on Kali?
+10. **IPS mode** — Detect-only for how many days (suggest 14) before block?
+11. **Syslog destination** — Wazuh manager IP (`CTG_WAZUH_MANAGER`) or file-only initially?
+12. **OSINT APIs** — Which keys (Shodan, etc.) and budget for paid transforms?
+13. **Maltego** — CE manual install accepted (Java + EULA)?
+14. **Family LAN** — SSID/VLAN isolation plan so spouse/kids WiFi unaffected in P1–P2?
+15. **Company RF policy** — Written sign-off for lab AP power/channel plan?
+16. **Backup path** — `C:\Users\Owner\Backups` + OneDrive when SSD **D:** offline?
+17. **Production hardware** — Stay VM for 6 months or budget mini-PC for OPNsense edge (P6)?
 
 ---
 
@@ -373,8 +422,10 @@ Answer **before** running automation beyond P0. Record choices in a private lab 
 | Install Kali VM skeleton | `Install-KaliVirtualBox.ps1` unattended install | Buy RAM, free disk on **C:**, approve UAC |
 | Harden Kali packages | `harden`, `fail2ban`, `unattended-upgrades` | Interpret Lynis; legal acceptance of Kali ToS |
 | ClamAV signatures | `freshclam` cron | Analyze zero-day malware safely (VM isolation discipline) |
-| Realtek driver | DKMS when VID/PID matches | Unknown chipset magic; illegal RF power |
-| WiFi regdomain tune | `iw reg set` legal country | Choose country incorrectly on travel; bypass FCC/ETSI |
+| Realtek OOT driver | DKMS when VID/PID matches (`company-lab`) | Unknown chipset magic; regdomain bypass; illegal amplifiers |
+| WiFi Option 1 tune | Legal regdomain + max legal TX | Jamming; deauth against third-party SSIDs |
+| WiFi Option 2 tune | `power_save off`, fixed channel, scan baseline, link-quality, legal PHY TX tables | “Disable FCC limits”; outdoor unauthorized radiators |
+| Lab-only AP / VLAN | Documented in OPNsense + Ansible vars | Bridge lab WiFi to `LAN_HOME` day one |
 | OPNsense lab VM | Planned `Install-OpnsenseLab.ps1` | `-EdgeMode` ISP bridge, family outage comms |
 | Suricata detect-only | Documented export/import steps | Tune rules without false positive pain |
 | Suricata block mode | Enable after playbook gate | Fix broken iCloud/gaming without rollback plan |
@@ -396,7 +447,8 @@ scripts/kali/
   README_KALI_LAB.md              # Quick index → this doc
   ansible.cfg
   inventory/localhost.yml
-  playbooks/site.yml              # imports all roles
+  playbooks/site.yml              # imports all roles; --wifi-profile default company-lab
+  group_vars/wifi_profile.yml     # company-lab | home-conservative
   roles/harden/tasks/main.yml
   roles/clamav/tasks/main.yml
   roles/snort-ids/tasks/main.yml

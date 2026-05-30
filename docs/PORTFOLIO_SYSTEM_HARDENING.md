@@ -3,7 +3,7 @@
 **Author:** Andy Kowal · **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
 **GitHub:** [salvador-Data](https://github.com/salvador-Data) · **Flagship repo:** [CyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi)
 
-**Companions:** [PORTFOLIO_FIRMWARE_OS.md](PORTFOLIO_FIRMWARE_OS.md) — M5 OS Cardputer firmware/OS arc (pocket UTMS, OTA launcher) · [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md) — nightly 4 AM backup, website, and SOC logging automation · [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) — Kali/OPNsense homelab architecture and phased bootstrap (describe-only; Ansible + Windows scripts planned).
+**Companions:** [PORTFOLIO_FIRMWARE_OS.md](PORTFOLIO_FIRMWARE_OS.md) — M5 OS Cardputer firmware/OS arc (pocket UTMS, OTA launcher) · [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md) — nightly 4 AM backup, website, and SOC logging automation · [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) — Kali/OPNsense homelab architecture, phased bootstrap P0–P6, and **default WiFi Option 2 (`--wifi-profile=company-lab`)** on isolated lab AP/VLAN (describe-only; Ansible + Windows scripts planned).
 
 ---
 
@@ -207,7 +207,7 @@ The platform repo is the **single source of truth** for defensive automation tha
 | Host policy | Harden-Windows-Security, Defender ASR (audit → enforce) |
 | Host telemetry | Sysmon 64 + SwiftOnSecurity config |
 | SIEM | Wazuh agent → self-hosted manager |
-| Network | OPNsense + Suricata (documented edge); Kali analyst VM — [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) |
+| Network | OPNsense + Suricata (documented edge); Kali analyst VM (company-lab WiFi profile, lab VLAN) — [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) |
 | Backup | selective SSD + OneDrive staging + manifests |
 | Mobile | iOS Settings + Malwarebytes (non-VPN features) |
 | Pocket | M5 OS UTMS menu |
