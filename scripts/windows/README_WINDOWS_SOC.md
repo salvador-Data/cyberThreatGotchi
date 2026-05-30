@@ -201,3 +201,101 @@ SSD default: drive **D:** (volume label **SSD**) → `D:\Backups\Andy-PC-YYYY-MM
 | `CTG_WEBHOOK_URL` | Optional HTTPS endpoint for backup-complete ping |
 | `CTG_WEBHOOK_SECRET` | Sent as `X-CTG-Secret` header (env only) |
 
+## Nightly 4 AM automation
+
+Daily **4:00 AM local** task for backup (SSD + OneDrive), [hackerplanet.dev](https://hackerplanet.dev/) website sync/health, audit scans, and logging — without running disruptive hardening every night. **Harden-Windows-Security** remains a manual or weekly elevated run (`ctg_soc_run_once.ps1` or `harden_windows.ps1`); do not schedule full hardening nightly.
+
+### Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `ctg_nightly_4am.ps1` | Main orchestrator (elevated preferred) |
+| `ctg_website_nightly.ps1` | Website + portfolio backup, sync, health check |
+| `Register-CtgNightlyTask.ps1` | Creates scheduled task **HackerPlanet-CTG-Nightly-4AM** |
+| `ctg_nightly_install.ps1` | One-shot Admin installer (calls register script) |
+
+### Orchestration order
+
+1. Timestamp + hostname header
+2. Disk space on **C:** and **D:** (if present) — warn if &lt; 5 GB free
+3. **SSD detection** — Disk 1 / **D:** writable probe; logs `SSD: online|offline|not_ready`; `mount_ssd_d.ps1` if needed (Admin)
+4. **selective_ssd_backup.ps1** — user data + **Projects** (`C:\Users\Owner\Projects`, robocopy caps/exclusions)
+5. **ctg_website_nightly.ps1** — `website/`, `docs/web/`, portfolio → backup tree; `sync_website_to_docs.py`; GET **https://hackerplanet.dev/**
+6. **cloud_backup.ps1** — mirror subset to OneDrive `\Backups\Andy-PC-YYYY-MM-DD` + `\Backups\logs\`
+7. Windows Update audit, Defender QuickScan, Sysmon, Wazuh (status), VPN preserve, Git dry-run
+8. **SOC logs** copied to `D:\Backups\logs\` when SSD online
+
+### Backup matrix
+
+| Content | Source | SSD online (`D:\Backups\Andy-PC-YYYY-MM-DD\`) | C: fallback | OneDrive mirror |
+|---------|--------|-----------------------------------------------|-------------|-----------------|
+| Documents / Desktop / Pictures | User folders | Via selective backup | Same | Manifest + subset via `cloud_backup.ps1` |
+| **Projects** | `C:\Users\Owner\Projects` | `Projects\` (robocopy, size/exclusion caps) | Same | Manifest references |
+| **Website** | `website/` | `website\` | Same | `website\` |
+| **Docs web mirror** | `docs/web/` | `docs-web\` | Same | `docs-web\` |
+| **Portfolio md** | `docs/PORTFOLIO_*.md` | `portfolio\` | Same | `portfolio\` |
+| **Portfolio HTML** | `export_portfolio_html.py` | `portfolio_export\` | Same | `portfolio_export\` |
+| Registry sample / programs list | selective backup | Root of day folder | Same | Copied by cloud_backup |
+| **Nightly log** | `Backups\logs\nightly-*.log` | `D:\Backups\logs\` | Primary on C: | `OneDrive\Backups\logs\` |
+| **SOC log** | Desktop `ctg-soc-run-log.txt` | `D:\Backups\logs\` | Desktop | Nightly log mirrored |
+
+Deploy path: **GitHub Pages** via `.github/workflows/pages.yml` (`website/` → `gh-pages` branch). Custom domain **hackerplanet.dev** (Cloudflare DNS → GitHub Pages). Nightly run does **not** deploy unless `-DeployWebsite`.
+
+### SSD behavior (Andy SDK drive)
+
+At start the orchestrator checks **Disk 1** (SDK SSD), `Test-Path D:\`, and a write probe under `D:\Backups`. If the disk shows **No Media** or is not writable, it logs clearly and falls back to **C:\Users\Owner\Backups** + OneDrive only (no failure exit).
+
+When SSD is **online and writable**:
+
+- Runs `mount_ssd_d.ps1` if **D:** is missing or Disk 1 is offline (Admin)
+- All backup rows above land under `D:\Backups\Andy-PC-YYYY-MM-DD\`
+- SOC + nightly logs under `D:\Backups\logs\`
+
+### Install (Admin PowerShell, one command per block)
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows\ctg_nightly_install.ps1
+```
+
+Verify task:
+
+```powershell
+Get-ScheduledTask -TaskName 'HackerPlanet-CTG-Nightly-4AM' | Format-List
+```
+
+Manual test run (no wait until 4 AM):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows\ctg_nightly_4am.ps1 -VerboseLog
+```
+
+Optional website deploy (commit/push → GitHub Actions):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows\ctg_nightly_4am.ps1 -DeployWebsite -VerboseLog
+```
+
+### Flags
+
+| Flag | Default | Effect |
+|------|---------|--------|
+| `-ApplyUpdates` | off | Install Windows Updates (may reboot) |
+| `-SkipBackup` | off | Skip selective + website + cloud backup |
+| `-DeployWebsite` | off | Commit/push `website/` + `docs/web/` to `main` |
+| `-SyncRepos` | off | `git pull` instead of dry-run log |
+| `-VerboseLog` | off | Echo steps to console |
+
+### Log paths
+
+| Path | Purpose |
+|------|---------|
+| `C:\Users\Owner\Backups\logs\nightly-YYYY-MM-DD.log` | Primary nightly log |
+| `%USERPROFILE%\Desktop\ctg-soc-run-log.txt` | Append mirror (SOC history) |
+| `D:\Backups\logs\nightly-YYYY-MM-DD.log` | SSD copy when Disk 1 online |
+| `D:\Backups\logs\ctg-soc-run-log.txt` | SSD SOC mirror |
+| `%OneDrive%\Backups\logs\nightly-YYYY-MM-DD.log` | OneDrive cloud mirror |
+

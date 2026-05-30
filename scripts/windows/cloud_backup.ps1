@@ -13,6 +13,9 @@
 .PARAMETER WhatIf
   Show paths only; no copy (PreviewOnly).
 
+.PARAMETER NightlyLogPath
+  Optional nightly log file to mirror into OneDrive\Backups\logs\.
+
 .EXAMPLE
   .\scripts\windows\cloud_backup.ps1
 
@@ -22,20 +25,35 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [string] $SourceBackupRoot = '',
+    [string] $NightlyLogPath = '',
     [switch] $PreviewOnly
 )
 
 $ErrorActionPreference = 'Stop'
 $date = Get-Date -Format 'yyyy-MM-dd'
 
-function Get-OneDriveRoot {
-    foreach ($name in @('OneDriveCommercial', 'OneDriveConsumer', 'OneDrive')) {
-        $p = [Environment]::GetEnvironmentVariable($name, 'Process')
-        if (-not $p) { $p = [Environment]::GetEnvironmentVariable($name, 'User') }
-        if ($p -and (Test-Path $p)) { return $p }
+function Get-CtgOneDriveInfo {
+    foreach ($entry in @(
+            @{ Env = 'OneDriveCommercial'; Kind = 'Commercial (Work/School)' },
+            @{ Env = 'OneDriveConsumer'; Kind = 'Personal (Consumer)' },
+            @{ Env = 'OneDrive'; Kind = 'Personal (OneDrive)' }
+        )) {
+        $p = [Environment]::GetEnvironmentVariable($entry.Env, 'Process')
+        if (-not $p) { $p = [Environment]::GetEnvironmentVariable($entry.Env, 'User') }
+        if ($p -and (Test-Path $p)) {
+            return @{ Path = $p; Kind = $entry.Kind; EnvVar = $entry.Env }
+        }
     }
     $default = Join-Path $env:USERPROFILE 'OneDrive'
-    if (Test-Path $default) { return $default }
+    if (Test-Path $default) {
+        return @{ Path = $default; Kind = 'Personal (default folder)'; EnvVar = 'default' }
+    }
+    return $null
+}
+
+function Get-OneDriveRoot {
+    $info = Get-CtgOneDriveInfo
+    if ($info) { return $info.Path }
     return $null
 }
 
@@ -66,16 +84,18 @@ function Test-OneDriveClient {
 }
 
 $src = Find-LatestBackup -Explicit $SourceBackupRoot
-$od = Get-OneDriveRoot
-if (-not $od) {
+$odInfo = Get-CtgOneDriveInfo
+if (-not $odInfo) {
     Write-Warning 'OneDrive folder not found. Sign into Microsoft account and enable OneDrive sync first.'
     Write-Host 'Manual: Settings > Accounts > Windows backup, or install OneDrive from microsoft.com/onedrive'
     exit 2
 }
+$od = $odInfo.Path
 
 $dest = Join-Path $od "Backups\Andy-PC-$date"
 Write-Host "Source backup: $src"
 Write-Host "OneDrive root: $od"
+Write-Host "OneDrive kind: $($odInfo.Kind) (env: $($odInfo.EnvVar))"
 Write-Host "Cloud staging: $dest"
 
 if (-not (Test-Path $src)) {
@@ -106,12 +126,61 @@ if (Test-Path $regSrc) {
     Write-Host 'Copied registry_exports\' -ForegroundColor Green
 }
 
+foreach ($folder in @('website', 'docs-web', 'portfolio', 'portfolio_export')) {
+    $folderSrc = Join-Path $src $folder
+    if (Test-Path $folderSrc) {
+        $folderDest = Join-Path $dest $folder
+        New-Item -ItemType Directory -Path $folderDest -Force | Out-Null
+        Copy-Item -Path (Join-Path $folderSrc '*') -Destination $folderDest -Recurse -Force
+        Write-Host "Copied $folder\ (hackerplanet.dev / portfolio backup)" -ForegroundColor Green
+    }
+}
+
+$repoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+if (-not (Test-Path $repoRoot)) {
+    $repoRoot = 'C:\Users\Owner\Projects\cyberThreatGotchi'
+}
+$portfolioScript = Join-Path $repoRoot 'scripts\export_portfolio_html.py'
+if ((Test-Path $portfolioScript) -and -not (Test-Path (Join-Path $src 'portfolio_export'))) {
+    $portfolioOut = Join-Path $src 'portfolio_export'
+    New-Item -ItemType Directory -Path $portfolioOut -Force | Out-Null
+    Write-Host "Portfolio export (OneDrive staging): $portfolioScript -> $portfolioOut"
+    try {
+        $py = (Get-Command python -ErrorAction SilentlyContinue).Source
+        if (-not $py) { $py = (Get-Command py -ErrorAction SilentlyContinue).Source }
+        if ($py) {
+            & $py $portfolioScript $portfolioOut 2>&1 | ForEach-Object { Write-Host $_ }
+            if (Test-Path $portfolioOut) {
+                $portfolioDest = Join-Path $dest 'portfolio_export'
+                New-Item -ItemType Directory -Path $portfolioDest -Force | Out-Null
+                Copy-Item -Path (Join-Path $portfolioOut '*') -Destination $portfolioDest -Recurse -Force
+                Write-Host 'Copied portfolio_export\ to OneDrive staging' -ForegroundColor Green
+            }
+        } else {
+            Write-Warning 'Python not found — portfolio export skipped'
+        }
+    } catch {
+        Write-Warning "Portfolio export failed: $($_.Exception.Message)"
+    }
+}
+
+if ($NightlyLogPath -and (Test-Path $NightlyLogPath)) {
+    $odLogDir = Join-Path $od 'Backups\logs'
+    New-Item -ItemType Directory -Path $odLogDir -Force | Out-Null
+    $odLogDest = Join-Path $odLogDir (Split-Path $NightlyLogPath -Leaf)
+    Copy-Item -Path $NightlyLogPath -Destination $odLogDest -Force
+    Write-Host "Mirrored nightly log to OneDrive: $odLogDest" -ForegroundColor Green
+}
+
 $cloudNote = @(
     "Microsoft Windows cloud backup note"
     "Generated: $(Get-Date -Format o)"
     "OneDrive client installed: $(Test-OneDriveClient)"
     "OneDrive path: $od"
+    "OneDrive kind: $($odInfo.Kind)"
+    "OneDrive env var: $($odInfo.EnvVar)"
     "Staged folder: $dest"
+    "Nightly log mirrored: $(if ($NightlyLogPath) { $NightlyLogPath } else { 'none' })"
     ""
     "Andy manual steps:"
     "1. Sign in: Settings > Accounts > Your Microsoft account"
