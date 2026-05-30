@@ -1,0 +1,32 @@
+---
+description: Andy hardware, backups, Windows SOC, and iPhone hardening context
+alwaysApply: true
+---
+
+# Andy environment & ops
+
+## Hardware (Andy workstation)
+
+### Windows laptop (SOC + nightly 4 AM)
+
+- **External SDK SSD:** intended **D:** — often shows **No Media**. Backup fallbacks: `C:\Users\Owner\Backups` and **OneDrive\Backups**.
+- **Nightly 4 AM task:** laptop only — `ctg_nightly_4am.ps1`, `ctg_website_nightly.ps1`. Backs up SSD D:, OneDrive, C:, Projects, hackerplanet.dev website. **Does not** flash or schedule anything on Cardputer.
+
+### M5Stack Cardputer (manual dev — not nightly)
+
+- **USB flash:** **COM13** (Espressif VID_303A PID_1001). **Not** COM15 (CH9102).
+- **microSD:** contacts away from screen; **FAT32**; paths `/apps/`, `/home/default/utms/`.
+- PlatformIO upload and microSD app installs are **manual** — never part of `HackerPlanet-CTG-Nightly-4AM`.
+
+## CyberThreatGotchi — Windows SOC
+
+- Scripts: `scripts/windows/` — `harden_windows.ps1`, `ctg_soc_run_once.ps1`, `selective_ssd_backup.ps1`, `cloud_backup.ps1`, `ctg_nightly_4am.ps1`.
+- **Admin PowerShell** required for Sysmon, SSD mount, and nightly task registration.
+
+## iPhone hardening
+
+- Guide: `docs/IPHONE_HARDENING.md` — preserve existing VPN/DNS setup when advising changes.
+
+## Workflow (reminder)
+
+- Commit only when Andy asks; use **gh** for PRs (see `hacker-planet-devsecops.mdc`).

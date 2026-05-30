@@ -203,7 +203,11 @@ SSD default: drive **D:** (volume label **SSD**) → `D:\Backups\Andy-PC-YYYY-MM
 
 ## Nightly 4 AM automation
 
-Daily **4:00 AM local** task for backup (SSD + OneDrive), [hackerplanet.dev](https://hackerplanet.dev/) website sync/health, audit scans, and logging — without running disruptive hardening every night. **Harden-Windows-Security** remains a manual or weekly elevated run (`ctg_soc_run_once.ps1` or `harden_windows.ps1`); do not schedule full hardening nightly.
+> **Windows laptop automation only — does not flash or schedule anything on M5 Cardputer.**
+>
+> This task runs on Andy's Windows PC only (backup, SOC scans, [hackerplanet.dev](https://hackerplanet.dev/) sync). **M5Stack Cardputer** firmware (COM13, PlatformIO, microSD apps) is separate manual dev work — never part of the 4 AM job.
+
+Daily **4:00 AM local** task for backup (SSD + OneDrive), website sync/health, audit scans, and logging — without running disruptive hardening every night. **Harden-Windows-Security** remains a manual or weekly elevated run (`ctg_soc_run_once.ps1` or `harden_windows.ps1`); do not schedule full hardening nightly.
 
 ### Scripts
 

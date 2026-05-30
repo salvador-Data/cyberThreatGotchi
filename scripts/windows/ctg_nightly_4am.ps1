@@ -1,8 +1,13 @@
 <#
+Windows laptop automation only — does not flash or schedule anything on M5 Cardputer.
+
 .SYNOPSIS
-  CyberThreatGotchi nightly 4 AM orchestrator — backup, scan, audit, log.
+  CyberThreatGotchi nightly 4 AM orchestrator — backup, scan, audit, log (Andy PC only).
 
 .DESCRIPTION
+  Windows laptop SOC automation only. Does NOT flash, upload, or schedule anything on
+  the M5Stack Cardputer (COM13 / PlatformIO). Cardputer firmware is manual dev work.
+
   Runs selective SSD backup (when Disk 1 / D: is online and writable), OneDrive
   staging, Windows Update audit, Defender quick scan, Sysmon/Wazuh checks, VPN
   preservation, and optional repo sync. Does NOT run Harden-Windows-Security nightly.
@@ -319,6 +324,7 @@ function Invoke-CtgGitRepos {
 
 # --- Run ---
 Write-NightlyLog "=== CTG Nightly 4 AM started === Host=$env:COMPUTERNAME User=$env:USERNAME Admin=$script:CtgIsAdmin ==="
+Write-NightlyLog 'Scope: Windows laptop only — does not flash or schedule anything on M5 Cardputer'
 
 Write-NightlyLog '--- Disk space ---'
 Test-CtgVolumeFreeSpace -DriveLetter 'C'

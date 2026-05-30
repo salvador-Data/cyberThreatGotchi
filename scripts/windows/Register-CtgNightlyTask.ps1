@@ -56,7 +56,7 @@ Register-ScheduledTask `
     -Trigger $trigger `
     -Settings $settings `
     -Principal $principal `
-    -Description 'CyberThreatGotchi nightly 4 AM — backup, scan, audit, log (Hacker Planet LLC)' | Out-Null
+    -Description 'CyberThreatGotchi nightly 4 AM — Windows laptop backup, scan, audit, log only (no M5 Cardputer flash)' | Out-Null
 
 Write-Host "Registered scheduled task: $TaskName"
 Write-Host "  Trigger: Daily at $At (local time)"
