@@ -86,6 +86,8 @@ Optional: Defender ASR audit mode:
 | `iphone_usb_check.ps1` | Log-only: iPhone USB attached → run `IPHONE_RUN_NOW` USB steps (no device modification) |
 | `iphone_hardening_automate.ps1` | **Primary:** interactive 21-step Phase 1+2 orchestrator — USB check, deep links, `-Resume`, `-LogOnly`, `-OpenGuide`, `-ServeOnLan` |
 | `iphone_hardening_assist.ps1` | Deprecated alias — forwards to `iphone_hardening_automate.ps1` (`-OpenRunbook` still works) |
+| `Pause-DefenderRealtime.ps1` | **Admin:** pause/resume Defender real-time during PlatformIO builds |
+| `Pause-DefenderRealtime.bat` | Double-click UAC shim — toggles realtime pause/resume |
 
 Check Wazuh without installing:
 
@@ -215,12 +217,54 @@ Nightly `ctg_nightly_4am.ps1` does not run Apple backup or iPhone hardening assi
 
 Interpretation: **on Windows cloud services** — Microsoft OneDrive sync, Windows Backup settings, Defender for Cloud (CSPM), and Entra ID sign-in security. Not IONOS or third-party "Ion" products.
 
+### Build-time AV and OneDrive (PlatformIO / Cardputer)
+
+PlatformIO builds under `Projects\` or `C:\pio\` can stall when **Microsoft Defender real-time scanning** or **OneDrive sync** locks object files mid-compile.
+
+| Mitigation | How |
+|------------|-----|
+| **Defender pause (short window)** | **Administrator required.** `Pause-DefenderRealtime.ps1` — pause before build, **resume after**. Double-click `Pause-DefenderRealtime.bat` to toggle (UAC). |
+| **Defender exclusions (preferred long-term)** | Same script with `-AddBuildExclusions` adds `C:\pio\`, `M5_OS-Cardputer\.pio`, and `Projects\` — keeps realtime on. |
+| **OneDrive** | No reliable PowerShell pause for consumer OneDrive. **Tray icon → Pause syncing** for 2/8/24 hours, or exclude build folders from sync / use `PLATFORMIO_BUILD_DIR=C:\pio\m5os-build` outside OneDrive. |
+
+Check Defender realtime status (**Admin PowerShell**):
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\Pause-DefenderRealtime.ps1 -Status
+```
+
+Pause before a Cardputer flash (**Admin** — resume when done):
+
+```powershell
+.\scripts\windows\Pause-DefenderRealtime.ps1 -Pause
+```
+
+Resume after build:
+
+```powershell
+.\scripts\windows\Pause-DefenderRealtime.ps1 -Resume
+```
+
+Optional persistent build exclusions (Admin, one-time):
+
+```powershell
+.\scripts\windows\Pause-DefenderRealtime.ps1 -AddBuildExclusions
+```
+
+**Warning:** Do not leave realtime protection off. Nightly `ctg_nightly_4am.ps1` runs Defender QuickScan — pausing is for manual build windows only.
+
 ### Scripts
 
 | Script | Purpose |
 |--------|---------|
 | `selective_ssd_backup.ps1` | SSD/local selective backup + manifest |
 | `cloud_backup.ps1` | Copy manifest + critical files to OneDrive `\Backups\Andy-PC-YYYY-MM-DD` |
+| `Pause-DefenderRealtime.ps1` | Pause/resume Defender realtime; optional build-path exclusions |
+| `Pause-DefenderRealtime.bat` | UAC elevation shim (toggle) |
 
 Orchestrator flag:
 
