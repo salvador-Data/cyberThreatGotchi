@@ -26,6 +26,7 @@ Thumbs.db
 .tmp-crackbot-stl/
 scripts/kali/ansible/group_vars/realtek.yml
 scripts/kali/.vault_pass
+scripts/kali/lab-targets.conf
 Backups/opnsense-*.xml
 Backups/kali-vm-credentials.txt
 Backups/kali-vm-vbox-password.txt

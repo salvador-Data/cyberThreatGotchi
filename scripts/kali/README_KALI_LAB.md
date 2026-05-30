@@ -23,11 +23,21 @@ Optional: force Kali resolv.conf to DuckDuckGo only:
 From **inside Kali** (after install):
 
 ```bash
-sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=company-lab --preserve-ddg-dns
+sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=company-lab --preserve-ddg-dns --lab-anonymity
 ```
 
 ```bash
 sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=company-lab --ddg-dns-only
+```
+
+Lab anonymity + pentest scope (default **on** for company lab):
+
+```bash
+cp lab-targets.example lab-targets.conf
+```
+
+```bash
+sudo bash /tmp/kali-lab-bootstrap.sh --no-lab-anonymity
 ```
 
 ## DuckDuckGo preserve
@@ -42,7 +52,8 @@ Same rules as [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md):
 
 | File | Purpose |
 |------|---------|
-| `kali-lab-bootstrap.sh` | Monolithic bootstrap: DDG preserve, harden, ClamAV, passive Snort, OSINT apt, Realtek detect, WiFi Option 2 |
+| `kali-lab-bootstrap.sh` | Monolithic bootstrap: DDG preserve, lab anonymity (Tor/proxychains), harden, ClamAV, passive Snort, OSINT apt, Realtek detect, WiFi Option 2 |
+| `lab-targets.example` | Authorized targets template — copy to `lab-targets.conf` (gitignored) |
 | `ansible/` | Optional Ansible mirror (includes `ddg-dns` role) |
 
 ## WiFi profiles

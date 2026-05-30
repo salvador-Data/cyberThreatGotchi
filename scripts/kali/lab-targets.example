@@ -1,0 +1,25 @@
+# CyberThreatGotchi — authorized lab targets (Hacker Planet LLC defensive lab ONLY)
+# Copy to lab-targets.conf (gitignored) and edit IPs for your environment.
+# Before nmap, metasploit, burp, or sqlmap: destination MUST appear in this file (uncommented).
+#
+# NOT ALLOWED: public internet sweeps, neighbors, coffee-shop WiFi, production SaaS without ROE.
+# See docs/KALI_LAB_ARCHITECTURE.md § Lab anonymity & authorized pentest
+
+# Localhost services inside Kali VM
+127.0.0.1
+
+# VirtualBox NAT default segment (adjust if your hypervisor differs)
+10.0.2.0/24
+
+# Documented lab VLAN (LAN_LAB) — example from KALI_LAB_ARCHITECTURE.md
+192.168.50.0/24
+
+# Placeholders — replace with your DVWA / Metasploitable VM IPs when VMs exist
+# 192.168.50.10
+# 192.168.50.11
+
+# Hack The Box / range platforms — only when your account rules and written scope allow
+# 10.10.0.0/16
+
+# OPNsense lab management (if testing from Kali on lab VLAN)
+# 192.168.50.1

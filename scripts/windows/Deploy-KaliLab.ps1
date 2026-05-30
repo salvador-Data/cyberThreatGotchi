@@ -1,5 +1,5 @@
 # Deploy CyberThreatGotchi Kali lab bootstrap to VirtualBox or VMware Kali VM.
-# Authorized defensive lab use only — Hacker Planet LLC.
+# Authorized defensive lab use only - Hacker Planet LLC.
 # Master script: DDG preserve, detect hypervisor, Wireshark/Npcap, OPNsense lab stub, Kali bootstrap.
 param(
     [string[]]$VmNameCandidates = @('kali', 'Kali-Lab', 'Kali', 'kali-linux'),
@@ -14,6 +14,7 @@ param(
     [switch]$SkipOpnsense,
     [switch]$SkipWireshark,
     [switch]$SkipDdgPreserve,
+    [switch]$NoLabAnonymity,
     [switch]$StartVmIfStopped,
     [switch]$InstallSshServerHint,
     [switch]$WhatIf
@@ -82,8 +83,8 @@ function Get-CtgDuckDuckGoHostStatus {
 
 function Invoke-CtgDuckDuckGoPreserveCheck {
     Write-CtgLog '=== DuckDuckGo VPN/DNS preserve (mandatory) ==='
-    Write-CtgLog "Policy: same as $IphoneHardeningDoc — do NOT replace DDG on Windows/iPhone/router"
-    Write-CtgLog 'OPNsense lab: DuckDuckGo forwarders only — do NOT stack NextDNS/Cloudflare/1.1.1.1 when DDG set'
+    Write-CtgLog "Policy: same as $IphoneHardeningDoc - do NOT replace DDG on Windows/iPhone/router"
+    Write-CtgLog 'OPNsense lab: DuckDuckGo forwarders only - do NOT stack NextDNS/Cloudflare/1.1.1.1 when DDG set'
 
     $ddg = Get-CtgDuckDuckGoHostStatus
     if ($ddg.VpnInstalled) {
@@ -93,18 +94,19 @@ function Invoke-CtgDuckDuckGoPreserveCheck {
         Write-CtgLog 'Windows DuckDuckGo VPN: not detected (OK if using DDG DNS only)'
     }
     if ($ddg.DnsOnHost) {
-        Write-CtgLog ("Windows DuckDuckGo DNS on adapter(s): " + ($ddg.DnsAdapters -join '; '))
+        $ddgAdapters = $ddg.DnsAdapters -join '; '
+        Write-CtgLog "Windows DuckDuckGo DNS on adapter(s): $ddgAdapters"
     } else {
-        Write-CtgLog 'Windows adapter DNS: no 94.140.14.14/15.15 on active interfaces (DDG may be via VPN tunnel only)'
+        Write-CtgLog 'Windows adapter DNS: no 94.140.14.14 or 94.140.15.15 on active interfaces (DDG may be via VPN tunnel only)'
     }
 
     if ($PreserveDdgDns) {
         Write-CtgLog 'Kali bootstrap: --preserve-ddg-dns (default ON)'
     } else {
-        Write-CtgLog 'WARNING: -NoPreserveDdgDns — Kali may change resolv.conf without DDG guard'
+        Write-CtgLog 'WARNING: -NoPreserveDdgDns - Kali may change resolv.conf without DDG guard'
     }
     if ($DdgDnsOnly) {
-        Write-CtgLog 'Kali bootstrap: --ddg-dns-only — resolv.conf + Unbound stub → DuckDuckGo only'
+        Write-CtgLog 'Kali bootstrap: --ddg-dns-only - resolv.conf + Unbound stub to DuckDuckGo only'
     }
 
     $preserveScript = Join-Path $PSScriptRoot 'Preserve-DuckDuckGoVpn.ps1'
@@ -122,6 +124,11 @@ function Get-CtgBootstrapExtraArgs {
     if ($PreserveDdgDns) { $args += '--preserve-ddg-dns' }
     if ($NoPreserveDdgDns) { $args += '--no-preserve-ddg-dns' }
     if ($DdgDnsOnly) { $args += '--ddg-dns-only' }
+    if ($NoLabAnonymity) {
+        $args += '--no-lab-anonymity'
+    } else {
+        $args += '--lab-anonymity'
+    }
     return ($args -join ' ')
 }
 
@@ -132,10 +139,10 @@ function Invoke-CtgWiresharkCompanion {
     }
     $wsScript = Join-Path $PSScriptRoot 'Install-WiresharkNpcap.ps1'
     if (-not (Test-Path $wsScript)) {
-        Write-CtgLog 'Install-WiresharkNpcap.ps1 not found — skip Windows Wireshark companion'
+        Write-CtgLog 'Install-WiresharkNpcap.ps1 not found - skip Windows Wireshark companion'
         return
     }
-    Write-CtgLog 'Windows companion: Wireshark + Npcap (WiFi monitor → Kali VM + USB passthrough)'
+    Write-CtgLog 'Windows companion: Wireshark + Npcap (WiFi monitor via Kali VM + USB passthrough)'
     if ($WhatIf) {
         Write-CtgLog '[WhatIf] Install-WiresharkNpcap.ps1'
         return
@@ -151,20 +158,21 @@ function Write-CtgLabChecklistStatus {
     Write-CtgLog '=== Kali lab feature checklist (docs/KALI_LAB_ARCHITECTURE.md) ==='
     $items = @(
         '1 Auto Kali hardening (bootstrap/Ansible)',
-        '2 Free IDS/IPS — Suricata OPNsense + passive Snort Kali',
+        '2 Free IDS/IPS - Suricata OPNsense + passive Snort Kali',
         '3 ClamAV',
         '4 Wireshark + WiFi monitor lab',
         '5 Snort (passive Kali)',
-        '6 Realtek dongle drivers — Kali + Windows notes',
+        '6 Realtek dongle drivers - Kali + Windows notes',
         '7 OSINT tier 1/2 (Maltego CE manual)',
         '8 WiFi Option 2 company-lab profile',
-        '9 Production firewall — OPNsense lab VM',
+        '9 Production firewall - OPNsense lab VM',
         '10 WiFi range/lab tune module',
         '11 Deploy-KaliLab.ps1 + kali-lab-bootstrap.sh',
         '12 Windows Wireshark/Npcap companion',
-        '13 Defender pause script (Pause-DefenderRealtime.ps1 — manual for builds)',
+        '13 Defender pause script (Pause-DefenderRealtime.ps1 - manual for builds)',
         '14 Authorized Hacker Planet LLC lab framing',
-        '15 DuckDuckGo VPN + DNS preserve (this deploy)'
+        '15 DuckDuckGo VPN + DNS preserve (this deploy)',
+        '16 Lab anonymity + authorized pentest (Tor/proxychains; lab-targets.example)'
     )
     foreach ($item in $items) { Write-CtgLog "  [doc+script] $item" }
 }
@@ -384,6 +392,13 @@ Invoke-CtgWiresharkCompanion
 
 $bootstrapExtra = Get-CtgBootstrapExtraArgs
 Write-CtgLog "Kali bootstrap args: $bootstrapExtra"
+if ($NoLabAnonymity) {
+    Write-CtgLog 'Lab anonymity module: SKIPPED (-NoLabAnonymity)'
+} else {
+    Write-CtgLog 'Lab anonymity module: ON - tor, proxychains4, Tor Browser launcher, firefox-esr; manual Tor Browser launch'
+    Write-CtgLog 'Authorized pentest: copy scripts/kali/lab-targets.example to lab-targets.conf (gitignored); nmap/metasploit/burp/sqlmap against listed targets only'
+    Write-CtgLog 'See docs/KALI_LAB_ARCHITECTURE.md Lab anonymity section - NOT third-party or crime use'
+}
 
 $vbox = Find-CtgVirtualBoxKali -Names @($VmNameCandidates)
 $vmware = Find-CtgVmwareKali -Names @($VmNameCandidates)
@@ -436,7 +451,7 @@ if ($target.Hypervisor -eq 'VirtualBox') {
 }
 
 if ($sshReady) {
-    Write-CtgLog 'SSH port open — attempting bootstrap deploy'
+    Write-CtgLog 'SSH port open - attempting bootstrap deploy'
     foreach ($tryUser in @($creds.User, 'kali', 'sal')) {
         $tryCreds = @{ User = $tryUser; Password = $creds.Password }
         Write-CtgLog "Trying SSH user: $tryUser"
@@ -479,7 +494,7 @@ if (-not $SkipOpnsense) {
 Write-CtgLog '=== Deploy-KaliLab.ps1 summary ==='
 Write-CtgLog "Hypervisor: $($target.Hypervisor) | VM: $($target.Name)"
 Write-CtgLog "SSH ready: $sshReady | Bootstrap deployed via SSH: $deployed"
-Write-CtgLog "DDG preserve: $PreserveDdgDns | ddg-dns-only: $DdgDnsOnly"
+Write-CtgLog "DDG preserve: $PreserveDdgDns | ddg-dns-only: $DdgDnsOnly | lab-anonymity: $(-not $NoLabAnonymity)"
 Write-CtgLog "Fallback script: $sharedPath"
 Write-CtgLog "OPNsense DNS template: docs/OPNSENSE_LAB_DNS.md"
 Write-CtgLog "iPhone/Windows DDG rules: docs/IPHONE_HARDENING.md"
