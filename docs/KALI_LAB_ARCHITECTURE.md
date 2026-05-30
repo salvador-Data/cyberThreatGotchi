@@ -46,6 +46,97 @@ All items below are documented here and implemented or stubbed with clear phase 
 | 13 | Defender pause script (build windows only) | `Pause-DefenderRealtime.ps1` — manual, not auto-deploy | P5 |
 | 14 | Authorized Hacker Planet LLC lab framing | This doc § Authorized use | P0 |
 | 15 | **DuckDuckGo VPN + DNS preserve** | `Deploy-KaliLab.ps1`, `--preserve-ddg-dns`, [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md) | P0–P6 |
+| 16 | **Lab anonymity + authorized pentest** | `kali-lab-bootstrap.sh --lab-anonymity`, `lab-targets.example` | P1 |
+
+---
+
+## Lab anonymity & authorized pentest
+
+**Scope (Hacker Planet LLC authorized lab ONLY):** Privacy research and **defensive pentest** against targets you own or have **written scope** to test. This is **not** for evading law enforcement, crime, paywall fraud, or attacks against third parties on the public internet.
+
+### Anonymous browsing (privacy research)
+
+| Component | Role | Automation |
+|-----------|------|------------|
+| **Tor Browser** | Research browsing via Tor network | `torbrowser-launcher` via bootstrap; **manual** first launch (download/verify bundle) |
+| **tor service** | SOCKS proxy for CLI tools | `systemctl enable --now tor` — bootstrap enables; no custom exit-node or illegal relay config |
+| **proxychains4** | Route **authorized lab** CLI through Tor/SOCKS | Installed; example in bootstrap log — use only for permitted research |
+| **firefox-esr** (optional) | Hardened browser profile baseline | Installed when missing; pair with Tor Browser for sensitive research, not daily email |
+| **Whonix** (optional, doc only) | Gateway + workstation isolation | Second VM — **not** installed by bootstrap; see [Whonix optional VM](#whonix-optional-second-vm-doc-only) |
+
+**What “anonymous browsing” means here:** Understanding Tor/proxychains for **privacy research** on lab networks — **not** using anonymity to commit crimes or bypass lawful process.
+
+**What bootstrap does NOT do:** Configure illegal exit nodes, custom attack C2, malware distribution infrastructure, or automation that scans/attacks hosts outside your authorized target list.
+
+### Authorized “attacking” (pentest toolchain)
+
+Kali ships offensive tools for **authorized** assessments. In this lab they are used **only** against entries in `lab-targets.conf` (copy from `scripts/kali/lab-targets.example`).
+
+| Tool | Typical lab use | Out of scope |
+|------|-----------------|--------------|
+| **nmap** | Port/service discovery on lab VMs, DVWA, Metasploitable | Internet-wide scanning, Shodan-driven opportunistic sweeps |
+| **metasploit-framework** | Exploit validation on **owned** vulnerable VMs | Auto-exploit against production SaaS or neighbors |
+| **Burp Suite Community** | Web app testing on local DVWA / Juice Shop | Intercepting traffic you are not permitted to test |
+| **sqlmap** | SQLi labs (DVWA, WebGoat) with written scope | Third-party sites without ROE |
+
+**Lab target examples** (see `scripts/kali/lab-targets.example`):
+
+- `127.0.0.1` — localhost services in Kali VM
+- `10.0.2.0/24` — VirtualBox NAT lab segment (adjust to your hypervisor)
+- `192.168.50.0/24` — documented lab VLAN (`LAN_LAB`)
+- Placeholders: DVWA VM IP, Metasploitable IP, Hack The Box VPN range **only when your HTB account and rules allow**
+
+Real targets file: `scripts/kali/lab-targets.conf` — **gitignored**; never commit customer IPs or production CIDRs.
+
+**Before any scan or exploit:** `grep -v '^#' lab-targets.conf` and confirm destination is listed. If it is not listed, **stop**.
+
+### DuckDuckGo VPN/DNS layering (preserve rules)
+
+Same mandatory preserve rules as [IPHONE_HARDENING.md](IPHONE_HARDENING.md) Step 0 and § Preserve your existing VPN:
+
+| Layer | Recommendation |
+|-------|----------------|
+| **Windows host / iPhone** | Keep **DuckDuckGo VPN + DNS** — deploy script does not replace DDG |
+| **Kali VM** | **Either** Tor Browser/proxychains for research sessions **or** `--ddg-dns-only` / existing DDG in `resolv.conf` — understand stacking |
+| **Conflict warning** | Tor + system DNS VPN + Manual DNS + second resolver can cause **DNS leaks** or bypass confusion — test with checklist below |
+
+**Do not** stack NextDNS, Cloudflare `1.1.1.1`, or AdGuard DNS VPN on phone/host while also forcing conflicting resolvers in Kali without a leak test plan.
+
+### DNS leak & WebRTC leak checklist
+
+Run after enabling Tor or changing Kali DNS (lab journal — not automated):
+
+1. **Baseline:** Note Windows DDG status (`Deploy-KaliLab.ps1` log) and iPhone **Settings → VPN** + **Wi‑Fi → Configure DNS** per [IPHONE_HARDENING.md](IPHONE_HARDENING.md) Phase 1 verify step.
+2. **Kali resolver:** `cat /etc/resolv.conf` — expect Tor-only, DDG-only, or OPNsense lab forwarder — **not** three conflicting upstreams.
+3. **DNS leak test (lab):** From Kali, use Tor Browser or `torsocks` for browser tests; compare `dig` with and without proxychains — resolver should not bypass Tor when Tor session is intended.
+4. **WebRTC:** In Firefox/Tor Browser — `about:config` → disable WebRTC IP leak settings for research profile; prefer **Tor Browser** for sensitive sessions.
+5. **VirtualBox NAT:** Bridged-to-lab vs NAT affects what the host sees — document mode in lab journal.
+6. **Rollback:** Snapshot VM before anonymity phase; restore if DNS breaks DDG-dependent workflows on host (host itself should stay on DDG).
+
+### Whonix (optional second VM — doc only)
+
+Whonix splits **Gateway** (Tor) and **Workstation** (apps). Bootstrap does **not** install Whonix. Optional future layout:
+
+1. Import official Whonix KVM/VirtualBox templates on **lab VLAN only**.
+2. Route **no** Whonix traffic through family `LAN_HOME` until rules are proven.
+3. Use for high-isolation browsing research — still subject to authorized target list for any pentest tools run from Workstation.
+
+### Bootstrap flags (anonymity)
+
+| Flag | Default (company lab) | Effect |
+|------|----------------------|--------|
+| `--lab-anonymity` | **On** | Install `tor`, `torbrowser-launcher`, `proxychains4`, `firefox-esr`; enable `tor` service; log manual Tor Browser steps |
+| `--no-lab-anonymity` | Off | Skip anonymity packages (hardening/OSINT/WiFi unchanged) |
+
+Windows: `Deploy-KaliLab.ps1` passes `--lab-anonymity` by default; `-NoLabAnonymity` skips.
+
+### Manual steps after bootstrap
+
+1. Launch **Tor Browser** from desktop menu (first run downloads bundle — verify signature per Tor Project).
+2. Copy `lab-targets.example` → `lab-targets.conf` and fill lab VM IPs only.
+3. Example constrained scan: `nmap -sV -F <target-from-list>` — never pipe a public IP range from the internet.
+4. Metasploit: `msfconsole` → set `RHOSTS` only to listed lab IPs.
+5. Re-run DNS/WebRTC checklist if switching between Tor session and `--ddg-dns-only` day.
 
 ---
 
@@ -243,6 +334,8 @@ ansible-playbook playbooks/site.yml --wifi-profile=company-lab
 | `--preserve-ddg-dns` | Skip Kali DNS changes when DDG already in resolv.conf | **Yes** |
 | `--ddg-dns-only` | Kali resolv.conf + Unbound stub → DuckDuckGo only | Opt-in |
 | `--no-preserve-ddg-dns` | Disable DDG guard (warn) | Opt-in |
+| `--lab-anonymity` | Tor, proxychains4, Tor Browser launcher, firefox-esr; enable `tor` | **Yes (company lab)** |
+| `--no-lab-anonymity` | Skip anonymity packages | Opt-in |
 
 | Role | Purpose |
 |------|---------|
@@ -507,6 +600,8 @@ Answer **before** running automation beyond P0. Record choices in a private lab 
 scripts/kali/
   README_KALI_LAB.md
   kali-lab-bootstrap.sh           # primary (--wifi-profile=company-lab default)
+  lab-targets.example             # authorized targets template
+  lab-targets.conf                # real targets (gitignored)
   ansible/ansible.cfg
   ansible/inventory/localhost.yml
   ansible/playbooks/site.yml
@@ -529,6 +624,7 @@ scripts/windows/
 ```gitignore
 scripts/kali/group_vars/realtek.yml
 scripts/kali/.vault_pass
+scripts/kali/lab-targets.conf
 Backups/opnsense-*.xml
 ```
 

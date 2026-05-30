@@ -16,6 +16,9 @@ SKIP_REALTEK=false
 DRY_RUN=false
 PRESERVE_DDG_DNS=true
 DDG_DNS_ONLY=false
+LAB_ANONYMITY=true
+LAB_TARGETS_EXAMPLE="scripts/kali/lab-targets.example"
+LAB_TARGETS_CONF="scripts/kali/lab-targets.conf"
 
 DDG_DNS_PRIMARY="94.140.14.14"
 DDG_DNS_SECONDARY="94.140.15.15"
@@ -33,11 +36,17 @@ Options:
   --ddg-dns-only           Set resolv.conf + optional Unbound stub to DuckDuckGo only
   --skip-snort             Skip passive Snort install
   --skip-realtek           Skip Realtek USB driver detection/install
+  --lab-anonymity          Install Tor, proxychains4, Tor Browser launcher (default ON)
+  --no-lab-anonymity       Skip anonymity packages (tor/proxychains/Tor Browser deps)
   --dry-run                Print planned actions only
   -h, --help               Show this help
 
 DuckDuckGo DNS: $DDG_DNS_PRIMARY / $DDG_DNS_SECONDARY (DoH: $DDG_DOH_URL).
 Preserve rules match $IPHONE_HARDENING_DOC — do NOT stack NextDNS/Cloudflare on host or phone.
+
+Lab anonymity: privacy research (Tor Browser, proxychains) — NOT crime or law-enforcement evasion.
+Pentest tools (nmap, metasploit, burp, sqlmap): lab targets in $LAB_TARGETS_CONF only (see $LAB_TARGETS_EXAMPLE).
+Bootstrap does NOT configure illegal exit nodes or attack C2.
 
 Authorized use: systems and RF you own or have written scope to test (Hacker Planet lab VLAN).
 EOF
@@ -80,8 +89,9 @@ run() {
 CTG_ENV="/etc/environment.d/ctg-osint.env"
 CTG_WIFI_BASE="/usr/local/sbin/wifi-lab-baseline.sh"
 
-log "CyberThreatGotchi Kali lab bootstrap — wifi-profile=$WIFI_PROFILE preserve-ddg-dns=$PRESERVE_DDG_DNS ddg-dns-only=$DDG_DNS_ONLY"
+log "CyberThreatGotchi Kali lab bootstrap — wifi-profile=$WIFI_PROFILE preserve-ddg-dns=$PRESERVE_DDG_DNS ddg-dns-only=$DDG_DNS_ONLY lab-anonymity=$LAB_ANONYMITY"
 log "DuckDuckGo preserve: same rules as $IPHONE_HARDENING_DOC — no NextDNS/Cloudflare stack on host/iPhone/router"
+log "Authorized pentest: targets only in $LAB_TARGETS_CONF (copy from $LAB_TARGETS_EXAMPLE) — never third parties"
 
 resolv_has_ddg() {
     [[ -f /etc/resolv.conf ]] && grep -qE '94\.140\.(14\.14|15\.15)' /etc/resolv.conf
@@ -124,6 +134,55 @@ elif $PRESERVE_DDG_DNS; then
     log "Optional: point Kali to OPNsense lab LAN Unbound with DDG forwarders (docs/OPNSENSE_LAB_DNS.md)"
 else
     log "WARNING: --no-preserve-ddg-dns — bootstrap will not protect existing DNS; verify host/iPhone DDG unchanged"
+fi
+
+# --- lab-anonymity (Tor / proxychains — privacy research; no illegal exit/C2) ---
+if $LAB_ANONYMITY; then
+    log "Phase: lab-anonymity (Tor, proxychains4, Tor Browser launcher — authorized lab privacy research)"
+    run DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+        tor torbrowser-launcher proxychains4 firefox-esr 2>/dev/null || \
+    run DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+        tor proxychains4 firefox-esr
+
+    if ! $DRY_RUN; then
+        systemctl enable tor 2>/dev/null || true
+        systemctl start tor 2>/dev/null || true
+        if [[ -f /etc/proxychains4.conf ]] && ! grep -q '^strict_chain' /etc/proxychains4.conf; then
+            sed -i 's/^#strict_chain/strict_chain/' /etc/proxychains4.conf 2>/dev/null || true
+        fi
+        if [[ -f /etc/proxychains4.conf ]] && ! grep -q 'socks5.*127.0.0.1.*9050' /etc/proxychains4.conf; then
+            log "proxychains4: ensure [ProxyList] ends with: socks5 127.0.0.1 9050 (Tor SOCKS)"
+        fi
+    fi
+    log "Tor service enabled — SOCKS 127.0.0.1:9050 for authorized lab CLI via proxychains"
+    log "Tor Browser: launch manually from desktop (torbrowser-launcher) — first run downloads bundle; verify Tor Project signature"
+    log "firefox-esr: optional hardened profile — use Tor Browser for sensitive anonymity research"
+    log "Whonix: optional second VM — see docs/KALI_LAB_ARCHITECTURE.md (not installed by bootstrap)"
+    log "DNS/WebRTC: run leak checklist in docs/KALI_LAB_ARCHITECTURE.md after enabling Tor or changing DNS"
+    log "Do NOT configure illegal exit nodes, custom attack C2, or scans outside lab-targets.conf"
+else
+    log "Phase: lab-anonymity skipped (--no-lab-anonymity)"
+fi
+
+# --- lab-targets reminder ---
+if ! $DRY_RUN; then
+    CTG_TARGETS="/etc/ctg/lab-targets.conf"
+    mkdir -p /etc/ctg
+    if [[ ! -f "$CTG_TARGETS" ]]; then
+        cat >"$CTG_TARGETS" <<'TARGETSEOF'
+# CTG authorized lab targets — edit IPs to match your VMs (Hacker Planet LLC lab only).
+# Copy full template from repo: scripts/kali/lab-targets.example
+127.0.0.1
+10.0.2.0/24
+192.168.50.0/24
+# 192.168.50.10   # DVWA placeholder
+# 192.168.50.11   # Metasploitable placeholder
+TARGETSEOF
+        chmod 600 "$CTG_TARGETS"
+        log "Created $CTG_TARGETS — edit before nmap/metasploit/sqlmap; sync from repo lab-targets.conf"
+    else
+        log "Lab targets file exists: $CTG_TARGETS"
+    fi
 fi
 
 # --- harden ---
@@ -273,5 +332,9 @@ log "Phase: lynis audit (report only)"
 run lynis audit system --quick --quiet || true
 
 log "Bootstrap complete. Next: snapshot VM, attach Realtek USB in VirtualBox, edit $CTG_ENV for OSINT keys."
+if $LAB_ANONYMITY; then
+    log "Anonymity: launch Tor Browser manually; pentest only against /etc/ctg/lab-targets.conf entries"
+fi
 log "Maltego CE: manual install from vendor .deb (EULA). Suricata primary IDS belongs on OPNsense, not Kali."
 log "DuckDuckGo: preserve host/iPhone/router DNS per $IPHONE_HARDENING_DOC — OPNsense lab forwarders: docs/OPNSENSE_LAB_DNS.md"
+log "Pentest (nmap, metasploit, burp, sqlmap): lab-owned VMs and written scope only — see docs/KALI_LAB_ARCHITECTURE.md"
