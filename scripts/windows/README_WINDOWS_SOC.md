@@ -83,6 +83,7 @@ Optional: Defender ASR audit mode:
 | `harden_windows.ps1` | Orchestrator; flags control each step |
 | `install_sysmon.ps1` | Download Sysmon + SwiftOnSecurity XML |
 | `wazuh_agent_setup.ps1` | MSI/winget/choco agent install |
+| `iphone_usb_check.ps1` | Log-only: iPhone USB attached → run `IPHONE_RUN_NOW` USB steps (no device modification) |
 
 Check Wazuh without installing:
 
@@ -150,6 +151,28 @@ Test-NetConnection -ComputerName $env:CTG_WAZUH_MANAGER -Port 1514
 
 - [docs/SECURITY_HARDENING.md](../../docs/SECURITY_HARDENING.md) — project-wide env vars and API hardening
 - [docs/FIREWALL_BASELINE.md](../../docs/FIREWALL_BASELINE.md) — Linux/BPI-R3 firewall (complements Windows stack)
+- [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md) · [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) · [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) — iPhone Settings + USB (preserve VPN/DNS)
+
+## iPhone USB (Windows SOC laptop)
+
+When the **iPhone 15 Pro Max** is on USB-C to this PC, hardening is done **on the device** (USB Restricted Mode, Trust This Computer, Find My). CTG scripts do **not** push MDM or change iPhone Settings without Apple Business Manager.
+
+| Item | Detail |
+|------|--------|
+| **Runbook** | [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) Step 5 · [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) |
+| **Preserve VPN/DNS** | Do not install a second DNS VPN on the phone; verify **Settings → VPN** after hardening (DuckDuckGo/NextDNS/1.1.1.1 unchanged) |
+| **Encrypted backup** | Apple Devices → **Encrypt local backup**; align with `D:\Backups\Andy-PC-*`, `C:\Users\Owner\Backups\`, OneDrive `Backups\Andy-PC-*` (see `cloud_backup.ps1`) |
+| **Log stub** | `iphone_usb_check.ps1` — writes `Backups\logs\iphone_usb_check.log`; reminder only |
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\iphone_usb_check.ps1
+```
+
+Nightly `ctg_nightly_4am.ps1` does not run Apple backup (phone must be unlocked and trusted).
 
 ## Microsoft Windows cloud (OneDrive + Defender)
 

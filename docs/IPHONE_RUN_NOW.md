@@ -1,7 +1,8 @@
 # iPhone 15 Pro Max — run now (preserve VPN & DNS)
 
 **Device:** iPhone 15 Pro Max · **iOS:** 17 / 18  
-**Full reference:** [IPHONE_HARDENING.md](IPHONE_HARDENING.md)
+**Full reference:** [IPHONE_HARDENING.md](IPHONE_HARDENING.md)  
+**USB focus:** [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md)
 
 Use this checklist on the phone. **Do not replace** an existing VPN profile or DNS setup unless you intentionally want to switch.
 
@@ -80,12 +81,52 @@ After Steps 1–3:
 
 ---
 
+## Step 5 — USB connection hardening (preserve VPN/DNS)
+
+Run when you use **USB-C** to the Windows laptop or after trusting a new PC. **Does not** change VPN/DNS if you skip new DNS VPN apps.
+
+### Keep VPN/DNS (repeat before and after)
+
+- **Do not** install DuckDuckGo/NextDNS/Cloudflare/**second** DNS VPN if one is already working.
+- **Malwarebytes** SMS/Safari only — **no** Malwarebytes VPN if you keep existing VPN/DNS.
+- After this step: **Settings** → **General** → **VPN & Device Management** → **VPN** — same as Step 0.
+
+### On the iPhone
+
+- [ ] **Settings** → **Face ID & Passcode** → **USB Accessories** → **Off** when locked
+- [ ] **Trust This Computer** — only on Andy’s laptop; if unsure → **Settings** → **General** → **Transfer or Reset iPhone** → **Reset** → **Reset Location & Privacy**
+- [ ] **Settings** → **Face ID & Passcode** → **Stolen Device Protection** on
+- [ ] **Settings** → **[your name]** → **Find My** → **Find My iPhone** on
+- [ ] **Settings** → **Privacy & Security** → **Developer Mode** off (unless dev week)
+- [ ] **Settings** → **General** → **VPN & Device Management** — no unknown profiles
+- [ ] Trusted USB-C cable; data blocker for untrusted public charging when possible
+- [ ] (Optional) **Settings** → **Privacy & Security** → **Lockdown Mode** — see [IPHONE_HARDENING.md](IPHONE_HARDENING.md)
+
+### On Windows (when cable attached)
+
+- [ ] **Apple Devices** → device → **Encrypt local backup** → **Back Up Now** (password in password manager)
+- [ ] Turn **off** automatic sync unless you want it every connect
+- [ ] Optional log reminder (no phone changes):
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\iphone_usb_check.ps1
+```
+
+Backup paths aligned with nightly CTG: `D:\Backups\Andy-PC-YYYY-MM-DD\`, `C:\Users\Owner\Backups\...`, OneDrive `Backups\Andy-PC-...` — details in [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md).
+
+---
+
 ## Quick decision card
 
 ```
 HAVE VPN or DNS already?  →  Settings hardening YES  |  Malwarebytes YES  |  Cloudflare/NextDNS SKIP
 NO VPN/DNS?               →  Settings hardening YES  |  Malwarebytes YES  |  Cloudflare OR NextDNS (pick one, optional)
 Want Wi‑Fi DNS only?      →  Configure DNS → Manual on home Wi‑Fi  |  skip DNS VPN apps
+USB to Windows laptop?    →  Step 5 USB hardening  |  encrypted backup  |  VPN verify unchanged
 ```
 
 ---

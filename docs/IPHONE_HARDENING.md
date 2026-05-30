@@ -26,7 +26,8 @@ What actually protects iPhone users:
 
 **What you cannot do from a Windows PC:** Install App Store apps on your iPhone remotely without Apple Business Manager / MDM enrollment. Andy must install apps **on the phone** (see [Manual install steps](#what-andy-must-do-manually-on-the-iphone) below).
 
-**Action runbook:** [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) — step-by-step checklist including VPN/DNS verification.
+**Action runbook:** [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) — step-by-step checklist including VPN/DNS verification.  
+**USB focus:** [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md) — Trust This Computer, encrypted backup to SSD/OneDrive paths, Windows laptop reminders.
 
 ---
 
@@ -211,6 +212,8 @@ Profiles can enforce custom DNS, certificates, and MDM control—**never** insta
 
 When enabled, USB data accessories (including some forensic tools) cannot connect until the device is unlocked. Charging still works.
 
+Full USB + Windows backup checklist: [§ USB connection hardening](#usb-connection-hardening) and [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md).
+
 ### 14. Additional hardening (recommended)
 
 | Setting | Path | Recommendation |
@@ -223,6 +226,42 @@ When enabled, USB data accessories (including some forensic tools) cannot connec
 | **Siri & Search** | Settings → Siri & Search | Limit lock screen Siri; review app shortcuts |
 | **Messages** | Settings → Apps → Messages | **Filter Unknown Senders**; **Report Junk** on spam |
 | **Face ID apps** | Settings → Face ID & Passcode → Other Apps | Only enable for apps that need it |
+
+---
+
+## USB connection hardening
+
+Use this when the iPhone 15 Pro Max is on **USB-C** to Andy’s Windows SOC laptop or when you charge in public. **These steps do not change VPN or DNS** — complete them in addition to [Preserve your existing VPN and DNS](#preserve-your-existing-vpn-and-dns-read-before-installing-apps).
+
+**Focused runbook:** [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md) · tap-through on device: [IPHONE_RUN_NOW.md § USB](IPHONE_RUN_NOW.md#step-5--usb-connection-hardening-preserve-vpndns).
+
+### Keep VPN/DNS while hardening USB (repeat)
+
+- **Do not** install a second DNS VPN if **DuckDuckGo**, **NextDNS**, **Cloudflare 1.1.1.1**, or **Wi‑Fi Manual DNS** is already configured.
+- **Malwarebytes** for SMS/Safari only — **no** Malwarebytes paid VPN alongside your existing profile.
+- After USB hardening: **Settings** → **General** → **VPN & Device Management** → **VPN** — verify the same profile(s) as before (**Connected** if they were before).
+
+### iPhone settings (USB-C, iOS 17 / 18)
+
+| Control | Path | Action |
+|---------|------|--------|
+| **USB Restricted Mode** | **Settings** → **Face ID & Passcode** → **USB Accessories** | **Off** when locked (after ~1h locked, data USB blocked; charging OK) |
+| **Trust This Computer** | Prompt on first USB connect | **Trust** only Andy’s laptop; if unknown PCs were trusted → **Settings** → **General** → **Transfer or Reset iPhone** → **Reset** → **Reset Location & Privacy** |
+| **Stolen Device Protection** | **Settings** → **Face ID & Passcode** | **On** (iOS 17.3+) — see [§ 2](#2-strong-passcode-face-id-stolen-device-protection) |
+| **Find My / Activation Lock** | **Settings** → **[your name]** → **Find My** | **Find My iPhone** **On** |
+| **Developer Mode** | **Settings** → **Privacy & Security** → **Developer Mode** | **Off** unless actively developing |
+| **Configuration profiles** | **Settings** → **General** → **VPN & Device Management** | Remove profiles not from known work/school MDM |
+| **Lockdown Mode** (optional) | **Settings** → **Privacy & Security** → **Lockdown Mode** | Stronger USB accessory limits; see [§ 8](#8-lockdown-mode-optional--high-threat-profile) |
+| **USB-C hygiene** | Physical | Trusted cable; **data blocker** on untrusted public charge ports |
+
+### When plugged into Windows (Andy’s laptop)
+
+1. **Apple Devices** (or iTunes) — run **encrypted local backup**; store encryption password in your password manager (never in git).
+2. Prefer backup trees already covered by CTG nightly: `D:\Backups\Andy-PC-YYYY-MM-DD\`, fallback `C:\Users\Owner\Backups\Andy-PC-YYYY-MM-DD\`, OneDrive `Backups\Andy-PC-YYYY-MM-DD\` via [cloud_backup.ps1](../scripts/windows/cloud_backup.ps1). Default Apple MobileSync backups live under `%AppData%\Apple Computer\MobileSync\Backup\`.
+3. **Disable auto-sync** in Apple Devices unless you want photos/music sync on every connect.
+4. Run log-only reminder (no device modification): `.\scripts\windows\iphone_usb_check.ps1` — see [README_WINDOWS_SOC.md § iPhone USB](../scripts/windows/README_WINDOWS_SOC.md#iphone-usb-windows-soc-laptop).
+
+**Do not** push MDM or configuration profiles from the PC without **Apple Business Manager** and explicit MSP scope.
 
 ---
 
@@ -339,6 +378,8 @@ Same principle everywhere: **reduce attack surface**, **log and detect on infras
 [ ] Bluetooth / Local Network permissions audited
 [ ] Lock screen previews restricted
 [ ] USB Restricted Mode (accessories when locked OFF)
+[ ] USB: Trust only Andy's laptop; encrypted backup when plugged into Windows
+[ ] USB-C trusted cable; data blocker for untrusted public ports
 [ ] Malwarebytes installed + SMS/Safari features enabled (safe with existing VPN/DNS)
 [ ] DNS VPN app ONLY if none already: Cloudflare 1.1.1.1 OR NextDNS — else SKIP
 [ ] Post-hardening: VPN + Wi‑Fi DNS unchanged from baseline

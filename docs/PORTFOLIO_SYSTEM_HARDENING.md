@@ -166,11 +166,13 @@ For Hacker Planet **Year 1 kits**, the narrative is: reproducible scripts + runb
 
 ## iPhone 15 Pro Max defensive hardening
 
-**Docs:** [IPHONE_HARDENING.md](IPHONE_HARDENING.md) · [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md)
+**Docs:** [IPHONE_HARDENING.md](IPHONE_HARDENING.md) · [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) · [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md)
 
 **iOS constraint:** No traditional filesystem AV. App Store “antivirus” cannot scan other apps’ sandboxes like Defender on Windows. The portfolio approach is **Settings-first** (Face ID, Stolen Device Protection, Find My, Safari fraud warning, USB restricted when locked, AirDrop contacts-only), then **additive tools that do not steal the VPN slot**.
 
 **Preserve VPN/DNS:** Step 0 documents existing VPN profiles and Wi‑Fi Manual DNS before any app install. Malwarebytes free tier = **SMS filtering + Safari content blocking**—compatible with DuckDuckGo/NextDNS/Private Relay because it does not install a competing system DNS VPN. Optional Cloudflare/NextDNS apps are documented as **mutually exclusive** with other DNS VPN strategies.
+
+**USB to Windows SOC:** USB Restricted Mode, trust-only-laptop, encrypted backup via Apple Devices to SSD/OneDrive backup trees, optional `scripts/windows/iphone_usb_check.ps1` log reminder—no MDM push from PC. Runbook Step 5 in `IPHONE_RUN_NOW.md`.
 
 ---
 
@@ -218,7 +220,7 @@ The platform repo is the **single source of truth** for defensive automation tha
 - Elevated `ctg_soc_run_once.ps1` after major OS changes or quarterly hygiene
 - `mount_ssd_d.ps1` when external SDK SSD is physically connected and shows No Media
 - Non-admin `selective_ssd_backup.ps1` / `cloud_backup.ps1` on schedule
-- iPhone checklist from `IPHONE_RUN_NOW.md` after iOS upgrades
+- iPhone checklist from `IPHONE_RUN_NOW.md` after iOS upgrades; USB section + `iphone_usb_check.ps1` when plugging into the laptop
 - Cardputer UTMS scan after sideloading new `/apps/` payloads
 
 **What remains documented for MSP/kits:**
