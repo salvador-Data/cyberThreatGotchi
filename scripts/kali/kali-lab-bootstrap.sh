@@ -227,6 +227,19 @@ if ! $DRY_RUN && command -v ufw >/dev/null; then
     ufw --force enable || true
 fi
 
+# --- password policy (faillock + chage) ---
+log "Phase: password policy"
+PWD_SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/harden-password-policy.sh"
+if [[ -f "$PWD_SCRIPT" ]]; then
+    if $DRY_RUN; then
+        log "[dry-run] bash $PWD_SCRIPT --apply --lab-user=sal"
+    else
+        bash "$PWD_SCRIPT" --apply --lab-user=sal || log "password policy script returned non-zero"
+    fi
+else
+    log "harden-password-policy.sh not found — skip"
+fi
+
 # --- clamav ---
 log "Phase: clamav"
 run DEBIAN_FRONTEND=noninteractive apt-get install -y -qq clamav clamav-daemon clamav-freshclam

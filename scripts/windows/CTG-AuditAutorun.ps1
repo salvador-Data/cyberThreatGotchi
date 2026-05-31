@@ -174,6 +174,21 @@ function Invoke-CtgHardenPass {
     } else {
         Write-AuditLog 'Preserve-DuckDuckGoVpn.ps1 not found - skipped' 'WARN'
     }
+
+    $pwdScript = Join-Path $Win 'Harden-PasswordPolicy.ps1'
+    if (Test-Path $pwdScript) {
+        Write-AuditLog 'Harden: Harden-PasswordPolicy -DiagnoseOnly'
+        $pwdOut = Join-Path $hardenDir 'password-policy-diagnose.txt'
+        & $pwdScript -DiagnoseOnly *>&1 | Tee-Object -FilePath $pwdOut
+        if ($script:CtgIsAdmin) {
+            Write-AuditLog 'Harden: Harden-PasswordPolicy -ApplyPolicy (elevated)'
+            & $pwdScript -ApplyPolicy *>&1 | Tee-Object -FilePath (Join-Path $hardenDir 'password-policy-apply.txt') -Append
+        } else {
+            Write-AuditLog 'Harden-PasswordPolicy -ApplyPolicy skipped (not Admin)' 'WARN'
+        }
+    } else {
+        Add-AuditError 'Harden-PasswordPolicy.ps1 missing'
+    }
 }
 
 function Invoke-CtgWindowsSecurityAudit {

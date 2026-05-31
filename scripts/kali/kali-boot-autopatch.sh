@@ -10,6 +10,7 @@
 #   sudo bash kali-boot-autopatch.sh --ids-ips      # ClamAV + Suricata-primary (detect-only)
 #   sudo bash kali-boot-autopatch.sh --siem         # JSON export to Backups/logs/siem/
 #   sudo bash kali-boot-autopatch.sh --install      # install systemd unit for boot
+#   sudo bash kali-boot-autopatch.sh --retbleed     # RETBleed diagnose + apply (see docs/KALI_RETBLEED.md)
 set -euo pipefail
 
 LOG_FILE="/var/log/ctg-boot-autopatch.log"
@@ -28,6 +29,7 @@ DO_WIFI_LAB=false
 DO_IDS_IPS=false
 DO_SIEM=false
 DO_IDS_OPTIMIZE=false
+DO_RETBLEED=false
 
 log() {
     local msg="[$(date -Iseconds)] [ctg-boot-autopatch] $*"
@@ -59,9 +61,11 @@ CTG Kali boot autopatch — authorized defensive lab use only.
   sudo bash $0 --ids-ips --optimize  Pass --optimize to IDS autorun
   sudo bash $0 --siem          Run ctg-siem-autorun (JSON export for Windows tail)
   sudo bash $0 --install       Install ${SERVICE_NAME} for boot-time runs
+  sudo bash $0 --retbleed      Run fix-retbleed-mitigation.sh (--apply if also --upgrade)
   sudo bash $0 --help
 
 Log: ${LOG_FILE}
+RETBleed log: /var/log/ctg-retbleed.log (see docs/KALI_RETBLEED.md)
 DuckDuckGo DNS: preserved when 94.140.14.14/15.15 already in resolv.conf
 EOF
 }
@@ -75,6 +79,7 @@ while [[ $# -gt 0 ]]; do
         --ids-ips) DO_IDS_IPS=true ;;
         --optimize) DO_IDS_OPTIMIZE=true ;;
         --siem) DO_SIEM=true ;;
+        --retbleed) DO_RETBLEED=true ;;
         --help|-h) usage; exit 0 ;;
         *) log "Unknown option: $1"; usage; exit 1 ;;
     esac
@@ -90,7 +95,7 @@ mkdir -p /var/lib/ctg "$(dirname "$LOG_FILE")"
 touch "$LOG_FILE"
 chmod 644 "$LOG_FILE"
 
-log "=== CTG Kali boot autopatch start (upgrade=$DO_UPGRADE firmware=$DO_FIRMWARE wifi_lab=$DO_WIFI_LAB ids_ips=$DO_IDS_IPS siem=$DO_SIEM optimize=$DO_IDS_OPTIMIZE) ==="
+log "=== CTG Kali boot autopatch start (upgrade=$DO_UPGRADE firmware=$DO_FIRMWARE wifi_lab=$DO_WIFI_LAB ids_ips=$DO_IDS_IPS siem=$DO_SIEM optimize=$DO_IDS_OPTIMIZE retbleed=$DO_RETBLEED) ==="
 
 resolv_has_ddg() {
     [[ -f /etc/resolv.conf ]] && grep -qE '94\.140\.(14\.14|15\.15)' /etc/resolv.conf
@@ -127,7 +132,9 @@ disable_broken_ctg_profiled() {
 }
 
 fix_virtualbox_guest_packages() {
-    log "Phase: VirtualBox guest packages (x11, utils, dkms)"
+    # virtualbox-guest-x11 is required for VirtualBox seamless mode (Host+L on Windows).
+    # See docs/KALI_VIRTUALBOX_SEAMLESS.md
+    log "Phase: VirtualBox guest packages (x11, utils, dkms) — seamless + blank-screen fix"
     export DEBIAN_FRONTEND=noninteractive
     local missing=()
     for pkg in virtualbox-guest-x11 virtualbox-guest-utils dkms; do
@@ -325,6 +332,26 @@ run_siem_autorun() {
     bash "$siem_script" "${siem_args[@]}" || log "SIEM autorun returned non-zero (continuing boot autopatch)"
 }
 
+run_retbleed_mitigation() {
+    log "Phase: RETBleed mitigation (retbleed=$DO_RETBLEED upgrade=$DO_UPGRADE)"
+    local rb_script="$SCRIPT_DIR/fix-retbleed-mitigation.sh"
+    for candidate in /mnt/ctg/fix-retbleed-mitigation.sh /opt/ctg/fix-retbleed-mitigation.sh /media/sf_ctg-backups/fix-retbleed-mitigation.sh; do
+        if [[ -f "$candidate" ]]; then
+            rb_script="$candidate"
+            break
+        fi
+    done
+    if [[ ! -f "$rb_script" ]]; then
+        log "fix-retbleed-mitigation.sh not found — skip RETBleed phase"
+        return 0
+    fi
+    if $DO_RETBLEED || $DO_UPGRADE; then
+        bash "$rb_script" --apply || log "RETBleed apply returned non-zero (continuing)"
+    else
+        bash "$rb_script" --diagnose-only || log "RETBleed diagnose returned non-zero (continuing)"
+    fi
+}
+
 run_wifi_lab_autorun() {
     log "Phase: ctg-wifi-lab-autorun (--wifi-lab)"
     local wifi_script="$SCRIPT_DIR/ctg-wifi-lab-autorun.sh"
@@ -403,6 +430,7 @@ if $DO_SIEM; then
 fi
 fix_gdm_wayland_blank_screen
 ensure_ctg_backups_mount_hint
+run_retbleed_mitigation
 run_optional_upgrade
 scan_journal_boot_errors
 maybe_install_firmware

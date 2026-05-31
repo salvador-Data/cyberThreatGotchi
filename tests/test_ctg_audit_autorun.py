@@ -50,6 +50,7 @@ def test_audit_autorun_script_exists_and_parses():
     assert "CTG_AUDIT_REMOTE" in text
     assert "selective_ssd_backup.ps1" in text
     assert "Harden-DDoSRogueWifi.ps1" in text
+    assert "Harden-PasswordPolicy.ps1" in text
     assert "ctg-audit-autorun.log" in text
     _parse_ps1(script)
 

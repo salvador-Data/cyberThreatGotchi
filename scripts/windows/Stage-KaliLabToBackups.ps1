@@ -77,7 +77,9 @@ $docs = @(
     @{ Src = 'docs\KALI_IDS_IPS_CLAMAV.md'; Dest = 'KALI_IDS_IPS_CLAMAV.md' },
     @{ Src = 'docs\CTG_SHIELD_SIEM_PLAYBOOK.md'; Dest = 'CTG_SHIELD_SIEM_PLAYBOOK.md' },
     @{ Src = 'docs\CTG_LAB_PLAYGROUND.md'; Dest = 'CTG_LAB_PLAYGROUND.md' },
-    @{ Src = 'docs\CTG_LAB_AUTORUN.md'; Dest = 'CTG_LAB_AUTORUN.md' }
+    @{ Src = 'docs\CTG_LAB_AUTORUN.md'; Dest = 'CTG_LAB_AUTORUN.md' },
+    @{ Src = 'docs\KALI_RETBLEED.md'; Dest = 'KALI_RETBLEED.md' },
+    @{ Src = 'docs\PASSWORD_HARDENING.md'; Dest = 'PASSWORD_HARDENING.md' }
 )
 foreach ($d in $docs) {
     $srcPath = Join-Path $RepoRoot $d.Src
