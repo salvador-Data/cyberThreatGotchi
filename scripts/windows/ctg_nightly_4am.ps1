@@ -379,6 +379,19 @@ Invoke-CtgDefenderQuickScan
 Invoke-CtgSysmonCheck
 Invoke-CtgWazuhCheck
 
+Write-NightlyLog '--- CTG Audit Autorun (compartments) ---'
+$auditScript = Join-Path $Win 'CTG-AuditAutorun.ps1'
+if (Test-Path $auditScript) {
+    try {
+        & $auditScript -AuditOnly -SinkCloud *>&1 | ForEach-Object { Write-NightlyLog "  audit: $_" }
+    } catch {
+        Write-NightlyLog "CTG-AuditAutorun.ps1 failed: $($_.Exception.Message)" 'WARN'
+        Add-StepError 'audit_autorun'
+    }
+} else {
+    Write-NightlyLog 'CTG-AuditAutorun.ps1 missing' 'WARN'
+}
+
 Write-NightlyLog '--- Preserve DuckDuckGo VPN ---'
 $vpnScript = Join-Path $Win 'Preserve-DuckDuckGoVpn.ps1'
 if (Test-Path $vpnScript) {

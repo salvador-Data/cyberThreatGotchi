@@ -18,6 +18,7 @@ NIGHTLY_PS1 = (
     "ctg_website_nightly.ps1",
     "Register-CtgNightlyTask.ps1",
     "ctg_nightly_install.ps1",
+    "CTG-AuditAutorun.ps1",
 )
 
 
@@ -79,6 +80,7 @@ def test_nightly_orchestrator_backup_and_domain():
     assert "mandatory" in orch.lower()
     assert "website nightly still runs" in orch.lower()
     assert "Copy-SocLogsToSsd" in orch
+    assert "CTG-AuditAutorun.ps1" in orch
     assert "docs-web" in website
     assert "https://hackerplanet.dev/" in website
     assert "sync_website_to_docs.py" in website

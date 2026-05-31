@@ -1,0 +1,34 @@
+# Filebeat example — audit compartment shipper (Elastic/OpenSearch)
+# Copy to e.g. C:\ProgramData\CTG\filebeat\filebeat.yml
+# Do NOT commit credentials; set CTG_ELASTIC_HOST and auth via env or keystore.
+
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - C:\Users\Owner\Backups\audit\*\run-*\manifest.json
+      - C:\Users\Owner\Backups\audit\*\run-*\windows-security\*.json
+      - C:\Users\Owner\Backups\audit\*\run-*\network-ids\wireshark-alerts.json
+      - C:\Users\Owner\Backups\audit\*\run-*\soc-ctg\*.json
+    json.keys_under_root: true
+    fields:
+      service: ctg-audit
+      host: ${HOSTNAME}
+    fields_under_root: true
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+
+output.elasticsearch:
+  hosts: ["${CTG_ELASTIC_HOST:localhost:9200}"]
+  # username: ${CTG_ELASTIC_USER}
+  # password: ${CTG_ELASTIC_PASSWORD}
+  # For OpenSearch, use output.opensearch section instead.
+
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: C:\ProgramData\CTG\filebeat\logs
+  name: filebeat
+  keepfiles: 7
