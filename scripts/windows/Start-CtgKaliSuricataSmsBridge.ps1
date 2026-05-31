@@ -55,7 +55,7 @@ function Write-BridgeLog {
 
 function Invoke-CtgBridgeTestAlert {
     $alertScript = Join-Path $PSScriptRoot 'Send-CtgIdsAlert.ps1'
-    $msg = 'CTG Suricata: [info] sid 9000001 — review log'
+    $msg = 'CTG Suricata: [info] sid 9000001 - review log'
     Write-BridgeLog "Sending test alert: $msg" 'Cyan'
     $args = @{
         AlertType   = 'suricata-kali-test'
@@ -126,7 +126,7 @@ function Invoke-CtgBridgeAlert {
     if ($Alert.Severity -notin @('high', 'critical')) { return }
     $sid = if ($Alert.Sid) { $Alert.Sid } else { 'unknown' }
     $alertScript = Join-Path $PSScriptRoot 'Send-CtgIdsAlert.ps1'
-    $msg = "CTG Suricata: [$($Alert.Severity)] sid $sid — review log"
+    $msg = "CTG Suricata: [$($Alert.Severity)] sid $sid - review log"
     $args = @{
         AlertType = "suricata-kali-sid-$sid"
         Severity  = $Alert.Severity

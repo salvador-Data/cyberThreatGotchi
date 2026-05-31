@@ -80,7 +80,7 @@ def test_start_script_flags_and_sms_format():
         "ApplyRules",
         "TestAlert",
         "CTG Suricata:",
-        "Send-CtgSmsAlert.ps1",
+        "Send-CtgIdsAlert.ps1",
         "suricata-sid-",
         "UseKaliBridge",
         "BlockRepeatOffender",
@@ -93,7 +93,7 @@ def test_kali_bridge_script():
     text = (WIN / "Start-CtgKaliSuricataSmsBridge.ps1").read_text(encoding="utf-8")
     assert "kali-suricata" in text
     assert "suricata_eve_tail" in text
-    assert "CTG Suricata/Kali:" in text
+    assert "CTG Suricata:" in text
 
 
 def test_register_task_interactive_highest():

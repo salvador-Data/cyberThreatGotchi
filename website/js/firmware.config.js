@@ -10,7 +10,7 @@ window.HPL_FIRMWARE = {
       num: "1",
       title: "Flash M5 OS",
       detail:
-        "Clone M5_OS-Cardputer to Projects\\M5_OS-Cardputer (repo root has platformio.ini - no platformio\\ subfolder). Build env m5stack-cardputer, then USB upload.",
+        "Clone M5_OS-Cardputer to Programs\\Hacker Planet LLC\\M5_OS-Cardputer (repo root has platformio.ini - no platformio\\ subfolder). Build env m5stack-cardputer, then USB upload.",
     },
     {
       num: "2",
