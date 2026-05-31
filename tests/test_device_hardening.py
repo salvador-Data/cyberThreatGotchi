@@ -180,7 +180,8 @@ def test_iphone_tether_monitoring_doc():
         "Start-CtgIphoneTetherIds",
     ):
         assert needle in body, needle
-    assert "emulate" not in body.lower() or "not emulation" in body.lower()
+    assert "emulate" not in body.lower()
+    assert "emulation" not in body.lower()
     assert not PHONE_PATTERN.search(body)
 
 
