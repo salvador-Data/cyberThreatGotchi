@@ -11,7 +11,7 @@
   Rate-limit key (e.g. snort-sid-1000001).
 
 .PARAMETER Message
-  Short alert body — no payloads or PII.
+  Short alert body - no payloads or PII.
 
 .PARAMETER Severity
   Passed through to Twilio SMS prefix when SMS channel is used.

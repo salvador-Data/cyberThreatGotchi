@@ -3,9 +3,9 @@
   Diagnose signal-cli for CTG SOC alerts and print link/register steps.
 
 .DESCRIPTION
-  signal-cli is free OSS — sends Signal messages from Windows or WSL without Twilio.
+  signal-cli is free OSS - sends Signal messages from Windows or WSL without Twilio.
   Account data stays in gitignored config dir (never commit).
-  Does not auto-download binaries — prints install URLs and one-command steps.
+  Does not auto-download binaries - prints install URLs and one-command steps.
 
 .PARAMETER DiagnoseOnly
   Report Java, signal-cli path, config dir, linked account, env vars.
@@ -42,7 +42,7 @@ $configured = Test-CtgSignalConfigured
 $java = Get-Command java -ErrorAction SilentlyContinue
 Write-Step "Java on PATH: $(if ($java) { $java.Source } else { 'NOT FOUND (required for signal-cli JAR builds)' })" `
     $(if ($java) { 'Green' } else { 'Yellow' })
-Write-Step "signal-cli: $(if ($cli) { $cli } else { 'NOT FOUND — set CTG_SIGNAL_CLI_PATH' })" `
+Write-Step "signal-cli: $(if ($cli) { $cli } else { 'NOT FOUND - set CTG_SIGNAL_CLI_PATH' })" `
     $(if ($cli) { 'Green' } else { 'Red' })
 Write-Step "Config dir: $configDir exists=$(Test-Path $configDir)"
 Write-Step "Linked account: $(if ($account) { $account } else { 'none' })"
@@ -76,17 +76,17 @@ if ($cli) {
     Write-Step 'signal-cli --config "%USERPROFILE%\.local\share\signal-cli" link -n CTG-SOC' 'White'
 }
 Write-Step ''
-Write-Step 'Alternative (SMS register — needs dedicated number, not your primary phone):'
+Write-Step 'Alternative (SMS register - needs dedicated number, not your primary phone):'
 Write-Step 'signal-cli -a +1XXXXXXXXXX register'
 Write-Step 'signal-cli -a +1XXXXXXXXXX verify CODE'
 
 Write-Host ''
-Write-Step '--- .env (local only — never commit) ---' 'Cyan'
+Write-Step '--- .env (local only - never commit) ---' 'Cyan'
 Write-Step 'CTG_SIGNAL_CLI_PATH=C:\Users\Owner\AppData\Local\Programs\signal-cli\signal-cli.exe'
 Write-Step 'CTG_SIGNAL_CONFIG_DIR=%USERPROFILE%\.local\share\signal-cli'
 Write-Step 'CTG_ALERT_SIGNAL_TO=+1XXXXXXXXXX'
 Write-Step 'CTG_SIGNAL_ACCOUNT=+1XXXXXXXXXX'
-Write-Step '# CTG_USE_TWILIO=1   # optional — force Twilio instead of Signal'
+Write-Step '# CTG_USE_TWILIO=1   # optional - force Twilio instead of Signal'
 
 Write-Host ''
 Write-Step '--- Vault phone (preferred over .env) ---' 'Cyan'

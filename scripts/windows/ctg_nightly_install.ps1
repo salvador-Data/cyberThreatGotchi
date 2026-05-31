@@ -23,7 +23,7 @@ if (-not (Test-Path $register)) {
 }
 
 Write-Host '=== CTG Nightly 4 AM installer ==='
-Write-Host 'Windows laptop + hackerplanet.dev — backup, website sync/health, SOC scans nightly at 4 AM.'
+Write-Host 'Windows laptop + hackerplanet.dev - backup, website sync/health, SOC scans nightly at 4 AM.'
 & $register
 if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) { exit $LASTEXITCODE }
 Write-Host ''

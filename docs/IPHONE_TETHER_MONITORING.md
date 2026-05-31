@@ -1,4 +1,4 @@
-﻿# iPhone tether egress monitoring (honest scope)
+# iPhone tether egress monitoring (honest scope)
 
 **Hacker Planet LLC / CyberThreatGotchi** â€” defensive lab use on devices you **own** or are **explicitly authorized** to administer.
 
@@ -10,13 +10,13 @@
 
 When your iPhone shares internet with a Windows SOC laptop (**Personal Hotspot** Wiâ€‘Fi or **USB tether**), the laptop receives a **NAT'd IP path** through the phone. CTG can run **detect-only IDS** (Snort or Suricata) on that Windows network adapter and send **Signal** alerts for high/critical hits.
 
-This is **monitor tether egress** â€” not emulation or spoofing of the phone's radios.
+This is **monitor tether egress** â€” not spoofing of the phone's radios.
 
 | Layer | Can Windows/Kali monitor from laptop? | Cannot do (illegal / impossible without jailbreak) |
 |-------|--------------------------------------|-----------------------------------------------------|
 | **Wiâ€‘Fi (phone as hotspot AP)** | IP traffic **after** laptop joins hotspot; adapter heuristics + optional SSID pattern (`YourHotspotSSID`) | Rewrite iPhone Wiâ€‘Fi MAC, impersonate phone on home LAN, decrypt WPA3 for third parties |
 | **BLE** | **No IDS path** â€” BLE stays on phone SoC; optional **passive lab inventory** only (Apple continuity beacons nearby) | Spoof iPhone BLE identity, inject pairing, "be" the phone over BLE from laptop |
-| **Cellular (LTE/5G)** | **NAT'd IP only** on tether/hotspot hop â€” same as any upstream gateway | Emulate modem/IMSI/ICCID, intercept carrier air interface, SIM clone from laptop |
+| **Cellular (LTE/5G)** | **NAT'd IP only** on tether/hotspot hop â€” same as any upstream gateway | Spoof modem/IMSI/ICCID, intercept carrier air interface, SIM clone from laptop |
 
 **Preserve DuckDuckGo VPN/DNS on the phone.** Tether monitoring does not replace or disable DDG VPN; complete the read-only checklist before capture sessions.
 

@@ -3,12 +3,12 @@
   Install and configure Snort 2.9.x IDS on Windows 11 Pro (detect-only, CTG lab).
 
 .DESCRIPTION
-  Snort 3 has no official Windows build — this stack targets Snort 2.9 Windows + Npcap.
+  Snort 3 has no official Windows build - this stack targets Snort 2.9 Windows + Npcap.
   Rules and config live under Backups\ctg-snort\ (never commit secrets).
   Primary perimeter IPS remains OPNsense Suricata; Kali runs Suricata-primary passive IDS.
 
 .PARAMETER DiagnoseOnly
-  Check Win11 Pro, Npcap, admin, Snort binary, CTG paths — no install.
+  Check Win11 Pro, Npcap, admin, Snort binary, CTG paths - no install.
 
 .PARAMETER InstallViaChocolatey
   Attempt choco install snort when binary missing (legacy 2.9.14 package).
@@ -55,14 +55,14 @@ function Invoke-CtgSnortDiagnose {
     if (-not $isAdmin) {
         Write-InstallLog 'WARN: Snort live capture requires elevated PowerShell' 'Yellow'
     }
-    Write-InstallLog "Npcap: $(if ($npcap) { 'installed' } else { 'MISSING — run Install-WiresharkNpcap.ps1 or install from https://npcap.com' })"
+    Write-InstallLog "Npcap: $(if ($npcap) { 'installed' } else { 'MISSING - run Install-WiresharkNpcap.ps1 or install from https://npcap.com' })"
     if (-not $npcap) { $ok = $false }
     if ($snort) {
         Write-InstallLog "Snort binary: $snort"
         $ver = Get-CtgSnortVersion -SnortPath $snort
         if ($ver) { Write-InstallLog "Snort version: $ver" }
     } else {
-        Write-InstallLog 'Snort: NOT installed — download Snort 2.9.x Windows installer from https://www.snort.org/downloads' 'Red'
+        Write-InstallLog 'Snort: NOT installed - download Snort 2.9.x Windows installer from https://www.snort.org/downloads' 'Red'
         Write-InstallLog '  Optional: -InstallViaChocolatey (legacy choco package 2.9.14.1)' 'Yellow'
         Write-InstallLog '  Fallback: Start-CtgSnortIDS.ps1 -UseWiresharkFallback uses tshark heuristics' 'Yellow'
         $ok = $false
@@ -77,9 +77,9 @@ function Invoke-CtgSnortDiagnose {
     if ($twilioOk.Count -eq 4) {
         Write-InstallLog 'Twilio SMS: env configured (Send-CtgSmsAlert.ps1 -TestMessage)'
     } else {
-        Write-InstallLog 'Twilio SMS: not fully configured — set vars in local .env'
+        Write-InstallLog 'Twilio SMS: not fully configured - set vars in local .env'
     }
-    Write-InstallLog "DiagnoseOnly result: $(if ($ok) { 'PASS' } else { 'FAIL — see manual steps in docs/WINDOWS_SNORT_IDS_SMS.md' })"
+    Write-InstallLog "DiagnoseOnly result: $(if ($ok) { 'PASS' } else { 'FAIL - see manual steps in docs/WINDOWS_SNORT_IDS_SMS.md' })"
     return $ok
 }
 
@@ -113,7 +113,7 @@ function Deploy-CtgSnortConfig {
 function Install-CtgSnortChocolatey {
     $choco = Get-Command choco -ErrorAction SilentlyContinue
     if (-not $choco) {
-        Write-InstallLog 'Chocolatey not found — install Snort manually from snort.org' 'Yellow'
+        Write-InstallLog 'Chocolatey not found - install Snort manually from snort.org' 'Yellow'
         return $false
     }
     if ($WhatIf) {
@@ -139,7 +139,7 @@ Ensure-CtgSnortLayout -Paths $paths
 
 if (-not $npcap) {
     $npcapScript = Join-Path $PSScriptRoot 'Install-WiresharkNpcap.ps1'
-    Write-InstallLog 'Npcap required — install Wireshark/Npcap first:' 'Yellow'
+    Write-InstallLog 'Npcap required - install Wireshark/Npcap first:' 'Yellow'
     Write-InstallLog "  $npcapScript"
     if (-not $WhatIf -and (Test-Path $npcapScript)) {
         Write-InstallLog 'Attempting Wireshark/Npcap install via winget/choco...' 'Cyan'
@@ -161,7 +161,7 @@ if ($snort) {
     if (-not $WhatIf) {
         & $snort -T -c $paths.ConfFile -i $iface 2>&1 | ForEach-Object { Write-InstallLog "snort -T: $_" }
         if ($LASTEXITCODE -ne 0) {
-            Write-InstallLog 'Config test failed — check dynamic engine paths match Snort install dir' 'Yellow'
+            Write-InstallLog 'Config test failed - check dynamic engine paths match Snort install dir' 'Yellow'
             Write-InstallLog "Snort install dir assumed: $snortInstall"
         } else {
             Write-InstallLog 'Snort config test PASSED' 'Green'
@@ -169,7 +169,7 @@ if ($snort) {
     }
 } else {
     Write-InstallLog 'Snort binary still missing. Manual steps:' 'Yellow'
-    Write-InstallLog '1. https://www.snort.org/downloads — Snort 2.9.x Windows installer'
+    Write-InstallLog '1. https://www.snort.org/downloads - Snort 2.9.x Windows installer'
     Write-InstallLog '2. Install to C:\Snort (default)'
     Write-InstallLog '3. Register at snort.org for community rules tarball'
     Write-InstallLog '4. Re-run: .\scripts\windows\Install-CtgSnortWindows.ps1'

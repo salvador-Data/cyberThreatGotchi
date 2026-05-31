@@ -1,5 +1,5 @@
 # Fix VirtualBox Kali blank screen after login (VRAM, graphics, stage in-guest recovery script).
-# Authorized defensive lab use only — Hacker Planet LLC.
+# Authorized defensive lab use only - Hacker Planet LLC.
 param(
     [string]$VmName = 'kali',
     [string]$BackupRoot = 'C:\Users\Owner\Backups',
@@ -74,10 +74,10 @@ Write-CtgFixLog '2. Login as sal, then:'
 Write-CtgFixLog '   sudo bash /mnt/ctg/fix-kali-blank-screen.sh'
 Write-CtgFixLog '   OR if share not mounted:'
 Write-CtgFixLog "   sudo bash $destFix"
-Write-CtgFixLog '3. Ctrl+Alt+F1 or reboot — desktop should appear on X11'
+Write-CtgFixLog '3. Ctrl+Alt+F1 or reboot - desktop should appear on X11'
 Write-CtgFixLog '4. CTG scrambler: launch from Applications (manual GUI only)'
 Write-CtgFixLog '=== Windows already applied (when VM off) ==='
 Write-CtgFixLog "VBoxManage modifyvm $VmName --vram $VramMB --graphicscontroller $GraphicsController --accelerate3d off"
-Write-CtgFixLog 'Root cause notes: 5 MiB VRAM + GNOME Wayland + optional profile.d read prompt — see docs/CTG_LAB_AUTORUN.md'
+Write-CtgFixLog 'Root cause notes: 5 MiB VRAM + GNOME Wayland + optional profile.d read prompt - see docs/CTG_LAB_AUTORUN.md'
 
 exit 0

@@ -3,7 +3,7 @@
   DPAPI-protected local secret vault for CTG lab scripts (Windows CurrentUser scope).
 
 .DESCRIPTION
-  Secrets live under %USERPROFILE%\Backups\.vault\secrets.dpapi — never in git.
+  Secrets live under %USERPROFILE%\Backups\.vault\secrets.dpapi - never in git.
   Set values interactively on your machine; other scripts read via -GetSecret or dot-sourcing.
 
 .PARAMETER SetSecret
@@ -19,7 +19,7 @@
   Delete a named secret from the vault.
 
 .PARAMETER SetSecretHash
-  Store SHA-256 hash of a secret in the DPAPI vault (key Name_HASH) — for local verification only.
+  Store SHA-256 hash of a secret in the DPAPI vault (key Name_HASH) - for local verification only.
   Does NOT enable scheduled-task elevation; Windows needs plaintext or Interactive/UAC.
 
 .PARAMETER TestSecretHash
@@ -29,7 +29,7 @@
   Store recoverable PII (DPAPI). Prompts with SecureString (no echo). Updates hash sidecar + index.
 
 .PARAMETER GetPii
-  Return PII to pipeline for scripts — never Write-Host the value. Use -Quiet for a Name/Value object.
+  Return PII to pipeline for scripts - never Write-Host the value. Use -Quiet for a Name/Value object.
 
 .PARAMETER SetPiiHash
   Store SHA-256 of normalized PII in .vault\<Name>.hash and pii-index.json (no plaintext in index).
@@ -44,7 +44,7 @@
   Optional value for -SetSecret. Omit to prompt (SecureString for *PASSWORD names).
 
 .PARAMETER VaultPath
-  Override vault file path (tests only — do not commit real vaults).
+  Override vault file path (tests only - do not commit real vaults).
 
 .EXAMPLE
   .\Protect-CtgSecrets.ps1 -SetSecret -Name KALI_SSH_USER
@@ -725,7 +725,7 @@ if ($SetPiiHash) {
 }
 
 Write-Host @'
-CTG DPAPI secret vault — interactive use only (no secrets or PII in git).
+CTG DPAPI secret vault - interactive use only (no secrets or PII in git).
 
   Set username:  .\Protect-CtgSecrets.ps1 -SetSecret -Name KALI_SSH_USER
   Set password:  .\Protect-CtgSecrets.ps1 -SetSecret -Name KALI_SSH_PASSWORD
@@ -736,7 +736,7 @@ CTG DPAPI secret vault — interactive use only (no secrets or PII in git).
   List names:    .\Protect-CtgSecrets.ps1 -ListSecrets
   Read (script): .\Protect-CtgSecrets.ps1 -GetSecret -Name KALI_SSH_USER
 
-Never embed SHA256, passwords, or PII in committed .ps1 files — use this vault or .env (gitignored).
+Never embed SHA256, passwords, or PII in committed .ps1 files - use this vault or .env (gitignored).
 
 See docs/SECRET_VAULT.md
 '@

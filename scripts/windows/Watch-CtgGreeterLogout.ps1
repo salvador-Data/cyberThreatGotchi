@@ -1,6 +1,6 @@
-# Background watcher — refresh Kali login greeter size after logout (VirtualBox lab).
+# Background watcher - refresh Kali login greeter size after logout (VirtualBox lab).
 # Started by Start-KaliSeamless.ps1; polls LoggedInUsers and CTG_GREETER_REFRESH on share.
-# Authorized defensive lab use only — Hacker Planet LLC.
+# Authorized defensive lab use only - Hacker Planet LLC.
 param(
     [string]$VmName = 'kali',
     [string[]]$VmNameCandidates = @('kali', 'Kali-Lab', 'Kali', 'kali-linux'),
@@ -32,7 +32,7 @@ Write-CtgSeamlessLog "Watch-CtgGreeterLogout: monitoring $Name (poll ${PollSec}s
 while ($true) {
     $state = Get-CtgVmState -Name $Name -VBoxManage $VBoxManage
     if ($state -ne 'running') {
-        Write-CtgSeamlessLog "Watch-CtgGreeterLogout: VM state $state — exiting watcher"
+        Write-CtgSeamlessLog "Watch-CtgGreeterLogout: VM state $state - exiting watcher"
         break
     }
 

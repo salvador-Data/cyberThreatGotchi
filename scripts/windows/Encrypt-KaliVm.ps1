@@ -388,7 +388,7 @@ if ($encDiag.MachineUuid) {
 foreach ($n in $encDiag.Notes) { Write-CtgKaliEncryptLog "  $n" 'DarkGray' }
 Write-CtgKaliEncryptLog '--- Disk / storage paths ---' 'Yellow'
 if ($encDiag.DiskAttachments.Count -eq 0) {
-    Write-CtgKaliEncryptLog '  (no .vdi paths parsed — see VM folder above)' 'DarkGray'
+    Write-CtgKaliEncryptLog '  (no .vdi paths parsed - see VM folder above)' 'DarkGray'
 } else {
     foreach ($d in $encDiag.DiskAttachments) {
         Write-CtgKaliEncryptLog "  $d" 'DarkGray'
@@ -401,7 +401,7 @@ if (-not $ext.Installed) {
     $blockers += 'Install Oracle VM VirtualBox Extension Pack (version must match VirtualBox).'
 }
 if ($encDiag.Encrypted) {
-    $blockers += 'VM already encrypted — no need to -Apply.'
+    $blockers += 'VM already encrypted - no need to -Apply.'
 } elseif ($state -ne 'poweroff' -and $state -ne 'aborted') {
     $blockers += "VM must be powered off before -Apply (current: $state). Script will ACPI-stop when applying."
 }

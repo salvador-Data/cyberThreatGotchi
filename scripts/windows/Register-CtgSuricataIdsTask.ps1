@@ -3,7 +3,7 @@
   Register Windows Scheduled Task HackerPlanet-CTG-Suricata-IDS (at logon, continuous loop).
 
 .NOTES
-  Requires Administrator. Interactive logon + Highest — no password in task XML.
+  Requires Administrator. Interactive logon + Highest - no password in task XML.
   Runs ctg_suricata_ids_loop.ps1 for detect-only Suricata IDS + SMS on high severity.
 #>
 [CmdletBinding()]
@@ -84,7 +84,7 @@ Register-ScheduledTask `
     -Trigger $trigger `
     -Settings $settings `
     -Principal $principal `
-    -Description 'CyberThreatGotchi Suricata IDS detect-only loop — SMS on high severity via Twilio env vars' | Out-Null
+    -Description 'CyberThreatGotchi Suricata IDS detect-only loop - SMS on high severity via Twilio env vars' | Out-Null
 
 Write-Host "Registered scheduled task: $TaskName"
 Write-Host "  Trigger: At logon ($env:USERNAME)"

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  CTG Snort IDS on Windows — detect-only capture, alert tail, rate-limited SMS.
+  CTG Snort IDS on Windows - detect-only capture, alert tail, rate-limited SMS.
 
 .DESCRIPTION
   Runs Snort 2.9.x in passive IDS mode on selected interface. Logs to Backups\logs\snort\.

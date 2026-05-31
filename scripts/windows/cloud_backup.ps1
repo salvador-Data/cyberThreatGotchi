@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   Stage backup manifest and critical subset to Microsoft OneDrive (Windows cloud sync).
 
@@ -155,7 +155,7 @@ if ((Test-Path $portfolioScript) -and -not (Test-Path (Join-Path $src 'portfolio
                 Write-Host 'Copied portfolio_export\ to OneDrive staging' -ForegroundColor Green
             }
         } else {
-            Write-Warning 'Python not found — portfolio export skipped'
+            Write-Warning 'Python not found - portfolio export skipped'
         }
     } catch {
         Write-Warning "Portfolio export failed: $($_.Exception.Message)"

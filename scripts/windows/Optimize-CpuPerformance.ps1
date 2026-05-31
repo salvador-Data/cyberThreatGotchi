@@ -9,9 +9,9 @@
   -ApplySafe: high/ultimate performance on AC, aggressive boost if supported, min/max 100% on AC,
   disable core parking on AC only. With -BalancedOnBattery (default ON), battery stays on Balanced.
 
-  -ApplyUnsafe: NOT implemented — prints BIOS/XTU manual guidance only.
+  -ApplyUnsafe: NOT implemented - prints BIOS/XTU manual guidance only.
 
-  Logs to %USERPROFILE%\Backups\logs\optimize-cpu.log — no secrets.
+  Logs to %USERPROFILE%\Backups\logs\optimize-cpu.log - no secrets.
 
 .PARAMETER DiagnoseOnly
   Report current CPU and power posture (default when -ApplySafe omitted).
@@ -20,7 +20,7 @@
   Apply conservative Windows power tweaks (Administrator recommended).
 
 .PARAMETER ApplyUnsafe
-  Rejected — voltage/frequency OC requires BIOS or vendor tools (manual only).
+  Rejected - voltage/frequency OC requires BIOS or vendor tools (manual only).
 
 .PARAMETER BalancedOnBattery
   When applying safe tweaks, leave Balanced plan active on battery (default ON).
@@ -136,9 +136,9 @@ function Get-CtgFormFactorHint {
     }
 
     if ($hint.IsLikelyLaptop) {
-        $hint.HeuristicSummary = 'Likely laptop/mobile — BIOS voltage/frequency OC usually unavailable or unsafe'
+        $hint.HeuristicSummary = 'Likely laptop/mobile - BIOS voltage/frequency OC usually unavailable or unsafe'
     } else {
-        $hint.HeuristicSummary = 'Likely desktop/workstation — BIOS OC may be possible; still not scripted here'
+        $hint.HeuristicSummary = 'Likely desktop/workstation - BIOS OC may be possible; still not scripted here'
     }
     return [PSCustomObject]$hint
 }
@@ -173,11 +173,11 @@ function Get-CtgOcToolHint {
     }
 
     if ($result.IntelXtuInstalled) {
-        $result.Recommendation = 'Intel XTU detected — manual tuning only; monitor thermals'
+        $result.Recommendation = 'Intel XTU detected - manual tuning only; monitor thermals'
     } elseif ($result.AmdRyzenMasterInstalled) {
-        $result.Recommendation = 'AMD Ryzen Master detected — manual PBO/curve only; monitor thermals'
+        $result.Recommendation = 'AMD Ryzen Master detected - manual PBO/curve only; monitor thermals'
     } else {
-        $result.Recommendation = 'No vendor OC tool detected — use BIOS for any frequency/voltage changes'
+        $result.Recommendation = 'No vendor OC tool detected - use BIOS for any frequency/voltage changes'
     }
     return [PSCustomObject]$result
 }
@@ -258,7 +258,7 @@ function Get-CtgThermalHints {
         }
     }
     if ($rows.Count -eq 0) {
-        $rows += 'No thermal WMI data — run elevated for ACPI zones; watch fan noise and sustained clock drops'
+        $rows += 'No thermal WMI data - run elevated for ACPI zones; watch fan noise and sustained clock drops'
     }
     return $rows
 }
@@ -302,9 +302,9 @@ function Invoke-CtgCpuDiagnose {
             $c.Cores, $c.LogicalProcessors, $c.MaxClockMHz, $c.CurrentClockMHz, $c.LoadPercent)
         $mfr = $c.Manufacturer
         if ($mfr -match 'Intel') {
-            Write-CtgCpuLog '  Vendor: Intel — turbo via Windows power policy; OC via BIOS/XTU only' 'Gray'
+            Write-CtgCpuLog '  Vendor: Intel - turbo via Windows power policy; OC via BIOS/XTU only' 'Gray'
         } elseif ($mfr -match 'AMD') {
-            Write-CtgCpuLog '  Vendor: AMD — PBO/curve in BIOS/Ryzen Master only' 'Gray'
+            Write-CtgCpuLog '  Vendor: AMD - PBO/curve in BIOS/Ryzen Master only' 'Gray'
         }
     }
 
@@ -335,13 +335,13 @@ function Invoke-CtgCpuDiagnose {
         Write-CtgCpuLog "  $t" 'Gray'
     }
 
-    Write-CtgCpuLog 'Script OC (-ApplyUnsafe): NOT supported — see docs/CPU_PERFORMANCE.md' 'Yellow'
+    Write-CtgCpuLog 'Script OC (-ApplyUnsafe): NOT supported - see docs/CPU_PERFORMANCE.md' 'Yellow'
     Write-CtgCpuLog "Log: $LogFile" 'DarkGray'
 }
 
 function Invoke-CtgCpuApplySafe {
     if (-not $script:CtgIsAdmin) {
-        Write-CtgCpuLog 'ApplySafe requires Administrator — use Run-AsAdmin.ps1' 'Red'
+        Write-CtgCpuLog 'ApplySafe requires Administrator - use Run-AsAdmin.ps1' 'Red'
         return 1
     }
 
@@ -370,7 +370,7 @@ function Invoke-CtgCpuApplySafe {
     $plansToTune = @($targetGuid)
     if ($BalancedOnBattery) {
         $plansToTune += $BalancedGuid
-        Write-CtgCpuLog 'BalancedOnBattery=ON — aggressive AC tweaks on performance plan; Balanced DC limits preserved on battery plan' 'Yellow'
+        Write-CtgCpuLog 'BalancedOnBattery=ON - aggressive AC tweaks on performance plan; Balanced DC limits preserved on battery plan' 'Yellow'
     }
 
     foreach ($pg in $plansToTune) {
@@ -396,7 +396,7 @@ function Invoke-CtgCpuApplySafe {
     }
 
     powercfg /setactive $targetGuid 2>&1 | Out-Null
-    Write-CtgCpuLog 'Safe apply complete — monitor thermals; revert via powercfg /setactive for Balanced if needed' 'Cyan'
+    Write-CtgCpuLog 'Safe apply complete - monitor thermals; revert via powercfg /setactive for Balanced if needed' 'Cyan'
     Invoke-CtgCpuDiagnose
     return 0
 }

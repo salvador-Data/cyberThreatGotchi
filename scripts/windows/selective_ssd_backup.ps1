@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   Selective user-data backup to external SSD (no full C: clone).
 
@@ -108,7 +108,7 @@ $manifest += ""
 
 foreach ($item in $sources) {
     if ($item.Name -in @('Documents','Desktop','Pictures') -and $oneDriveRoot -and $item.Path.StartsWith($oneDriveRoot, [StringComparison]::OrdinalIgnoreCase)) {
-        Add-Log "SKIP $($item.Name) (path under OneDrive — cloud sync, no local duplicate: $($item.Path))"
+        Add-Log "SKIP $($item.Name) (path under OneDrive - cloud sync, no local duplicate: $($item.Path))"
         $manifest += "CLOUD_SYNC (skip duplicate): $($item.Name) at $($item.Path)"
         continue
     }

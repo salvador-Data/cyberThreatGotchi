@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Send password rotation reminder SMS — message contains NO secrets.
+  Send password rotation reminder SMS - message contains NO secrets.
 
 .NOTES
   Called by Register-CtgSecretRotationReminder.ps1 scheduled task.
@@ -20,6 +20,6 @@ if (-not (Test-Path $smsScript)) {
 & $smsScript `
     -AlertType 'password_rotation_reminder' `
     -Severity 'info' `
-    -Message 'CTG: rotate lab passwords (Windows/Kali). Use DuckDuckGo Password Manager — never SMS secrets.'
+    -Message 'CTG: rotate lab passwords (Windows/Kali). Use DuckDuckGo Password Manager - never SMS secrets.'
 
 exit $LASTEXITCODE

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Continuous CTG Suricata IDS loop — repeated Start-CtgSuricataIDS.ps1 cycles.
+  Continuous CTG Suricata IDS loop - repeated Start-CtgSuricataIDS.ps1 cycles.
 
 .DESCRIPTION
   Runs Suricata detect-only cycles during lab hours. Stop with Ctrl+C.
@@ -54,6 +54,6 @@ while ($true) {
     }
     Write-CtgSuricataLog "Loop cycle begin $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" $paths.IdsLog
     & powershell @args
-    Write-CtgSuricataLog 'Loop cycle end — sleeping 60s before next cycle' $paths.IdsLog
+    Write-CtgSuricataLog 'Loop cycle end - sleeping 60s before next cycle' $paths.IdsLog
     Start-Sleep -Seconds 60
 }

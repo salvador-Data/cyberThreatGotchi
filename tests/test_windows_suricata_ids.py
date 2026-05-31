@@ -54,7 +54,7 @@ def test_suricata_ps1_parse(name: str):
 
 
 def test_no_phone_or_twilio_secrets_in_suricata_scripts():
-    for name in SURICATA_SCRIPTS + ["Send-CtgSmsAlert.ps1"]:
+    for name in SURICATA_SCRIPTS + ["Send-CtgIdsAlert.ps1"]:
         text = (WIN / name).read_text(encoding="utf-8")
         assert not PHONE_PATTERN.search(text), f"PII phone found in {name}"
         assert "TWILIO_AUTH_TOKEN=" not in text

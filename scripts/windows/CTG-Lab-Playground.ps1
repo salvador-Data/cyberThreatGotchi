@@ -1,4 +1,4 @@
-# CTG Lab Playground — interactive Windows SOC menu (authorized lab only).
+# CTG Lab Playground - interactive Windows SOC menu (authorized lab only).
 # Hacker Planet LLC · Philadelphia, PA
 param()
 
@@ -19,7 +19,7 @@ function Write-CtgProfessor([string]$Note) {
 function Show-CtgPlaygroundMenu {
     Write-Host ''
     Write-Host '============================================================' -ForegroundColor Cyan
-    Write-Host '  CTG Lab Playground — Windows SOC (authorized lab only)' -ForegroundColor Cyan
+    Write-Host '  CTG Lab Playground - Windows SOC (authorized lab only)' -ForegroundColor Cyan
     Write-Host '============================================================' -ForegroundColor Cyan
     Write-Host '  1  Wireshark IDS DiagnoseOnly'
     Write-Host '  2  CTG Shield Status (host + optional Kali SSH)'
@@ -53,7 +53,7 @@ function Invoke-CtgPlayShieldStatus {
 }
 
 function Invoke-CtgPlayDdosDiagnose {
-    Write-CtgProfessor 'Client-side hardening cannot stop volumetric DDoS to your public IP — that needs your ISP. This diagnose checks firewall posture, rogue WiFi exposure, and honest limits.'
+    Write-CtgProfessor 'Client-side hardening cannot stop volumetric DDoS to your public IP - that needs your ISP. This diagnose checks firewall posture, rogue WiFi exposure, and honest limits.'
     $script = Join-Path $PSScriptRoot 'Harden-DDoSRogueWifi.ps1'
     if (-not (Test-Path $script)) {
         Write-CtgPlayLine "Not found: $script" 'Yellow'
@@ -63,7 +63,7 @@ function Invoke-CtgPlayDdosDiagnose {
 }
 
 function Invoke-CtgPlayOpenWebPages {
-    Write-CtgProfessor 'Kickstarter and feeds pages are static site previews — open locally before pushing to GitHub Pages.'
+    Write-CtgProfessor 'Kickstarter and feeds pages are static site previews - open locally before pushing to GitHub Pages.'
     $candidates = @(
         (Join-Path $RepoRoot 'website\kickstarter.html'),
         (Join-Path $RepoRoot 'website\feeds.html'),
@@ -78,12 +78,12 @@ function Invoke-CtgPlayOpenWebPages {
         $opened++
     }
     if ($opened -eq 0) {
-        Write-CtgPlayLine 'No kickstarter.html or feeds.html found in repo — run website sync or pull latest.' 'Yellow'
+        Write-CtgPlayLine 'No kickstarter.html or feeds.html found in repo - run website sync or pull latest.' 'Yellow'
     }
 }
 
 function Invoke-CtgPlayCaptureDemo {
-    Write-CtgProfessor 'Two-minute ring capture writes to Backups/logs — lab traffic only. Stop early with Ctrl+C if you need to.'
+    Write-CtgProfessor 'Two-minute ring capture writes to Backups/logs - lab traffic only. Stop early with Ctrl+C if you need to.'
     $script = Join-Path $PSScriptRoot 'Start-CTGWiresharkIDS.ps1'
     if (-not (Test-Path $script)) {
         Write-CtgPlayLine "Not found: $script" 'Yellow'
@@ -93,7 +93,7 @@ function Invoke-CtgPlayCaptureDemo {
 }
 
 function Invoke-CtgPlaySmsTest {
-    Write-CtgProfessor 'SMS uses Twilio env vars from .env only — never commit secrets. Rate limit applies except for -TestMessage.'
+    Write-CtgProfessor 'SMS uses Twilio env vars from .env only - never commit secrets. Rate limit applies except for -TestMessage.'
     $script = Join-Path $PSScriptRoot 'Send-CtgSmsAlert.ps1'
     if (-not (Test-Path $script)) {
         Write-CtgPlayLine "Not found: $script" 'Yellow'
@@ -101,7 +101,7 @@ function Invoke-CtgPlaySmsTest {
     }
     $envPath = Join-Path $RepoRoot '.env'
     if (-not (Test-Path $envPath)) {
-        Write-CtgPlayLine 'No .env — set TWILIO_* and CTG_ALERT_SMS_TO locally (see docs/WIRESHARK_IDS_SMS.md)' 'Yellow'
+        Write-CtgPlayLine 'No .env - set TWILIO_* and CTG_ALERT_SMS_TO locally (see docs/WIRESHARK_IDS_SMS.md)' 'Yellow'
         return
     }
     try {
@@ -117,7 +117,7 @@ function Invoke-CtgPlayKaliVm {
     if (Test-Path $seamlessScript) {
         & $seamlessScript
     } else {
-        Write-CtgPlayLine "Not found: $seamlessScript — run Deploy-KaliLab.ps1 first." 'Yellow'
+        Write-CtgPlayLine "Not found: $seamlessScript - run Deploy-KaliLab.ps1 first." 'Yellow'
     }
     Write-Host ''
     Write-CtgPlayLine 'In Kali (after mount):' 'Cyan'
@@ -141,7 +141,7 @@ while ($true) {
         '5' { Invoke-CtgPlayCaptureDemo }
         '6' { Invoke-CtgPlaySmsTest }
         '7' { Invoke-CtgPlayKaliVm }
-        '0' { Write-CtgPlayLine 'Good lab session — stay defensive.' 'Cyan'; break }
+        '0' { Write-CtgPlayLine 'Good lab session - stay defensive.' 'Cyan'; break }
         default { Write-CtgPlayLine "Invalid choice: $choice" 'Yellow' }
     }
     if ($choice -eq '0') { break }

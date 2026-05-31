@@ -56,7 +56,7 @@ Register-ScheduledTask `
     -Trigger $trigger `
     -Settings $settings `
     -Principal $principal `
-    -Description 'CyberThreatGotchi nightly 4 AM — backup, website, compartmentalized audit autorun, SOC scans' | Out-Null
+    -Description 'CyberThreatGotchi nightly 4 AM - backup, website, compartmentalized audit autorun, SOC scans' | Out-Null
 
 Write-Host "Registered scheduled task: $TaskName"
 Write-Host "  Trigger: Daily at $At (local time)"

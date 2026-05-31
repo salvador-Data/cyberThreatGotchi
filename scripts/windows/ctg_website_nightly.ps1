@@ -108,10 +108,10 @@ if (Test-Path $portfolioScript) {
     if ($py) {
         & $py $portfolioScript $portfolioOut 2>&1 | ForEach-Object { Write-WsLog "  portfolio: $_" }
     } else {
-        Write-WsLog 'Python not found — portfolio HTML export skipped' 'WARN'
+        Write-WsLog 'Python not found - portfolio HTML export skipped' 'WARN'
     }
 } else {
-    Write-WsLog 'export_portfolio_html.py not found — md copies only' 'WARN'
+    Write-WsLog 'export_portfolio_html.py not found - md copies only' 'WARN'
 }
 
 $syncScript = Join-Path $Repo 'scripts\sync_website_to_docs.py'
@@ -127,13 +127,13 @@ if (Test-Path $syncScript) {
                 Write-WsLog "sync_website_to_docs.py exit code $LASTEXITCODE" 'WARN'
             }
         } else {
-            Write-WsLog 'Python not found — sync_website_to_docs.py skipped' 'WARN'
+            Write-WsLog 'Python not found - sync_website_to_docs.py skipped' 'WARN'
         }
     } finally {
         Pop-Location
     }
 } else {
-    Write-WsLog 'sync_website_to_docs.py not found — skipped' 'WARN'
+    Write-WsLog 'sync_website_to_docs.py not found - skipped' 'WARN'
 }
 
 Push-Location $Repo
@@ -149,7 +149,7 @@ try {
             if ($LASTEXITCODE -eq 0) {
                 git push origin main 2>&1 | ForEach-Object { Write-WsLog "  git push: $_" }
                 if ($LASTEXITCODE -ne 0) {
-                    Write-WsLog 'git push failed — deploy manual or run gh workflow dispatch' 'WARN'
+                    Write-WsLog 'git push failed - deploy manual or run gh workflow dispatch' 'WARN'
                 } else {
                     Write-WsLog 'DeployWebsite: push complete; GitHub Actions pages.yml should publish to gh-pages'
                 }
@@ -157,7 +157,7 @@ try {
                 Write-WsLog 'DeployWebsite: nothing to commit or commit failed' 'WARN'
             }
         } else {
-            Write-WsLog 'Website git: changes detected — manual review (use -DeployWebsite to commit/push)'
+            Write-WsLog 'Website git: changes detected - manual review (use -DeployWebsite to commit/push)'
         }
     } else {
         Write-WsLog 'Website git: clean (no changes in website/ or docs/web/)'

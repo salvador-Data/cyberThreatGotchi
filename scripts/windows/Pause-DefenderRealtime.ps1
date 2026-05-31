@@ -21,7 +21,7 @@
 .EXAMPLE
   .\Pause-DefenderRealtime.ps1 -AddBuildExclusions
 .NOTES
-  Hacker Planet LLC / CyberThreatGotchi — authorized use on systems you administer only.
+  Hacker Planet LLC / CyberThreatGotchi - authorized use on systems you administer only.
   OneDrive sync cannot be paused reliably from script; pause sync from the tray icon or exclude build folders.
 #>
 [CmdletBinding(DefaultParameterSetName = 'Toggle')]
@@ -129,11 +129,11 @@ if ($action -eq 'Toggle') {
     if ($current.DisableRealtimeMonitoring -or -not $current.RealTimeProtectionEnabled) {
         $action = 'Resume'
         Write-Host ''
-        Write-Host 'Toggle: realtime is off — resuming protection.'
+        Write-Host 'Toggle: realtime is off - resuming protection.'
     } else {
         $action = 'Pause'
         Write-Host ''
-        Write-Host 'Toggle: realtime is on — pausing for build window.'
+        Write-Host 'Toggle: realtime is on - pausing for build window.'
         Write-Host 'WARNING: Resume after your build finishes (.\Pause-DefenderRealtime.ps1 -Resume).'
     }
 }

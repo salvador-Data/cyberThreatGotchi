@@ -1,9 +1,9 @@
-﻿<#
+<#
 .SYNOPSIS
   Inventory and optionally move Hacker Planet LLC dev projects to profile Programs folder.
 
 .DESCRIPTION
-  Default: DiagnoseOnly — report source→destination map, sizes, git repos, and path-update targets.
+  Default: DiagnoseOnly - report source→destination map, sizes, git repos, and path-update targets.
   Use -ApplyMove to move folders (robocopy /MOV). Use -UpdatePaths to rewrite CTG script paths after move.
 
 .NOTES
@@ -130,7 +130,7 @@ $NewCtg = Join-Path $NewPrograms 'cyberThreatGotchi'
 
 if ($UpdatePaths) {
     if (-not (Test-Path -LiteralPath $NewCtg)) {
-        Write-Log "UpdatePaths: cyberThreatGotchi not at $NewCtg — run -ApplyMove first or fix path"
+        Write-Log "UpdatePaths: cyberThreatGotchi not at $NewCtg - run -ApplyMove first or fix path"
     } else {
         $ctgRoot = $NewCtg
         $patterns = @(
@@ -194,7 +194,7 @@ function Get-DiskCleanupPlan {
 
 $cleanup = Get-DiskCleanupPlan
 Write-Log '--- Disk cleanup (DiagnoseOnly) ---'
-$cleanup | ForEach-Object { Write-Log ("{0}: {1} — {2}" -f $_.Category, (Format-Size $_.SizeBytes), $_.Action) }
+$cleanup | ForEach-Object { Write-Log ("{0}: {1} - {2}" -f $_.Category, (Format-Size $_.SizeBytes), $_.Action) }
 
 if ($ApplyDiskCleanup) {
     Write-Log 'ApplyDiskCleanup: removing logs >90 days'

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Local password policy hardening — max age, lockout, minimum length (authorized owned hosts).
+  Local password policy hardening - max age, lockout, minimum length (authorized owned hosts).
 
 .DESCRIPTION
   Diagnose-only by default. Use -ApplyPolicy from an elevated session to set:
@@ -9,7 +9,7 @@
   - Lockout duration / reset counter: 30 minutes (configurable)
   - Minimum password length: 12+ if current policy is weaker
 
-  Preserves DuckDuckGo Password Manager workflow — does NOT rotate or read passwords.
+  Preserves DuckDuckGo Password Manager workflow - does NOT rotate or read passwords.
   Documents Microsoft account vs local account recovery paths.
 
 .PARAMETER DiagnoseOnly

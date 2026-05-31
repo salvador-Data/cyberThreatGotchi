@@ -1,7 +1,7 @@
 #Requires -RunAsAdministrator
 <#
 .SYNOPSIS
-  Install or verify Wazuh agent on Windows (SIEM endpoint — authorized use only).
+  Install or verify Wazuh agent on Windows (SIEM endpoint - authorized use only).
 
 .DESCRIPTION
   Manager IP from -Manager, or environment variables CTG_WAZUH_MANAGER / WAZUH_MANAGER.
@@ -67,7 +67,7 @@ $configDir = Join-Path $env:ProgramData 'CTG\Wazuh'
 $configTemplate = Join-Path $configDir 'ossec.conf.template'
 
 Write-Host ''
-Write-Host 'CyberThreatGotchi — Wazuh agent setup (defensive / authorized use only)' -ForegroundColor Cyan
+Write-Host 'CyberThreatGotchi - Wazuh agent setup (defensive / authorized use only)' -ForegroundColor Cyan
 Write-Host ''
 
 if (-not $managerIp) {
@@ -192,6 +192,6 @@ if (-not $InstallOnly) {
     if ($tnc.TcpTestSucceeded) {
         Write-Host 'Manager port 1514: reachable.' -ForegroundColor Green
     } else {
-        Write-Host 'Manager port 1514: not reachable — check VPN/firewall.' -ForegroundColor Yellow
+        Write-Host 'Manager port 1514: not reachable - check VPN/firewall.' -ForegroundColor Yellow
     }
 }

@@ -1,6 +1,6 @@
-﻿# Harden VirtualBox Kali VM Spectre / RETBleed MSR exposure (wrapper).
-# Delegates to Harden-KaliVmCpu.ps1 — same parameters and behavior.
-# Authorized defensive lab use only — Hacker Planet LLC — Philadelphia, PA.
+# Harden VirtualBox Kali VM Spectre / RETBleed MSR exposure (wrapper).
+# Delegates to Harden-KaliVmCpu.ps1 - same parameters and behavior.
+# Authorized defensive lab use only - Hacker Planet LLC - Philadelphia, PA.
 param(
     [string]$VmName = 'kali',
     [string[]]$VmNameCandidates = @('kali', 'Kali-Lab', 'Kali', 'kali-linux'),

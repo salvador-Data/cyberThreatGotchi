@@ -88,6 +88,37 @@ log "Phase 1: boot autopatch one-time install (Guest Additions, GDM, systemd uni
 CTG_SKIP_AUTO_REBOOT=1 bash "$CTG_MOUNT/kali-boot-autopatch.sh" --install --wifi-lab --ids-ips --siem --optimize || \
     log "boot autopatch --install returned non-zero (continuing)"
 
+
+CTG_DESKTOP_USER="${SUDO_USER:-sal}"
+run_gui_as_user() {
+    if ! id "$CTG_DESKTOP_USER" &>/dev/null; then
+        log "Skip GUI helper (user $CTG_DESKTOP_USER missing)"
+        return 0
+    fi
+    local home disp xauth
+    home="$(getent passwd "$CTG_DESKTOP_USER" | cut -d: -f6)"
+    disp="${DISPLAY:-:0}"
+    xauth="${XAUTHORITY:-$home/.Xauthority}"
+    sudo -u "$CTG_DESKTOP_USER" env DISPLAY="$disp" XAUTHORITY="$xauth" "$@" || log "GUI step returned non-zero (continuing)"
+}
+
+if [[ -f "$CTG_MOUNT/ctg-display-scale.sh" ]]; then
+    log "Phase 1b: ctg-display-scale.sh --fit-window --cursor-neon"
+    run_gui_as_user bash "$CTG_MOUNT/ctg-display-scale.sh" --fit-window --cursor-neon
+    log "Phase 1c: ctg-display-scale.sh --login-scale (greeter)"
+    bash "$CTG_MOUNT/ctg-display-scale.sh" --login-scale || log "login-scale non-fatal (continuing)"
+else
+    log "Skip display-scale - not on share"
+fi
+
+if [[ -f "$CTG_MOUNT/ctg-seamless-guest.sh" ]]; then
+    log "Phase 1d: ctg-seamless-guest.sh"
+    run_gui_as_user bash "$CTG_MOUNT/ctg-seamless-guest.sh" || bash "$CTG_MOUNT/ctg-seamless-guest.sh" || log "seamless-guest non-fatal"
+fi
+
+log "Phase 1e: systemctl enable --now ssh"
+systemctl enable --now ssh 2>/dev/null || systemctl enable --now sshd 2>/dev/null || log "ssh enable returned non-zero (continuing)"
+
 if [[ -f "$CTG_MOUNT/tor-http-scrambler/install-scrambler.sh" ]]; then
     log "Phase 2: tor-http-scrambler install"
     bash "$CTG_MOUNT/tor-http-scrambler/install-scrambler.sh" || log "install-scrambler returned non-zero (continuing)"
@@ -97,6 +128,33 @@ log "Phase 3: full lab autorun (bootstrap, WiFi/IDS/SIEM, tor, scrambler)"
 export CTG_SKIP_AUTO_REBOOT=1
 bash "$CTG_MOUNT/ctg-lab-autorun.sh" || die "ctg-lab-autorun.sh failed"
 
+
+if [[ -f "$CTG_MOUNT/ctg-retbleed-check.sh" ]]; then
+    log "Phase verify-a: ctg-retbleed-check.sh"
+    bash "$CTG_MOUNT/ctg-retbleed-check.sh" || log "retbleed check reported action (continuing)"
+fi
+if [[ -f "$CTG_MOUNT/ctg-ram-mitigation-enforcer.sh" ]]; then
+    log "Phase verify-b: ctg-ram-mitigation-enforcer.sh --diagnose-only"
+    bash "$CTG_MOUNT/ctg-ram-mitigation-enforcer.sh" --diagnose-only || log "ram-mitigation diagnose non-fatal"
+fi
+if [[ -x /usr/local/bin/ctg-nmap-ask ]]; then
+    log "Phase verify-c: ctg-nmap-ask --help"
+    if /usr/local/bin/ctg-nmap-ask --help >/dev/null 2>&1; then
+        log "nmap-ask --help: OK"
+    else
+        log "nmap-ask --help failed"
+    fi
+elif [[ -f "$CTG_MOUNT/ctg-nmap-ask.sh" ]]; then
+    log "Phase verify-c: ctg-nmap-ask.sh --help (from share)"
+    if bash "$CTG_MOUNT/ctg-nmap-ask.sh" --help >/dev/null 2>&1; then
+        log "nmap-ask --help: OK"
+    else
+        log "nmap-ask --help failed"
+    fi
+fi
+if [[ -f "$CTG_MOUNT/ctg-ids-ips-autorun.sh" ]]; then
+    log "Phase verify-d: ctg-ids-ips-autorun (also via ctg-lab-autorun Phase 3)"
+fi
 log "=== Verify ==="
 for svc in ctg-kali-autopatch.service tor ctg-wifi-lab.service ctg-ids-ips.service; do
     st="$(systemctl is-active "$svc" 2>/dev/null || echo inactive)"

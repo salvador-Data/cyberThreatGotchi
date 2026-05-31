@@ -213,7 +213,7 @@ function Get-CtgKaliCredentials {
     if ($PreferVault) {
         $fromVault = Get-CtgKaliCredentialsFromVault
         if ($fromVault) { return $fromVault }
-        Write-CtgLog 'UseSecretVault: vault missing KALI_SSH_USER/KALI_SSH_PASSWORD — falling back to credentials file or default'
+        Write-CtgLog 'UseSecretVault: vault missing KALI_SSH_USER/KALI_SSH_PASSWORD - falling back to credentials file or default'
     }
     if (Test-Path $Path) {
         $text = Get-Content -Path $Path -Raw
@@ -306,7 +306,7 @@ function Start-CtgVirtualBoxVm {
     if ($state -eq 'running') {
         $seamlessScript = Join-Path $PSScriptRoot 'Start-KaliSeamless.ps1'
         if ((Test-Path $seamlessScript) -and $Name -eq 'kali') {
-            Write-CtgLog "VM $Name already running — ensuring seamless mode"
+            Write-CtgLog "VM $Name already running - ensuring seamless mode"
             if ($WhatIf) {
                 Write-CtgLog '[WhatIf] Start-KaliSeamless.ps1 (seamless on running VM)'
             } else {
@@ -331,7 +331,7 @@ function Start-CtgVirtualBoxVm {
         }
         return
     }
-    Write-CtgLog "Starting VirtualBox VM: $Name (headless — non-kali VM)"
+    Write-CtgLog "Starting VirtualBox VM: $Name (headless - non-kali VM)"
     if (-not $WhatIf) { & $VBoxManage startvm $Name --type headless }
 }
 
@@ -598,7 +598,7 @@ if ($vbox) {
 $creds = Get-CtgKaliCredentials -Path $CredentialsFile -PreferVault:$UseSecretVault
 Write-CtgLog "Credentials source: $($creds.Source) (user: $($creds.User))"
 if ($UseSecretVault) {
-    Write-CtgLog 'Secret vault: ON (-UseSecretVault). Set secrets via Protect-CtgSecrets.ps1 — never commit passwords.'
+    Write-CtgLog 'Secret vault: ON (-UseSecretVault). Set secrets via Protect-CtgSecrets.ps1 - never commit passwords.'
 }
 
 $deployed = $false

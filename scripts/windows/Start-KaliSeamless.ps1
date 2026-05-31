@@ -1,4 +1,4 @@
-﻿# Start VirtualBox Kali VM in seamless mode (Guest Additions + graphical login required).
+# Start VirtualBox Kali VM in seamless mode (Guest Additions + graphical login required).
 # Authorized defensive lab use only - Hacker Planet LLC - Philadelphia, PA
 param(
     [string]$VmName = 'kali',
@@ -6,7 +6,7 @@ param(
     [int]$GuestAdditionsWaitSec = 60,
     [int]$DesktopWaitSec = 120,
     # Text: -DisplayMode Gui + guest ctg-display-scale.sh --fit-window (medium) / --text-medium / --text-large
-    # Avoid -DisplayMode Scaled with guest DPI 144 — whole desktop huge; see docs/KALI_DISPLAY_SCALING.md
+    # Avoid -DisplayMode Scaled with guest DPI 144 - whole desktop huge; see docs/KALI_DISPLAY_SCALING.md
     [ValidateSet('Seamless', 'Scaled', 'Gui')]
     [string]$DisplayMode = 'Seamless',
     [switch]$SkipExtradata,
@@ -19,7 +19,7 @@ param(
     # Optional: nudge guest framebuffer ~25% at login greeter (before LoggedInUsers). Pair with guest --login-scale.
     [ValidateRange(1.0, 1.5)]
     [double]$LoginWindowScale = 0,
-    # Poll LoggedInUsers + CTG_GREETER_REFRESH — re-apply greeter hint after logout (default on).
+    # Poll LoggedInUsers + CTG_GREETER_REFRESH - re-apply greeter hint after logout (default on).
     [switch]$WatchGreeterLogout,
     [switch]$NoWatchGreeterLogout
 )
@@ -235,7 +235,7 @@ function Test-CtgGuestSizeHintOversized {
 }
 
 function Test-CtgGuestSizeHintUndersized {
-    # Greeter stuck at 800x600 after logout — host hint too small for readable sign-in.
+    # Greeter stuck at 800x600 after logout - host hint too small for readable sign-in.
     param([string]$Hint)
     if (-not $Hint) { return $true }
     if ($Hint -match '^(\d+),(\d+)') {
@@ -303,7 +303,7 @@ function Clear-CtgBadGuestSizeHint {
         }
         return
     }
-    Write-CtgSeamlessLog "Clearing oversized GUI/LastGuestSizeHint ($hint) — causes tiny terminal/UI in guest"
+    Write-CtgSeamlessLog "Clearing oversized GUI/LastGuestSizeHint ($hint) - causes tiny terminal/UI in guest"
     if ($WhatIf) {
         Write-CtgSeamlessLog ('[WhatIf] setextradata ' + $Name + ' GUI/LastGuestSizeHint (delete)')
         return
@@ -339,14 +339,14 @@ function Set-CtgSeamlessExtradata {
         Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Seamless' -Value 'off'
         if ($Mode -eq 'Scaled') {
             Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Scale' -Value 'true'
-            Write-CtgSeamlessLog 'Scaled host mode: use guest --fonts-only (DPI 108-112), not --aggressive — Scaled + high DPI oversizes UI'
+            Write-CtgSeamlessLog 'Scaled host mode: use guest --fonts-only (DPI 108-112), not --aggressive - Scaled + high DPI oversizes UI'
         } else {
-            # Gui: windowed + AutoresizeGuest — recommended when only text/terminal is too small
+            # Gui: windowed + AutoresizeGuest - recommended when only text/terminal is too small
             Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Scale' -Value 'false'
         }
         return $true
     }
-    Write-CtgSeamlessLog "Setting extradata GUI/Seamless=on on $Name (Scale off — scaled+seamless together causes glitch-revert)"
+    Write-CtgSeamlessLog "Setting extradata GUI/Seamless=on on $Name (Scale off - scaled+seamless together causes glitch-revert)"
     Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Seamless' -Value 'on'
     Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/SeamlessMode' -Value '1'
     Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Scale' -Value 'false'
@@ -381,7 +381,7 @@ function Invoke-CtgGuestVideoModeRefresh {
     if ((Get-CtgVmState -Name $Name -VBoxManage $VBoxManage) -ne 'running') { return $true }
     $atLoginGreeter = -not (Test-CtgGuestDesktopReady -Name $Name -VBoxManage $VBoxManage)
     if ($atLoginGreeter -and $LoginScale -le 1.0 -and -not $ForceGreeter) {
-        Write-CtgSeamlessLog 'setvideomodehint skip — guest not logged in (optional -LoginWindowScale 1.25 for sign-in screen)'
+        Write-CtgSeamlessLog 'setvideomodehint skip - guest not logged in (optional -LoginWindowScale 1.25 for sign-in screen)'
         return $true
     }
     $hint = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key 'GUI/LastGuestSizeHint'
@@ -397,11 +397,11 @@ function Invoke-CtgGuestVideoModeRefresh {
         $w = [int]$Matches[1]; $h = [int]$Matches[2]
     }
     if ($w -lt 640 -or $h -lt 480) {
-        Write-CtgSeamlessLog 'setvideomodehint skip — no usable LastGuestSizeHint (AutoresizeGuest will set on resize)'
+        Write-CtgSeamlessLog 'setvideomodehint skip - no usable LastGuestSizeHint (AutoresizeGuest will set on resize)'
         return $true
     }
     if (Test-CtgGuestSizeHintOversized -Hint "${w},${h}") {
-        Write-CtgSeamlessLog "setvideomodehint skip — hint ${w}x${h} oversized (cleared; guest ctg-display-scale.sh --fit-window)"
+        Write-CtgSeamlessLog "setvideomodehint skip - hint ${w}x${h} oversized (cleared; guest ctg-display-scale.sh --fit-window)"
         return $true
     }
     if ($atLoginGreeter -and $ForceGreeter -and (Test-CtgGuestSizeHintUndersized -Hint "${w},${h}")) {
@@ -438,7 +438,7 @@ function Invoke-CtgLoginGreeterRefresh {
         [string]$Reason = 'logout'
     )
     if ((Get-CtgVmState -Name $Name -VBoxManage $VBoxManage) -ne 'running') { return $true }
-    Write-CtgSeamlessLog "Greeter display refresh ($Reason) — restore sign-in window size"
+    Write-CtgSeamlessLog "Greeter display refresh ($Reason) - restore sign-in window size"
     Clear-CtgGreeterStaleSizeHint -Name $Name -VBoxManage $VBoxManage
     Start-Sleep -Milliseconds 500
     Invoke-CtgGuestVideoModeRefresh -Name $Name -VBoxManage $VBoxManage -LoginScale $LoginScale -ForceGreeter | Out-Null
@@ -458,7 +458,7 @@ function Start-CtgGreeterLogoutWatcher {
     if (-not $WatchGreeterLogout -and -not $PSBoundParameters.ContainsKey('WatchGreeterLogout')) {
         # Default on for Gui/Scaled window modes (greeter visible before login)
         if ($DisplayMode -eq 'Seamless') {
-            Write-CtgSeamlessLog 'Greeter logout watcher skipped (Seamless mode — use -WatchGreeterLogout to enable)'
+            Write-CtgSeamlessLog 'Greeter logout watcher skipped (Seamless mode - use -WatchGreeterLogout to enable)'
             return
         }
     } elseif (-not $WatchGreeterLogout) {
@@ -467,7 +467,7 @@ function Start-CtgGreeterLogoutWatcher {
     }
     $watcherScript = Join-Path $PSScriptRoot 'Watch-CtgGreeterLogout.ps1'
     if (-not (Test-Path $watcherScript)) {
-        Write-CtgSeamlessLog "WARNING: $watcherScript missing — greeter refresh on logout unavailable"
+        Write-CtgSeamlessLog "WARNING: $watcherScript missing - greeter refresh on logout unavailable"
         return
     }
     $existing = Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" -ErrorAction SilentlyContinue |
@@ -496,7 +496,7 @@ function Write-CtgHostToolbarHint {
     Write-CtgSeamlessLog 'Login greeter tiny text: sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale (guest only; keep login box size)'
     Write-CtgSeamlessLog 'Login greeter small after logout: -DisplayMode Gui + guest --login-scale; host watcher refreshes hint on logout'
     Write-CtgSeamlessLog 'Undo over-scale: bash /mnt/ctg/ctg-display-scale.sh --reset'
-    Write-CtgSeamlessLog 'Host blown-out fix: -DisplayMode Gui (AutoresizeGuest, Scale=false) — docs/KALI_DISPLAY_SCALING.md'
+    Write-CtgSeamlessLog 'Host blown-out fix: -DisplayMode Gui (AutoresizeGuest, Scale=false) - docs/KALI_DISPLAY_SCALING.md'
 }
 
 function Write-CtgGuestAdditionsHint {
@@ -616,13 +616,13 @@ function Get-CtgSeamlessDiagnostics {
         $issues += "GUI/ShowMiniToolBar is '$extradataMiniTb' - host mini toolbar hidden; re-run without -NoShowHostToolbar"
     }
     if ($DisplayMode -eq 'Seamless' -and $seamlessActive) {
-        $issues += 'Seamless facility ACTIVE — if desktop cut off, run bash /mnt/ctg/ctg-display-scale.sh --fit-window before Host+L'
+        $issues += 'Seamless facility ACTIVE - if desktop cut off, run bash /mnt/ctg/ctg-display-scale.sh --fit-window before Host+L'
     }
     if (-not (Test-CtgExtradataTruthy -Value $guiExtra['GUI/AutoresizeGuest'])) {
         $issues += "GUI/AutoresizeGuest is '$($guiExtra['GUI/AutoresizeGuest'])' - guest may wrap/clip; script sets this true"
     }
     if (Test-CtgGuestSizeHintOversized -Hint $guiExtra['GUI/LastGuestSizeHint']) {
-        $issues += "GUI/LastGuestSizeHint is '$($guiExtra['GUI/LastGuestSizeHint'])' — tiny UI; script clears hints >2560×1600"
+        $issues += "GUI/LastGuestSizeHint is '$($guiExtra['GUI/LastGuestSizeHint'])' - tiny UI; script clears hints >2560×1600"
     }
     if ($vram -ne '128MB') { $issues += "VRAM is $vram (recommend 128MB - Fix-KaliBlankScreen.ps1)" }
     if ($gfx -notmatch 'VMSVGA|VBoxSVGA') { $issues += "Graphics controller is $gfx (recommend VMSVGA)" }
@@ -717,7 +717,7 @@ function Enable-CtgSeamlessOnRunningVm {
         }
         Write-CtgSeamlessLog "controlvm seamless on unavailable: $($result.Output.Trim())"
     }
-    Write-CtgSeamlessLog "VM $Name ready — extradata GUI/Seamless=on, GUI/Scale=false. Press Host+L to enter seamless."
+    Write-CtgSeamlessLog "VM $Name ready - extradata GUI/Seamless=on, GUI/Scale=false. Press Host+L to enter seamless."
     Write-CtgHostLHint -Name $Name
     Write-CtgGlitchRevertFix
     if (Wait-CtgSeamlessFacilityStable -Name $Name -VBoxManage $VBoxManage -PollSec 8) {
@@ -788,7 +788,7 @@ function Start-CtgKaliSeamless {
         Write-CtgSeamlessLog 'Seamless preflight: needs graphical X11 login + VBoxClient --seamless in guest.'
         Write-CtgSeamlessLog 'Before Host+L in Kali run: bash /mnt/ctg/ctg-seamless-guest.sh (fixes Wayland glitch-revert)'
         Write-CtgSeamlessLog 'Text: -DisplayMode Gui + guest ctg-display-scale.sh --fit-window (medium DPI 108) or --text-medium / --text-large'
-        Write-CtgSeamlessLog 'For visible menu/scrollbars: -DisplayMode Scaled or Gui (Scaled enlarges whole desktop — not for font-only fix)'
+        Write-CtgSeamlessLog 'For visible menu/scrollbars: -DisplayMode Scaled or Gui (Scaled enlarges whole desktop - not for font-only fix)'
     }
 
     $state = Get-CtgVmState -Name $Name -VBoxManage $VBoxManage

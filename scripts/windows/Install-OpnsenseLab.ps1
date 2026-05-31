@@ -1,5 +1,5 @@
 # Create OPNsense lab VM in VirtualBox (lab LAN, 2 NICs). Not edge/production by default.
-# Authorized defensive lab use only — Hacker Planet LLC.
+# Authorized defensive lab use only - Hacker Planet LLC.
 param(
     [string]$VmName = 'OPNsense-Lab',
     [string]$IsoPath = '',
@@ -14,13 +14,13 @@ $ErrorActionPreference = 'Stop'
 $VBoxManage = 'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe'
 
 if (-not (Test-Path $VBoxManage)) {
-    Write-Warning 'VirtualBox not installed — OPNsense lab VM skipped.'
+    Write-Warning 'VirtualBox not installed - OPNsense lab VM skipped.'
     return
 }
 
 if ($EdgeMode) {
     Write-Host ''
-    Write-Host '*** WARNING: -EdgeMode would replace ISP edge — NOT implemented by default. ***'
+    Write-Host '*** WARNING: -EdgeMode would replace ISP edge - NOT implemented by default. ***'
     Write-Host 'Use lab VLAN / host-only only. Export ISP config and get household approval first.'
     Write-Host ''
     throw 'EdgeMode blocked. Re-run without -EdgeMode for lab-only VM.'
@@ -44,7 +44,7 @@ if ($exists) {
 
 if (-not $IsoPath -or -not (Test-Path $IsoPath)) {
     Write-Warning "OPNsense ISO not found in Downloads. Download from https://opnsense.org/download/ and re-run."
-    Write-Warning 'Skipping OPNsense VM creation — Kali bootstrap is not blocked.'
+    Write-Warning 'Skipping OPNsense VM creation - Kali bootstrap is not blocked.'
     return
 }
 

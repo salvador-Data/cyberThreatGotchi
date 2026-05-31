@@ -261,7 +261,7 @@ function New-CtgSnortConfContent {
         $dynEng = "$base\\lib\\snort_dynamicengine\\sf_engine.dll"
     }
     @"
-# CTG Windows Snort IDS — detect-only, community rules (authorized lab use)
+# CTG Windows Snort IDS - detect-only, community rules (authorized lab use)
 ipvar HOME_NET [192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]
 ipvar EXTERNAL_NET !`$HOME_NET
 var RULE_PATH $rules
@@ -303,14 +303,14 @@ function Ensure-CtgSnortLayout {
     }
     if (-not (Test-Path $Paths.LocalRules)) {
         @'
-# CTG lab local Snort rules — authorized lab signatures only (detect-only)
+# CTG lab local Snort rules - authorized lab signatures only (detect-only)
 alert icmp any any -> $HOME_NET any (msg:"CTG ICMP test rule"; sid:9000001; rev:1;)
 '@ | Set-Content -Path $Paths.LocalRules -Encoding utf8
     }
     $community = Join-Path $Paths.RulesDir 'community.rules'
     if (-not (Test-Path $community)) {
         @'
-# Placeholder — download community rules from https://www.snort.org/downloads (#rule-downloads)
+# Placeholder - download community rules from https://www.snort.org/downloads (#rule-downloads)
 # Or copy from C:\Snort\rules after official Snort Windows install
 '@ | Set-Content -Path $community -Encoding utf8
     }

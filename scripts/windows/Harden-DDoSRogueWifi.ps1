@@ -4,7 +4,7 @@
 
 .DESCRIPTION
   Diagnose-only by default. Use -ApplyHardening from an elevated session for firewall,
-  registry, and firewall-log changes. Does NOT attack back — defensive posture only.
+  registry, and firewall-log changes. Does NOT attack back - defensive posture only.
 
 .PARAMETER DiagnoseOnly
   Report current state; no registry or firewall mutations (default when -ApplyHardening omitted).
@@ -52,7 +52,7 @@ function Write-CtgDdosLog {
 function Write-Banner {
     Write-Host ''
     Write-Host '========================================' -ForegroundColor Cyan
-    Write-Host ' CTG — DDoS / rogue WiFi hardening' -ForegroundColor Cyan
+    Write-Host ' CTG - DDoS / rogue WiFi hardening' -ForegroundColor Cyan
     Write-Host ' Authorized defensive use on systems you own' -ForegroundColor Cyan
     Write-Host '========================================' -ForegroundColor Cyan
     Write-CtgDdosLog "Computer=$env:COMPUTERNAME User=$env:USERNAME Admin=$script:CtgIsAdmin"
@@ -131,7 +131,7 @@ function Get-CtgWlanAutoConnectOpen {
     try {
         $autoOpen = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config' -Name 'AutoConnectOpenNetworks' -ErrorAction SilentlyContinue
         if ($autoOpen -and $autoOpen.AutoConnectOpenNetworks -ne 0) {
-            $issues += 'AutoConnectOpenNetworks is enabled (registry) — open hotspots may auto-join.'
+            $issues += 'AutoConnectOpenNetworks is enabled (registry) - open hotspots may auto-join.'
         }
     } catch { }
     try {
@@ -196,26 +196,26 @@ function Invoke-CtgDiagnose {
     } else {
         foreach ($l in $web.Listeners) {
             $msg = "CTG web API port $($l.Port) on $($l.Address)"
-            if ($l.OkLocalhostOnly) { Write-CtgDdosLog "$msg — localhost only (OK)." 'Green' }
-            else { Write-CtgDdosLog "$msg — EXPOSED ON LAN/WAN; bind 127.0.0.1 only." 'Red' }
+            if ($l.OkLocalhostOnly) { Write-CtgDdosLog "$msg - localhost only (OK)." 'Green' }
+            else { Write-CtgDdosLog "$msg - EXPOSED ON LAN/WAN; bind 127.0.0.1 only." 'Red' }
         }
     }
 
     $smb1 = Test-CtgSmb1Enabled
     if ($null -eq $smb1) { Write-CtgDdosLog 'SMB1: could not determine (Admin may be required).' 'Yellow' }
-    elseif ($smb1) { Write-CtgDdosLog 'SMB1: ENABLED — disable if not needed.' 'Red' }
+    elseif ($smb1) { Write-CtgDdosLog 'SMB1: ENABLED - disable if not needed.' 'Red' }
     else { Write-CtgDdosLog 'SMB1: disabled or not installed (OK).' 'Green' }
 
     $proto = Get-CtgLlmnrNetbiosState
     if ($proto.LlmnrDisabled) { Write-CtgDdosLog 'LLMNR: disabled via policy (OK).' 'Green' }
-    else { Write-CtgDdosLog 'LLMNR: not disabled — spoofing/deauth-adjacent risk on LAN.' 'Yellow' }
+    else { Write-CtgDdosLog 'LLMNR: not disabled - spoofing/deauth-adjacent risk on LAN.' 'Yellow' }
 
     $wlan = Get-CtgWlanAutoConnectOpen
     if ($wlan.Count -eq 0) { Write-CtgDdosLog 'WiFi auto-connect open: no obvious issues.' 'Green' }
     else { $wlan | ForEach-Object { Write-CtgDdosLog "WiFi: $_" 'Yellow' } }
 
     Write-CtgDdosLog '--- Client DDoS honest limits ---' 'Cyan'
-    Write-CtgDdosLog 'Volumetric DDoS (flood to your public IP) cannot be stopped on the laptop — call ISP.'
+    Write-CtgDdosLog 'Volumetric DDoS (flood to your public IP) cannot be stopped on the laptop - call ISP.'
     Write-CtgDdosLog 'This script: shrink attack surface, firewall inbound, VPN for IP privacy, unplug WAN if flooded.'
     Write-CtgDdosLog 'No exposed services checklist: disable file sharing, remote desktop, IIS, CTG web on 0.0.0.0.'
     Write-CtgDdosLog 'Rogue captive portal: never enter credentials on a portal you did not expect; use VPN first.'
@@ -291,7 +291,7 @@ function Invoke-CtgApplyRegistry {
     try {
         $smb1 = Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -ErrorAction SilentlyContinue
         if ($smb1 -and $smb1.State -eq 'Enabled') {
-            Write-CtgDdosLog 'SMB1 is enabled — run: Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart' 'Yellow'
+            Write-CtgDdosLog 'SMB1 is enabled - run: Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart' 'Yellow'
         }
     } catch { }
 }
@@ -299,7 +299,7 @@ function Invoke-CtgApplyRegistry {
 function Invoke-CtgPreserveVpn {
     $preserve = Join-Path $ScriptDir 'Preserve-DuckDuckGoVpn.ps1'
     if (-not (Test-Path $preserve)) {
-        Write-CtgDdosLog 'Preserve-DuckDuckGoVpn.ps1 not found — skip.' 'Yellow'
+        Write-CtgDdosLog 'Preserve-DuckDuckGoVpn.ps1 not found - skip.' 'Yellow'
         return
     }
     . $preserve
@@ -311,7 +311,7 @@ function Invoke-CtgPreserveVpn {
 Write-Banner
 
 if ($ApplyHardening -and $DiagnoseOnly) {
-    Write-CtgDdosLog 'Both -ApplyHardening and -DiagnoseOnly set — diagnose first, then apply.' 'Yellow'
+    Write-CtgDdosLog 'Both -ApplyHardening and -DiagnoseOnly set - diagnose first, then apply.' 'Yellow'
 }
 
 Invoke-CtgDiagnose
@@ -321,7 +321,7 @@ if ($ApplyHardening) {
     Invoke-CtgApplyFirewall
     Invoke-CtgApplyRegistry
 } elseif (-not $DiagnoseOnly) {
-    Write-CtgDdosLog 'No -ApplyHardening — guidance/diagnose only. Re-run with -ApplyHardening as Admin to apply.' 'Yellow'
+    Write-CtgDdosLog 'No -ApplyHardening - guidance/diagnose only. Re-run with -ApplyHardening as Admin to apply.' 'Yellow'
 }
 
 Invoke-CtgPreserveVpn

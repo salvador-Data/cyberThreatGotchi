@@ -6,10 +6,10 @@
   Registers HackerPlanet-CTG-Cpu-Optimize to run Optimize-CpuPerformance.ps1 -ApplySafe
   on a weekly schedule (default Sunday 03:30) or at user logon.
 
-  Uses Interactive logon + RunLevel Highest — runs only when you are logged on;
+  Uses Interactive logon + RunLevel Highest - runs only when you are logged on;
   Windows stores no password in this script or git. Registration requires Administrator.
 
-  Optional unattended path: use DPAPI vault (Protect-CtgSecrets.ps1) only for other secrets —
+  Optional unattended path: use DPAPI vault (Protect-CtgSecrets.ps1) only for other secrets -
   this task does NOT require a stored password when LogonType is Interactive.
 
 .PARAMETER TaskName

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  DEPRECATED alias — forwards to iphone_hardening_automate.ps1.
+  DEPRECATED alias - forwards to iphone_hardening_automate.ps1.
 
 .DESCRIPTION
   Backward-compatible wrapper. All parameters pass through to the full 21-step
@@ -18,7 +18,7 @@
   With -OpenGuide: LAN http.server on port 8765.
 
 .PARAMETER LogOnly
-  Validate step URLs and run USB check — no prompts.
+  Validate step URLs and run USB check - no prompts.
 
 .PARAMETER Resume
   Continue from last incomplete step in automate log.

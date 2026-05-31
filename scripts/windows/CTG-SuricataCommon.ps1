@@ -232,7 +232,7 @@ function New-CtgSuricataYamlContent {
     @"
 %YAML 1.1
 ---
-# CTG Windows Suricata IDS — detect-only (authorized lab use)
+# CTG Windows Suricata IDS - detect-only (authorized lab use)
 run-as:
   user: SYSTEM
   group: SYSTEM
@@ -271,7 +271,7 @@ function Ensure-CtgSuricataLayout {
     }
     if (-not (Test-Path $Paths.LocalRules)) {
         @'
-# CTG lab local Suricata rules — authorized lab signatures only (detect-only)
+# CTG lab local Suricata rules - authorized lab signatures only (detect-only)
 alert icmp any any -> $HOME_NET any (msg:"CTG ICMP test rule"; sid:9000001; rev:1;)
 '@ | Set-Content -Path $Paths.LocalRules -Encoding utf8
     }

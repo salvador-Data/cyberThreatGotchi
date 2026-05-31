@@ -34,7 +34,7 @@ function Test-SysmonInstalled {
 }
 
 Write-Host ''
-Write-Host 'CyberThreatGotchi — Sysmon install (defensive / authorized use only)' -ForegroundColor Cyan
+Write-Host 'CyberThreatGotchi - Sysmon install (defensive / authorized use only)' -ForegroundColor Cyan
 Write-Host 'Host: ' -NoNewline; Write-Host $env:COMPUTERNAME -ForegroundColor Gray
 Write-Host ''
 

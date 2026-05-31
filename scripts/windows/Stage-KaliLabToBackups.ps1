@@ -1,5 +1,5 @@
-﻿# Stage entire scripts/kali tree to C:\Users\Owner\Backups for VirtualBox ctg-backups share.
-# Authorized defensive lab use only â€” Hacker Planet LLC.
+# Stage entire scripts/kali tree to C:\Users\Owner\Backups for VirtualBox ctg-backups share.
+# Authorized defensive lab use only - Hacker Planet LLC.
 param(
     [string]$BackupRoot = 'C:\Users\Owner\Backups',
     [string]$RepoRoot = '',

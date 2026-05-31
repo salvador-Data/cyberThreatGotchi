@@ -1,4 +1,4 @@
-﻿# CTG one-shot SOC run (elevated). Logs to Desktop + D:\Backups if writable.
+# CTG one-shot SOC run (elevated). Logs to Desktop + D:\Backups if writable.
 $ErrorActionPreference = 'Continue'
 . (Join-Path $PSScriptRoot 'CTG-Paths.ps1')
 $Repo = Get-CtgRepoRoot -FromPath $PSScriptRoot
@@ -69,5 +69,5 @@ if (Test-Path 'D:\') {
         Write-Log "SSD log copy failed: $($_.Exception.Message)"
     }
 } else {
-    Write-Log 'D: missing — skip SSD log copy'
+    Write-Log 'D: missing - skip SSD log copy'
 }

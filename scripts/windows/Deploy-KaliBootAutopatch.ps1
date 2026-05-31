@@ -389,7 +389,7 @@ $wantSeamless = $EnableSeamless -or (-not $NoSeamless)
 if ($wantSeamless -and (Get-CtgVmState -Name $VmName).State -eq 'running') {
     $seamlessScript = Join-Path $PSScriptRoot 'Start-KaliSeamless.ps1'
     if (Test-Path $seamlessScript) {
-        Write-CtgDeployLog '=== Start-KaliSeamless.ps1 (after autopatch — GUI/Seamless + Host+L) ==='
+        Write-CtgDeployLog '=== Start-KaliSeamless.ps1 (after autopatch - GUI/Seamless + Host+L) ==='
         if ($WhatIf) {
             Write-CtgDeployLog '[WhatIf] Start-KaliSeamless.ps1 -DiagnoseOnly'
         } else {

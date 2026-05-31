@@ -2,7 +2,7 @@
 Windows laptop + hackerplanet.dev automation only (Andy PC).
 
 .SYNOPSIS
-  CyberThreatGotchi nightly 4 AM orchestrator — backup, website, scan, audit, log.
+  CyberThreatGotchi nightly 4 AM orchestrator - backup, website, scan, audit, log.
 
 .DESCRIPTION
   Runs every night on Andy's Windows laptop. Always includes ctg_website_nightly.ps1
@@ -225,9 +225,9 @@ function Copy-SocLogsToSsd {
 function Invoke-CtgWindowsUpdateAudit {
     Write-NightlyLog '--- Windows Update (audit) ---'
     if ($ApplyUpdates) {
-        Write-NightlyLog 'ApplyUpdates: ENABLED — updates may install and reboot' 'WARN'
+        Write-NightlyLog 'ApplyUpdates: ENABLED - updates may install and reboot' 'WARN'
     } else {
-        Write-NightlyLog 'ApplyUpdates: disabled — audit/scan only (no auto-install)'
+        Write-NightlyLog 'ApplyUpdates: disabled - audit/scan only (no auto-install)'
     }
 
     $module = Get-Module -ListAvailable -Name PSWindowsUpdate -ErrorAction SilentlyContinue
@@ -337,7 +337,7 @@ if ($ssd.Status -eq 'online' -and $ssd.Writable) {
     $script:LastBackupRoot = "D:\Backups\Andy-PC-$date"
     Write-NightlyLog "Backup tree (SSD): $script:LastBackupRoot"
 } else {
-    Write-NightlyLog 'SSD unavailable — backup tree uses C:\Users\Owner\Backups fallback path'
+    Write-NightlyLog 'SSD unavailable - backup tree uses C:\Users\Owner\Backups fallback path'
     $script:LastBackupRoot = Join-Path $env:USERPROFILE "Backups\Andy-PC-$date"
     Write-NightlyLog "Backup tree (fallback): $script:LastBackupRoot"
 }
@@ -367,11 +367,11 @@ if (-not $SkipBackup) {
 
 $websiteScript = Join-Path $Win 'ctg_website_nightly.ps1'
 if (Test-Path $websiteScript) {
-    Write-NightlyLog '--- Website nightly (hackerplanet.dev) — mandatory ---'
+    Write-NightlyLog '--- Website nightly (hackerplanet.dev) - mandatory ---'
     & $websiteScript -BackupRoot $script:LastBackupRoot -DeployWebsite:$DeployWebsite `
         -LogAction { param($m) Write-NightlyLog $m }
 } else {
-    Write-NightlyLog 'ctg_website_nightly.ps1 missing — website step failed' 'WARN'
+    Write-NightlyLog 'ctg_website_nightly.ps1 missing - website step failed' 'WARN'
     Add-StepError 'website_nightly'
 }
 
@@ -399,7 +399,7 @@ if (Test-Path $vpnScript) {
     . $vpnScript
     Invoke-CtgPreserveDuckDuckGoVpn -LogAction { param($m) Write-NightlyLog $m }
 } else {
-    Write-NightlyLog 'Preserve-DuckDuckGoVpn.ps1 not found — skipped'
+    Write-NightlyLog 'Preserve-DuckDuckGoVpn.ps1 not found - skipped'
 }
 
 Invoke-CtgGitRepos

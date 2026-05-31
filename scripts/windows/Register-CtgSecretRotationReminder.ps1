@@ -4,7 +4,7 @@
 
 .DESCRIPTION
   Sends "CTG: rotate lab passwords" via Send-CtgSmsAlert.ps1 every 120 days.
-  Requires Twilio + CTG_ALERT_SMS_TO in local .env only — never commit .env.
+  Requires Twilio + CTG_ALERT_SMS_TO in local .env only - never commit .env.
 
 .PARAMETER TaskName
   Windows Scheduled Task name.

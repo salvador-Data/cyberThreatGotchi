@@ -1,5 +1,5 @@
-﻿# Install ctg-nmap-ask (a$k) in Kali guest — SSH, guestcontrol, trigger, keyboard.
-# Authorized lab use only — Hacker Planet LLC.
+# Install ctg-nmap-ask (a$k) in Kali guest - SSH, guestcontrol, trigger, keyboard.
+# Authorized lab use only - Hacker Planet LLC.
 param(
     [string]$VmName = 'kali',
     [string]$CredentialsFile = 'C:\Users\Owner\Backups\kali-vm-credentials.txt',

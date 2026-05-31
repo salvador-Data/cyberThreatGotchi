@@ -5,7 +5,7 @@
 .DESCRIPTION
   Reads staged EVE from Backups\logs\kali-suricata\ or SIEM export ctg-siem-latest.json.
   Kali guest stages logs via ctg-suricata-ips-sms.sh (ctg-ids-ips-autorun.sh primary).
-  Alerts via Send-CtgIdsAlert.ps1 — Signal preferred on Windows host; Twilio fallback.
+  Alerts via Send-CtgIdsAlert.ps1 - Signal preferred on Windows host; Twilio fallback.
 
 .PARAMETER RunMinutes
   Minutes to poll (default 60). Use 0 for one poll cycle.

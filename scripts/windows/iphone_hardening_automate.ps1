@@ -3,14 +3,14 @@
   Full interactive orchestrator for iPhone Phase 1+2 hardening (21 steps).
 
 .DESCRIPTION
-  Maximum automation stock iOS allows from Windows — guided walkthrough with logging.
+  Maximum automation stock iOS allows from Windows - guided walkthrough with logging.
 
   HONEST LIMITS (read before running):
-  - Cannot auto-toggle iOS Settings from Windows — no MDM, no Apple Configurator profiles.
+  - Cannot auto-toggle iOS Settings from Windows - no MDM, no Apple Configurator profiles.
   - You tap each change on the iPhone; this script prints instructions, deep-link URLs,
     optional clipboard copy, and logs progress to Backups\logs\iphone_hardening_automate.log.
-  - iOS 18 may block some prefs: URLs — manual path is always shown on every step.
-  - Preserves DuckDuckGo VPN/DNS and DuckDuckGo Password Manager — warnings on every relevant step.
+  - iOS 18 may block some prefs: URLs - manual path is always shown on every step.
+  - Preserves DuckDuckGo VPN/DNS and DuckDuckGo Password Manager - warnings on every relevant step.
 
   Step IDs match docs/iphone_hardening_guide.html (0a … 2.V = 21 steps).
 
@@ -27,7 +27,7 @@
   With -OpenGuide: optional LAN http.server on port 8765 for phone access (same Wi-Fi).
 
 .PARAMETER LogOnly
-  Dry-run / CI: validate repo, run USB check, verify all step URLs exist — no prompts.
+  Dry-run / CI: validate repo, run USB check, verify all step URLs exist - no prompts.
 
 .PARAMETER LogDir
   Log directory (default: %USERPROFILE%\Backups\logs).
@@ -102,7 +102,7 @@ function Get-CtgAutomateSteps {
         @{
             Id = '0a'
             Index = 0
-            Phase = 'Step 0 — Baseline'
+            Phase = 'Step 0 - Baseline'
             Title = 'Document VPN (do not change)'
             Instructions = @(
                 'Open VPN and write down profile name(s) and Connected / Not Connected.'
@@ -119,7 +119,7 @@ function Get-CtgAutomateSteps {
         @{
             Id = '0b'
             Index = 1
-            Phase = 'Step 0 — Baseline'
+            Phase = 'Step 0 - Baseline'
             Title = 'Document Wi-Fi DNS (do not change)'
             Instructions = @(
                 'On home Wi-Fi, tap (i) -> Configure DNS.'
@@ -128,13 +128,13 @@ function Get-CtgAutomateSteps {
             )
             Manual = 'Settings -> Wi-Fi -> (i) on home network -> Configure DNS'
             Links = @('prefs:root=WIFI', 'App-Prefs:root=WIFI')
-            Warn = 'KEEP existing Wi-Fi DNS configuration — document only.'
+            Warn = 'KEEP existing Wi-Fi DNS configuration - document only.'
         }
         @{
             Id = '0c'
             Index = 2
-            Phase = 'Step 0 — Baseline'
-            Title = 'DuckDuckGo Password Manager — keep On'
+            Phase = 'Step 0 - Baseline'
+            Title = 'DuckDuckGo Password Manager - keep On'
             Instructions = @(
                 'Confirm DuckDuckGo Passwords / DuckDuckGo Autofill is On.'
                 'Confirm DuckDuckGo app is installed.'
@@ -172,7 +172,7 @@ function Get-CtgAutomateSteps {
             )
             Manual = 'Settings -> Face ID & Passcode'
             Links = @('prefs:root=PASSCODE', 'App-Prefs:root=PASSCODE')
-            Limit = 'Cannot auto-enroll Face ID or change passcode — complete biometrics on device.'
+            Limit = 'Cannot auto-enroll Face ID or change passcode - complete biometrics on device.'
         }
         @{
             Id = '1.3'
@@ -190,10 +190,10 @@ function Get-CtgAutomateSteps {
             Id = '1.4'
             Index = 6
             Phase = 'Phase 1'
-            Title = 'Apple ID — 2FA and devices'
+            Title = 'Apple ID - 2FA and devices'
             Instructions = @(
                 'Two-Factor Authentication -> On.'
-                'Sign-In & Security -> Devices — remove anything unrecognized.'
+                'Sign-In & Security -> Devices - remove anything unrecognized.'
                 'Keep DuckDuckGo Password Manager for Apple ID password.'
             )
             Manual = 'Settings -> [your name] -> Sign-In & Security'
@@ -216,7 +216,7 @@ function Get-CtgAutomateSteps {
             Id = '1.6'
             Index = 8
             Phase = 'Phase 1'
-            Title = 'Mail — Protect Mail Activity'
+            Title = 'Mail - Protect Mail Activity'
             Instructions = @(
                 'Privacy Protection -> Protect Mail Activity -> On.'
             )
@@ -229,9 +229,9 @@ function Get-CtgAutomateSteps {
             Phase = 'Phase 1'
             Title = 'Privacy permissions'
             Instructions = @(
-                'Bluetooth — revoke apps that do not need Bluetooth.'
-                'Local Network — revoke unnecessary LAN access.'
-                'Tracking — deny cross-app tracking.'
+                'Bluetooth - revoke apps that do not need Bluetooth.'
+                'Local Network - revoke unnecessary LAN access.'
+                'Tracking - deny cross-app tracking.'
             )
             Manual = 'Settings -> Privacy & Security -> Bluetooth / Local Network / Tracking'
             Links = @('prefs:root=Privacy', 'App-Prefs:root=Privacy')
@@ -242,7 +242,7 @@ function Get-CtgAutomateSteps {
             Phase = 'Phase 1'
             Title = 'Lock screen & notifications'
             Instructions = @(
-                'Face ID & Passcode -> Allow Access When Locked — turn off unneeded items.'
+                'Face ID & Passcode -> Allow Access When Locked - turn off unneeded items.'
                 'Notifications -> sensitive apps -> Show Previews -> When Unlocked or Never.'
             )
             Manual = 'Settings -> Face ID & Passcode; Settings -> Notifications'
@@ -266,7 +266,7 @@ function Get-CtgAutomateSteps {
             Title = 'AirDrop & profiles'
             Instructions = @(
                 'AirDrop -> Contacts Only (or Receiving Off in public).'
-                'VPN & Device Management — remove only unknown profiles.'
+                'VPN & Device Management - remove only unknown profiles.'
             )
             Manual = 'Settings -> General -> AirDrop; Settings -> General -> VPN & Device Management'
             Links = @(
@@ -293,8 +293,8 @@ function Get-CtgAutomateSteps {
             Phase = 'Phase 1 verify'
             Title = 'Verify VPN, DNS, Autofill unchanged'
             Instructions = @(
-                'Re-check VPN profile — same as Step 0 (Connected if it was before).'
-                'Wi-Fi Configure DNS — unchanged from Step 0.'
+                'Re-check VPN profile - same as Step 0 (Connected if it was before).'
+                'Wi-Fi Configure DNS - unchanged from Step 0.'
                 'DuckDuckGo Autofill still On.'
                 'Do NOT start Phase 2 until this passes.'
             )
@@ -314,7 +314,7 @@ function Get-CtgAutomateSteps {
             Instructions = @(
                 'App Store -> Malwarebytes Mobile Security -> Get.'
                 'Complete onboarding in the Malwarebytes app on device.'
-                'Do NOT enable Malwarebytes paid VPN — keep DuckDuckGo VPN/DNS.'
+                'Do NOT enable Malwarebytes paid VPN - keep DuckDuckGo VPN/DNS.'
             )
             Manual = 'App Store -> Search -> Malwarebytes Mobile Security -> Get'
             Links = @($MalwarebytesAppStore)
@@ -325,13 +325,13 @@ function Get-CtgAutomateSteps {
             Id = '2.2'
             Index = 16
             Phase = 'Phase 2'
-            Title = 'DNS VPN apps — usually SKIP'
+            Title = 'DNS VPN apps - usually SKIP'
             Instructions = @(
-                'If Step 0 showed DuckDuckGo, corporate VPN, Private Relay, NextDNS, Cloudflare, or Manual DNS — SKIP.'
+                'If Step 0 showed DuckDuckGo, corporate VPN, Private Relay, NextDNS, Cloudflare, or Manual DNS - SKIP.'
                 'Only one DNS-capturing VPN at a time on iOS.'
                 'Do NOT enable Malwarebytes paid VPN.'
             )
-            Manual = 'No action if VPN/DNS already set — proceed to next step'
+            Manual = 'No action if VPN/DNS already set - proceed to next step'
             Links = @('prefs:root=General&path=ManagedConfigurationList')
             Warn = 'SKIP Cloudflare/NextDNS when DuckDuckGo or existing VPN/DNS is already configured.'
         }
@@ -346,7 +346,7 @@ function Get-CtgAutomateSteps {
             )
             Manual = 'Settings -> Apps -> Messages; Settings -> Apps -> Safari -> Extensions'
             Links = @('App-prefs:com.apple.MobileSMS', 'App-prefs:com.apple.mobilesafari')
-            Warn = 'Do NOT enable Malwarebytes paid VPN — keep DuckDuckGo VPN/DNS.'
+            Warn = 'Do NOT enable Malwarebytes paid VPN - keep DuckDuckGo VPN/DNS.'
         }
         @{
             Id = '2.4'
@@ -355,9 +355,9 @@ function Get-CtgAutomateSteps {
             Title = 'USB hardening'
             Instructions = @(
                 'Confirm USB Accessories Off when locked (step 1.9).'
-                'Trust This Computer — only this laptop; reset Location & Privacy if unsure.'
+                'Trust This Computer - only this laptop; reset Location & Privacy if unsure.'
                 'Developer Mode -> Off (unless dev week).'
-                'When cabled: Apple Devices -> Encrypt local backup (password in DuckDuckGo PM — never git).'
+                'When cabled: Apple Devices -> Encrypt local backup (password in DuckDuckGo PM - never git).'
             )
             Manual = 'Settings -> Face ID & Passcode; Settings -> Privacy & Security -> Developer Mode'
             Links = @('prefs:root=PASSCODE', 'prefs:root=Privacy')
@@ -370,7 +370,7 @@ function Get-CtgAutomateSteps {
             Phase = 'Phase 2'
             Title = 'Lockdown Mode (optional)'
             Instructions = @(
-                'Use only for credible targeted threat — skip for normal daily use.'
+                'Use only for credible targeted threat - skip for normal daily use.'
                 'Lockdown Mode -> Turn On only if you accept tradeoffs.'
             )
             Manual = 'Settings -> Privacy & Security -> Lockdown Mode'
@@ -380,11 +380,11 @@ function Get-CtgAutomateSteps {
             Id = '2.V'
             Index = 20
             Phase = 'Phase 2 verify'
-            Title = 'Final verify — VPN & DNS'
+            Title = 'Final verify - VPN & DNS'
             Instructions = @(
                 'VPN and Wi-Fi DNS match Step 0 baseline.'
                 'VPN status icon behaves as before.'
-                'Browse a familiar site — no captive portal surprises.'
+                'Browse a familiar site - no captive portal surprises.'
                 'If broken: disconnect any new VPN from Phase 2; restore DuckDuckGo / original profile.'
             )
             Manual = 'Settings -> VPN; Settings -> Wi-Fi -> (i) -> Configure DNS'
@@ -400,7 +400,7 @@ function Get-CtgAutomateSteps {
 function Format-DeepLinkDisplay {
     param([string[]] $Links)
     if (-not $Links -or $Links.Count -eq 0) {
-        return '(no deep link — use manual path)'
+        return '(no deep link - use manual path)'
     }
     $lines = @()
     for ($i = 0; $i -lt $Links.Count; $i++) {
@@ -415,9 +415,9 @@ function Copy-ToClipboardOptional {
     if (-not $Text) { return }
     try {
         Set-Clipboard -Value $Text -ErrorAction Stop
-        Write-Host '  (Primary link copied to clipboard — paste into Notes/AirDrop for phone)' -ForegroundColor DarkCyan
+        Write-Host '  (Primary link copied to clipboard - paste into Notes/AirDrop for phone)' -ForegroundColor DarkCyan
     } catch {
-        Write-Host '  (Clipboard copy unavailable — copy link manually)' -ForegroundColor DarkGray
+        Write-Host '  (Clipboard copy unavailable - copy link manually)' -ForegroundColor DarkGray
     }
 }
 
@@ -472,7 +472,7 @@ function Test-StepUrlsValid {
 function Show-AutomateBanner {
     Write-Host ''
     Write-Host '============================================================' -ForegroundColor Cyan
-    Write-Host ' CyberThreatGotchi — iPhone hardening automate (21 steps)' -ForegroundColor Cyan
+    Write-Host ' CyberThreatGotchi - iPhone hardening automate (21 steps)' -ForegroundColor Cyan
     Write-Host ' Guided maximum-automation flow (Windows + phone taps)' -ForegroundColor Cyan
     Write-Host '============================================================' -ForegroundColor Cyan
     Write-Host " Repo:     $RepoRoot"
@@ -482,7 +482,7 @@ function Show-AutomateBanner {
     Write-Host ''
     Write-Host 'HONEST: Cannot auto-toggle iOS Settings from Windows.' -ForegroundColor Yellow
     Write-Host '        You tap each change; script guides + logs progress.' -ForegroundColor Yellow
-    Write-Host '        iOS 18 may block some prefs: URLs — manual path always shown.' -ForegroundColor Yellow
+    Write-Host '        iOS 18 may block some prefs: URLs - manual path always shown.' -ForegroundColor Yellow
     Write-Host ''
     Write-Host 'PRESERVE: DuckDuckGo VPN/DNS + DuckDuckGo Password Manager.' -ForegroundColor Yellow
     Write-Host ''
@@ -511,7 +511,7 @@ function Show-StepScreen {
     Write-Host ''
     Write-Host ' Deep links (tap on iPhone via AirDrop/Notes/Shortcuts):' -ForegroundColor DarkCyan
     Write-Host (Format-DeepLinkDisplay -Links $Step.Links)
-    Write-Host ' (iOS 17/18: may open parent pane only — follow manual path)' -ForegroundColor DarkGray
+    Write-Host ' (iOS 17/18: may open parent pane only - follow manual path)' -ForegroundColor DarkGray
     if ($Step.Warn) {
         Write-Host ''
         Write-Host " WARN: $($Step.Warn)" -ForegroundColor Yellow
@@ -576,7 +576,7 @@ function Invoke-AutomateFlow {
         switch -Regex ($choice) {
             '^[qQ]$' {
                 Write-AutomateLog "SESSION_QUIT at step=$($step.Id) index=$idx"
-                Write-Host 'Session saved — re-run with -Resume to continue.' -ForegroundColor Yellow
+                Write-Host 'Session saved - re-run with -Resume to continue.' -ForegroundColor Yellow
                 return
             }
             '^[bB]$' {
@@ -647,7 +647,7 @@ function Start-CtgGuideLanServer {
         $exe = (Get-Command py).Source
     }
     if (-not $exe) {
-        Write-Host 'Python not found — skip -ServeOnLan or install Python 3.' -ForegroundColor Yellow
+        Write-Host 'Python not found - skip -ServeOnLan or install Python 3.' -ForegroundColor Yellow
         return $null
     }
     $argList = @('-m', 'http.server', "$Port", '--bind', '0.0.0.0')
@@ -724,7 +724,7 @@ try {
         }
     } elseif ($LogOnly) {
         Write-AutomateLog "URL_VALIDATE_OK steps=$($steps.Count) guide=$GuideHtml shortcuts=$ShortcutsDoc"
-        Write-AutomateLog 'LogOnly complete — no device modification from PC'
+        Write-AutomateLog 'LogOnly complete - no device modification from PC'
         Write-Output "LogOnly OK: $($steps.Count) steps, all URLs valid. USB: $usbLine"
         exit 0
     }

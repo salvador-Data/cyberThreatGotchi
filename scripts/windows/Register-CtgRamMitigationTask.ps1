@@ -1,12 +1,12 @@
 <#
 .SYNOPSIS
-  Register scheduled task for CTG RAM mitigation monitor (host enforcer — not network IPS).
+  Register scheduled task for CTG RAM mitigation monitor (host enforcer - not network IPS).
 
 .DESCRIPTION
   Registers HackerPlanet-CTG-Ram-Mitigation to run Enforce-CtgRamMitigations.ps1 -Monitor
   on a weekly schedule (default Monday 04:15) or at user logon.
 
-  Uses Interactive logon + RunLevel Highest — no password stored in script or git.
+  Uses Interactive logon + RunLevel Highest - no password stored in script or git.
   Registration requires Administrator.
 
   Alerts use Send-CtgIdsAlert (Signal preferred) when vulnerable posture is detected.

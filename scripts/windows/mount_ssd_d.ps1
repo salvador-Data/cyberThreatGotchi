@@ -1,8 +1,8 @@
-﻿<#
+<#
 .SYNOPSIS
   Bring SDK SSD (Disk 1) online and mount as D: without formatting when a partition exists.
 .NOTES
-  Hacker Planet / CyberThreatGotchi — run elevated: Right-click PowerShell -> Run as administrator
+  Hacker Planet / CyberThreatGotchi - run elevated: Right-click PowerShell -> Run as administrator
 #>
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -49,7 +49,7 @@ $dpScript | Set-Content -Path $dpList -Encoding ASCII
 Write-Step "diskpart list: $dpList"
 diskpart /s $dpList
 
-# Ghost D: (size 0, no filesystem) — release letter before reassignment
+# Ghost D: (size 0, no filesystem) - release letter before reassignment
 $volD = Get-Volume -DriveLetter $letter -ErrorAction SilentlyContinue
 if ($volD -and ($volD.Size -eq 0 -or [string]::IsNullOrWhiteSpace($volD.FileSystem))) {
     Write-Step 'Removing stale drive letter D from empty volume...'

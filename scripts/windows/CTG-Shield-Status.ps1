@@ -7,7 +7,7 @@
   Optional: set CTG_KALI_SSH_HOST (default 127.0.0.1) and CTG_KALI_SSH_PORT (2222)
   to query /opt/ctg/tor-http-scrambler/ctg-shield-rotate.sh status on the lab VM.
 .NOTES
-  Hacker Planet LLC — authorized defensive lab use only.
+  Hacker Planet LLC - authorized defensive lab use only.
 #>
 param(
     [string]$KaliSshHost = $(if ($env:CTG_KALI_SSH_HOST) { $env:CTG_KALI_SSH_HOST } else { '127.0.0.1' }),
@@ -75,7 +75,7 @@ if ($SkipKaliSsh) {
 
 $ssh = Get-Command ssh -ErrorAction SilentlyContinue
 if (-not $ssh) {
-    Write-Host 'OpenSSH client not found — install Windows OpenSSH Client for Kali guest status.' -ForegroundColor Yellow
+    Write-Host 'OpenSSH client not found - install Windows OpenSSH Client for Kali guest status.' -ForegroundColor Yellow
     exit 0
 }
 

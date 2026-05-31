@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Continuous CTG Snort IDS loop — repeated Start-CtgSnortIDS.ps1 cycles.
+  Continuous CTG Snort IDS loop - repeated Start-CtgSnortIDS.ps1 cycles.
 
 .DESCRIPTION
   Runs Snort detect-only cycles during lab hours. Stop with Ctrl+C.
@@ -47,6 +47,6 @@ while ($true) {
     }
     Write-CtgSnortLog "Loop cycle begin $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" $paths.IdsLog
     & powershell @args
-    Write-CtgSnortLog 'Loop cycle end — sleeping 60s before next cycle' $paths.IdsLog
+    Write-CtgSnortLog 'Loop cycle end - sleeping 60s before next cycle' $paths.IdsLog
     Start-Sleep -Seconds 60
 }

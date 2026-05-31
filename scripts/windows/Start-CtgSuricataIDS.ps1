@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  CTG Suricata IDS on Windows — detect-only capture, EVE tail, rate-limited SMS.
+  CTG Suricata IDS on Windows - detect-only capture, EVE tail, rate-limited SMS.
 
 .DESCRIPTION
   Runs Suricata in passive IDS mode on selected Npcap interface. Logs EVE JSON to Backups\logs\suricata\.
@@ -214,7 +214,7 @@ function Start-CtgSuricataDaemon {
 }
 
 function Invoke-CtgKaliBridge {
-    Write-IdsLog 'Suricata unavailable on Windows — using Kali EVE SMS bridge' 'Yellow'
+    Write-IdsLog 'Suricata unavailable on Windows - using Kali EVE SMS bridge' 'Yellow'
     $bridgeScript = Join-Path $PSScriptRoot 'Start-CtgKaliSuricataSmsBridge.ps1'
     if (-not (Test-Path $bridgeScript)) {
         Write-IdsLog "Missing bridge script: $bridgeScript" 'Red'

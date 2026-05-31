@@ -8,7 +8,7 @@
   Windows stack is detect-only + SMS; inline IPS on Win11 laptop is limited.
 
 .PARAMETER DiagnoseOnly
-  Check Win11 Pro, Npcap, admin, Suricata binary, CTG paths — no install.
+  Check Win11 Pro, Npcap, admin, Suricata binary, CTG paths - no install.
 
 .PARAMETER InstallViaWinget
   Attempt winget install OISF.Suricata when binary missing.
@@ -55,14 +55,14 @@ function Invoke-CtgSuricataDiagnose {
     if (-not $isAdmin) {
         Write-InstallLog 'WARN: Suricata live capture requires elevated PowerShell' 'Yellow'
     }
-    Write-InstallLog "Npcap: $(if ($npcap) { 'installed' } else { 'MISSING — run Install-WiresharkNpcap.ps1 or https://npcap.com' })"
+    Write-InstallLog "Npcap: $(if ($npcap) { 'installed' } else { 'MISSING - run Install-WiresharkNpcap.ps1 or https://npcap.com' })"
     if (-not $npcap) { $ok = $false }
     if ($suricata) {
         Write-InstallLog "Suricata binary: $suricata"
         $ver = Get-CtgSuricataVersion -SuricataPath $suricata
         if ($ver) { Write-InstallLog "Suricata version: $ver" }
     } else {
-        Write-InstallLog 'Suricata: NOT installed — MSI from https://suricata.io/download/' 'Red'
+        Write-InstallLog 'Suricata: NOT installed - MSI from https://suricata.io/download/' 'Red'
         Write-InstallLog '  Optional: -InstallViaWinget (OISF.Suricata)' 'Yellow'
         Write-InstallLog '  Kali bridge: Start-CtgKaliSuricataSmsBridge.ps1 when VM runs Suricata-primary' 'Yellow'
         $ok = $false
@@ -77,9 +77,9 @@ function Invoke-CtgSuricataDiagnose {
     if ($twilioOk.Count -eq 4) {
         Write-InstallLog 'Twilio SMS: env configured (Send-CtgSmsAlert.ps1 -TestMessage)'
     } else {
-        Write-InstallLog 'Twilio SMS: not fully configured — set vars in local .env'
+        Write-InstallLog 'Twilio SMS: not fully configured - set vars in local .env'
     }
-    Write-InstallLog "DiagnoseOnly result: $(if ($ok) { 'PASS' } else { 'FAIL — see docs/FREE_IPS_SURICATA.md' })"
+    Write-InstallLog "DiagnoseOnly result: $(if ($ok) { 'PASS' } else { 'FAIL - see docs/FREE_IPS_SURICATA.md' })"
     return $ok
 }
 
@@ -108,7 +108,7 @@ function Deploy-CtgSuricataConfig {
 function Install-CtgSuricataWinget {
     $winget = Get-Command winget -ErrorAction SilentlyContinue
     if (-not $winget) {
-        Write-InstallLog 'winget not found — download MSI from suricata.io/download' 'Yellow'
+        Write-InstallLog 'winget not found - download MSI from suricata.io/download' 'Yellow'
         return $false
     }
     if ($WhatIf) {
@@ -134,7 +134,7 @@ Ensure-CtgSuricataLayout -Paths $paths
 
 if (-not $npcap) {
     $npcapScript = Join-Path $PSScriptRoot 'Install-WiresharkNpcap.ps1'
-    Write-InstallLog 'Npcap required — install Wireshark/Npcap first:' 'Yellow'
+    Write-InstallLog 'Npcap required - install Wireshark/Npcap first:' 'Yellow'
     Write-InstallLog "  $npcapScript"
     if (-not $WhatIf -and (Test-Path $npcapScript)) {
         Write-InstallLog 'Attempting Wireshark/Npcap install via winget/choco...' 'Cyan'
@@ -156,14 +156,14 @@ if ($suricata) {
     if (-not $WhatIf) {
         & $suricata -T -c $paths.YamlFile 2>&1 | ForEach-Object { Write-InstallLog "suricata -T: $_" }
         if ($LASTEXITCODE -ne 0) {
-            Write-InstallLog 'Config test failed — check rule paths and Npcap interface name in yaml' 'Yellow'
+            Write-InstallLog 'Config test failed - check rule paths and Npcap interface name in yaml' 'Yellow'
         } else {
             Write-InstallLog 'Suricata config test PASSED' 'Green'
         }
     }
 } else {
     Write-InstallLog 'Suricata binary still missing. Manual steps:' 'Yellow'
-    Write-InstallLog '1. https://suricata.io/download/ — Suricata 8.x Windows 64-bit MSI'
+    Write-InstallLog '1. https://suricata.io/download/ - Suricata 8.x Windows 64-bit MSI'
     Write-InstallLog '2. Install to C:\Program Files\Suricata (default)'
     Write-InstallLog '3. Re-run: .\scripts\windows\Install-CtgSuricataWindows.ps1'
     Write-InstallLog '4. Or poll Kali VM: Start-CtgKaliSuricataSmsBridge.ps1'
