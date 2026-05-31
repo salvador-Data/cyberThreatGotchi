@@ -39,6 +39,86 @@ as_user() {
         XAUTHORITY="/home/$DESKTOP_USER/.Xauthority" "$@"
 }
 
+# Seamless requires an X11/Xorg session. A Wayland session makes VirtualBox
+# enable seamless then immediately revert ("glitch and revert"), because the
+# guest cannot report seamless window regions over Wayland.
+SESSION_TYPE="unknown"
+
+detect_session_type() {
+    SESSION_TYPE="$(as_user bash -lc 'echo -n "${XDG_SESSION_TYPE:-}"' 2>/dev/null || true)"
+    if [[ -z "$SESSION_TYPE" || "$SESSION_TYPE" == "unknown" ]]; then
+        # Fallback: ask loginctl for the user's graphical session
+        local sid
+        sid="$(loginctl 2>/dev/null | awk -v u="$DESKTOP_USER" '$0 ~ u {print $1; exit}')"
+        if [[ -n "$sid" ]]; then
+            SESSION_TYPE="$(loginctl show-session "$sid" -p Type --value 2>/dev/null || echo unknown)"
+        fi
+    fi
+    log "Graphical session type: ${SESSION_TYPE:-unknown}"
+    if [[ "$SESSION_TYPE" == "wayland" ]]; then
+        log "WARNING: Wayland session detected — VirtualBox seamless WILL glitch and revert."
+        log "Forcing X11 (WaylandEnable=false) and requesting a re-login."
+        force_x11_display_manager
+        ensure_xfce_x11_session
+        return 1
+    fi
+    ensure_xfce_x11_session
+    return 0
+}
+
+ensure_xfce_x11_session() {
+    # Prefer Xfce on Xorg at login (not GNOME Wayland).
+    local dmrc="/home/$DESKTOP_USER/.dmrc"
+    if [[ ! -f "$dmrc" ]] || ! grep -q 'Session=xfce' "$dmrc" 2>/dev/null; then
+        cat >"$dmrc" <<'DMRC'
+[Desktop]
+Session=xfce
+DMRC
+        chown "$DESKTOP_USER:$DESKTOP_USER" "$dmrc" 2>/dev/null || true
+        chmod 644 "$dmrc" 2>/dev/null || true
+        log "Set default session Xfce in $dmrc"
+    fi
+    local acc="/var/lib/AccountsService/users/$DESKTOP_USER"
+    if [[ -d /var/lib/AccountsService/users ]]; then
+        install -d -m 0755 /var/lib/AccountsService/users
+        if [[ ! -f "$acc" ]] || ! grep -q 'XSession=xfce' "$acc" 2>/dev/null; then
+            {
+                echo '[User]'
+                echo 'Session=xfce'
+                echo 'XSession=xfce'
+            } >"$acc"
+            chmod 644 "$acc" 2>/dev/null || true
+            log "AccountsService: XSession=xfce for $DESKTOP_USER"
+        fi
+    fi
+}
+
+force_x11_display_manager() {
+    # GDM3
+    local gdm=/etc/gdm3/custom.conf
+    if [[ -d /etc/gdm3 ]] || command -v gdm3 >/dev/null 2>&1; then
+        install -d -m 0755 /etc/gdm3
+        if [[ -f "$gdm" ]]; then
+            if grep -q '^[[:space:]]*#\?WaylandEnable=' "$gdm"; then
+                sed -i 's/^[[:space:]]*#\?WaylandEnable=.*/WaylandEnable=false/' "$gdm"
+            elif grep -q '^\[daemon\]' "$gdm"; then
+                sed -i '/^\[daemon\]/a WaylandEnable=false' "$gdm"
+            else
+                printf '\n[daemon]\nWaylandEnable=false\n' >>"$gdm"
+            fi
+        else
+            printf '[daemon]\nWaylandEnable=false\n' >"$gdm"
+        fi
+        chmod 644 "$gdm"
+        log "GDM: WaylandEnable=false in $gdm (log out / reboot to apply)"
+    fi
+    # SDDM (KDE) — force X11 greeter session
+    if command -v sddm >/dev/null 2>&1; then
+        log "SDDM present — choose an 'X11'/'Xorg' session at login (not Wayland)"
+    fi
+    log "After re-login on X11, re-run: bash /mnt/ctg/ctg-seamless-guest.sh"
+}
+
 fix_xfce_panel() {
     if ! as_user bash -lc 'command -v xfconf-query >/dev/null 2>&1'; then
         return 1
@@ -75,17 +155,39 @@ fix_panel() {
     log "No XFCE/GNOME panel tool found — install xfce4-panel or use GNOME; skipping panel fix"
 }
 
-start_vboxclient() {
+restart_vboxclient() {
     if ! command -v VBoxClient >/dev/null 2>&1; then
         log "VBoxClient missing — run: sudo bash /mnt/ctg/kali-boot-autopatch.sh"
         return 1
     fi
-    log "Starting VBoxClient services (seamless, autoresize/vmsvga, clipboard, dnd)"
+    # Ensure the kernel guest service is up first (seamless needs vboxadd/vboxguest).
+    local svc
+    for svc in vboxadd-service vboxadd vboxservice; do
+        if systemctl list-unit-files "${svc}.service" >/dev/null 2>&1; then
+            systemctl start "${svc}.service" 2>/dev/null || true
+        fi
+    done
+    # Kill stale/crashed VBoxClient seamless so we relaunch cleanly (fixes glitch-revert).
+    log "Restarting VBoxClient cleanly (kill stale seamless, relaunch)"
+    as_user bash -lc 'pkill -u "$USER" -f "VBoxClient --seamless" >/dev/null 2>&1 || true'
+    sleep 1
     # --vmsvga drives dynamic resize on the VMSVGA controller (no wrap/clip)
     as_user bash -lc 'VBoxClient --vmsvga >/dev/null 2>&1 || VBoxClient --display >/dev/null 2>&1 || true'
     as_user bash -lc 'VBoxClient --seamless >/dev/null 2>&1 || true'
     as_user bash -lc 'VBoxClient --clipboard >/dev/null 2>&1 || true'
     as_user bash -lc 'VBoxClient --draganddrop >/dev/null 2>&1 || true'
+}
+
+verify_seamless() {
+    sleep 1
+    if as_user bash -lc 'pgrep -u "$USER" -f "VBoxClient --seamless" >/dev/null 2>&1'; then
+        log "OK: VBoxClient --seamless is running (host Host+L will stay in seamless)"
+        return 0
+    fi
+    log "WARNING: VBoxClient --seamless is NOT running — seamless will revert."
+    log "  Check: ps aux | grep VBoxClient ; journalctl -b | grep -i vboxclient"
+    log "  Likely Wayland session (need X11) or guest additions not fully installed."
+    return 1
 }
 
 fix_autoresize() {
@@ -100,33 +202,54 @@ fix_autoresize() {
 }
 
 install_autostart() {
-    # Persist VBoxClient seamless+autoresize for every GUI login (in addition to apt package autostart).
     local autostart_dir="/home/$DESKTOP_USER/.config/autostart"
     install -d -m 0755 -o "$DESKTOP_USER" -g "$DESKTOP_USER" "$autostart_dir" 2>/dev/null || true
-    local f="$autostart_dir/ctg-vboxclient-seamless.desktop"
+    local f="$autostart_dir/vboxclient-seamless.desktop"
     cat >"$f" <<'DESK'
 [Desktop Entry]
 Type=Application
 Name=CTG VBoxClient Seamless+Resize
 Comment=Hacker Planet CTG lab — seamless + autoresize at login
-Exec=sh -c 'VBoxClient --vmsvga || VBoxClient --display; VBoxClient --seamless; VBoxClient --clipboard'
+Exec=sh -c 'sleep 2; VBoxClient --vmsvga 2>/dev/null || VBoxClient --display 2>/dev/null; VBoxClient --seamless; VBoxClient --clipboard'
 X-GNOME-Autostart-enabled=true
 NoDisplay=true
 DESK
     chown "$DESKTOP_USER:$DESKTOP_USER" "$f" 2>/dev/null || true
     chmod 644 "$f" 2>/dev/null || true
     log "Installed per-user autostart: $f"
+    install -d -m 0755 /etc/xdg/autostart
+    local sys=/etc/xdg/autostart/vboxclient-seamless.desktop
+    if [[ ! -f "$sys" ]]; then
+        cat >"$sys" <<'SYS'
+[Desktop Entry]
+Type=Application
+Name=VirtualBox Seamless Client
+Comment=CTG lab — VBoxClient seamless at login
+Exec=sh -c 'VBoxClient --vmsvga 2>/dev/null || VBoxClient --display 2>/dev/null; VBoxClient --seamless'
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
+SYS
+        chmod 644 "$sys"
+        log "Installed system autostart: $sys"
+    fi
 }
 
 log "=== CTG seamless/scaled guest fix ==="
 if ! detect_desktop_user; then
     exit 1
 fi
+WAYLAND_BLOCK=false
+detect_session_type || WAYLAND_BLOCK=true
 fix_panel
-start_vboxclient
+restart_vboxclient
 fix_autoresize
 install_autostart
+verify_seamless || true
 log ""
+if $WAYLAND_BLOCK; then
+    log "ACTION REQUIRED: log out of the Wayland session and log back in on X11/Xorg,"
+    log "then re-run this script. Seamless cannot work on Wayland."
+fi
 log "IMPORTANT — VirtualBox toolbar facts (Windows host):"
 log "  * Seamless mode shows NO menu/toolbar/scrollbar by design; its only chrome is the"
 log "    mini-toolbar, which VirtualBox 7 frequently fails to draw in seamless (known bug)."

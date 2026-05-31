@@ -4,6 +4,26 @@
 
 See also: [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) (install, autopatch, diagnose).
 
+## Glitch and revert when selecting Seamless
+
+**Symptom:** View → Seamless Mode (or Host+L) flashes, then returns to windowed/scaled.
+
+**Root cause (guest):** VirtualBox seamless needs an **X11** session with **`VBoxClient --seamless`**
+running. If the guest is on **Wayland**, or VBoxClient crashed, the host enables seamless and the
+guest cannot report window regions — VirtualBox immediately reverts.
+
+| Cause | Fix |
+|-------|-----|
+| **Wayland session** | `WaylandEnable=false` in `/etc/gdm3/custom.conf`, log out, log in as **Xfce** (Xorg) |
+| **VBoxClient not running** | `bash /mnt/ctg/ctg-seamless-guest.sh` (restarts `--vmsvga` + `--seamless`) |
+| **GUI/Scale still true** | Host: `Start-KaliSeamless.ps1 -DisplayMode Seamless` sets `GUI/Scale=false` |
+| **No GUI login** | Log in at Kali console first |
+
+**Verify seamless stays on:** after the guest fix, press **Host+L** once. `VBoxManage showvminfo kali`
+should show `Facility "Seamless Mode": active`.
+
+**Scaled mode still works** — use `-DisplayMode Scaled` when you want menu/scrollbars; seamless is separate.
+
 ## ROOT CAUSE: seamless mode has no toolbar by design
 
 After setting `GUI/ShowMiniToolBar=true` the toolbar still did not appear. The real reason:

@@ -26,6 +26,9 @@ def test_start_kali_seamless_script_exists():
     assert "DisplayMode" in text
     assert "Get-CtgGuiExtradataSnapshot" in text
     assert "Set-CtgMiniToolbarExtradata" in text
+    assert "Wait-CtgSeamlessFacilityStable" in text
+    assert "Write-CtgGlitchRevertFix" in text
+    assert "GUI/Scale' -Value 'false'" in text or "GUI/Scale', 'false'" in text
     assert "kali-seamless.log" in text
     assert "kali-boot-autopatch.sh" in text
     assert "NoShowHostToolbar" in text
@@ -67,6 +70,25 @@ def test_seamless_doc_and_autopatch_note():
     assert "--vmsvga" in guest_body
     assert "autohide" in guest_body
     assert "gsettings" in guest_body or "gnome" in guest_body.lower()
+    # Glitch-and-revert fixes: Wayland detection + clean VBoxClient restart + verify
+    assert "XDG_SESSION_TYPE" in guest_body
+    assert "wayland" in guest_body.lower()
+    assert "WaylandEnable=false" in guest_body
+    assert "restart_vboxclient" in guest_body
+    assert "pkill" in guest_body
+    assert "verify_seamless" in guest_body
+
+
+def test_seamless_script_detects_glitch_revert():
+    text = (WIN / "Start-KaliSeamless.ps1").read_text(encoding="utf-8")
+    assert "GLITCH-REVERT" in text
+    assert "ctg-seamless-guest.sh" in text
+
+
+def test_stage_script_normalizes_sh_to_lf():
+    stage = (WIN / "Stage-KaliLabToBackups.ps1").read_text(encoding="utf-8")
+    assert "Copy-CtgGuestFile" in stage
+    assert "`r`n" in stage or "\\r\\n" in stage
 
     autopatch = (KALI / "kali-boot-autopatch.sh").read_text(encoding="utf-8")
     assert "virtualbox-guest-x11" in autopatch

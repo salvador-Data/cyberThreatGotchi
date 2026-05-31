@@ -215,9 +215,10 @@ function Set-CtgSeamlessExtradata {
         }
         return $true
     }
-    Write-CtgSeamlessLog "Setting extradata GUI/Seamless=on on $Name (auto-enter when Guest Additions + desktop ready)"
+    Write-CtgSeamlessLog "Setting extradata GUI/Seamless=on on $Name (Scale off — scaled+seamless together causes glitch-revert)"
     Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Seamless' -Value 'on'
     Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/SeamlessMode' -Value '1'
+    Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Scale' -Value 'false'
     if ($WhatIf) { return $true }
     $seamless = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Seamless'
     if (-not (Test-CtgExtradataTruthy -Value $seamless)) {
@@ -254,6 +255,60 @@ function Write-CtgGuestAdditionsHint {
 function Write-CtgDesktopLoginHint {
     Write-CtgSeamlessLog 'WARNING: No graphical login in Kali - log in to GNOME/X11 at the VM console, then press Host+L or re-run this script.'
     Write-CtgSeamlessLog 'Guest fix: sudo bash /mnt/ctg/kali-boot-autopatch.sh (ensures vboxservice + X11)'
+}
+
+function Write-CtgGlitchRevertFix {
+    Write-CtgSeamlessLog 'GLITCH-REVERT: seamless was requested but the guest dropped back to windowed/scaled.'
+    Write-CtgSeamlessLog 'Most common causes: Wayland session (need X11/Xorg) or VBoxClient --seamless not running.'
+    Write-CtgSeamlessLog 'In Kali after GUI login (choose Xfce session, not Wayland):'
+    Write-CtgSeamlessLog '  bash /mnt/ctg/ctg-seamless-guest.sh'
+    Write-CtgSeamlessLog 'Then on Windows: press Host+L once. Seamless should stay on.'
+    Write-CtgSeamlessLog 'Docs: docs/KALI_SEAMLESS_MODE.md'
+}
+
+function Test-CtgSeamlessPreflight {
+    param([string]$Name, [string]$VBoxManage)
+    if ((Get-CtgVmState -Name $Name -VBoxManage $VBoxManage) -ne 'running') {
+        return $true
+    }
+    if (-not (Test-CtgGuestAdditionsReady -Name $Name -VBoxManage $VBoxManage)) {
+        Write-CtgGuestAdditionsHint
+        return $false
+    }
+    if (-not (Test-CtgGuestDesktopReady -Name $Name -VBoxManage $VBoxManage)) {
+        Write-CtgDesktopLoginHint
+        return $false
+    }
+    return $true
+}
+
+function Wait-CtgSeamlessFacilityStable {
+    param(
+        [string]$Name,
+        [string]$VBoxManage,
+        [int]$PollSec = 12,
+        [int]$IntervalSec = 2
+    )
+    if ($PollSec -le 0) {
+        return (Test-CtgSeamlessFacilityActive -Name $Name -VBoxManage $VBoxManage)
+    }
+    Write-CtgSeamlessLog "Polling up to ${PollSec}s for Seamless facility to stay active ..."
+    $deadline = (Get-Date).AddSeconds($PollSec)
+    $seenActive = $false
+    while ((Get-Date) -lt $deadline) {
+        if (Test-CtgSeamlessFacilityActive -Name $Name -VBoxManage $VBoxManage) {
+            $seenActive = $true
+        } elseif ($seenActive) {
+            Write-CtgSeamlessLog 'Seamless facility went active then inactive (glitch-revert detected)'
+            return $false
+        }
+        Start-Sleep -Seconds $IntervalSec
+    }
+    if ($seenActive) {
+        Write-CtgSeamlessLog 'Seamless facility stable (active)'
+        return $true
+    }
+    return $false
 }
 
 function Wait-CtgGuestDesktop {
@@ -301,8 +356,8 @@ function Get-CtgSeamlessDiagnostics {
     if (-not $NoShowHostToolbar -and -not (Test-CtgExtradataTruthy -Value $extradataMiniTb)) {
         $issues += "GUI/ShowMiniToolBar is '$extradataMiniTb' - host mini toolbar hidden; re-run without -NoShowHostToolbar"
     }
-    if ($DisplayMode -eq 'Seamless') {
-        $issues += 'Seamless mode hides ALL chrome (menu/toolbar/scrollbar); mini toolbar is unreliable in VB7 seamless. For a visible toolbar + scroll use -DisplayMode Scaled'
+    if ($DisplayMode -eq 'Seamless' -and $seamlessActive) {
+        $issues += 'Seamless facility ACTIVE — if menu toggle still reverts, run bash /mnt/ctg/ctg-seamless-guest.sh in Kali (X11 + VBoxClient)'
     }
     if (-not (Test-CtgExtradataTruthy -Value $guiExtra['GUI/AutoresizeGuest'])) {
         $issues += "GUI/AutoresizeGuest is '$($guiExtra['GUI/AutoresizeGuest'])' - guest may wrap/clip; script sets this true"
@@ -312,8 +367,8 @@ function Get-CtgSeamlessDiagnostics {
     if ($gaVer -and $ver.Raw -notmatch [regex]::Escape($gaVer.Split('.')[0])) {
         $issues += "Guest Additions $gaVer may not match host $($ver.Raw) - run kali-boot-autopatch.sh"
     }
-    if ($state -eq 'running' -and $gaReady -and $desktop -and -not $seamlessActive) {
-        $issues += 'Seamless facility inactive - press Host+L on Kali window (VB7 has no controlvm seamless)'
+    if ($state -eq 'running' -and $gaReady -and $desktop -and -not $seamlessActive -and (Test-CtgExtradataTruthy -Value $extradataSeamless)) {
+        $issues += 'GLITCH-REVERT: GUI/Seamless on but Seamless facility INACTIVE. Cause is almost always a Wayland session or VBoxClient --seamless not running. In Kali run: bash /mnt/ctg/ctg-seamless-guest.sh (forces X11 + restarts VBoxClient)'
     }
     return [ordered]@{
         HostVBox       = $ver.Raw
@@ -369,18 +424,21 @@ function Enable-CtgSeamlessOnRunningVm {
     )
     if (-not (Test-CtgGuestAdditionsReady -Name $Name -VBoxManage $VBoxManage)) {
         Write-CtgGuestAdditionsHint
-        Write-CtgSeamlessLog "VM $Name is running but Guest Additions missing - leaving normal windowed mode"
+        Write-CtgSeamlessLog "VM $Name is running but Guest Additions missing - seamless will revert"
         return $false
+    }
+    if (-not (Test-CtgGuestDesktopReady -Name $Name -VBoxManage $VBoxManage)) {
+        if (-not (Wait-CtgGuestDesktop -Name $Name -VBoxManage $VBoxManage -WaitSec $WaitSec)) {
+            Write-CtgDesktopLoginHint
+            return $false
+        }
     }
     if (Test-CtgSeamlessFacilityActive -Name $Name -VBoxManage $VBoxManage) {
         Write-CtgSeamlessLog "Seamless mode already active on $Name"
-        Write-CtgHostToolbarHint
-        return $true
-    }
-    if (-not (Wait-CtgGuestDesktop -Name $Name -VBoxManage $VBoxManage -WaitSec $WaitSec)) {
-        Write-CtgDesktopLoginHint
-        Write-CtgHostLHint -Name $Name
-        Write-CtgHostToolbarHint
+        if (Wait-CtgSeamlessFacilityStable -Name $Name -VBoxManage $VBoxManage -PollSec 4) {
+            return $true
+        }
+        Write-CtgGlitchRevertFix
         return $false
     }
     if (Test-CtgVBoxControlvmSeamlessSupported -VBoxManage $VBoxManage) {
@@ -397,10 +455,13 @@ function Enable-CtgSeamlessOnRunningVm {
         }
         Write-CtgSeamlessLog "controlvm seamless on unavailable: $($result.Output.Trim())"
     }
-    Write-CtgSeamlessLog "VM $Name running with Guest Additions + desktop - extradata GUI/Seamless=on set"
+    Write-CtgSeamlessLog "VM $Name ready — extradata GUI/Seamless=on, GUI/Scale=false. Press Host+L to enter seamless."
     Write-CtgHostLHint -Name $Name
-    Write-CtgHostToolbarHint
-    return $true
+    Write-CtgGlitchRevertFix
+    if (Wait-CtgSeamlessFacilityStable -Name $Name -VBoxManage $VBoxManage -PollSec 8) {
+        return $true
+    }
+    return $false
 }
 
 function Start-CtgKaliSeamless {
@@ -442,8 +503,9 @@ function Start-CtgKaliSeamless {
         Set-CtgMiniToolbarExtradata -Name $Name -VBoxManage $VBoxManage
     }
     if ($Mode -eq 'Seamless') {
-        Write-CtgSeamlessLog 'NOTE: Seamless mode shows NO menu/toolbar/scrollbar. The mini toolbar is unreliable in VB7 seamless.'
-        Write-CtgSeamlessLog 'For a visible toolbar + scrollbars use: Start-KaliSeamless.ps1 -DisplayMode Scaled (or -DisplayMode Gui)'
+        Write-CtgSeamlessLog 'Seamless preflight: needs graphical X11 login + VBoxClient --seamless in guest.'
+        Write-CtgSeamlessLog 'Before Host+L in Kali run: bash /mnt/ctg/ctg-seamless-guest.sh (fixes Wayland glitch-revert)'
+        Write-CtgSeamlessLog 'For visible menu/scrollbars use -DisplayMode Scaled (does not disable seamless)'
     }
 
     $state = Get-CtgVmState -Name $Name -VBoxManage $VBoxManage

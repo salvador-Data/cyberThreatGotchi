@@ -30,6 +30,22 @@ function Write-CtgStageLog([string]$Message) {
     }
 }
 
+# Shell scripts must be LF for the Kali guest. Windows checkout (core.autocrlf=true)
+# yields CRLF working-tree files; a CRLF .sh can fail in bash ($'\r' syntax errors),
+# which would break ctg-seamless-guest.sh and the boot autopatch in the VM.
+function Copy-CtgGuestFile {
+    param([string]$Source, [string]$Dest)
+    $ext = [IO.Path]::GetExtension($Source).ToLowerInvariant()
+    if ($ext -eq '.sh') {
+        $text = [IO.File]::ReadAllText($Source)
+        $lf = $text -replace "`r`n", "`n" -replace "`r", "`n"
+        $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+        [IO.File]::WriteAllText($Dest, $lf, $utf8NoBom)
+    } else {
+        Copy-Item -Path $Source -Destination $Dest -Force
+    }
+}
+
 Write-CtgStageLog "Staging scripts/kali -> $BackupRoot"
 
 $topFiles = Get-ChildItem -Path $KaliSrc -File -ErrorAction SilentlyContinue
@@ -38,7 +54,7 @@ foreach ($f in $topFiles) {
     if ($WhatIf) {
         Write-CtgStageLog "[WhatIf] $($f.FullName) -> $dest"
     } else {
-        Copy-Item -Path $f.FullName -Destination $dest -Force
+        Copy-CtgGuestFile -Source $f.FullName -Dest $dest
         Write-CtgStageLog "Staged: $dest"
     }
 }
@@ -53,6 +69,9 @@ foreach ($dirName in $subDirs) {
     } else {
         New-Item -ItemType Directory -Path $destDir -Force | Out-Null
         Copy-Item -Path (Join-Path $srcDir '*') -Destination $destDir -Recurse -Force
+        Get-ChildItem -Path $destDir -Recurse -File -Filter '*.sh' -ErrorAction SilentlyContinue | ForEach-Object {
+            Copy-CtgGuestFile -Source $_.FullName -Dest $_.FullName
+        }
         Write-CtgStageLog "Staged tree: $destDir"
     }
 }
@@ -61,7 +80,7 @@ $runScript = Join-Path $KaliSrc 'RUN-KALI-LAB-NOW.sh'
 if (Test-Path $runScript) {
     $runDest = Join-Path $BackupRoot 'RUN-KALI-LAB-NOW.sh'
     if (-not $WhatIf) {
-        Copy-Item -Path $runScript -Destination $runDest -Force
+        Copy-CtgGuestFile -Source $runScript -Dest $runDest
     }
     Write-CtgStageLog "RUN script: $runDest"
 }

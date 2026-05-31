@@ -165,19 +165,17 @@ XEOF
     fi
     install -d -m 0755 /etc/xdg/autostart
     local autostart=/etc/xdg/autostart/vboxclient-seamless.desktop
-    if [[ ! -f "$autostart" ]]; then
-        cat >"$autostart" <<'DESK'
+    cat >"$autostart" <<'DESK'
 [Desktop Entry]
 Type=Application
 Name=VirtualBox Seamless Client
-Comment=CTG lab — enables Host+L seamless on Windows host
-Exec=/usr/bin/VBoxClient --seamless
+Comment=CTG lab — vmsvga + seamless (prevents glitch-revert on Host+L)
+Exec=sh -c 'VBoxClient --vmsvga 2>/dev/null || VBoxClient --display 2>/dev/null; VBoxClient --seamless'
 X-GNOME-Autostart-enabled=true
 NoDisplay=true
 DESK
-        chmod 644 "$autostart"
-        log "Installed $autostart (VBoxClient --seamless at login)"
-    fi
+    chmod 644 "$autostart"
+    log "Installed $autostart (VBoxClient vmsvga+seamless at login)"
     local guest_fix="${SCRIPT_DIR}/ctg-seamless-guest.sh"
     for candidate in /mnt/ctg/ctg-seamless-guest.sh /opt/ctg/ctg-seamless-guest.sh; do
         if [[ -f "$candidate" ]]; then
