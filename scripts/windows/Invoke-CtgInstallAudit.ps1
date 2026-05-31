@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  CTG install audit — INSTALLED vs PENDING vs MANUAL for every lab component.
+  CTG install audit â€” INSTALLED vs PENDING vs MANUAL for every lab component.
 
 .DESCRIPTION
   Diagnose-only by default. Writes a timestamped report to Backups\logs\ctg-install-audit-*.txt
@@ -27,6 +27,7 @@ param(
     [switch] $ApplySafe,
     [switch] $Json
 )
+. (Join-Path $PSScriptRoot 'CTG-ShellFast.ps1')
 
 $ErrorActionPreference = 'Continue'
 . (Join-Path $PSScriptRoot 'CTG-Paths.ps1')
@@ -181,7 +182,14 @@ if (Test-Path $credVault) {
         -AdminStep '.\scripts\windows\Ctg-CredentialVault.ps1 -InitVault -WithDpapiWrap'
 }
 
-# --- Scheduled tasks ---
+# --- Scheduled tasks (single Get-ScheduledTask query for speed) ---
+$registeredCtgTasks = @{}
+try {
+    Get-ScheduledTask -ErrorAction SilentlyContinue |
+        Where-Object { $_.TaskName -like 'HackerPlanet-CTG-*' } |
+        ForEach-Object { $registeredCtgTasks[$_.TaskName] = $true }
+} catch { }
+
 $taskMap = [ordered]@{
     'HackerPlanet-CTG-Nightly-4AM'         = 'Register-CtgNightlyTask.ps1'
     'HackerPlanet-CTG-Cpu-Optimize'        = 'Register-CtgCpuOptimizeTask.ps1'
@@ -195,7 +203,7 @@ $taskMap = [ordered]@{
 foreach ($entry in $taskMap.GetEnumerator()) {
     $taskName = $entry.Key
     $regScript = $entry.Value
-    if (Test-CtgScheduledTask -TaskName $taskName) {
+    if ($registeredCtgTasks.ContainsKey($taskName)) {
         Add-CtgComponent -Component "Task $taskName" -Status 'INSTALLED' -Detail 'registered'
     } else {
         $scriptPath = Join-Path $Win $regScript
@@ -250,7 +258,7 @@ if (Test-Path $composeFile) {
 $defenderScript = Join-Path $Win 'Harden-CtgWindowsDefender.ps1'
 if (Test-Path $defenderScript) {
     if (Test-CtgIsAdmin) {
-        Add-CtgComponent -Component 'Defender ASR ApplySafe' -Status 'MANUAL' -Detail 'Admin available — run after ASR audit review' `
+        Add-CtgComponent -Component 'Defender ASR ApplySafe' -Status 'MANUAL' -Detail 'Admin available â€” run after ASR audit review' `
             -AdminStep '.\scripts\windows\Harden-CtgWindowsDefender.ps1 -ApplySafe'
     } else {
         Add-CtgComponent -Component 'Defender ASR ApplySafe' -Status 'MANUAL' -Detail 'diagnose OK without Admin' `

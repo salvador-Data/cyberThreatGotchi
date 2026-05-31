@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  DuckDuckGo-preserving stack audit — diagnose key CTG Windows SOC scripts.
+  DuckDuckGo-preserving stack audit â€” diagnose key CTG Windows SOC scripts.
 
 .DESCRIPTION
   Runs Preserve-DuckDuckGoVpn before and after a batch of -DiagnoseOnly scripts.
@@ -25,6 +25,7 @@ param(
     [switch] $ApplySafeDefender,
     [switch] $SkipWifiDiagnose
 )
+. (Join-Path $PSScriptRoot 'CTG-ShellFast.ps1')
 
 $ErrorActionPreference = 'Continue'
 . (Join-Path $PSScriptRoot 'CTG-Paths.ps1')
@@ -32,6 +33,12 @@ $ErrorActionPreference = 'Continue'
 
 $Repo = Get-CtgRepoRoot -FromPath $PSScriptRoot
 $Win = Join-Path $Repo 'scripts\windows'
+$script:CtgPreserveScriptLoaded = $false
+$script:CtgPreserveScriptPath = Join-Path $Win 'Preserve-DuckDuckGoVpn.ps1'
+if (Test-Path $script:CtgPreserveScriptPath) {
+    . $script:CtgPreserveScriptPath
+    $script:CtgPreserveScriptLoaded = $true
+}
 $LogDir = Join-Path $env:USERPROFILE 'Backups\logs'
 if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir -Force | Out-Null }
 

@@ -2,7 +2,7 @@
 
 One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized defensive use only.
 
-**Related docs:** [CTG_ONE_WORKING.md](CTG_ONE_WORKING.md) · [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) · [LAB_MATURITY.md](LAB_MATURITY.md) · [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) · [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md) · [LAB_VLAN.md](LAB_VLAN.md) · [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+**Related docs:** [CTG_ONE_WORKING.md](CTG_ONE_WORKING.md) · [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) · [LAB_MATURITY.md](LAB_MATURITY.md) · [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) · [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md) · [LAB_VLAN.md](LAB_VLAN.md) · [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [SHELL_PERFORMANCE.md](SHELL_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
 
 ---
 
@@ -25,6 +25,7 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 | **Print = run (iPhone)** | [IPHONE_AUDIT_PRINT.md](IPHONE_AUDIT_PRINT.md) | Manual Settings on device; preserve DDG VPN/DNS/PM |
 | **Print = run (Windows SOC)** | [WINDOWS_SOC_AUDIT_PRINT.md](WINDOWS_SOC_AUDIT_PRINT.md) | `Invoke-CtgPreserveStackAudit.ps1` |
 | **Print = run (all domains)** | [print/README_PRINT_ALL.md](print/README_PRINT_ALL.md) | `Invoke-CtgPrintAllAudit.ps1 -OpenPrintFolder` |
+| Shell speed | `Optimize-CtgShellPerformance.ps1` | `-ApplySafe` for `ctg` profile snippet; use **pwsh 7** default |
 
 **Email vault titles needed:** `Proton IMAP` (or `CTG_EMAIL_IMAP`); optional `Microsoft Account`.
 

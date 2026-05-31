@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  One CTG orchestrator — install audit, preserve stack, print bundle, memory, Kali stage.
+  One CTG orchestrator â€” install audit, preserve stack, print bundle, memory, Kali stage.
 
 .DESCRIPTION
   Runs the full defensive lab diagnose pipeline in order. Default: -DiagnoseOnly.
@@ -31,6 +31,7 @@ param(
     [switch] $ApplySafe,
     [switch] $OpenPrintFolder
 )
+. (Join-Path $PSScriptRoot 'CTG-ShellFast.ps1')
 
 $ErrorActionPreference = 'Continue'
 . (Join-Path $PSScriptRoot 'CTG-Paths.ps1')
@@ -91,7 +92,7 @@ Add-OwLine ('Mode: {0} | Admin: {1}' -f $(if ($ApplySafe) { 'ApplySafe' } else {
 Add-OwLine 'Policy: preserve DDG VPN/DNS/PM; never disable HVCI/spec-ctrl; no guest-flash loops'
 Add-OwLine ''
 
-# Step 1 — DDG preserve + Wi-Fi diagnose only
+# Step 1 â€” DDG preserve + Wi-Fi diagnose only
 Add-OwLine '--- Step 1: DDG preserve check ---'
 $beforeSnap = @{ VpnInstalled = $false; TunnelUp = $false }
 $preserveScript = Join-Path $Win 'Preserve-DuckDuckGoVpn.ps1'
@@ -119,10 +120,10 @@ if (Test-Path $wifiScript) {
 }
 
 if ($ApplySafe -and -not $ddgOk) {
-    Add-OwLine '  BLOCKED: Wi-Fi ApplyFixes skipped — DDG preserve not verified'
+    Add-OwLine '  BLOCKED: Wi-Fi ApplyFixes skipped â€” DDG preserve not verified'
 }
 
-# Step 2 — Install audit
+# Step 2 â€” Install audit
 Add-OwLine ''
 Add-OwLine '--- Step 2: Install audit ---'
 $auditSplat = @{ Json = $true }
@@ -137,10 +138,10 @@ if ($auditResult.Ok -and $auditResult.Result -is [hashtable]) {
 }
 $auditOut = if ($auditResult.Ok -and $auditResult.Result -is [hashtable]) { $auditResult.Result } else { $null }
 
-# Step 3 — Preserve stack audit
+# Step 3 â€” Preserve stack audit
 Add-OwLine ''
 Add-OwLine '--- Step 3: Preserve stack audit ---'
-$stackResult = Invoke-OwScript -RelativePath 'Invoke-CtgPreserveStackAudit.ps1'
+$stackResult = Invoke-OwScript -RelativePath 'Invoke-CtgPreserveStackAudit.ps1' -Splat @{ SkipWifiDiagnose = $true }
 if ($stackResult.Ok) {
     $unchanged = $null
     if ($stackResult.Result -and $stackResult.Result.DdgTunnelUnchanged -ne $null) {
@@ -152,7 +153,7 @@ if ($stackResult.Ok) {
     Add-OwStep -Step 3 -Name 'Preserve stack audit' -Result 'FAIL' -Detail $stackResult.Error
 }
 
-# Step 4 — Print-all (paths only, skip duplicate stack)
+# Step 4 â€” Print-all (paths only, skip duplicate stack)
 Add-OwLine ''
 Add-OwLine '--- Step 4: Print-all audit (paths only) ---'
 $printSplat = @{ SkipStackAudit = $true }
@@ -166,23 +167,29 @@ if ($printResult.Ok) {
     Add-OwStep -Step 4 -Name 'Print-all audit' -Result 'FAIL' -Detail $printResult.Error
 }
 
-# Step 5 — Memory protection diagnose
+# Step 5 â€” Memory protection diagnose
 Add-OwLine ''
 Add-OwLine '--- Step 5: Memory protection ---'
-$memResult = Invoke-OwScript -RelativePath 'Enforce-CtgMemoryProtection.ps1' -Splat @{ DiagnoseOnly = $true }
-Add-OwStep -Step 5 -Name 'Memory protection' -Result $(if ($memResult.Ok) { 'OK' } else { 'FAIL' }) -Detail 'HVCI/VBS/spec-ctrl - do not regress'
+if ($DiagnoseOnly -and $stackResult.Ok) {
+    Add-OwStep -Step 5 -Name 'Memory protection' -Result 'SKIP' -Detail 'covered by preserve stack audit (Step 3)'
+} else {
+    $memResult = Invoke-OwScript -RelativePath 'Enforce-CtgMemoryProtection.ps1' -Splat @{ DiagnoseOnly = $true }
+    Add-OwStep -Step 5 -Name 'Memory protection' -Result $(if ($memResult.Ok) { 'OK' } else { 'FAIL' }) -Detail 'HVCI/VBS/spec-ctrl - do not regress'
+}
 
-# Step 6 — Kali staging
+# Step 6 â€” Kali staging
 Add-OwLine ''
 Add-OwLine '--- Step 6: Kali lab staging ---'
+$clickMe = Join-Path $env:USERPROFILE 'Backups\CLICK-ME-RUN-IN-KALI.sh'
 if ($ApplySafe) {
     Add-OwLine '  (ApplySafe already staged via install audit if run; re-run for idempotent sync)'
+    $stageResult = Invoke-OwScript -RelativePath 'Stage-KaliLabToBackups.ps1'
+    Add-OwStep -Step 6 -Name 'Kali staging' -Result $(if ($stageResult.Ok -and (Test-Path $clickMe)) { 'OK' } elseif ($stageResult.Ok) { 'WARN' } else { 'FAIL' }) -Detail $(if (Test-Path $clickMe) { 'CLICK-ME staged' } else { 'CLICK-ME missing after stage' })
+} else {
+    Add-OwStep -Step 6 -Name 'Kali staging' -Result $(if (Test-Path $clickMe) { 'OK' } else { 'WARN' }) -Detail $(if (Test-Path $clickMe) { 'CLICK-ME present (DiagnoseOnly — no re-stage)' } else { 'CLICK-ME missing; run -ApplySafe to stage' })
 }
-$stageResult = Invoke-OwScript -RelativePath 'Stage-KaliLabToBackups.ps1'
-$clickMe = Join-Path $env:USERPROFILE 'Backups\CLICK-ME-RUN-IN-KALI.sh'
-Add-OwStep -Step 6 -Name 'Kali staging' -Result $(if ($stageResult.Ok -and (Test-Path $clickMe)) { 'OK' } elseif ($stageResult.Ok) { 'WARN' } else { 'FAIL' }) -Detail $(if (Test-Path $clickMe) { 'CLICK-ME staged' } else { 'CLICK-ME missing after stage' })
 
-# Step 7 — Summary
+# Step 7 â€” Summary
 Add-OwLine ''
 Add-OwLine '=== FINAL SUMMARY ==='
 Add-OwLine ''
