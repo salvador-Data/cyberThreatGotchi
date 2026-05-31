@@ -105,7 +105,10 @@ function Copy-CtgKaliScriptsToBackups {
         (Join-Path $RepoRoot 'scripts\kali\ctg-ids-ips-autorun.sh'),
         (Join-Path $RepoRoot 'scripts\kali\ctg-siem-autorun.sh'),
         (Join-Path $RepoRoot 'scripts\kali\kali-boot-autopatch.sh'),
-        (Join-Path $RepoRoot 'scripts\kali\ctg-wifi-lab-autorun.sh')
+        (Join-Path $RepoRoot 'scripts\kali\ctg-wifi-lab-autorun.sh'),
+        (Join-Path $RepoRoot 'scripts\kali\ctg-reboot-if-needed.sh'),
+        (Join-Path $RepoRoot 'scripts\kali\ctg-lab-playground.sh'),
+        (Join-Path $RepoRoot 'scripts\kali\rogue-ap-guard.sh')
     )
     $scramblerDir = Join-Path $RepoRoot 'scripts\kali\tor-http-scrambler'
     if (Test-Path $scramblerDir) {
@@ -138,6 +141,16 @@ function Copy-CtgKaliScriptsToBackups {
     if ((Test-Path $siemDoc) -and -not $WhatIf) {
         Copy-Item -Path $siemDoc -Destination (Join-Path $backupRoot 'KALI_SIEM_STACK.md') -Force
         Write-CtgAutorunLog "Staged: $(Join-Path $backupRoot 'KALI_SIEM_STACK.md')"
+    }
+    $playgroundPs1 = Join-Path $PSScriptRoot 'CTG-Lab-Playground.ps1'
+    if ((Test-Path $playgroundPs1) -and -not $WhatIf) {
+        Copy-Item -Path $playgroundPs1 -Destination (Join-Path $backupRoot 'CTG-Lab-Playground.ps1') -Force
+        Write-CtgAutorunLog "Staged: $(Join-Path $backupRoot 'CTG-Lab-Playground.ps1')"
+    }
+    $playgroundDoc = Join-Path $RepoRoot 'docs\CTG_LAB_PLAYGROUND.md'
+    if ((Test-Path $playgroundDoc) -and -not $WhatIf) {
+        Copy-Item -Path $playgroundDoc -Destination (Join-Path $backupRoot 'CTG_LAB_PLAYGROUND.md') -Force
+        Write-CtgAutorunLog "Staged: $(Join-Path $backupRoot 'CTG_LAB_PLAYGROUND.md')"
     }
 }
 

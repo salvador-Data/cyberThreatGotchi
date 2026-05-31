@@ -17,6 +17,7 @@ CTG_SURICATA_DIR="/etc/ctg/suricata"
 SNORT_LOG="/var/log/ctg-snort"
 CLAMAV_LOG="/var/log/ctg-clamav"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REBOOT_HELPER="${SCRIPT_DIR}/ctg-reboot-if-needed.sh"
 SERVICE_NAME="ctg-ids-ips.service"
 SURICATA_SVC="ctg-suricata.service"
 UNIT_DEST="/etc/systemd/system/${SERVICE_NAME}"
@@ -38,6 +39,18 @@ log() {
     printf '%s\n' "$msg"
     mkdir -p "$(dirname "$LOG_FILE")"
     printf '%s\n' "$msg" >>"$LOG_FILE"
+}
+
+ctg_reboot_helper() {
+    local helper="$REBOOT_HELPER"
+    for candidate in /mnt/ctg/ctg-reboot-if-needed.sh /opt/ctg/ctg-reboot-if-needed.sh; do
+        if [[ -f "$candidate" ]]; then
+            helper="$candidate"
+            break
+        fi
+    done
+    [[ -f "$helper" ]] || return 0
+    bash "$helper" "$@" || true
 }
 
 usage() {
@@ -610,6 +623,8 @@ if $DO_INSTALL; then
     install_systemd_unit
     install_ctg_suricata_service "$LAB_IFACE"
 fi
+
+[[ -f /var/run/reboot-required ]] && ctg_reboot_helper --mark
 
 log "=== CTG IDS/IPS autorun complete ==="
 log "Suricata EVE: ${SNORT_LOG}/suricata-eve.json · Snort: ${SNORT_LOG}/alert"

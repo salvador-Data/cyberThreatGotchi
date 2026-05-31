@@ -222,7 +222,8 @@ function Stage-CtgAutopatchScripts {
         (Join-Path $RepoRoot 'scripts\kali\fix-kali-blank-screen.sh'),
         (Join-Path $RepoRoot 'scripts\kali\kali-lab-bootstrap.sh'),
         (Join-Path $RepoRoot 'scripts\kali\rogue-ap-guard.sh'),
-        (Join-Path $RepoRoot 'scripts\kali\lab-wifi.conf.example')
+        (Join-Path $RepoRoot 'scripts\kali\lab-wifi.conf.example'),
+        (Join-Path $RepoRoot 'scripts\kali\ctg-reboot-if-needed.sh')
     )
     $scramblerSrc = Join-Path $RepoRoot 'scripts\kali\tor-http-scrambler'
     if (Test-Path $scramblerSrc) {

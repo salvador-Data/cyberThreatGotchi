@@ -228,6 +228,42 @@ sudo bash /mnt/ctg/ctg-lab-autorun.sh
 3. `systemctl start tor`
 4. Starts `scrambler-daemon.sh` (default mode **tor**)
 5. Prints GUI and SIEM commands
+6. **Auto-reboot** when required (guest additions, GDM X11, new kernel, Realtek DKMS) — see below
+
+### Auto-reboot after autorun
+
+`ctg-reboot-if-needed.sh` aggregates reboot signals:
+
+| Signal | Source |
+|--------|--------|
+| `/var/run/ctg-reboot-required` | `--mark` from autorun scripts |
+| `/var/run/reboot-required` | `apt full-upgrade` / new `linux-image` |
+| `/var/run/ctg-gdm-config-changed` | GDM `WaylandEnable=false` |
+| Newer kernel in `/lib/modules` than `uname -r` | Kernel not yet active |
+| DKMS `installed` for non-running kernel | Realtek / guest modules |
+
+**When it triggers:** End of `ctg-lab-autorun.sh` runs `ctg-reboot-if-needed.sh --auto-reboot` → `shutdown -r +1 "CTG lab autorun complete"` and logs to `/var/log/ctg-reboot.log`. Optional **10s countdown** on TTY1–3.
+
+**Boot service:** `kali-boot-autopatch.sh` also calls `--auto-reboot` on every boot **unless** invoked from lab autorun (`CTG_SKIP_AUTO_REBOOT=1`).
+
+**Disable (SSH / no surprise reboot):**
+
+```bash
+export CTG_NO_REBOOT=1
+sudo bash /mnt/ctg/ctg-lab-autorun.sh
+```
+
+Or one-shot:
+
+```bash
+sudo CTG_NO_REBOOT=1 bash /mnt/ctg/ctg-reboot-if-needed.sh --auto-reboot --no-reboot
+```
+
+**Check without rebooting:**
+
+```bash
+sudo bash /mnt/ctg/ctg-reboot-if-needed.sh --check && echo reboot-needed || echo ok
+```
 
 **Scrambler GUI:**
 
@@ -334,8 +370,33 @@ Then switch back to graphical session (Ctrl+Alt+F1) or `sudo reboot`.
 
 ---
 
+## Lab playground (hands-on menu)
+
+After autorun or deploy, use the **interactive playground** to experiment with WiFi, Shield, Scrambler, SIEM, IDS, ClamAV, and Tor — without re-running the full autorun or triggering reboots.
+
+**Windows:**
+
+```powershell
+cd C:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\CTG-Lab-Playground.ps1
+```
+
+**Kali:**
+
+```bash
+sudo bash /mnt/ctg/ctg-lab-playground.sh
+```
+
+15-minute walkthrough: [CTG_LAB_PLAYGROUND.md](CTG_LAB_PLAYGROUND.md)
+
+---
+
 ## Related docs
 
+- [CTG_LAB_PLAYGROUND.md](CTG_LAB_PLAYGROUND.md) — hands-on lab session
 - [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md)
 - [IPHONE_HARDENING.md](IPHONE_HARDENING.md) — DDG preserve rules
 - [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)

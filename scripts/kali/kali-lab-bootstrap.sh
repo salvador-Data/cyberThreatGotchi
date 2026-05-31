@@ -83,7 +83,22 @@ if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
     exit 1
 fi
 
+REBOOT_HELPER="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/ctg-reboot-if-needed.sh"
+
 log() { printf '[ctg-kali] %s\n' "$*"; }
+
+ctg_reboot_helper() {
+    local helper="$REBOOT_HELPER"
+    for candidate in /mnt/ctg/ctg-reboot-if-needed.sh /opt/ctg/ctg-reboot-if-needed.sh; do
+        if [[ -f "$candidate" ]]; then
+            helper="$candidate"
+            break
+        fi
+    done
+    [[ -f "$helper" ]] || return 0
+    bash "$helper" "$@" || true
+}
+
 run() {
     if $DRY_RUN; then
         log "[dry-run] $*"
@@ -302,7 +317,11 @@ if ! $SKIP_REALTEK; then
                 if [[ ! -d /usr/src/rtl88xxau ]]; then
                     run git clone --depth 1 https://github.com/aircrack-ng/rtl8812au.git /usr/src/rtl88xxau || true
                     if [[ -d /usr/src/rtl88xxau ]]; then
-                        run make -C /usr/src/rtl88xxau dkms_install || log "DKMS build failed — verify headers and chipset"
+                        if run make -C /usr/src/rtl88xxau dkms_install; then
+                            ctg_reboot_helper --mark
+                        else
+                            log "DKMS build failed — verify headers and chipset"
+                        fi
                     fi
                 fi
                 ;;

@@ -18,8 +18,21 @@ IDS_AUTORUN="/mnt/ctg/ctg-ids-ips-autorun.sh"
 REPO_IDS="$(dirname "$0")/ctg-ids-ips-autorun.sh"
 SIEM_AUTORUN="/mnt/ctg/ctg-siem-autorun.sh"
 REPO_SIEM="$(dirname "$0")/ctg-siem-autorun.sh"
+REBOOT_HELPER="$(dirname "$0")/ctg-reboot-if-needed.sh"
 
 log() { printf '[ctg-lab-autorun] %s\n' "$*"; }
+
+ctg_reboot_helper() {
+    local helper="$REBOOT_HELPER"
+    for candidate in /mnt/ctg/ctg-reboot-if-needed.sh /opt/ctg/ctg-reboot-if-needed.sh; do
+        if [[ -f "$candidate" ]]; then
+            helper="$candidate"
+            break
+        fi
+    done
+    [[ -f "$helper" ]] || return 0
+    bash "$helper" "$@" || true
+}
 
 if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
     echo "Run as root: sudo $0" >&2
@@ -33,7 +46,7 @@ if [[ ! -f "$AUTOPATCH" && -f "$REPO_AUTOPATCH" ]]; then
 fi
 if [[ -f "$AUTOPATCH" ]]; then
     log "Running boot autopatch: $AUTOPATCH"
-    bash "$AUTOPATCH" --wifi-lab --ids-ips || log "Autopatch returned non-zero (continuing lab autorun)"
+    CTG_SKIP_AUTO_REBOOT=1 bash "$AUTOPATCH" --wifi-lab --ids-ips || log "Autopatch returned non-zero (continuing lab autorun)"
 else
     log "Autopatch script not found (optional) — mount ctg-backups share for kali-boot-autopatch.sh"
 fi
@@ -121,3 +134,8 @@ log "DDG preserve: --preserve-ddg-dns ON by default — see docs/IPHONE_HARDENIN
 log "WiFi/Eth capture: docs/KALI_WIFI_ETH_PROMISC.md · config: /etc/ctg/lab-wifi.conf"
 log "IDS/IPS/ClamAV: docs/KALI_IDS_IPS_CLAMAV.md · logs: /var/log/ctg-snort/"
 log "SIEM stack: docs/KALI_SIEM_STACK.md · export: Backups/logs/siem/"
+if [[ "${CTG_NO_REBOOT:-}" != "1" ]]; then
+    ctg_reboot_helper --auto-reboot
+else
+    log "CTG_NO_REBOOT=1 — skipping scheduled reboot (check: ctg-reboot-if-needed.sh --check)"
+fi

@@ -437,6 +437,12 @@ function Copy-CtgBootstrapToSharedFolder {
         Write-CtgLog "SIEM autorun copied to $(Join-Path $backupRoot 'ctg-siem-autorun.sh')"
     }
 
+    $rebootHelper = Join-Path $RepoRoot 'scripts\kali\ctg-reboot-if-needed.sh'
+    if (Test-Path $rebootHelper) {
+        Copy-Item -Path $rebootHelper -Destination (Join-Path $backupRoot 'ctg-reboot-if-needed.sh') -Force
+        Write-CtgLog "Reboot helper copied to $(Join-Path $backupRoot 'ctg-reboot-if-needed.sh')"
+    }
+
     $siemLogDir = Join-Path $backupRoot 'logs\siem'
     if (-not (Test-Path $siemLogDir)) {
         New-Item -ItemType Directory -Path $siemLogDir -Force | Out-Null
@@ -474,7 +480,26 @@ function Copy-CtgBootstrapToSharedFolder {
         Write-CtgLog "CTG Shield playbook staged: $(Join-Path $backupRoot 'CTG_SHIELD_SIEM_PLAYBOOK.md')"
     }
 
+    $playgroundSh = Join-Path $RepoRoot 'scripts\kali\ctg-lab-playground.sh'
+    if (Test-Path $playgroundSh) {
+        Copy-Item -Path $playgroundSh -Destination (Join-Path $backupRoot 'ctg-lab-playground.sh') -Force
+        Write-CtgLog "Lab playground staged: $(Join-Path $backupRoot 'ctg-lab-playground.sh')"
+    }
+
+    $playgroundPs1 = Join-Path $PSScriptRoot 'CTG-Lab-Playground.ps1'
+    if (Test-Path $playgroundPs1) {
+        Copy-Item -Path $playgroundPs1 -Destination (Join-Path $backupRoot 'CTG-Lab-Playground.ps1') -Force
+        Write-CtgLog "Windows playground staged: $(Join-Path $backupRoot 'CTG-Lab-Playground.ps1')"
+    }
+
+    $playgroundDoc = Join-Path $RepoRoot 'docs\CTG_LAB_PLAYGROUND.md'
+    if (Test-Path $playgroundDoc) {
+        Copy-Item -Path $playgroundDoc -Destination (Join-Path $backupRoot 'CTG_LAB_PLAYGROUND.md') -Force
+        Write-CtgLog "Playground doc staged: $(Join-Path $backupRoot 'CTG_LAB_PLAYGROUND.md')"
+    }
+
     Write-CtgLog 'In Kali after mount: sudo bash /mnt/ctg/ctg-lab-autorun.sh'
+    Write-CtgLog 'Playground: sudo bash /mnt/ctg/ctg-lab-playground.sh'
     Write-CtgLog "  or: sudo bash /mnt/ctg/kali-lab-bootstrap.sh --wifi-profile=$WifiProfile"
     return $dest
 }

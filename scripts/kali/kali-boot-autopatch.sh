@@ -17,6 +17,7 @@ MARKER="/var/lib/ctg/kali-boot-autopatch.done"
 DDG_PRIMARY="94.140.14.14"
 DDG_SECONDARY="94.140.15.15"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REBOOT_HELPER="${SCRIPT_DIR}/ctg-reboot-if-needed.sh"
 SERVICE_NAME="ctg-kali-autopatch.service"
 UNIT_DEST="/etc/systemd/system/${SERVICE_NAME}"
 
@@ -32,6 +33,18 @@ log() {
     local msg="[$(date -Iseconds)] [ctg-boot-autopatch] $*"
     printf '%s\n' "$msg"
     printf '%s\n' "$msg" >>"$LOG_FILE"
+}
+
+ctg_reboot_helper() {
+    local helper="$REBOOT_HELPER"
+    for candidate in /mnt/ctg/ctg-reboot-if-needed.sh /opt/ctg/ctg-reboot-if-needed.sh /media/sf_ctg-backups/ctg-reboot-if-needed.sh; do
+        if [[ -f "$candidate" ]]; then
+            helper="$candidate"
+            break
+        fi
+    done
+    [[ -f "$helper" ]] || return 0
+    bash "$helper" "$@" || true
 }
 
 usage() {
@@ -130,6 +143,7 @@ fix_virtualbox_guest_packages() {
             build-essential "linux-headers-$(uname -r)" 2>/dev/null || \
             apt-get install -y --no-install-recommends \
                 virtualbox-guest-x11 virtualbox-guest-utils dkms build-essential
+        ctg_reboot_helper --mark
     else
         log "VirtualBox guest packages present"
     fi
@@ -139,20 +153,24 @@ fix_gdm_wayland_blank_screen() {
     log "Phase: GDM WaylandEnable=false (VirtualBox blank screen)"
     install -d -m 0755 /etc/gdm3
     local gdm_custom=/etc/gdm3/custom.conf
+    local gdm_changed=false
     if [[ -f "$gdm_custom" ]]; then
         if grep -q '^WaylandEnable=' "$gdm_custom"; then
             if ! grep -q '^WaylandEnable=false' "$gdm_custom"; then
                 sed -i 's/^WaylandEnable=.*/WaylandEnable=false/' "$gdm_custom"
                 log "Updated WaylandEnable=false in $gdm_custom"
+                gdm_changed=true
             else
                 log "WaylandEnable=false already set"
             fi
         elif grep -q '^\[daemon\]' "$gdm_custom"; then
             sed -i '/^\[daemon\]/a WaylandEnable=false' "$gdm_custom"
             log "Added WaylandEnable=false under [daemon]"
+            gdm_changed=true
         else
             printf '\n[daemon]\nWaylandEnable=false\n' >>"$gdm_custom"
             log "Appended [daemon] WaylandEnable=false"
+            gdm_changed=true
         fi
     else
         cat >"$gdm_custom" <<'EOF'
@@ -160,8 +178,12 @@ fix_gdm_wayland_blank_screen() {
 WaylandEnable=false
 EOF
         log "Created $gdm_custom with WaylandEnable=false"
+        gdm_changed=true
     fi
     chmod 644 "$gdm_custom"
+    if $gdm_changed; then
+        ctg_reboot_helper --mark-gdm
+    fi
 }
 
 ensure_ctg_backups_mount_hint() {
@@ -255,6 +277,9 @@ run_optional_upgrade() {
     apt-get update -qq
     apt-get full-upgrade -y
     preserve_ddg_dns
+    if [[ -f /var/run/reboot-required ]]; then
+        ctg_reboot_helper --mark
+    fi
 }
 
 run_ids_ips_autorun() {
@@ -389,5 +414,8 @@ fi
 
 date -Iseconds >"$MARKER"
 log "=== CTG Kali boot autopatch complete ==="
+if [[ "${CTG_SKIP_AUTO_REBOOT:-}" != "1" ]]; then
+    ctg_reboot_helper --auto-reboot
+fi
 log "GUI scrambler (manual): python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py"
 log "One-shot lab: sudo bash /mnt/ctg/ctg-lab-autorun.sh"

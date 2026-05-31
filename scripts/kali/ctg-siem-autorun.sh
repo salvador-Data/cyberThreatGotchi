@@ -12,6 +12,7 @@ set -euo pipefail
 
 LOG_FILE="/var/log/ctg-siem/autorun.log"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REBOOT_HELPER="${SCRIPT_DIR}/ctg-reboot-if-needed.sh"
 SERVICE_NAME="ctg-siem-export.service"
 TIMER_NAME="ctg-siem-export.timer"
 UNIT_DEST="/etc/systemd/system/${SERVICE_NAME}"
@@ -35,6 +36,18 @@ log() {
     printf '%s\n' "$msg"
     mkdir -p "$(dirname "$LOG_FILE")"
     printf '%s\n' "$msg" >>"$LOG_FILE"
+}
+
+ctg_reboot_helper() {
+    local helper="$REBOOT_HELPER"
+    for candidate in /mnt/ctg/ctg-reboot-if-needed.sh /opt/ctg/ctg-reboot-if-needed.sh; do
+        if [[ -f "$candidate" ]]; then
+            helper="$candidate"
+            break
+        fi
+    done
+    [[ -f "$helper" ]] || return 0
+    bash "$helper" "$@" || true
 }
 
 usage() {
@@ -219,6 +232,8 @@ integrate_siem_hook
 if $DO_INSTALL; then
     install_systemd_units
 fi
+
+[[ -f /var/run/reboot-required ]] && ctg_reboot_helper --mark
 
 log "=== CTG SIEM autorun complete ==="
 log "Windows tail: Backups\\logs\\siem\\ctg-siem-latest.json (map ${SIEM_EXPORT})"
