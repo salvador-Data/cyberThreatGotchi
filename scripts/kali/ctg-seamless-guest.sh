@@ -11,12 +11,55 @@
 #   bash /mnt/ctg/ctg-seamless-guest.sh
 # Or once as root after a GUI login exists:
 #   sudo bash /mnt/ctg/ctg-seamless-guest.sh
-set -euo pipefail
+# Diagnose without changes:
+#   bash /mnt/ctg/ctg-seamless-guest.sh --diagnose-only
+set -uo pipefail
+
+DIAGNOSE_ONLY=false
+for arg in "$@"; do
+    case "$arg" in
+        --diagnose-only|--diagnose) DIAGNOSE_ONLY=true ;;
+        -h|--help)
+            echo "Usage: bash $(basename "$0") [--diagnose-only]"
+            echo "  --diagnose-only  Print checks; do not change panel/VBoxClient/autostart"
+            exit 0
+            ;;
+    esac
+done
 
 log() { printf '[ctg-seamless-guest] %s\n' "$*"; }
+warn() { printf '[ctg-seamless-guest] WARNING: %s\n' "$*"; }
+err() { printf '[ctg-seamless-guest] ERROR: %s\n' "$*"; }
 
 DESKTOP_USER=""
 DISPLAY_NUM=":0"
+VBOX_CLIENT=""
+SESSION_TYPE="unknown"
+WAYLAND_BLOCK=false
+ISSUES=0
+
+note_issue() { ISSUES=$((ISSUES + 1)); }
+
+run_optional() {
+    local desc="$1"
+    shift
+    if "$@"; then
+        return 0
+    fi
+    warn "$desc (skipped — non-fatal)"
+    note_issue
+    return 0
+}
+
+check_crlf() {
+    if grep -q $'\r' "$0" 2>/dev/null; then
+        err "This script has Windows CRLF line endings — bash will fail with \$'\\r' errors."
+        err "Fix on Windows host: .\\scripts\\windows\\Stage-KaliLabToBackups.ps1 then re-run in VM."
+        note_issue
+        return 1
+    fi
+    return 0
+}
 
 detect_desktop_user() {
     DESKTOP_USER="$(who 2>/dev/null | awk '/\(:[0-9]+\)/{print $1; exit}')"
@@ -27,11 +70,18 @@ detect_desktop_user() {
     disp="$(who 2>/dev/null | grep -oE '\(:[0-9]+\)' | head -n1 | tr -d '()')"
     [[ -n "$disp" ]] && DISPLAY_NUM="$disp"
     if [[ -z "$DESKTOP_USER" || "$DESKTOP_USER" == root ]]; then
-        log "No graphical (:N) desktop user found — log in to the Kali GUI first, then re-run"
+        err "No graphical (:N) desktop user found."
+        err "Log in to the Kali Xfce/GNOME GUI first (not just a TTY or SSH), then re-run:"
+        err "  bash /mnt/ctg/ctg-seamless-guest.sh"
+        err "If the VM is headless from Windows, open the VM window and sign in at the login screen."
         return 1
     fi
     log "Desktop user: $DESKTOP_USER on DISPLAY=$DISPLAY_NUM"
     return 0
+}
+
+has_x_display() {
+    as_user bash -lc 'xdpyinfo >/dev/null 2>&1' 2>/dev/null
 }
 
 as_user() {
@@ -39,15 +89,26 @@ as_user() {
         XAUTHORITY="/home/$DESKTOP_USER/.Xauthority" "$@"
 }
 
-# Seamless requires an X11/Xorg session. A Wayland session makes VirtualBox
-# enable seamless then immediately revert ("glitch and revert"), because the
-# guest cannot report seamless window regions over Wayland.
-SESSION_TYPE="unknown"
+find_vboxclient() {
+    VBOX_CLIENT=""
+    if command -v VBoxClient >/dev/null 2>&1; then
+        VBOX_CLIENT="$(command -v VBoxClient)"
+        return 0
+    fi
+    local candidate
+    for candidate in /usr/bin/VBoxClient /opt/VBoxGuestAdditions/bin/VBoxClient; do
+        if [[ -x "$candidate" ]]; then
+            VBOX_CLIENT="$candidate"
+            export PATH="$(dirname "$candidate"):$PATH"
+            return 0
+        fi
+    done
+    return 1
+}
 
 detect_session_type() {
     SESSION_TYPE="$(as_user bash -lc 'echo -n "${XDG_SESSION_TYPE:-}"' 2>/dev/null || true)"
     if [[ -z "$SESSION_TYPE" || "$SESSION_TYPE" == "unknown" ]]; then
-        # Fallback: ask loginctl for the user's graphical session
         local sid
         sid="$(loginctl 2>/dev/null | awk -v u="$DESKTOP_USER" '$0 ~ u {print $1; exit}')"
         if [[ -n "$sid" ]]; then
@@ -56,18 +117,18 @@ detect_session_type() {
     fi
     log "Graphical session type: ${SESSION_TYPE:-unknown}"
     if [[ "$SESSION_TYPE" == "wayland" ]]; then
-        log "WARNING: Wayland session detected — VirtualBox seamless WILL glitch and revert."
-        log "Forcing X11 (WaylandEnable=false) and requesting a re-login."
-        force_x11_display_manager
-        ensure_xfce_x11_session
+        warn "Wayland session detected — VirtualBox seamless WILL glitch and revert."
+        warn "Need X11/Xorg session. Forcing X11 config and requesting re-login."
+        WAYLAND_BLOCK=true
+        run_optional "GDM Wayland disable" force_x11_display_manager
+        run_optional "Xfce X11 session default" ensure_xfce_x11_session
         return 1
     fi
-    ensure_xfce_x11_session
+    run_optional "Xfce X11 session default" ensure_xfce_x11_session
     return 0
 }
 
 ensure_xfce_x11_session() {
-    # Prefer Xfce on Xorg at login (not GNOME Wayland).
     local dmrc="/home/$DESKTOP_USER/.dmrc"
     if [[ ! -f "$dmrc" ]] || ! grep -q 'Session=xfce' "$dmrc" 2>/dev/null; then
         cat >"$dmrc" <<'DMRC'
@@ -80,6 +141,10 @@ DMRC
     fi
     local acc="/var/lib/AccountsService/users/$DESKTOP_USER"
     if [[ -d /var/lib/AccountsService/users ]]; then
+        if [[ $EUID -ne 0 ]]; then
+            warn "Not root — cannot update AccountsService XSession (optional; .dmrc is set)"
+            return 0
+        fi
         install -d -m 0755 /var/lib/AccountsService/users
         if [[ ! -f "$acc" ]] || ! grep -q 'XSession=xfce' "$acc" 2>/dev/null; then
             {
@@ -91,10 +156,14 @@ DMRC
             log "AccountsService: XSession=xfce for $DESKTOP_USER"
         fi
     fi
+    return 0
 }
 
 force_x11_display_manager() {
-    # GDM3
+    if [[ $EUID -ne 0 ]]; then
+        warn "Not root — cannot edit GDM/SDDM config. Re-run: sudo bash $0"
+        return 1
+    fi
     local gdm=/etc/gdm3/custom.conf
     if [[ -d /etc/gdm3 ]] || command -v gdm3 >/dev/null 2>&1; then
         install -d -m 0755 /etc/gdm3
@@ -111,34 +180,40 @@ force_x11_display_manager() {
         fi
         chmod 644 "$gdm"
         log "GDM: WaylandEnable=false in $gdm (log out / reboot to apply)"
+    else
+        log "GDM3 not present — skipping /etc/gdm3/custom.conf"
     fi
-    # SDDM (KDE) — force X11 greeter session
     if command -v sddm >/dev/null 2>&1; then
         log "SDDM present — choose an 'X11'/'Xorg' session at login (not Wayland)"
     fi
     log "After re-login on X11, re-run: bash /mnt/ctg/ctg-seamless-guest.sh"
+    return 0
 }
 
 fix_xfce_panel() {
     if ! as_user bash -lc 'command -v xfconf-query >/dev/null 2>&1'; then
         return 1
     fi
+    if ! has_x_display; then
+        warn "No active X display on $DISPLAY_NUM — log into the Xfce desktop first, then re-run."
+        return 1
+    fi
     log "XFCE detected — forcing panel-0 visible (autohide off, reserve space, top)"
-    # autohide-behavior: 0 = never hide
     as_user xfconf-query -c xfce4-panel -p /panels/panel-0/autohide-behavior --create -t int -s 0 2>/dev/null || true
-    # mode: 0 = horizontal
     as_user xfconf-query -c xfce4-panel -p /panels/panel-0/mode --create -t int -s 0 2>/dev/null || true
-    # disable-struts false => panel reserves screen space (apps don't cover it)
     as_user xfconf-query -c xfce4-panel -p /panels/panel-0/disable-struts --create -t bool -s false 2>/dev/null || true
     as_user xfconf-query -c xfce4-panel -p /panels/panel-0/position --create -t string -s 'p=6;x=0;y=0' 2>/dev/null || true
     as_user xfconf-query -c xfce4-panel -p /panels/panel-0/position-locked --create -t bool -s true 2>/dev/null || true
-    # restart the panel so changes apply now
     as_user bash -lc 'xfce4-panel -r >/dev/null 2>&1 || true'
     return 0
 }
 
 fix_gnome_panel() {
     if ! as_user bash -lc 'command -v gsettings >/dev/null 2>&1'; then
+        return 1
+    fi
+    if ! has_x_display; then
+        warn "No active X display on $DISPLAY_NUM — log into the GNOME desktop first, then re-run."
         return 1
     fi
     if as_user bash -lc 'pgrep -u "$USER" -x gnome-shell >/dev/null 2>&1'; then
@@ -152,30 +227,36 @@ fix_gnome_panel() {
 fix_panel() {
     if fix_xfce_panel; then return 0; fi
     if fix_gnome_panel; then return 0; fi
-    log "No XFCE/GNOME panel tool found — install xfce4-panel or use GNOME; skipping panel fix"
+    log "No XFCE/GNOME panel tool found or X not running — install xfce4-panel or log into desktop first"
+    return 1
 }
 
 restart_vboxclient() {
-    if ! command -v VBoxClient >/dev/null 2>&1; then
-        log "VBoxClient missing — run: sudo bash /mnt/ctg/kali-boot-autopatch.sh"
+    if ! find_vboxclient; then
+        err "VBoxClient not found in PATH or /usr/bin — guest additions may be missing."
+        err "Install: sudo bash /mnt/ctg/kali-boot-autopatch.sh"
         return 1
     fi
-    # Ensure the kernel guest service is up first (seamless needs vboxadd/vboxguest).
+    log "VBoxClient: $VBOX_CLIENT"
     local svc
     for svc in vboxadd-service vboxadd vboxservice; do
         if systemctl list-unit-files "${svc}.service" >/dev/null 2>&1; then
             systemctl start "${svc}.service" 2>/dev/null || true
         fi
     done
-    # Kill stale/crashed VBoxClient seamless so we relaunch cleanly (fixes glitch-revert).
+    if ! has_x_display; then
+        warn "No active X display — VBoxClient needs a logged-in X11 session."
+        warn "Log into the Kali desktop, then re-run this script."
+        return 1
+    fi
     log "Restarting VBoxClient cleanly (kill stale seamless, relaunch)"
     as_user bash -lc 'pkill -u "$USER" -f "VBoxClient --seamless" >/dev/null 2>&1 || true'
     sleep 1
-    # --vmsvga drives dynamic resize on the VMSVGA controller (no wrap/clip)
-    as_user bash -lc 'VBoxClient --vmsvga >/dev/null 2>&1 || VBoxClient --display >/dev/null 2>&1 || true'
-    as_user bash -lc 'VBoxClient --seamless >/dev/null 2>&1 || true'
-    as_user bash -lc 'VBoxClient --clipboard >/dev/null 2>&1 || true'
-    as_user bash -lc 'VBoxClient --draganddrop >/dev/null 2>&1 || true'
+    as_user bash -lc "$VBOX_CLIENT --vmsvga >/dev/null 2>&1 || $VBOX_CLIENT --display >/dev/null 2>&1 || true"
+    as_user bash -lc "$VBOX_CLIENT --seamless >/dev/null 2>&1 || true"
+    as_user bash -lc "$VBOX_CLIENT --clipboard >/dev/null 2>&1 || true"
+    as_user bash -lc "$VBOX_CLIENT --draganddrop >/dev/null 2>&1 || true"
+    return 0
 }
 
 verify_seamless() {
@@ -184,13 +265,17 @@ verify_seamless() {
         log "OK: VBoxClient --seamless is running (host Host+L will stay in seamless)"
         return 0
     fi
-    log "WARNING: VBoxClient --seamless is NOT running — seamless will revert."
-    log "  Check: ps aux | grep VBoxClient ; journalctl -b | grep -i vboxclient"
-    log "  Likely Wayland session (need X11) or guest additions not fully installed."
+    warn "VBoxClient --seamless is NOT running — seamless will revert."
+    warn "Check: ps aux | grep VBoxClient ; journalctl -b | grep -i vboxclient"
+    warn "Likely causes: Wayland session, no GUI login, or guest additions not fully installed."
+    note_issue
     return 1
 }
 
 fix_autoresize() {
+    if ! has_x_display; then
+        return 0
+    fi
     if ! as_user bash -lc 'command -v xrandr >/dev/null 2>&1'; then
         return 0
     fi
@@ -199,9 +284,14 @@ fix_autoresize() {
         out="$(xrandr 2>/dev/null | awk "/ connected/{print \$1; exit}")"
         [ -n "$out" ] && xrandr --output "$out" --auto >/dev/null 2>&1 || true
     ' || true
+    return 0
 }
 
 install_autostart() {
+    if [[ $EUID -ne 0 ]] && [[ "$(id -un)" != "$DESKTOP_USER" ]]; then
+        warn "Not root and not desktop user — skipping autostart install (run with sudo after GUI login)"
+        return 1
+    fi
     local autostart_dir="/home/$DESKTOP_USER/.config/autostart"
     install -d -m 0755 -o "$DESKTOP_USER" -g "$DESKTOP_USER" "$autostart_dir" 2>/dev/null || true
     local f="$autostart_dir/vboxclient-seamless.desktop"
@@ -217,10 +307,11 @@ DESK
     chown "$DESKTOP_USER:$DESKTOP_USER" "$f" 2>/dev/null || true
     chmod 644 "$f" 2>/dev/null || true
     log "Installed per-user autostart: $f"
-    install -d -m 0755 /etc/xdg/autostart
-    local sys=/etc/xdg/autostart/vboxclient-seamless.desktop
-    if [[ ! -f "$sys" ]]; then
-        cat >"$sys" <<'SYS'
+    if [[ $EUID -eq 0 ]]; then
+        install -d -m 0755 /etc/xdg/autostart
+        local sys=/etc/xdg/autostart/vboxclient-seamless.desktop
+        if [[ ! -f "$sys" ]]; then
+            cat >"$sys" <<'SYS'
 [Desktop Entry]
 Type=Application
 Name=VirtualBox Seamless Client
@@ -229,22 +320,81 @@ Exec=sh -c 'VBoxClient --vmsvga 2>/dev/null || VBoxClient --display 2>/dev/null;
 X-GNOME-Autostart-enabled=true
 NoDisplay=true
 SYS
-        chmod 644 "$sys"
-        log "Installed system autostart: $sys"
+            chmod 644 "$sys"
+            log "Installed system autostart: $sys"
+        fi
     fi
+    return 0
+}
+
+diagnose_only() {
+    log "=== CTG seamless diagnose (read-only) ==="
+    check_crlf || true
+    if ! detect_desktop_user; then
+        log "who output: $(who 2>/dev/null || echo '(empty)')"
+        log "loginctl sessions: $(loginctl 2>/dev/null | head -n5 || echo '(unavailable)')"
+        exit 1
+    fi
+    if has_x_display; then
+        log "X display: OK ($DISPLAY_NUM, xdpyinfo succeeds)"
+    else
+        warn "X display: NOT reachable on $DISPLAY_NUM — log into Xfce/GNOME desktop first"
+        note_issue
+    fi
+    detect_session_type || true
+    if find_vboxclient; then
+        log "VBoxClient: $VBOX_CLIENT ($( $VBOX_CLIENT --version 2>/dev/null || echo 'version unknown'))"
+    else
+        err "VBoxClient: NOT FOUND — run sudo bash /mnt/ctg/kali-boot-autopatch.sh"
+        note_issue
+    fi
+    if as_user bash -lc 'command -v xfconf-query >/dev/null 2>&1'; then
+        log "xfconf-query: present"
+    else
+        log "xfconf-query: not available (not XFCE or package missing)"
+    fi
+    local gdm=/etc/gdm3/custom.conf
+    if [[ -f "$gdm" ]]; then
+        if grep -q 'WaylandEnable=false' "$gdm" 2>/dev/null; then
+            log "GDM: WaylandEnable=false (good for seamless)"
+        else
+            warn "GDM: WaylandEnable not false in $gdm — seamless may revert on Wayland"
+            note_issue
+        fi
+    else
+        log "GDM custom.conf: not present (may use SDDM/lightdm)"
+    fi
+    verify_seamless || true
+    log ""
+    if $WAYLAND_BLOCK; then
+        warn "ACTION: log out and back in on X11/Xorg, then re-run without --diagnose-only"
+    fi
+    if [[ $ISSUES -gt 0 ]]; then
+        err "Diagnose found $ISSUES issue(s) — fix above, then: bash /mnt/ctg/ctg-seamless-guest.sh"
+        exit 1
+    fi
+    log "Diagnose: all checks passed — run without --diagnose-only to apply fixes"
+    exit 0
 }
 
 log "=== CTG seamless/scaled guest fix ==="
+check_crlf || true
+
+if $DIAGNOSE_ONLY; then
+    diagnose_only
+fi
+
 if ! detect_desktop_user; then
     exit 1
 fi
-WAYLAND_BLOCK=false
-detect_session_type || WAYLAND_BLOCK=true
-fix_panel
-restart_vboxclient
-fix_autoresize
-install_autostart
+
+detect_session_type || true
+run_optional "desktop panel fix" fix_panel
+run_optional "VBoxClient restart" restart_vboxclient
+run_optional "xrandr autoresize" fix_autoresize
+run_optional "autostart install" install_autostart
 verify_seamless || true
+
 log ""
 if $WAYLAND_BLOCK; then
     log "ACTION REQUIRED: log out of the Wayland session and log back in on X11/Xorg,"
@@ -257,3 +407,9 @@ log "  * For a visible toolbar + scrollbars, use NORMAL or SCALED window, not se
 log "      Windows:  .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Scaled"
 log "      In-VM toggle: Host+L (seamless), Host+C (scaled), Host+Home (menu), Host+F (fullscreen)"
 log "Docs: docs/KALI_SEAMLESS_MODE.md"
+
+if [[ $ISSUES -gt 0 ]]; then
+    warn "Completed with $ISSUES non-fatal issue(s) — see messages above"
+    exit 1
+fi
+exit 0
