@@ -4,6 +4,9 @@ from __future__ import annotations
 import ast
 import shutil
 import subprocess
+import sys
+
+import pytest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +42,8 @@ def test_shield_playbook_doc():
 
 
 def test_ctg_shield_bash_syntax_if_bash_available():
+    if sys.platform == "win32":
+        pytest.skip("bash -n syntax check skipped on Windows (Store bash can hang)")
     bash = shutil.which("bash")
     if not bash:
         return
