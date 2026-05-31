@@ -447,6 +447,30 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **Admin:** No - SSH to Kali needs keys
 - **Docs:** [SECURITY_HARDENING.md](SECURITY_HARDENING.md)
 
+### `Install-CtgSuricataWindows.ps1` / `Start-CtgSuricataIDS.ps1`
+- **Path:** `scripts/windows/Install-CtgSuricataWindows.ps1` - `Start-CtgSuricataIDS.ps1`
+- **Tagline:** *Free IPS path on Windows - Suricata MSI detect-only, EVE tail, Twilio SMS.*
+- **Does:** Suricata 7/8 + Npcap passive IDS; optional netsh block; Kali bridge fallback.
+- **When:** SOC laptop when Kali VM offline or parallel host IDS.
+- **Admin:** **Yes** for capture and `-BlockRepeatOffender`
+- **Docs:** [FREE_IPS_SURICATA.md](FREE_IPS_SURICATA.md)
+
+### `Start-CtgKaliSuricataSmsBridge.ps1` / `Register-CtgSuricataIdsTask.ps1`
+- **Path:** `scripts/windows/Start-CtgKaliSuricataSmsBridge.ps1` - `Register-CtgSuricataIdsTask.ps1`
+- **Tagline:** *Kali Suricata EVE on ctg-backups share -> Windows SMS - logon scheduled task.*
+- **Does:** Polls staged `suricata-eve.json` or SIEM export; registers `HackerPlanet-CTG-Suricata-IDS`.
+- **When:** Suricata-primary on Kali (`ctg-ids-ips-autorun.sh`); Twilio stays on Windows.
+- **Admin:** **Yes** for scheduled task registration
+- **Docs:** [FREE_IPS_SURICATA.md](FREE_IPS_SURICATA.md)
+
+### `ctg-suricata-ips-sms.sh`
+- **Path:** `scripts/kali/ctg-suricata-ips-sms.sh`
+- **Tagline:** *Stage Suricata EVE tail to ctg-backups for the Windows SMS bridge.*
+- **Does:** Copies EVE JSON to share; optional 2-min systemd timer.
+- **When:** After `ctg-ids-ips-autorun.sh --install`; pairs with `Start-CtgKaliSuricataSmsBridge.ps1`.
+- **Admin:** **sudo**
+- **Docs:** [FREE_IPS_SURICATA.md](FREE_IPS_SURICATA.md) - [KALI_IDS_IPS_CLAMAV.md](KALI_IDS_IPS_CLAMAV.md)
+
 ---
 
 ## Payments, fulfillment & shop
