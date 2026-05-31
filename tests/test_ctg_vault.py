@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import re
@@ -159,62 +160,33 @@ def test_vault_document_structure(temp_vault_path: Path, vault_module):
 
 
 def test_cli_init_and_get(temp_vault_path: Path):
-    cli = ROOT / "scripts" / "ctg_vault_cli.py"
-    env = {**dict(**{}), **{"PYTHONPATH": str(ROOT)}}
-    init = subprocess.run(
-        [sys.executable, str(cli), "init", "--vault-path", str(temp_vault_path)],
-        input=FAKE_MASTER + "\n",
-        capture_output=True,
-        text=True,
-        timeout=60,
-        env={**os.environ, "PYTHONPATH": str(ROOT)},
-    )
-    assert init.returncode == 0, init.stderr
-    unlock = subprocess.run(
-        [sys.executable, str(cli), "unlock", "--vault-path", str(temp_vault_path)],
-        input=FAKE_MASTER + "\n",
-        capture_output=True,
-        text=True,
-        timeout=60,
-        env={**os.environ, "PYTHONPATH": str(ROOT)},
-    )
-    assert unlock.returncode == 0, unlock.stderr
-    add = subprocess.run(
-        [
-            sys.executable,
-            str(cli),
-            "add",
-            "--vault-path",
-            str(temp_vault_path),
-            "--title",
-            FAKE_TITLE,
-            "--username",
-            FAKE_USER,
-        ],
-        input=FAKE_PASSWORD + "\n",
-        capture_output=True,
-        text=True,
-        timeout=60,
-        env={**os.environ, "PYTHONPATH": str(ROOT)},
-    )
-    assert add.returncode == 0, add.stderr
-    get = subprocess.run(
-        [
-            sys.executable,
-            str(cli),
-            "get",
-            "--vault-path",
-            str(temp_vault_path),
-            "--title",
-            FAKE_TITLE,
-        ],
-        capture_output=True,
-        text=True,
-        timeout=60,
-        env={**os.environ, "PYTHONPATH": str(ROOT)},
-    )
-    assert get.returncode == 0, get.stderr
-    payload = json.loads(get.stdout)
+    from contextlib import redirect_stdout
+
+    import scripts.ctg_vault_cli as cli_mod
+
+    vault_arg = ["--vault-path", str(temp_vault_path)]
+
+    def run_cli(extra_argv: list[str], stdin: str = "") -> tuple[int, str]:
+        old_argv = sys.argv
+        old_stdin = sys.stdin
+        out_buf = io.StringIO()
+        in_buf = io.StringIO(stdin)
+        try:
+            sys.argv = ["ctg_vault_cli.py", *vault_arg, *extra_argv]
+            sys.stdin = in_buf
+            with redirect_stdout(out_buf):
+                code = cli_mod.main()
+            return code, out_buf.getvalue()
+        finally:
+            sys.argv = old_argv
+            sys.stdin = old_stdin
+
+    assert run_cli(["init"], FAKE_MASTER + "\n")[0] == 0
+    assert run_cli(["unlock"], FAKE_MASTER + "\n")[0] == 0
+    assert run_cli(["add", "--title", FAKE_TITLE, "--username", FAKE_USER], FAKE_PASSWORD + "\n")[0] == 0
+    code, out = run_cli(["get", "--title", FAKE_TITLE])
+    assert code == 0
+    payload = json.loads(out)
     assert payload["ok"] is True
     assert payload["credential"]["password"] == FAKE_PASSWORD
 
