@@ -18,7 +18,7 @@ Windows laptop + hackerplanet.dev automation only (Andy PC).
   Skip selective_ssd_backup.ps1 and cloud_backup.ps1 only. Website nightly still runs.
 
 .PARAMETER SyncRepos
-  git pull in C:\Users\Owner\Projects\cyberThreatGotchi (default: dry-run log only).
+  git pull in cyberThreatGotchi repo root (default: dry-run log only).
 
 .PARAMETER DeployWebsite
   Commit and push website/ + docs/web/ to main (triggers GitHub Pages). Default: off.
@@ -39,7 +39,8 @@ param(
 )
 
 $ErrorActionPreference = 'Continue'
-$Repo = 'C:\Users\Owner\Projects\cyberThreatGotchi'
+. (Join-Path $PSScriptRoot 'CTG-Paths.ps1')
+$Repo = Get-CtgRepoRoot -FromPath $PSScriptRoot
 $Win = Join-Path $Repo 'scripts\windows'
 $date = Get-Date -Format 'yyyy-MM-dd'
 $LogDir = Join-Path $env:USERPROFILE 'Backups\logs'

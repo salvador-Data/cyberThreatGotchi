@@ -1,8 +1,8 @@
-# CTG device hardening
+﻿# CTG device hardening
 
-**Hacker Planet LLC / CyberThreatGotchi** — defensive device and host hardening for **authorized lab use only**.
+**Hacker Planet LLC / CyberThreatGotchi** â€” defensive device and host hardening for **authorized lab use only**.
 
-Focused collection of iPhone laptop-connection guidance, Windows/Kali exploit-mitigation helpers, IDS/IPS documentation cross-links, Signal alert references, and vulnerability feed sync — split from the [cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) monorepo for labs that want hardening without the full Tamagotchi stack.
+Focused collection of iPhone laptop-connection guidance, Windows/Kali exploit-mitigation helpers, IDS/IPS documentation cross-links, Signal alert references, and vulnerability feed sync â€” split from the [cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) monorepo for labs that want hardening without the full Tamagotchi stack.
 
 ## What this repo contains
 
@@ -12,13 +12,13 @@ Focused collection of iPhone laptop-connection guidance, Windows/Kali exploit-mi
 | **IDS/IPS** | Links to Snort/Suricata stacks; network vs RAM exploit table |
 | **CPU mitigations** | Windows `Enforce-CtgRamMitigations.ps1`, `Update-CtgExploitMitigations.ps1`, Kali `ctg-ram-mitigation-enforcer.sh` |
 | **Patch intelligence** | CISA KEV sync to local cache (no auto-install) |
-| **Alerts** | Signal-first IDS alerts — see `docs/SIGNAL_ALERTS.md` in monorepo |
+| **Alerts** | Signal-first IDS alerts â€” see `docs/SIGNAL_ALERTS.md` in monorepo |
 
-## iPhone — honest limits
+## iPhone â€” honest limits
 
 Apple does **not** let Windows scripts rewrite iPhone MAC addresses, UDID, or Settings without **MDM**. CTG provides:
 
-- Manual Settings checklists (Private Wi‑Fi Address, Limit IP Tracking, USB Restricted Mode)
+- Manual Settings checklists (Private Wiâ€‘Fi Address, Limit IP Tracking, USB Restricted Mode)
 - **Preserve DuckDuckGo VPN/DNS** and DuckDuckGo Password Manager
 - Read-only USB detection: `scripts/iphone/iphone_tethering_privacy_checklist.ps1`
 
@@ -38,7 +38,7 @@ Signal/IDS scripts alert on network and RAM-mit exposure; mitigation is host pat
 ## Quick start (Windows SOC)
 
 ```powershell
-cd C:\Users\Owner\Projects\ctg-device-hardening
+cd C:\Users\Owner\Programs\Hacker Planet LLC\ctg-device-hardening
 ```
 
 ```powershell
@@ -64,7 +64,7 @@ cd C:\Users\Owner\Projects\ctg-device-hardening
 ## Sync from monorepo
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -79,8 +79,8 @@ Use `scripts/publish/Set-CtgPrivateRepos.ps1 -DiagnoseOnly` in the monorepo to r
 
 ## License
 
-MIT — same as CyberThreatGotchi monorepo.
+MIT â€” same as CyberThreatGotchi monorepo.
 
 ## Author
 
-[Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) · Philadelphia, PA
+[Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) Â· Philadelphia, PA

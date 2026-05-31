@@ -10,7 +10,7 @@ alwaysApply: true
 ### Windows laptop (SOC + nightly 4 AM)
 
 - **External SDK SSD:** intended **D:** — often shows **No Media**. Backup fallbacks: `C:\Users\Owner\Backups` and **OneDrive\Backups**.
-- **Nightly 4 AM task:** laptop only — `ctg_nightly_4am.ps1`, `ctg_website_nightly.ps1`. Backs up SSD D:, OneDrive, C:, Projects, hackerplanet.dev website. **Does not** flash or schedule anything on Cardputer.
+- **Nightly 4 AM task:** laptop only — `ctg_nightly_4am.ps1`, `ctg_website_nightly.ps1`. Backs up SSD D:, OneDrive, C:, Hacker Planet LLC dev tree, hackerplanet.dev website. **Does not** flash or schedule anything on Cardputer.
 
 ### M5Stack Cardputer (manual dev — not nightly)
 

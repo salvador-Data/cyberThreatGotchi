@@ -1,4 +1,4 @@
-# Windows Snort IDS + SMS alerts — CyberThreatGotchi SOC
+﻿# Windows Snort IDS + SMS alerts â€” CyberThreatGotchi SOC
 
 **Authorized defensive use only** on networks and hosts you own or are explicitly permitted to monitor.
 
@@ -9,10 +9,10 @@
 | Network IDS | Snort **2.9.x** detect-only on Npcap interface | **Suricata on OPNsense** (perimeter) |
 | Snort 3 | **Not available** on Windows (roadmap item) | Kali / Linux / OPNsense |
 | SMS alerts | **Signal preferred** ([SIGNAL_ALERTS.md](SIGNAL_ALERTS.md)); Twilio fallback via local `.env` / DPAPI vault | Same |
-| IPS inline block | **Not in this stack** — detect + alert only | OPNsense Suricata blocking mode |
-| Fallback | `-UseWiresharkFallback` → tshark heuristics | Wireshark IDS doc |
+| IPS inline block | **Not in this stack** â€” detect + alert only | OPNsense Suricata blocking mode |
+| Fallback | `-UseWiresharkFallback` â†’ tshark heuristics | Wireshark IDS doc |
 
-Windows host IDS complements — it does not replace — **Suricata-primary** on Kali (`ctg-ids-ips-autorun.sh`) or OPNsense. See [KALI_IDS_IPS_CLAMAV.md](KALI_IDS_IPS_CLAMAV.md) and [WIRESHARK_IDS_SMS.md](WIRESHARK_IDS_SMS.md).
+Windows host IDS complements â€” it does not replace â€” **Suricata-primary** on Kali (`ctg-ids-ips-autorun.sh`) or OPNsense. See [KALI_IDS_IPS_CLAMAV.md](KALI_IDS_IPS_CLAMAV.md) and [WIRESHARK_IDS_SMS.md](WIRESHARK_IDS_SMS.md).
 
 ## Why Snort 2.9 on Windows (not Snort 3)
 
@@ -21,22 +21,22 @@ Cisco Snort 3 targets Linux with CMake/DDAQ builds. The official Windows path re
 ## Prerequisites
 
 1. **Windows 11 Pro** (or Enterprise/Education) on your SOC laptop
-2. **Npcap** — install via Wireshark or [npcap.com](https://npcap.com/) (WinPcap-compatible mode)
-3. **Snort 2.9.x Windows** — manual installer from snort.org (or `choco install snort` legacy package)
-4. **Community rules** — free account at snort.org → rule downloads → extract to `Backups\ctg-snort\rules\`
+2. **Npcap** â€” install via Wireshark or [npcap.com](https://npcap.com/) (WinPcap-compatible mode)
+3. **Snort 2.9.x Windows** â€” manual installer from snort.org (or `choco install snort` legacy package)
+4. **Community rules** â€” free account at snort.org â†’ rule downloads â†’ extract to `Backups\ctg-snort\rules\`
 
-## Environment variables (local `.env` only — never commit)
+## Environment variables (local `.env` only â€” never commit)
 
-**Preferred:** Signal via [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md) — free, E2E, no Twilio billing.
+**Preferred:** Signal via [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md) â€” free, E2E, no Twilio billing.
 
 ```env
 CTG_SIGNAL_CLI_PATH=C:\Users\Owner\AppData\Local\Programs\signal-cli\signal-cli.exe
 CTG_ALERT_SIGNAL_TO=+1XXXXXXXXXX
 ```
 
-Twilio SMS fallback (optional — set `CTG_USE_TWILIO=1` to prefer SMS):
+Twilio SMS fallback (optional â€” set `CTG_USE_TWILIO=1` to prefer SMS):
 
-Add to `C:\Users\Owner\Projects\cyberThreatGotchi\.env` (gitignored):
+Add to `C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi\.env` (gitignored):
 
 ```env
 TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -53,10 +53,10 @@ Replace `+1XXXXXXXXXX` with your mobile in E.164 format. **Prefer** DPAPI vault 
 
 Then use `Send-CtgSmsAlert.ps1 -UseSecretVault` or `Send-CtgIdsAlert.ps1 -UseSecretVault` (IDS scripts use the dispatcher; Signal preferred when configured).
 
-## Install (Administrator PowerShell — one command per block)
+## Install (Administrator PowerShell â€” one command per block)
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -166,7 +166,7 @@ Unregister:
 High/critical Snort alerts send a short message (no payloads, no PII):
 
 ```text
-CTG Snort: [high] sid 1000001 — review log
+CTG Snort: [high] sid 1000001 â€” review log
 ```
 
 Rate limit: **one alert per rule SID per 15 minutes** (`Send-CtgIdsAlert.ps1` / shared rate file).
@@ -189,7 +189,7 @@ When SSD **D:** is online, paths use `D:\Backups\` instead.
 | Control | Implementation |
 |---------|----------------|
 | DE.CM-1 | Network monitoring via Snort detect-only on authorized interface |
-| DE.AE-2 | Alert analysis — review `snort\alert` and JSON, correlate with Wireshark/Kali Suricata |
+| DE.AE-2 | Alert analysis â€” review `snort\alert` and JSON, correlate with Wireshark/Kali Suricata |
 | PR.PT-1 | Npcap + Snort on hardened Win11 Pro host; secrets in `.env`/vault only |
 | RS.AN-1 | Signal/SMS notifies analyst; full forensics from local logs (no payload in alert) |
 
@@ -211,6 +211,6 @@ When SSD **D:** is online, paths use `D:\Backups\` instead.
 ## Security notes
 
 - Never commit `.env`, Twilio tokens, phone numbers, or signal-cli account data
-- Snort on Windows is **detect-only** in this stack — no inline drop
-- Promiscuous WiFi capture depends on driver/Npcap — prefer Ethernet or Kali USB monitor for 802.11 lab
-- Full perimeter IPS: OPNsense + Suricata — see [README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)
+- Snort on Windows is **detect-only** in this stack â€” no inline drop
+- Promiscuous WiFi capture depends on driver/Npcap â€” prefer Ethernet or Kali USB monitor for 802.11 lab
+- Full perimeter IPS: OPNsense + Suricata â€” see [README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)

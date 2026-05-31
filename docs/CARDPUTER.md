@@ -1,4 +1,4 @@
-# Cardputer + CyberThreatGotchi integration
+﻿# Cardputer + CyberThreatGotchi integration
 
 Show **Cipherhorn mood** and the latest threat on your M5Stack Cardputer by polling the CTG web API over Wi-Fi.
 
@@ -6,23 +6,23 @@ Show **Cipherhorn mood** and the latest threat on your M5Stack Cardputer by poll
 
 ```
   BPI-R3 Mini (CTG)                    M5Stack Cardputer
-  ┌─────────────────┐                  ┌──────────────────┐
-  │ main.py --web   │  Wi-Fi LAN       │ ctg_status.py    │
-  │ :8765 /api/status ─────────────────►│ poll every 4s    │
-  └─────────────────┘                  └──────────────────┘
+  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+  â”‚ main.py --web   â”‚  Wi-Fi LAN       â”‚ ctg_status.py    â”‚
+  â”‚ :8765 /api/status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–ºâ”‚ poll every 4s    â”‚
+  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
-No firmware changes to CTG are required — the Cardputer is a **read-only status client**.
+No firmware changes to CTG are required â€” the Cardputer is a **read-only status client**.
 
 ## Desktop test (before flashing Cardputer)
 
-Terminal A — start CTG:
+Terminal A â€” start CTG:
 
 ```powershell
 python main.py --simulation --web
 ```
 
-Terminal B — Cardputer-style display:
+Terminal B â€” Cardputer-style display:
 
 ```powershell
 python scripts\cardputer_status.py --host 127.0.0.1 --watch
@@ -52,31 +52,31 @@ Configure `CTG_HOST` in `platformio.ini` and Wi-Fi credentials in `src/main.cpp`
 
 ## M5 OS launcher (firmware catalog)
 
-Field apps ship through **[M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer)** — SD layout, manifest download, and flash-from-SD workflow. Security details (HTTPS-only manifest URLs, SHA-256 verify before flash, Wi-Fi password handling): [M5 OS SECURITY.md](https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/SECURITY.md).
+Field apps ship through **[M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer)** â€” SD layout, manifest download, and flash-from-SD workflow. Security details (HTTPS-only manifest URLs, SHA-256 verify before flash, Wi-Fi password handling): [M5 OS SECURITY.md](https://github.com/salvador-Data/M5_OS-Cardputer/blob/main/SECURITY.md).
 
 ### Flash M5 OS (PlatformIO)
 
-**M5 OS** is its own repo. Recommended clone: `C:\Users\Owner\Projects\M5_OS-Cardputer` (sibling of `cyberThreatGotchi`).
+**M5 OS** is its own repo. Recommended clone: `C:\Users\Owner\Programs\Hacker Planet LLC\M5_OS-Cardputer` (sibling of `cyberThreatGotchi`).
 
-If you already work from `cyberThreatGotchi\M5_OS-Cardputer`, that is a **nested duplicate clone** (not tracked by the CTG repo). It still builds — `platformio.ini` is at that folder root. Run `git pull` there, or switch to the sibling path below.
+If you already work from `cyberThreatGotchi\M5_OS-Cardputer`, that is a **nested duplicate clone** (not tracked by the CTG repo). It still builds â€” `platformio.ini` is at that folder root. Run `git pull` there, or switch to the sibling path below.
 
 ```text
-C:\Users\Owner\Projects\M5_OS-Cardputer\     ← recommended
-  platformio.ini    ← project root (no platformio/ subfolder)
+C:\Users\Owner\Programs\Hacker Planet LLC\M5_OS-Cardputer\     â† recommended
+  platformio.ini    â† project root (no platformio/ subfolder)
   src\
   include\
 
-C:\Users\Owner\Projects\cyberThreatGotchi\M5_OS-Cardputer\   ← nested duplicate (also valid)
+C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi\M5_OS-Cardputer\   â† nested duplicate (also valid)
   platformio.ini
   src\
 ```
 
-BLE Bot and Remote Possibility use a `platformio/` subfolder in *their* repos — do not copy that path for M5 OS.
+BLE Bot and Remote Possibility use a `platformio/` subfolder in *their* repos â€” do not copy that path for M5 OS.
 
 PowerShell from **either** M5_OS-Cardputer root (where `platformio.ini` lives):
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi\M5_OS-Cardputer
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi\M5_OS-Cardputer
 ```
 
 ```powershell
@@ -87,7 +87,7 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi\M5_OS-Cardputer
 & "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e m5stack-cardputer -t upload
 ```
 
-In VS Code: **File → Open Folder** → `M5_OS-Cardputer`, pick env `m5stack-cardputer`, click **Build** / **Upload**.
+In VS Code: **File â†’ Open Folder** â†’ `M5_OS-Cardputer`, pick env `m5stack-cardputer`, click **Build** / **Upload**.
 
 Host-side manifest validation:
 
@@ -101,7 +101,7 @@ python scripts/validate_manifest.py data/manifest.example.json
 
 | Path | Cardputer display |
 |------|-------------------|
-| `gotchi.mood` | Status label (IDLE, ALERT, BLOCK, …) |
+| `gotchi.mood` | Status label (IDLE, ALERT, BLOCK, â€¦) |
 | `gotchi.name` | Title line |
 | `gotchi.level` | Level |
 | `gotchi.threats_blocked` | Block counter |
@@ -110,7 +110,7 @@ python scripts/validate_manifest.py data/manifest.example.json
 | `threats[0].severity` | Severity color hint |
 | `threats[0].action_taken` | IPS action |
 
-## Mood → icon map (desktop client)
+## Mood â†’ icon map (desktop client)
 
 | Mood | Icon |
 |------|------|
@@ -128,7 +128,7 @@ python scripts/validate_manifest.py data/manifest.example.json
 |---------|-----|
 | `CTG unreachable` | Ping CTG IP; confirm `--web` and firewall allow port 8765 |
 | Empty threats | Normal until simulation/live traffic generates events |
-| Wrong mood | Check `/api/status` in browser — Cardputer mirrors that JSON |
+| Wrong mood | Check `/api/status` in browser â€” Cardputer mirrors that JSON |
 
 ## Ecosystem
 

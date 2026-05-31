@@ -1,10 +1,10 @@
-# SEO ranking playbook — Google, Bing, DuckDuckGo & more
+﻿# SEO ranking playbook â€” Google, Bing, DuckDuckGo & more
 
-**Hacker Planet LLC · hackerplanet.dev · Philadelphia, PA**
+**Hacker Planet LLC Â· hackerplanet.dev Â· Philadelphia, PA**
 
-> **Honest expectation:** No one can guarantee top-3 Google (or Bing) rankings. Competitive terms like “cybersecurity Philadelphia” and “ethical hacking” take **3–6 months** of consistent indexing, content, and backlinks — often longer. This playbook implements best-practice technical SEO and documents verification steps I run as Salvador Data.
+> **Honest expectation:** No one can guarantee top-3 Google (or Bing) rankings. Competitive terms like â€œcybersecurity Philadelphiaâ€ and â€œethical hackingâ€ take **3â€“6 months** of consistent indexing, content, and backlinks â€” often longer. This playbook implements best-practice technical SEO and documents verification steps I run as Salvador Data.
 
-Technical SEO is driven by `website/seo/site.json` and `python scripts/sync_seo.py`. Content positioning frames **“hacking” as authorized / ethical lab use only**.
+Technical SEO is driven by `website/seo/site.json` and `python scripts/sync_seo.py`. Content positioning frames **â€œhackingâ€ as authorized / ethical lab use only**.
 
 See also: [SEO.md](./SEO.md) (developer sync workflow).
 
@@ -16,12 +16,12 @@ See also: [SEO.md](./SEO.md) (developer sync workflow).
 |--------|---------|-----------------|
 | **Google** | Googlebot | Search Console + sitemap |
 | **Bing** | Bingbot | Bing Webmaster Tools + sitemap + IndexNow |
-| **DuckDuckGo** | DuckDuckBot (+ Bing index) | robots.txt allow + Bing indexing — see §3 |
+| **DuckDuckGo** | DuckDuckBot (+ Bing index) | robots.txt allow + Bing indexing â€” see Â§3 |
 | **Yahoo** | Slurp (Bing-powered) | Same as Bing |
-| **Apple** | Applebot | Siri / Spotlight — robots allow + quality sitemap |
-| **Yandex** | Yandex | Optional international — robots allow |
-| **Baidu** | Baiduspider | Optional China — robots allow; verify in Baidu Webmaster if needed |
-| **Ecosia** | (Bing-powered) | Same as Bing — no separate crawler |
+| **Apple** | Applebot | Siri / Spotlight â€” robots allow + quality sitemap |
+| **Yandex** | Yandex | Optional international â€” robots allow |
+| **Baidu** | Baiduspider | Optional China â€” robots allow; verify in Baidu Webmaster if needed |
+| **Ecosia** | (Bing-powered) | Same as Bing â€” no separate crawler |
 | **Brave Search** | Brave | robots allow + general crawl via `User-agent: *` |
 | **Facebook/Meta** | facebot | OG tags (already injected) |
 
@@ -29,7 +29,7 @@ All crawlers above are **explicitly allowed** in `website/robots.txt` (generated
 
 **Quick status check:** `.\scripts\seo_go_live_checklist.ps1`
 
-**10-min all-engines indexing:** [SEO_INDEXING_NOW.md](./SEO_INDEXING_NOW.md) · `.\scripts\seo_all_engines_go_live.ps1`
+**10-min all-engines indexing:** [SEO_INDEXING_NOW.md](./SEO_INDEXING_NOW.md) Â· `.\scripts\seo_all_engines_go_live.ps1`
 
 **Get on top (honest ranking playbook):** [SEO_GET_ON_TOP.md](./SEO_GET_ON_TOP.md)
 
@@ -46,14 +46,14 @@ All crawlers above are **explicitly allowed** in `website/robots.txt` (generated
 ### Verify domain
 
 1. Go to [Google Search Console](https://search.google.com/search-console).
-2. Add property → **Domain** `hackerplanet.dev` (recommended) or URL prefix.
-3. Verify via **DNS TXT** record at Cloudflare — follow GSC’s exact TXT value.
+2. Add property â†’ **Domain** `hackerplanet.dev` (recommended) or URL prefix.
+3. Verify via **DNS TXT** record at Cloudflare â€” follow GSCâ€™s exact TXT value.
 4. **Automated apply** (after copying value from GSC dashboard):
 
    Go to the repo root:
 
    ```powershell
-   cd c:\Users\Owner\Projects\cyberThreatGotchi
+   cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
    ```
 
    Set Cloudflare token in this session only (never commit this):
@@ -77,7 +77,7 @@ See `python scripts/seo_verification_dns.py --doc` for copy-paste instructions.
 
 ### Submit sitemap
 
-1. GSC → **Sitemaps** → add: `https://hackerplanet.dev/sitemap.xml`
+1. GSC â†’ **Sitemaps** â†’ add: `https://hackerplanet.dev/sitemap.xml`
 2. Confirm no errors after deploy (GitHub Pages + custom domain).
 
 ### Ongoing (Salvador Data)
@@ -94,9 +94,9 @@ Full step-by-step: **[SEO_GOOGLE_BUSINESS_PROFILE.md](./SEO_GOOGLE_BUSINESS_PROF
 Hacker Planet LLC is a **service-area business** (no public street address):
 
 - Category ideas: *Computer security service*, *Computer consultant*
-- Service area: Philadelphia metro + “United States” for remote
+- Service area: Philadelphia metro + â€œUnited Statesâ€ for remote
 - Website: `https://hackerplanet.dev`
-- Phone: (215) 839-8738 · Email: salvadorData@proton.me
+- Phone: (215) 839-8738 Â· Email: salvadorData@proton.me
 - Do **not** publish warehouse/street address publicly
 
 ---
@@ -108,14 +108,14 @@ Bing powers **Bing search**, much of **DuckDuckGo**, and **Yahoo** results.
 ### Verify hackerplanet.dev
 
 1. Sign in at [Bing Webmaster Tools](https://www.bing.com/webmasters).
-2. **Add a site** → `https://hackerplanet.dev`
+2. **Add a site** â†’ `https://hackerplanet.dev`
 3. Verification options:
-   - **DNS CNAME** (recommended on Cloudflare) — Bing shows **Host** (subdomain label) and **Target** (e.g. `verify.bing.com`):
+   - **DNS CNAME** (recommended on Cloudflare) â€” Bing shows **Host** (subdomain label) and **Target** (e.g. `verify.bing.com`):
 
      Go to the repo root:
 
      ```powershell
-     cd c:\Users\Owner\Projects\cyberThreatGotchi
+     cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
      ```
 
      Apply Bing CNAME via Cloudflare API:
@@ -124,11 +124,11 @@ Bing powers **Bing search**, much of **DuckDuckGo**, and **Yahoo** results.
      py scripts/seo_verification_dns.py --bing-cname YOUR_HOST_LABEL verify.bing.com
      ```
      Cloudflare: Type **CNAME**, Name = host label only, Target = Bing target, **DNS only (grey cloud)**.
-   - **Meta tag** — set `bingSiteVerification` in `website/seo/site.json` to the content value (not the full tag), then run `python scripts/sync_seo.py`. Example placeholder shape:
+   - **Meta tag** â€” set `bingSiteVerification` in `website/seo/site.json` to the content value (not the full tag), then run `python scripts/sync_seo.py`. Example placeholder shape:
      ```html
      <meta name="msvalidate.01" content="YOUR_BING_VERIFICATION_CODE"/>
      ```
-     Store only `YOUR_BING_VERIFICATION_CODE` in JSON — it is not a secret, but keep it in config for easy rotation.
+     Store only `YOUR_BING_VERIFICATION_CODE` in JSON â€” it is not a secret, but keep it in config for easy rotation.
 
 ### Submit sitemap
 
@@ -138,7 +138,7 @@ Same URL as Google:
 https://hackerplanet.dev/sitemap.xml
 ```
 
-Bing Webmaster Tools → **Sitemaps** → Submit.
+Bing Webmaster Tools â†’ **Sitemaps** â†’ Submit.
 
 ### IndexNow (Bing + participating engines)
 
@@ -152,7 +152,7 @@ After content deploy:
 Go to the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Preview IndexNow payload (dry run):
@@ -173,20 +173,20 @@ Optional CI step: run `ping_indexnow.py` after `sync_website_to_docs.py` on main
 
 ## 3. DuckDuckGo (dedicated)
 
-DuckDuckGo is a **priority engine** for privacy-conscious users. Hacker Planet appears through **two independent paths** — both must be healthy:
+DuckDuckGo is a **priority engine** for privacy-conscious users. Hacker Planet appears through **two independent paths** â€” both must be healthy:
 
-### Path A — Bing index (primary for DDG web results)
+### Path A â€” Bing index (primary for DDG web results)
 
-DuckDuckGo’s web search results are largely sourced from **Bing’s index**. If Bing has not crawled or ranked your pages, DDG web results will lag or omit them even when DuckDuckBot is allowed.
+DuckDuckGoâ€™s web search results are largely sourced from **Bingâ€™s index**. If Bing has not crawled or ranked your pages, DDG web results will lag or omit them even when DuckDuckBot is allowed.
 
 **My actions:**
 
-- [ ] Complete **Bing Webmaster Tools** verification (§2)
+- [ ] Complete **Bing Webmaster Tools** verification (Â§2)
 - [ ] Submit `https://hackerplanet.dev/sitemap.xml` in Bing
 - [ ] Run `python scripts/ping_indexnow.py` after deploys (IndexNow notifies Bing)
-- [ ] Wait 2–6 weeks; search `site:hackerplanet.dev` on Bing, then on DuckDuckGo
+- [ ] Wait 2â€“6 weeks; search `site:hackerplanet.dev` on Bing, then on DuckDuckGo
 
-### Path B — DuckDuckBot (direct crawl)
+### Path B â€” DuckDuckBot (direct crawl)
 
 DDG operates its own crawler **DuckDuckBot** for discovery and supplemental indexing.
 
@@ -201,7 +201,7 @@ DDG operates its own crawler **DuckDuckBot** for discovery and supplemental inde
 Go to the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Run checklist (includes live robots.txt DuckDuckBot check):
@@ -214,11 +214,11 @@ Run checklist (includes live robots.txt DuckDuckBot check):
 
 | Feature | Applicable? | Notes |
 |---------|-------------|-------|
-| **Instant Answers** | Unlikely | Reserved for Wikipedia, major APIs, and high-authority sources — not typical for a boutique cybersecurity site at launch |
-| **!bang commands** | N/A | Site owners do not register !bangs; users type `!g`, `!w`, etc. — irrelevant to our SEO workflow |
+| **Instant Answers** | Unlikely | Reserved for Wikipedia, major APIs, and high-authority sources â€” not typical for a boutique cybersecurity site at launch |
+| **!bang commands** | N/A | Site owners do not register !bangs; users type `!g`, `!w`, etc. â€” irrelevant to our SEO workflow |
 | **Paid placement** | N/A | DDG has no ads; ranking is organic via Bing + crawl |
 
-### Optional — suggest your site to DuckDuckGo
+### Optional â€” suggest your site to DuckDuckGo
 
 After Bing shows at least your homepage and `cybersecurity-philadelphia.html`:
 
@@ -230,7 +230,7 @@ After Bing shows at least your homepage and `cybersecurity-philadelphia.html`:
 - [ ] Bing verified + sitemap submitted (Path A)
 - [ ] Live `robots.txt` allows `DuckDuckBot` (Path B)
 - [ ] IndexNow pinged after this deploy
-- [ ] Test search: `hacker planet cybersecurity philadelphia` on duckduckgo.com (month 1–3)
+- [ ] Test search: `hacker planet cybersecurity philadelphia` on duckduckgo.com (month 1â€“3)
 - [ ] Optional: submit site via DDG help form once Bing indexes key URLs
 
 ---
@@ -250,7 +250,7 @@ Applebot powers Siri suggestions and Spotlight web results.
 
 - [x] `User-agent: Applebot` allowed in `robots.txt`
 - [x] Sitemap submitted to Google/Bing (Apple also discovers via links)
-- [ ] No separate Apple Search Console — focus on fast, mobile-friendly pages and valid JSON-LD
+- [ ] No separate Apple Search Console â€” focus on fast, mobile-friendly pages and valid JSON-LD
 
 ---
 
@@ -258,7 +258,7 @@ Applebot powers Siri suggestions and Spotlight web results.
 
 International traffic is not the primary market. If you expand:
 
-- [ ] [Yandex Webmaster](https://webmaster.yandex.com/) — verify site
+- [ ] [Yandex Webmaster](https://webmaster.yandex.com/) â€” verify site
 - [x] `User-agent: Yandex` already allowed in `robots.txt`
 - Meta verification tag can be added to `site.json` / `sync_seo.py` if needed later
 
@@ -268,9 +268,9 @@ International traffic is not the primary market. If you expand:
 
 China traffic is not the primary market. If you expand:
 
-- [ ] [Baidu Webmaster](https://ziyuan.baidu.com/) — verify site
+- [ ] [Baidu Webmaster](https://ziyuan.baidu.com/) â€” verify site
 - [x] `User-agent: Baiduspider` allowed in `robots.txt`
-- Hosting in China or ICP filing may be required for serious CN presence — out of scope for US-local launch
+- Hosting in China or ICP filing may be required for serious CN presence â€” out of scope for US-local launch
 
 ---
 
@@ -278,7 +278,7 @@ China traffic is not the primary market. If you expand:
 
 | Engine | Mechanism | Action |
 |--------|-----------|--------|
-| **Ecosia** | Uses **Bing** index | Same as §2 — no separate bot in robots.txt |
+| **Ecosia** | Uses **Bing** index | Same as Â§2 â€” no separate bot in robots.txt |
 | **Brave Search** | **Brave** crawler + independent index | [x] `User-agent: Brave` in robots.txt; general `User-agent: *` Allow also applies |
 
 ---
@@ -287,8 +287,8 @@ China traffic is not the primary market. If you expand:
 
 | Item | Location |
 |------|----------|
-| Central meta + JSON-LD | `website/seo/site.json` → `scripts/sync_seo.py` |
-| Brand-first `<title>` pattern | `Hacker Planet \| …` on every page in `site.json` |
+| Central meta + JSON-LD | `website/seo/site.json` â†’ `scripts/sync_seo.py` |
+| Brand-first `<title>` pattern | `Hacker Planet \| â€¦` on every page in `site.json` |
 | Organization / WebSite / LocalBusiness JSON-LD | `"name": "Hacker Planet"` with `alternateName` |
 | `og:site_name` + `apple-mobile-web-app-title` | Injected per page |
 | Service area (Philly metro + remote US) | `areaServed` in schema |
@@ -309,9 +309,9 @@ Primary brand queries to monitor in GSC / Bing after verification:
 - `hackerplanet.dev`
 - `site:hackerplanet.dev`
 
-**Why brand may not rank yet:** `site:hackerplanet.dev` returning zero results usually means Google has **not indexed** the domain — not a title-tag problem. Fix: GSC domain verification → submit sitemap → URL inspection → request indexing.
+**Why brand may not rank yet:** `site:hackerplanet.dev` returning zero results usually means Google has **not indexed** the domain â€” not a title-tag problem. Fix: GSC domain verification â†’ submit sitemap â†’ URL inspection â†’ request indexing.
 
-**Differentiation in SERP:** Unrelated entities use “hacker planet” (e.g. media titles, other labs). Our schema and titles consistently pair **Hacker Planet** with **Philadelphia cybersecurity hardware lab** and **Hacker Planet LLC** so crawlers associate the brand with this site.
+**Differentiation in SERP:** Unrelated entities use â€œhacker planetâ€ (e.g. media titles, other labs). Our schema and titles consistently pair **Hacker Planet** with **Philadelphia cybersecurity hardware lab** and **Hacker Planet LLC** so crawlers associate the brand with this site.
 
 **Knowledge panel:** Unlikely at launch without Wikipedia/major press. Brand consistency (NAP, sameAs, titles) helps long-term entity recognition.
 
@@ -325,11 +325,11 @@ Primary brand queries to monitor in GSC / Bing after verification:
 | 2 | Verify in Bing Webmaster Tools |
 | 3 | Submit `https://hackerplanet.dev/sitemap.xml` to both |
 | 4 | Run `python scripts/ping_indexnow.py` after deploy |
-| 5 | GSC URL inspection → request indexing for `/` and `cybersecurity-philadelphia.html` |
+| 5 | GSC URL inspection â†’ request indexing for `/` and `cybersecurity-philadelphia.html` |
 | 6 | Week 2+: check `site:hackerplanet.dev` on Google and Bing |
 | 7 | Track brand queries in GSC Performance tab |
 
-**sameAs (entity signals):** GitHub profile, CyberThreatGotchi repo, Reddit u/SalvadorData, and `https://hackerplanet.dev` — configured in `website/seo/site.json`.
+**sameAs (entity signals):** GitHub profile, CyberThreatGotchi repo, Reddit u/SalvadorData, and `https://hackerplanet.dev` â€” configured in `website/seo/site.json`.
 
 ---
 
@@ -338,7 +338,7 @@ Primary brand queries to monitor in GSC / Bing after verification:
 Run automated preflight from repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -364,15 +364,15 @@ cd c:\Users\Owner\Projects\cyberThreatGotchi
 
 ### Local
 
-- [ ] Google Business Profile (service-area, no street) — [SEO_GOOGLE_BUSINESS_PROFILE.md](./SEO_GOOGLE_BUSINESS_PROFILE.md)
-- [ ] NAP consistency: Hacker Planet LLC · Philadelphia, PA · salvadorData@proton.me · (215) 839-8738
+- [ ] Google Business Profile (service-area, no street) â€” [SEO_GOOGLE_BUSINESS_PROFILE.md](./SEO_GOOGLE_BUSINESS_PROFILE.md)
+- [ ] NAP consistency: Hacker Planet LLC Â· Philadelphia, PA Â· salvadorData@proton.me Â· (215) 839-8738
 
 ### Maintenance
 
 Run each step separately from repo root after editing `site.json`:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -393,4 +393,4 @@ py scripts/ping_indexnow.py
 
 ---
 
-*Salvador Data · salvadorData@proton.me · Defensive / authorized use only*
+*Salvador Data Â· salvadorData@proton.me Â· Defensive / authorized use only*

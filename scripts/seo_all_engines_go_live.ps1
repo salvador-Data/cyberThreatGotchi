@@ -173,7 +173,7 @@ Write-Host "Done. Without GSC/Bing verification, site:hackerplanet.dev stays EMP
 Write-Host ""
 Write-Host "Next steps (one command per line - run from repo root):" -ForegroundColor Green
 Write-Host ""
-Write-Host "  cd c:\Users\Owner\Projects\cyberThreatGotchi" -ForegroundColor Gray
+Write-Host "  cd $(Join-Path $env:USERPROFILE 'Programs\Hacker Planet LLC\cyberThreatGotchi')" -ForegroundColor Gray
 Write-Host ""
 Write-Host "  Re-run automated checks:" -ForegroundColor Gray
 Write-Host "  .\scripts\seo_go_live_checklist.ps1" -ForegroundColor Gray

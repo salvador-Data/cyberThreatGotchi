@@ -1,10 +1,10 @@
-# Go-live setup checklist — Hacker Planet LLC
+﻿# Go-live setup checklist â€” Hacker Planet LLC
 
 **Salvador Data:** I work top-to-bottom. Automated items are already green unless noted.
 
 | Doc | Purpose |
 |-----|---------|
-| This file | **Today's go-live steps** (Voice → domain → email → payments) |
+| This file | **Today's go-live steps** (Voice â†’ domain â†’ email â†’ payments) |
 | [GO_LIVE_NOW.md](GO_LIVE_NOW.md) | **One-page runbook** with Account ID + Zone ID + links |
 | [HOSTING_OPTIONS.md](HOSTING_OPTIONS.md) | DNS table, `CNAME`, brand vs URL |
 | [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md) | **Expanded** Cloudflare DNS, TLS, WAF, Email Routing |
@@ -13,28 +13,28 @@
 | [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md) | Stripe, tax, fulfillment |
 | [KICKSTARTER_LAUNCH_PLAN.md](KICKSTARTER_LAUNCH_PLAN.md) | 30-day Kickstarter calendar |
 | [kickstarter/KICKSTARTER_CREATE_ON_KICKSTARTER_COM.md](kickstarter/KICKSTARTER_CREATE_ON_KICKSTARTER_COM.md) | Create project on kickstarter.com today |
-| [BUSINESS_PROJECTIONS.md](BUSINESS_PROJECTIONS.md) | Year 1–3 revenue scenarios |
+| [BUSINESS_PROJECTIONS.md](BUSINESS_PROJECTIONS.md) | Year 1â€“3 revenue scenarios |
 | [BUSINESS_IDEAS.md](BUSINESS_IDEAS.md) | Ranked growth ideas |
 | [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) | Pages enable / troubleshoot |
 
 **Quick verify (local):**
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 .\scripts\setup_go_live.ps1
 ```
 
 ---
 
-## A. Website — DONE (verify only)
+## A. Website â€” DONE (verify only)
 
 | Item | Status |
 |------|--------|
 | **Live URL** | https://salvador-Data.github.io/cyberThreatGotchi/ |
 | **Shop** | https://salvador-Data.github.io/cyberThreatGotchi/shop.html |
 | **Contact** | https://salvador-Data.github.io/cyberThreatGotchi/contact.html |
-| **Pages source** | Branch **`gh-pages`** · folder **`/ (root)`** |
-| **Deploy workflow** | [.github/workflows/pages.yml](../.github/workflows/pages.yml) → `peaceiris/actions-gh-pages@v4` publishes `website/` |
+| **Pages source** | Branch **`gh-pages`** Â· folder **`/ (root)`** |
+| **Deploy workflow** | [.github/workflows/pages.yml](../.github/workflows/pages.yml) â†’ `peaceiris/actions-gh-pages@v4` publishes `website/` |
 
 ### Brand vs URL (read once)
 
@@ -42,8 +42,8 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 |---------|-----------|
 | Site branding **HackerPlanet** everywhere | Browser URL still **`salvador-Data.github.io/cyberThreatGotchi/`** until DNS live |
 | Email **`hello@hackerplanet.dev`** on contact | Routes to **salvadorData@proton.me** after Email Routing |
-| Active inquiry email | ✅ **salvadorData@proton.me** on contact, shop, services |
-| Docs target **`hackerplanet.dev`** | **`website/CNAME`** added — register domain + DNS next |
+| Active inquiry email | âœ… **salvadorData@proton.me** on contact, shop, services |
+| Docs target **`hackerplanet.dev`** | **`website/CNAME`** added â€” register domain + DNS next |
 
 Custom domain steps: **Section C** below, [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md), and [HOSTING_OPTIONS.md](HOSTING_OPTIONS.md).
 
@@ -59,11 +59,11 @@ Run anytime:
 
 | Check | Result |
 |-------|--------|
-| HTTP 200 on all public HTML pages | ✅ Verified |
-| `check_shop.py` (30 products aligned) | ✅ Pass |
-| `tests/` full suite | ✅ 86 passed, 3 skipped |
-| Product pricing separation (CYD / CrackBot / Cardputer) | ✅ `docs/PRODUCT_PRICING.md` · commit `2b056dd` |
-| `pages.yml` latest deploy | ✅ Success (GitHub Actions) |
+| HTTP 200 on all public HTML pages | âœ… Verified |
+| `check_shop.py` (30 products aligned) | âœ… Pass |
+| `tests/` full suite | âœ… 86 passed, 3 skipped |
+| Product pricing separation (CYD / CrackBot / Cardputer) | âœ… `docs/PRODUCT_PRICING.md` Â· commit `2b056dd` |
+| `pages.yml` latest deploy | âœ… Success (GitHub Actions) |
 
 **GitHub CLI (when `gh` is on PATH):**
 
@@ -72,46 +72,46 @@ gh run list --workflow=pages.yml -L 3 -R salvador-Data/cyberThreatGotchi
 gh api repos/salvador-Data/cyberThreatGotchi/pages
 ```
 
-**One-time enable** (only if the site 404s): [Settings → Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages) → **`gh-pages`** / **(root)** — or `python scripts/enable_github_pages.py` after `gh auth login`.
+**One-time enable** (only if the site 404s): [Settings â†’ Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages) â†’ **`gh-pages`** / **(root)** â€” or `python scripts/enable_github_pages.py` after `gh auth login`.
 
 ---
 
-## B. Google Voice — ✅ DONE (paste number on contact page)
+## B. Google Voice â€” âœ… DONE (paste number on contact page)
 
 **Goal:** Free US business line (215 area) that forwards to my cell. **Do not** put my personal cell on the public site.
 
 | Item | Status |
 |------|--------|
-| Voice account + 215 number + forward to cell | ✅ **Completed** (2026-05-28) |
-| Public number on contact page | ✅ **(215) 839-8738** · `tel:+12158398738` |
+| Voice account + 215 number + forward to cell | âœ… **Completed** (2026-05-28) |
+| Public number on contact page | âœ… **(215) 839-8738** Â· `tel:+12158398738` |
 
-Live on [contact.html](../website/contact.html). Google Voice forwards to my cell — do not publish personal cell on the site.
+Live on [contact.html](../website/contact.html). Google Voice forwards to my cell â€” do not publish personal cell on the site.
 
 Original setup: [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md)
 
 ---
 
-## C. Domain `hackerplanet.dev` — IN PROGRESS
+## C. Domain `hackerplanet.dev` â€” IN PROGRESS
 
 **Full checklist:** [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md) (DNS, SSL/TLS, Bot Fight Mode, Email Routing).
 
 | Item | Status |
 |------|--------|
-| Cloudflare account | ✅ **Created** (2026-05-28) |
-| Register `hackerplanet.dev` at Cloudflare Registrar | ⏳ **Zone status `pending`** — finish purchase/activation |
-| `website/CNAME` in repo | ✅ **Added** (`hackerplanet.dev`) |
-| Cloudflare DNS → GitHub Pages | ⏳ **1× A proxied ON** — add 3 A + `www` CNAME, grey cloud all |
-| GitHub Pages custom domain | ✅ **`hackerplanet.dev` set** in repo Settings (via API) — enable HTTPS after DNS |
+| Cloudflare account | âœ… **Created** (2026-05-28) |
+| Register `hackerplanet.dev` at Cloudflare Registrar | â³ **Zone status `pending`** â€” finish purchase/activation |
+| `website/CNAME` in repo | âœ… **Added** (`hackerplanet.dev`) |
+| Cloudflare DNS â†’ GitHub Pages | â³ **1Ã— A proxied ON** â€” add 3 A + `www` CNAME, grey cloud all |
+| GitHub Pages custom domain | âœ… **`hackerplanet.dev` set** in repo Settings (via API) â€” enable HTTPS after DNS |
 
-**Agent will not purchase the domain for you.** Cloudflare MCP can **read** the zone but **cannot write DNS** until the zone is **active** and the API token has Zone.DNS Edit scope. Current state: one **proxied** A `@` → `185.199.108.153` — turn proxy **off** and add the other GitHub Pages records below.
+**Agent will not purchase the domain for you.** Cloudflare MCP can **read** the zone but **cannot write DNS** until the zone is **active** and the API token has Zone.DNS Edit scope. Current state: one **proxied** A `@` â†’ `185.199.108.153` â€” turn proxy **off** and add the other GitHub Pages records below.
 
 ### Cloudflare Registrar (if not done)
 
-1. Log in → **[Cloudflare Dashboard](https://dash.cloudflare.com/)** → left sidebar **Domain registration** (or **[domains.cloudflare.com](https://domains.cloudflare.com/)**).
-2. Search **`hackerplanet.dev`** → **Purchase** (~$10–12/yr, at-cost).
+1. Log in â†’ **[Cloudflare Dashboard](https://dash.cloudflare.com/)** â†’ left sidebar **Domain registration** (or **[domains.cloudflare.com](https://domains.cloudflare.com/)**).
+2. Search **`hackerplanet.dev`** â†’ **Purchase** (~$10â€“12/yr, at-cost).
 3. Confirm the zone **`hackerplanet.dev`** appears under **Websites**.
 
-### Repo (done — deploys via Pages workflow)
+### Repo (done â€” deploys via Pages workflow)
 
 **`website/CNAME`** contains exactly:
 
@@ -119,18 +119,18 @@ Original setup: [CONTACT_AND_PHONE.md](CONTACT_AND_PHONE.md)
 hackerplanet.dev
 ```
 
-Push to `main` triggers [.github/workflows/pages.yml](../.github/workflows/pages.yml) → publishes `CNAME` to **`gh-pages`**.
+Push to `main` triggers [.github/workflows/pages.yml](../.github/workflows/pages.yml) â†’ publishes `CNAME` to **`gh-pages`**.
 
 ### GitHub Pages custom domain
 
-**Option A — Dashboard (recommended; `gh` not on PATH on this machine):**
+**Option A â€” Dashboard (recommended; `gh` not on PATH on this machine):**
 
-1. **[Settings → Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages)**.
-2. Under **Custom domain**, enter **`hackerplanet.dev`** → **Save**.
+1. **[Settings â†’ Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages)**.
+2. Under **Custom domain**, enter **`hackerplanet.dev`** â†’ **Save**.
 3. Wait for **DNS check** (can take up to 24h after Cloudflare records).
 4. Enable **Enforce HTTPS** once the certificate provisions.
 
-**Option B — GitHub CLI** (after `winget install GitHub.cli` and `gh auth login`):
+**Option B â€” GitHub CLI** (after `winget install GitHub.cli` and `gh auth login`):
 
 ```powershell
 gh api -X PUT repos/salvador-Data/cyberThreatGotchi/pages -f cname=hackerplanet.dev
@@ -139,25 +139,25 @@ gh api repos/salvador-Data/cyberThreatGotchi/pages
 
 ### Cloudflare DNS (DNS only / grey cloud for GitHub Pages)
 
-**From your Add Record dialog:** Type **A**, Name **`@`**, paste **one** IPv4 below, click the **orange cloud** so it turns **grey** (“DNS only”), then **Save**. Repeat for all four A records.
+**From your Add Record dialog:** Type **A**, Name **`@`**, paste **one** IPv4 below, click the **orange cloud** so it turns **grey** (â€œDNS onlyâ€), then **Save**. Repeat for all four A records.
 
 | Type | Name | Content | Proxy |
 |------|------|---------|-------|
-| `A` | `@` | `185.199.108.153` | **DNS only** (grey — not Proxied) |
+| `A` | `@` | `185.199.108.153` | **DNS only** (grey â€” not Proxied) |
 | `A` | `@` | `185.199.109.153` | DNS only |
 | `A` | `@` | `185.199.110.153` | DNS only |
 | `A` | `@` | `185.199.111.153` | DNS only |
 | `CNAME` | `www` | `salvador-Data.github.io` | DNS only |
 
-**Ignore** GitHub **Profile → Settings → Pages → Verified domains** — that is optional account security, not where you connect the site. Use **[repo Settings → Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages)** instead (custom domain already set to `hackerplanet.dev`).
+**Ignore** GitHub **Profile â†’ Settings â†’ Pages â†’ Verified domains** â€” that is optional account security, not where you connect the site. Use **[repo Settings â†’ Pages](https://github.com/salvador-Data/cyberThreatGotchi/settings/pages)** instead (custom domain already set to `hackerplanet.dev`).
 
-**Alternative apex:** single `CNAME` `@` → `salvador-Data.github.io` (Cloudflare CNAME flattening) instead of four A records — pick one method, not both.
+**Alternative apex:** single `CNAME` `@` â†’ `salvador-Data.github.io` (Cloudflare CNAME flattening) instead of four A records â€” pick one method, not both.
 
-Full table: [HOSTING_OPTIONS.md § Connect custom domain](HOSTING_OPTIONS.md#connect-custom-domain-to-github-pages-after-purchase)
+Full table: [HOSTING_OPTIONS.md Â§ Connect custom domain](HOSTING_OPTIONS.md#connect-custom-domain-to-github-pages-after-purchase)
 
 ### SSL/TLS (after GitHub verifies domain)
 
-**Cloudflare → SSL/TLS → Overview** → set encryption mode to **Full (strict)** once GitHub Pages shows the custom domain as verified and HTTPS is available.
+**Cloudflare â†’ SSL/TLS â†’ Overview** â†’ set encryption mode to **Full (strict)** once GitHub Pages shows the custom domain as verified and HTTPS is available.
 
 ### Verify
 
@@ -169,22 +169,22 @@ Checks `salvador-Data.github.io` always; checks `https://hackerplanet.dev/` when
 
 ---
 
-## D. Email `hello@hackerplanet.dev` — after domain (free)
+## D. Email `hello@hackerplanet.dev` â€” after domain (free)
 
-1. Cloudflare dashboard → select **`hackerplanet.dev`** → **Email** → **Email Routing** → **Get started** / enable for the zone.
-2. **Routing rules** → **Create address** → custom address **`hello`** → destination **`salvadorData@proton.me`** → **Save**.
-3. Cloudflare adds required **MX** (and optional **TXT** SPF) records automatically — confirm under **DNS → Records**.
+1. Cloudflare dashboard â†’ select **`hackerplanet.dev`** â†’ **Email** â†’ **Email Routing** â†’ **Get started** / enable for the zone.
+2. **Routing rules** â†’ **Create address** â†’ custom address **`hello`** â†’ destination **`salvadorData@proton.me`** â†’ **Save**.
+3. Cloudflare adds required **MX** (and optional **TXT** SPF) records automatically â€” confirm under **DNS â†’ Records**.
 4. Send a test from another account; confirm receipt.
 5. Update **Stripe** and **PayPal** business profiles with `hello@hackerplanet.dev`.
 6. Contact page already shows the address; email copy notes delivery once MX routing is live.
 
 ---
 
-## E. Payments — when ready (not blocking site launch)
+## E. Payments â€” when ready (not blocking site launch)
 
 Shop is live in **demo mode** (`demoMode: true` in `payments.config.js`).
 
-**Fast path (automated — recommended):**
+**Fast path (automated â€” recommended):**
 
 ```powershell
 $env:CTG_STRIPE_SECRET_KEY = "sk_test_..."   # or sk_live_ when ready
@@ -195,20 +195,20 @@ $env:CTG_STRIPE_SECRET_KEY = "sk_test_..."   # or sk_live_ when ready
 
 **Manual path (Dashboard):**
 
-1. [Stripe Dashboard](https://dashboard.stripe.com) → enable **Tax** (PA minimum).
+1. [Stripe Dashboard](https://dashboard.stripe.com) â†’ enable **Tax** (PA minimum).
 2. Create **Payment Links** for every key in `website/js/payments.config.js`.
-3. Paste URLs into config → set **`demoMode: false`**.
+3. Paste URLs into config â†’ set **`demoMode: false`**.
 4. Validate:
 
 ```powershell
 .\.venv\Scripts\python scripts\check_payments.py
 ```
 
-5. Full playbook: [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md) · key table: [PAYMENTS.md](PAYMENTS.md) · [STRIPE_ADD_LINKS.md](STRIPE_ADD_LINKS.md)
+5. Full playbook: [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md) Â· key table: [PAYMENTS.md](PAYMENTS.md) Â· [STRIPE_ADD_LINKS.md](STRIPE_ADD_LINKS.md)
 
 ---
 
-## F. Ship-from address — internal only (done)
+## F. Ship-from address â€” internal only (done)
 
 Carrier labels use Philadelphia origin from **`website/js/shipping.config.js`** (`shipFrom` block). That street address must **never** appear on public HTML (enforced by `tests/test_website.py`).
 
@@ -220,16 +220,16 @@ Customer-facing copy: **Philadelphia, PA** only (`origin.publicLabel`).
 
 | # | Task | Status |
 |---|------|--------|
-| 1 | **Google Voice** (215 → cell) | ✅ **(215) 839-8738** on contact page |
-| 1b | **Active email** | ✅ **salvadorData@proton.me** on contact / shop / services |
-| 2 | **Cloudflare account** | ✅ Done |
-| 3 | **Register `hackerplanet.dev`** | ⏳ ~$10 at Cloudflare Registrar |
-| 4 | **DNS + GitHub custom domain** | ⏳ After step 3 (`CNAME` in repo ✅) |
-| 5 | **Cloudflare Email Routing** for `hello@` | ⏳ After step 3 |
+| 1 | **Google Voice** (215 â†’ cell) | âœ… **(215) 839-8738** on contact page |
+| 1b | **Active email** | âœ… **salvadorData@proton.me** on contact / shop / services |
+| 2 | **Cloudflare account** | âœ… Done |
+| 3 | **Register `hackerplanet.dev`** | â³ ~$10 at Cloudflare Registrar |
+| 4 | **DNS + GitHub custom domain** | â³ After step 3 (`CNAME` in repo âœ…) |
+| 5 | **Cloudflare Email Routing** for `hello@` | â³ After step 3 |
 | 6 | **Stripe links + `demoMode: false`** | When ready (not blocking launch) |
 
-Website hosting is **already live** on GitHub Pages — steps 3–5 are custom domain and contact; step 6 is revenue.
+Website hosting is **already live** on GitHub Pages â€” steps 3â€“5 are custom domain and contact; step 6 is revenue.
 
 ---
 
-*Hacker Planet LLC · Philadelphia, PA · Authorized use only*
+*Hacker Planet LLC Â· Philadelphia, PA Â· Authorized use only*

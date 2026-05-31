@@ -30,7 +30,8 @@ param(
 )
 
 $ErrorActionPreference = 'Continue'
-$Repo = 'C:\Users\Owner\Projects\cyberThreatGotchi'
+. (Join-Path $PSScriptRoot 'CTG-Paths.ps1')
+$Repo = Get-CtgRepoRoot -FromPath $PSScriptRoot
 $SitePrimary = 'https://hackerplanet.dev/'
 $SiteGithubPages = 'https://salvador-Data.github.io/cyberThreatGotchi/'
 

@@ -1,10 +1,6 @@
 # Shared helpers for CTG Wireshark IDS (authorized defensive lab use only).
 
-function Get-CtgRepoRoot {
-    $here = $PSScriptRoot
-    if (-not $here) { $here = Split-Path -Parent $MyInvocation.MyCommand.Path }
-    return (Resolve-Path (Join-Path $here '..\..')).Path
-}
+. (Join-Path $PSScriptRoot 'CTG-Paths.ps1')
 
 function Import-CtgDotEnv {
     param([string] $EnvPath)

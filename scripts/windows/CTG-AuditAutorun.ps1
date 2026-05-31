@@ -46,7 +46,8 @@ param(
 )
 
 $ErrorActionPreference = 'Continue'
-$Repo = 'C:\Users\Owner\Projects\cyberThreatGotchi'
+. (Join-Path $PSScriptRoot 'CTG-Paths.ps1')
+$Repo = Get-CtgRepoRoot -FromPath $PSScriptRoot
 $Win = Join-Path $Repo 'scripts\windows'
 $Now = Get-Date
 $RunDate = $Now.ToString('yyyy-MM-dd')

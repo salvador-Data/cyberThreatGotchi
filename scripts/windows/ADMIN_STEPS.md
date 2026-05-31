@@ -28,12 +28,12 @@ That should print **True**.
 
 Double-click:
 
-`C:\Users\Owner\Projects\cyberThreatGotchi\scripts\windows\Elevate-CTG-SOC.bat`
+`C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi\scripts\windows\Elevate-CTG-SOC.bat`
 
 Or from a normal PowerShell window:
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi\scripts\windows
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi\scripts\windows
 ```
 
 ```powershell
@@ -47,7 +47,7 @@ That triggers UAC and runs the elevated SOC one-shot.
 **1 — Mount SDK SSD as D: (no format)**
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\Owner\Projects\cyberThreatGotchi\scripts\windows\mount_ssd_d.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi\scripts\windows\mount_ssd_d.ps1"
 ```
 
 Expect **Running as Admin: True** and a probe file under `D:\Backups\`.
@@ -55,7 +55,7 @@ Expect **Running as Admin: True** and a probe file under `D:\Backups\`.
 **2 — Full elevated SOC pass (restore point, SSD backup to D:, Sysmon, hardening audit)**
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\Owner\Projects\cyberThreatGotchi\scripts\windows\ctg_soc_run_once.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi\scripts\windows\ctg_soc_run_once.ps1"
 ```
 
 Log: Desktop `ctg-soc-run-log.txt` and copy to `D:\Backups\` when D: is writable.
@@ -73,7 +73,7 @@ Your PC uses **DuckDuckGo VPN** (WireGuard). CTG SOC scripts are written to **pr
 Before/after SOC, confirm VPN in the **DuckDuckGo** app (Connected) or tray icon. Manual preserve step:
 
 ```powershell
-. "C:\Users\Owner\Projects\cyberThreatGotchi\scripts\windows\Preserve-DuckDuckGoVpn.ps1"
+. "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi\scripts\windows\Preserve-DuckDuckGoVpn.ps1"
 Invoke-CtgPreserveDuckDuckGoVpn
 ```
 
@@ -84,7 +84,7 @@ Symptom: **Settings → Accounts → Sign-in options** — Password option inact
 **Read-only diagnostic (no Admin):**
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -120,7 +120,7 @@ Log: `%USERPROFILE%\Backups\logs\repair-windows-signin.log`
 ## Cardputer flash (normal user PowerShell)
 
 ```powershell
-cd C:\Users\Owner\Projects\M5_OS-Cardputer
+cd C:\Users\Owner\Programs\Hacker Planet LLC\M5_OS-Cardputer
 ```
 
 ```powershell

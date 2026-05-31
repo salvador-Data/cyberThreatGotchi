@@ -1,7 +1,7 @@
-# CTG Shield + SIEM Playbook (authorized lab)
+﻿# CTG Shield + SIEM Playbook (authorized lab)
 
-**Author:** Andy Kowal · **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
-**Scope:** Networks and systems you own or have **written authorization** to test. This is **defensive lab** identity hygiene — not law-enforcement evasion, not silent WAN auto-rotate on production banking.
+**Author:** Andy Kowal Â· **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
+**Scope:** Networks and systems you own or have **written authorization** to test. This is **defensive lab** identity hygiene â€” not law-enforcement evasion, not silent WAN auto-rotate on production banking.
 
 ---
 
@@ -10,7 +10,7 @@
 | Asset | Path | Role |
 |-------|------|------|
 | Shield rotate | `scripts/kali/tor-http-scrambler/ctg-shield-rotate.sh` | USB wlan IP/MAC display + rotate; DDG DNS preserve |
-| SIEM hook | `scripts/kali/tor-http-scrambler/siem-hook.sh` | Tail Snort/Suricata/syslog → high severity → **y/n** shield rotate |
+| SIEM hook | `scripts/kali/tor-http-scrambler/siem-hook.sh` | Tail Snort/Suricata/syslog â†’ high severity â†’ **y/n** shield rotate |
 | GUI | `ctg-scrambler-gui.py` | Shield panel, Rotate button, last high alert |
 | Windows status | `scripts/windows/CTG-Shield-Status.ps1` | Read-only host + optional SSH to Kali |
 | Install | `install-scrambler.sh` | Copies shield + SIEM to `/opt/ctg/tor-http-scrambler` |
@@ -21,7 +21,7 @@
 
 | Version | Shield on IDS high alert | Production banking |
 |---------|--------------------------|-------------------|
-| **v1 (now)** | Terminal **y/n** prompt (`siem-hook.sh`) | **Never** auto-rotate — operator must confirm |
+| **v1 (now)** | Terminal **y/n** prompt (`siem-hook.sh`) | **Never** auto-rotate â€” operator must confirm |
 | **v2 (future)** | Optional auto on **isolated lab VLAN only** | Still requires playbook gate + snapshot rollback |
 
 ---
@@ -29,11 +29,11 @@
 ## IP refresh order (Kali guest)
 
 1. Reconnect **DuckDuckGo** NetworkManager/WireGuard profile if present on guest  
-2. Cycle **scrambler** mode (`tor` ↔ `http` ↔ restore) via `scrambler-daemon.sh`  
+2. Cycle **scrambler** mode (`tor` â†” `http` â†” restore) via `scrambler-daemon.sh`  
 3. **`dhclient`** renew (or `nmcli` reapply) on **lab USB wlan** only  
 4. **`preserve-ddg-dns`:** if `94.140.14.14` / `94.140.15.15` were in `resolv.conf`, restore from `/var/lib/ctg/shield/resolv.conf.ddg-backup` when needed
 
-See [IPHONE_HARDENING.md](IPHONE_HARDENING.md) and [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) for DDG preserve rules on Windows host and iPhone — **do not stack** NextDNS/Cloudflare VPN installers via CTG scripts.
+See [IPHONE_HARDENING.md](IPHONE_HARDENING.md) and [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) for DDG preserve rules on Windows host and iPhone â€” **do not stack** NextDNS/Cloudflare VPN installers via CTG scripts.
 
 ---
 
@@ -65,14 +65,14 @@ sudo /opt/ctg/tor-http-scrambler/ctg-shield-rotate.sh rotate
 sudo /opt/ctg/tor-http-scrambler/siem-hook.sh
 ```
 
-**GUI:** desktop **CTG .TOR/HTTP Scrambler** → **Rotate IP/MAC** (confirm dialog).
+**GUI:** desktop **CTG .TOR/HTTP Scrambler** â†’ **Rotate IP/MAC** (confirm dialog).
 
 ---
 
 ## Windows host (read-only)
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -96,7 +96,7 @@ $env:CTG_KALI_SSH_HOST = '127.0.0.1'
 The hook scans the last `CTG_SIEM_TAIL` lines (default 20) for patterns such as:
 
 - Snort `Priority: 1`  
-- Suricata severity 1–2 / `[1:` style markers  
+- Suricata severity 1â€“2 / `[1:` style markers  
 - `CRITICAL`, `HIGH`, `ALERT` tokens in syslog/IDS lines  
 
 On match, operator sees the line and is asked: **Rotate lab USB wlan IP/MAC via CTG Shield? [y/N]**
@@ -124,4 +124,4 @@ Kali autorun: [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md).
 
 - [CTG_TOR_HTTP_SCRAMBLER.md](CTG_TOR_HTTP_SCRAMBLER.md)  
 - [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)  
-- [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) § Phase 7
+- [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) Â§ Phase 7

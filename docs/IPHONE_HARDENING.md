@@ -28,7 +28,8 @@ What actually protects iPhone users:
 
 **Action runbook:** [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) — consolidated **Phase 1 + Phase 2** checklist (manual steps only).  
 **USB focus:** [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md) — Trust This Computer, encrypted backup to SSD/OneDrive paths, Windows laptop reminders.  
-**Laptop connection (honest scope):** [IPHONE_LAPTOP_CONNECTION.md](IPHONE_LAPTOP_CONNECTION.md) — what Windows **can and cannot** change (no MAC/hardware ID spoofing); Private Wi‑Fi Address, Limit IP Tracking, USB Restricted Mode, hotspot vs USB tethering; read-only `scripts/iphone/iphone_tethering_privacy_checklist.ps1`.
+**Laptop connection (honest scope):** [IPHONE_LAPTOP_CONNECTION.md](IPHONE_LAPTOP_CONNECTION.md) — what Windows **can and cannot** change (no MAC/hardware ID spoofing); Private Wi‑Fi Address, Limit IP Tracking, USB Restricted Mode, hotspot vs USB tethering; read-only `scripts/iphone/iphone_tethering_privacy_checklist.ps1`.  
+**Tether egress IDS:** [IPHONE_TETHER_MONITORING.md](IPHONE_TETHER_MONITORING.md) — monitor NAT'd IP traffic on hotspot/USB adapter (`Start-CtgIphoneTetherIds.ps1`); cannot emulate cellular/BLE from laptop.
 
 ---
 

@@ -1,8 +1,8 @@
-# Kali VirtualBox — Spectre v2 / RETBleed (`--spec-ctrl`)
+﻿# Kali VirtualBox â€” Spectre v2 / RETBleed (`--spec-ctrl`)
 
-**Hacker Planet LLC / CyberThreatGotchi** — authorized defensive lab documentation.
+**Hacker Planet LLC / CyberThreatGotchi** â€” authorized defensive lab documentation.
 
-**Full context:** [KALI_RETBLEED.md](KALI_RETBLEED.md) · **Host helper:** `scripts/windows/Harden-KaliVmCpu.ps1` (alias `Harden-KaliVmSpectre.ps1`)
+**Full context:** [KALI_RETBLEED.md](KALI_RETBLEED.md) Â· **Host helper:** `scripts/windows/Harden-KaliVmCpu.ps1` (alias `Harden-KaliVmSpectre.ps1`)
 
 ---
 
@@ -14,7 +14,7 @@ On RETBleed-affected host CPUs (e.g. Intel Coffee Lake **i9-8950HK**), a Kali gu
 Spectre v2: WARNING: Spectre v2 mitigation leaves CPU vulnerable to RETBleed attacks, data leaks possible!
 ```
 
-When VirtualBox does **not** expose `IA32_SPEC_CTRL` / `IA32_PRED_CMD` to the guest, the kernel cannot use **IBRS/IBPB** and falls back to retpoline — insufficient for RETBleed on these cores.
+When VirtualBox does **not** expose `IA32_SPEC_CTRL` / `IA32_PRED_CMD` to the guest, the kernel cannot use **IBRS/IBPB** and falls back to retpoline â€” insufficient for RETBleed on these cores.
 
 This is **not** `mitigations=off`. Never disable kernel mitigations in GRUB.
 
@@ -25,7 +25,7 @@ This is **not** `mitigations=off`. Never disable kernel mitigations in GRUB.
 Diagnose:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -73,7 +73,7 @@ cat /sys/devices/system/cpu/vulnerabilities/retbleed
 cat /sys/devices/system/cpu/vulnerabilities/spectre_v2
 ```
 
-Logs: `/var/log/ctg-retbleed.log` · host `C:\Users\Owner\Backups\logs\harden-kali-vm-cpu.log`
+Logs: `/var/log/ctg-retbleed.log` Â· host `C:\Users\Owner\Backups\logs\harden-kali-vm-cpu.log`
 
 ---
 

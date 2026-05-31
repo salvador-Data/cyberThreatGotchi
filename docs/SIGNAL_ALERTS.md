@@ -1,4 +1,4 @@
-# Signal alerts for CTG SOC (Snort / Suricata IDS)
+﻿# Signal alerts for CTG SOC (Snort / Suricata IDS)
 
 **Authorized defensive use only** on networks and hosts you own or are explicitly permitted to monitor.
 
@@ -9,7 +9,7 @@ Signal is the **preferred** alert channel for CTG IDS scripts when `signal-cli` 
 | | Signal (signal-cli) | Twilio SMS |
 |---|---------------------|------------|
 | Cost | Free (OSS CLI) | Per-message billing |
-| Secrets in repo | None — linked device + local config | Twilio SID/token in `.env` |
+| Secrets in repo | None â€” linked device + local config | Twilio SID/token in `.env` |
 | Privacy | End-to-end encrypted | Carrier SMS |
 | Setup | Link device once (QR) | Twilio account + phone numbers |
 
@@ -24,7 +24,7 @@ Signal is the **preferred** alert channel for CTG IDS scripts when `signal-cli` 
 Run the CTG installer guide (diagnose + link steps):
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -35,10 +35,10 @@ Download from [signal-cli releases](https://github.com/AsamK/signal-cli/releases
 
 ## Link device (recommended)
 
-Link this host as a Signal **linked device** — no separate phone number required:
+Link this host as a Signal **linked device** â€” no separate phone number required:
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Set path if not on PATH:
@@ -47,7 +47,7 @@ Set path if not on PATH:
 $env:CTG_SIGNAL_CLI_PATH = "$env:LOCALAPPDATA\Programs\signal-cli\signal-cli.exe"
 ```
 
-Create config dir and link (scan QR in Signal app → Settings → Linked Devices):
+Create config dir and link (scan QR in Signal app â†’ Settings â†’ Linked Devices):
 
 ```powershell
 & $env:CTG_SIGNAL_CLI_PATH --config "$env:USERPROFILE\.local\share\signal-cli" link -n CTG-SOC
@@ -63,9 +63,9 @@ New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\Backups\.vault\signa
 & $env:CTG_SIGNAL_CLI_PATH --config "$env:USERPROFILE\Backups\.vault\signal-cli" link -n CTG-SOC
 ```
 
-## Environment variables (local `.env` only — never commit)
+## Environment variables (local `.env` only â€” never commit)
 
-Add to `C:\Users\Owner\Projects\cyberThreatGotchi\.env` (gitignored):
+Add to `C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi\.env` (gitignored):
 
 ```env
 CTG_SIGNAL_CLI_PATH=C:\Users\Owner\AppData\Local\Programs\signal-cli\signal-cli.exe
@@ -125,7 +125,7 @@ Force Signal on IDS run:
 Short, no payloads, no PII:
 
 ```text
-CTG Suricata: [high] sid 12345 — review log
+CTG Suricata: [high] sid 12345 â€” review log
 ```
 
 Rate limit: **one message per rule SID per 15 minutes** (shared rate file with SMS: `Backups\logs\sms-rate-limit.json`).
@@ -138,19 +138,19 @@ Rate limit: **one message per rule SID per 15 minutes** (shared rate file with S
 | `Send-CtgSignalAlert.ps1` | signal-cli send with rate limit |
 | `Send-CtgIdsAlert.ps1` | Route Signal (default) or Twilio |
 | `CTG-SignalCommon.ps1` | Shared paths and config checks |
-| `Start-CtgSnortIDS.ps1` | Snort IDS → `Send-CtgIdsAlert.ps1` |
-| `Start-CtgSuricataIDS.ps1` | Suricata IDS → `Send-CtgIdsAlert.ps1` |
-| `Start-CtgKaliSuricataSmsBridge.ps1` | Kali EVE bridge → `Send-CtgIdsAlert.ps1` |
+| `Start-CtgSnortIDS.ps1` | Snort IDS â†’ `Send-CtgIdsAlert.ps1` |
+| `Start-CtgSuricataIDS.ps1` | Suricata IDS â†’ `Send-CtgIdsAlert.ps1` |
+| `Start-CtgKaliSuricataSmsBridge.ps1` | Kali EVE bridge â†’ `Send-CtgIdsAlert.ps1` |
 
 ## Security notes
 
 - Never commit `.env`, phone numbers, or `signal-cli` account data
 - Config dirs `%USERPROFILE%\.local\share\signal-cli\` and `Backups\.vault\signal-cli\` must stay gitignored
-- Kali guest only stages EVE JSON — alerts fire on Windows host
+- Kali guest only stages EVE JSON â€” alerts fire on Windows host
 - See [WINDOWS_SNORT_IDS_SMS.md](WINDOWS_SNORT_IDS_SMS.md) and [SECURITY_HARDENING.md](SECURITY_HARDENING.md)
 
 ## Related
 
-- [WINDOWS_SNORT_IDS_SMS.md](WINDOWS_SNORT_IDS_SMS.md) — Snort IDS (Signal preferred)
-- [FREE_IPS_SURICATA.md](FREE_IPS_SURICATA.md) — Suricata-primary on Kali
-- [SECRET_VAULT.md](SECRET_VAULT.md) — DPAPI `CTG_PII_PHONE`
+- [WINDOWS_SNORT_IDS_SMS.md](WINDOWS_SNORT_IDS_SMS.md) â€” Snort IDS (Signal preferred)
+- [FREE_IPS_SURICATA.md](FREE_IPS_SURICATA.md) â€” Suricata-primary on Kali
+- [SECRET_VAULT.md](SECRET_VAULT.md) â€” DPAPI `CTG_PII_PHONE`

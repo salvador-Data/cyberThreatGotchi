@@ -136,10 +136,8 @@ foreach ($folder in @('website', 'docs-web', 'portfolio', 'portfolio_export')) {
     }
 }
 
-$repoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-if (-not (Test-Path $repoRoot)) {
-    $repoRoot = 'C:\Users\Owner\Projects\cyberThreatGotchi'
-}
+. (Join-Path $PSScriptRoot 'CTG-Paths.ps1')
+$repoRoot = Get-CtgRepoRoot -FromPath $PSScriptRoot
 $portfolioScript = Join-Path $repoRoot 'scripts\export_portfolio_html.py'
 if ((Test-Path $portfolioScript) -and -not (Test-Path (Join-Path $src 'portfolio_export'))) {
     $portfolioOut = Join-Path $src 'portfolio_export'

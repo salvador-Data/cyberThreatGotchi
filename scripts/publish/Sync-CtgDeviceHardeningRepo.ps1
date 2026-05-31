@@ -13,8 +13,9 @@
 param()
 
 $ErrorActionPreference = 'Stop'
-$MonoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$DestRepo = Join-Path (Split-Path $MonoRoot -Parent) 'ctg-device-hardening'
+. (Join-Path $PSScriptRoot '..\windows\CTG-Paths.ps1')
+$MonoRoot = Get-CtgRepoRoot -FromPath $PSScriptRoot
+$DestRepo = Join-Path (Get-CtgProgramsRoot) 'ctg-device-hardening'
 
 function Copy-CtgFile {
     param([string] $Source, [string] $Dest)

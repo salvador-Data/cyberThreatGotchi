@@ -1,4 +1,4 @@
-# CTG script repos — split plan
+﻿# CTG script repos â€” split plan
 
 **Parent monorepo:** [salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi)  
 **Catalog:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md)
@@ -19,32 +19,32 @@ Sync device-hardening subtree:
 .\scripts\publish\Sync-CtgDeviceHardeningRepo.ps1
 ```
 
-## iPhone hardening — monorepo + ctg-device-hardening
+## iPhone hardening â€” monorepo + ctg-device-hardening
 
 Primary docs stay in the monorepo ([IPHONE_HARDENING.md](IPHONE_HARDENING.md), [IPHONE_LAPTOP_CONNECTION.md](IPHONE_LAPTOP_CONNECTION.md)). Read-only checklist: `scripts/iphone/iphone_tethering_privacy_checklist.ps1`. Split copy ships in **ctg-device-hardening** and **ctg-windows-soc** catalog references.
 
 ## Privatize lab repos (allowlist)
 
-`scripts/publish/Set-CtgPrivateRepos.ps1 -DiagnoseOnly` lists **ctg-kali-lab** and **ctg-windows-soc** as sensitive candidates. `-Apply` only privatizes names in the committed `$Script:CtgPrivateRepoAllowlist` — review before Apply. **cyberThreatGotchi** (public site) and firmware repos (M5_OS-Cardputer, etc.) are excluded.
+`scripts/publish/Set-CtgPrivateRepos.ps1 -DiagnoseOnly` lists **ctg-kali-lab** and **ctg-windows-soc** as sensitive candidates. `-Apply` only privatizes names in the committed `$Script:CtgPrivateRepoAllowlist` â€” review before Apply. **cyberThreatGotchi** (public site) and firmware repos (M5_OS-Cardputer, etc.) are excluded.
 
 ## Manual recreate (if `gh` fails)
 
 ```powershell
-cd C:\Users\Owner\Projects
+cd C:\Users\Owner\Programs\Hacker Planet LLC
 ```
 
 ```powershell
-gh repo create salvador-Data/ctg-kali-lab --public --description "CyberThreatGotchi Kali defensive lab scripts — Hacker Planet LLC"
+gh repo create salvador-Data/ctg-kali-lab --public --description "CyberThreatGotchi Kali defensive lab scripts â€” Hacker Planet LLC"
 ```
 
 ```powershell
-gh repo create salvador-Data/ctg-windows-soc --public --description "CyberThreatGotchi Windows SOC hardening & nightly automation — Hacker Planet LLC"
+gh repo create salvador-Data/ctg-windows-soc --public --description "CyberThreatGotchi Windows SOC hardening & nightly automation â€” Hacker Planet LLC"
 ```
 
 After copying files and adding `README.md` + `LICENSE` (MIT, same as parent):
 
 ```powershell
-cd C:\Users\Owner\Projects\ctg-kali-lab
+cd C:\Users\Owner\Programs\Hacker Planet LLC\ctg-kali-lab
 ```
 
 ```powershell
@@ -78,14 +78,14 @@ Repeat for `ctg-windows-soc` with its folder and remote URL.
 When scripts change in `cyberThreatGotchi`, re-copy the subtree and push the split repo:
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
 .\scripts\publish\Sync-CtgSplitRepos.ps1
 ```
 
-Copies `scripts/kali` → ctg-kali-lab and `scripts/windows` + `wireshark_ids` → ctg-windows-soc with doc subsets. No `.env`, `Backups/`, or lab conf secrets.
+Copies `scripts/kali` â†’ ctg-kali-lab and `scripts/windows` + `wireshark_ids` â†’ ctg-windows-soc with doc subsets. No `.env`, `Backups/`, or lab conf secrets.
 
 ## What not to publish
 

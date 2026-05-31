@@ -94,7 +94,7 @@ $backupOnOneDrive = $oneDriveRoot -and ($root.StartsWith($oneDriveRoot, [StringC
 $sources = @(
     @{ Name = 'Documents'; Path = [Environment]::GetFolderPath('MyDocuments') },
     @{ Name = 'Desktop'; Path = [Environment]::GetFolderPath('Desktop') },
-    @{ Name = 'Projects'; Path = 'C:\Users\Owner\Projects' },
+    @{ Name = 'HackerPlanet'; Path = (Join-Path $env:USERPROFILE 'Programs\Hacker Planet LLC') },
     @{ Name = 'Pictures'; Path = [Environment]::GetFolderPath('MyPictures') }
 )
 

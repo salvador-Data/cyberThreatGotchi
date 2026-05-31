@@ -1,6 +1,6 @@
-# CTG Lab Autorun — Windows + Kali one-command orchestration
+﻿# CTG Lab Autorun â€” Windows + Kali one-command orchestration
 
-**Author:** Andy Kowal · **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
+**Author:** Andy Kowal Â· **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
 **Authorized use:** Systems and networks you own or have written scope to test. No third-party attack automation, illegal reg bypass, or law-enforcement evasion.
 
 This document ties together the **Windows SOC host** autorun and the **Kali in-guest** autorun for the CyberThreatGotchi defensive lab.
@@ -52,17 +52,17 @@ flowchart TB
 | DuckDuckGo preserve | ON (`--preserve-ddg-dns`) |
 | WiFi profile | `company-lab` (Option 2) |
 | SIEM / Shield | High-severity y/n rotate v1 (`siem-hook.sh` + `ctg-shield-rotate.sh`) |
-| MAC rotate | USB wlan only (`ctg-shield-rotate.sh` — SIEM/GUI y/n v1) |
-| Lab targets | `lab-targets.example` → `/etc/ctg/lab-targets.conf` |
+| MAC rotate | USB wlan only (`ctg-shield-rotate.sh` â€” SIEM/GUI y/n v1) |
+| Lab targets | `lab-targets.example` â†’ `/etc/ctg/lab-targets.conf` |
 
 ---
 
-## Windows — one command
+## Windows â€” one command
 
 From an **elevated** PowerShell (recommended for Defender pause during deploy):
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -82,7 +82,7 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 
 **Kali VM disk encryption (one-time, interactive):** after host BitLocker, run `.\scripts\windows\Encrypt-KaliVm.ps1 -DiagnoseOnly` then `.\scripts\windows\Encrypt-KaliVm.ps1 -Apply -BackupFirst` - see [KALI_DISK_ENCRYPTION.md](KALI_DISK_ENCRYPTION.md). Not part of nightly autorun.
 
-**Order:** Defender pause (optional) → DDG preserve → stage scripts to Backups → `Deploy-KaliLab.ps1 -StartVmIfStopped` → Wireshark (non-blocking) → OPNsense if ISO in Downloads (non-blocking) → Kali GUI instructions → Defender resume.
+**Order:** Defender pause (optional) â†’ DDG preserve â†’ stage scripts to Backups â†’ `Deploy-KaliLab.ps1 -StartVmIfStopped` â†’ Wireshark (non-blocking) â†’ OPNsense if ISO in Downloads (non-blocking) â†’ Kali GUI instructions â†’ Defender resume.
 
 ---
 
@@ -93,7 +93,7 @@ Fixes common VirtualBox Kali boot errors automatically: Guest Additions packages
 **Windows deploy** (stages scripts to `C:\Users\Owner\Backups`, adds VirtualBox share `ctg-backups`, VRAM fix, starts VM, SSH install when ready):
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -133,7 +133,7 @@ tail -50 /var/log/ctg-boot-autopatch.log
 | `ctg-backups` share not mounted | Mount hint + `/mnt/ctg` symlink if auto-mount present |
 | DuckDuckGo DNS configured | **Never overwritten** when `94.140.14.14/15.15` in `resolv.conf` |
 
-**Log:** `/var/log/ctg-boot-autopatch.log` · **Service:** `ctg-kali-autopatch.service`
+**Log:** `/var/log/ctg-boot-autopatch.log` Â· **Service:** `ctg-kali-autopatch.service`
 
 **WiFi lab phase (optional):**
 
@@ -149,7 +149,7 @@ Runs `ctg-wifi-lab-autorun.sh` after Guest Additions fix. Also invoked from `ctg
 
 USB **Realtek** dongle detect, OOT driver (`rtl8812au`), **WPA3-SAE** connect (WPA2-PSK fallback) from `/etc/ctg/lab-wifi.conf`, **eth promisc** when CAT5 link is up, optional **WiFi monitor** (`airmon-ng`).
 
-**Professor answer:** Wired Ethernet uses **classic promisc**; WiFi 802.11 capture needs **monitor mode** — see [KALI_WIFI_ETH_PROMISC.md](KALI_WIFI_ETH_PROMISC.md).
+**Professor answer:** Wired Ethernet uses **classic promisc**; WiFi 802.11 capture needs **monitor mode** â€” see [KALI_WIFI_ETH_PROMISC.md](KALI_WIFI_ETH_PROMISC.md).
 
 **Windows staging:** `Deploy-KaliLab.ps1` copies `ctg-wifi-lab-autorun.sh` and `lab-wifi.conf.example` to `C:\Users\Owner\Backups\`.
 
@@ -171,20 +171,20 @@ sudo bash /mnt/ctg/ctg-wifi-lab-autorun.sh
 sudo CTG_WIFI_MONITOR=1 bash /mnt/ctg/ctg-wifi-lab-autorun.sh --monitor
 ```
 
-**Boot service (optional):** `sudo bash /mnt/ctg/ctg-wifi-lab-autorun.sh --install` → `ctg-wifi-lab.service`  
+**Boot service (optional):** `sudo bash /mnt/ctg/ctg-wifi-lab-autorun.sh --install` â†’ `ctg-wifi-lab.service`  
 **Log:** `/var/log/ctg-wifi-lab.log`
 
 ---
 
 ## Network IDS/IPS + ClamAV autorun
 
-**Suricata-primary** IDS (detect-only on boot), optional Snort coexist, **ClamAV** (daemon + daily `/home` scan). Optional inline IPS: `--EnableIPS` (lab VLAN only — see doc).
+**Suricata-primary** IDS (detect-only on boot), optional Snort coexist, **ClamAV** (daemon + daily `/home` scan). Optional inline IPS: `--EnableIPS` (lab VLAN only â€” see doc).
 
 **Professor answer:** **IDS** = log alerts on the lab interface; **IPS** = inline block via NFQUEUE (opt-in). Perimeter IPS remains **OPNsense Suricata**.
 
-Full reference: [KALI_IDS_IPS_CLAMAV.md](KALI_IDS_IPS_CLAMAV.md) · SIEM: [KALI_SIEM_STACK.md](KALI_SIEM_STACK.md)
+Full reference: [KALI_IDS_IPS_CLAMAV.md](KALI_IDS_IPS_CLAMAV.md) Â· SIEM: [KALI_SIEM_STACK.md](KALI_SIEM_STACK.md)
 
-**One-liner in VM (8 GB — optimized):**
+**One-liner in VM (8 GB â€” optimized):**
 
 ```bash
 sudo bash /mnt/ctg/ctg-ids-ips-autorun.sh --install --optimize --skip-snort
@@ -197,13 +197,13 @@ sudo bash /mnt/ctg/kali-boot-autopatch.sh --wifi-lab --ids-ips --siem --install
 ```
 
 `ctg-lab-autorun.sh` runs `--ids-ips` via autopatch and calls `ctg-ids-ips-autorun.sh --optimize --skip-snort` plus `ctg-siem-autorun.sh`.  
-**Logs:** `/var/log/ctg-snort/` · **Services:** `ctg-ids-ips.service`, `ctg-suricata.service` · **ClamAV:** `ctg-clamav-scan.timer`
+**Logs:** `/var/log/ctg-snort/` Â· **Services:** `ctg-ids-ips.service`, `ctg-suricata.service` Â· **ClamAV:** `ctg-clamav-scan.timer`
 
 ---
 
 ## SIEM export (Wazuh / JSON aggregator)
 
-Recommended for 8 GB Kali VM: **Wazuh agent** (when `CTG_WAZUH_MANAGER` set) + **local JSON export** — not Splunk on the VM.
+Recommended for 8 GB Kali VM: **Wazuh agent** (when `CTG_WAZUH_MANAGER` set) + **local JSON export** â€” not Splunk on the VM.
 
 ```bash
 sudo bash /mnt/ctg/ctg-siem-autorun.sh --install
@@ -211,13 +211,13 @@ sudo bash /mnt/ctg/ctg-siem-autorun.sh --install
 
 Windows tail: `Backups\logs\siem\ctg-siem-latest.json`
 
-Full comparison: [KALI_SIEM_STACK.md](KALI_SIEM_STACK.md) · Shield hook: [CTG_SHIELD_SIEM_PLAYBOOK.md](CTG_SHIELD_SIEM_PLAYBOOK.md)
+Full comparison: [KALI_SIEM_STACK.md](KALI_SIEM_STACK.md) Â· Shield hook: [CTG_SHIELD_SIEM_PLAYBOOK.md](CTG_SHIELD_SIEM_PLAYBOOK.md)
 
 ---
 
-## Kali — one command
+## Kali â€” one command
 
-After shared folder mount (VirtualBox `ctg` or `ctg-backups` → `/mnt/ctg`) or SSH staging:
+After shared folder mount (VirtualBox `ctg` or `ctg-backups` â†’ `/mnt/ctg`) or SSH staging:
 
 ```bash
 sudo bash /mnt/ctg/ctg-lab-autorun.sh
@@ -230,7 +230,7 @@ sudo bash /mnt/ctg/ctg-lab-autorun.sh
 3. `systemctl start tor`
 4. Starts `scrambler-daemon.sh` (default mode **tor**)
 5. Prints GUI and SIEM commands
-6. **Auto-reboot** when required (guest additions, GDM X11, new kernel, Realtek DKMS) — see below
+6. **Auto-reboot** when required (guest additions, GDM X11, new kernel, Realtek DKMS) â€” see below
 
 ### Auto-reboot after autorun
 
@@ -244,7 +244,7 @@ sudo bash /mnt/ctg/ctg-lab-autorun.sh
 | Newer kernel in `/lib/modules` than `uname -r` | Kernel not yet active |
 | DKMS `installed` for non-running kernel | Realtek / guest modules |
 
-**When it triggers:** End of `ctg-lab-autorun.sh` runs `ctg-reboot-if-needed.sh --auto-reboot` → `shutdown -r +1 "CTG lab autorun complete"` and logs to `/var/log/ctg-reboot.log`. Optional **10s countdown** on TTY1–3.
+**When it triggers:** End of `ctg-lab-autorun.sh` runs `ctg-reboot-if-needed.sh --auto-reboot` â†’ `shutdown -r +1 "CTG lab autorun complete"` and logs to `/var/log/ctg-reboot.log`. Optional **10s countdown** on TTY1â€“3.
 
 **Boot service:** `kali-boot-autopatch.sh` also calls `--auto-reboot` on every boot **unless** invoked from lab autorun (`CTG_SKIP_AUTO_REBOOT=1`).
 
@@ -285,13 +285,13 @@ sudo /opt/ctg/tor-http-scrambler/ctg-shield-rotate.sh status
 sudo /opt/ctg/tor-http-scrambler/ctg-shield-rotate.sh rotate
 ```
 
-**SIEM hook (high severity → y/n rotate):**
+**SIEM hook (high severity â†’ y/n rotate):**
 
 ```bash
 sudo /opt/ctg/tor-http-scrambler/siem-hook.sh
 ```
 
-Playbook: [CTG_SHIELD_SIEM_PLAYBOOK.md](CTG_SHIELD_SIEM_PLAYBOOK.md) · [CTG_TOR_HTTP_SCRAMBLER.md](CTG_TOR_HTTP_SCRAMBLER.md)
+Playbook: [CTG_SHIELD_SIEM_PLAYBOOK.md](CTG_SHIELD_SIEM_PLAYBOOK.md) Â· [CTG_TOR_HTTP_SCRAMBLER.md](CTG_TOR_HTTP_SCRAMBLER.md)
 
 **Windows host status (read-only):**
 
@@ -301,17 +301,17 @@ Playbook: [CTG_SHIELD_SIEM_PLAYBOOK.md](CTG_SHIELD_SIEM_PLAYBOOK.md) · [CTG_TOR
 
 ---
 
-## Phase 7 — CTG Privacy Router
+## Phase 7 â€” CTG Privacy Router
 
-See [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) § Phase 7. Components live in `scripts/kali/tor-http-scrambler/`:
+See [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) Â§ Phase 7. Components live in `scripts/kali/tor-http-scrambler/`:
 
 | File | Role |
 |------|------|
 | `scrambler-daemon.sh` | tor / http / auto modes; site-rules; glitch domain y/n prompt |
-| `site-rules.example` | Banking → http; `.onion` → tor |
+| `site-rules.example` | Banking â†’ http; `.onion` â†’ tor |
 | `ctg-scrambler-gui.py` | Mode toggle, shield IP/MAC, IDS tail, leak stub |
 | `ctg-shield-rotate.sh` | USB wlan IP/MAC status + rotate; DDG DNS preserve |
-| `siem-hook.sh` | IDS high severity → shield y/n; SIEM log gzip prompt |
+| `siem-hook.sh` | IDS high severity â†’ shield y/n; SIEM log gzip prompt |
 | `install-scrambler.sh` | Installs to `/opt/ctg/tor-http-scrambler` |
 
 ---
@@ -352,7 +352,7 @@ Scripts are copied to `C:\Users\Owner\Backups\` on every autorun (`Stage-KaliLab
 **Windows (host, VM powered off):**
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -361,7 +361,7 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 
 Sets **128 MiB VRAM**, **VMSVGA**, **3D off**, stages `C:\Users\Owner\Backups\fix-kali-blank-screen.sh`.
 
-**Kali (TTY recovery — Ctrl+Alt+F2):**
+**Kali (TTY recovery â€” Ctrl+Alt+F2):**
 
 ```bash
 sudo bash /mnt/ctg/fix-kali-blank-screen.sh
@@ -377,18 +377,18 @@ sudo bash /mnt/ctg-backups/fix-kali-blank-screen.sh
 
 Then switch back to graphical session (Ctrl+Alt+F1) or `sudo reboot`.
 
-**CTG scrambler after recovery:** launch manually from **CTG .TOR/HTTP Scrambler** or `python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py` — not via `/etc/profile.d/`.
+**CTG scrambler after recovery:** launch manually from **CTG .TOR/HTTP Scrambler** or `python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py` â€” not via `/etc/profile.d/`.
 
 ---
 
 ## Lab playground (hands-on menu)
 
-After autorun or deploy, use the **interactive playground** to experiment with WiFi, Shield, Scrambler, SIEM, IDS, ClamAV, and Tor — without re-running the full autorun or triggering reboots.
+After autorun or deploy, use the **interactive playground** to experiment with WiFi, Shield, Scrambler, SIEM, IDS, ClamAV, and Tor â€” without re-running the full autorun or triggering reboots.
 
 **Windows:**
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -407,7 +407,7 @@ sudo bash /mnt/ctg/ctg-lab-playground.sh
 
 ## Related docs
 
-- [CTG_LAB_PLAYGROUND.md](CTG_LAB_PLAYGROUND.md) — hands-on lab session
+- [CTG_LAB_PLAYGROUND.md](CTG_LAB_PLAYGROUND.md) â€” hands-on lab session
 - [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md)
-- [IPHONE_HARDENING.md](IPHONE_HARDENING.md) — DDG preserve rules
+- [IPHONE_HARDENING.md](IPHONE_HARDENING.md) â€” DDG preserve rules
 - [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)

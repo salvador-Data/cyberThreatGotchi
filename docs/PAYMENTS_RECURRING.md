@@ -1,8 +1,8 @@
-# Recurring payments — Pro feed & MSP retainers
+﻿# Recurring payments â€” Pro feed & MSP retainers
 
 Stripe subscriptions, Customer Portal, and optional PayPal subscription plans for Hacker Planet LLC.
 
-**PCI scope:** SAQ-A — card data stays on Stripe/PayPal hosted pages. Our static site never receives PAN.
+**PCI scope:** SAQ-A â€” card data stays on Stripe/PayPal hosted pages. Our static site never receives PAN.
 
 ---
 
@@ -34,7 +34,7 @@ One portal link serves all subscribers (Pro + MSP).
 stripeCustomerPortal: "https://billing.stripe.com/p/login/xxxxxxxx",
 ```
 
-The shop renders **Manage subscriptions & invoices** when this URL is set. Returning customers manage cards and cancellations on Stripe — not on our servers.
+The shop renders **Manage subscriptions & invoices** when this URL is set. Returning customers manage cards and cancellations on Stripe â€” not on our servers.
 
 ---
 
@@ -49,7 +49,7 @@ Create **Products** in Stripe with **Recurring** pricing:
 
 For each Payment Link:
 
-1. Set **After payment** → redirect to `https://hackerplanet.dev/shop.html#pro-feed` (or GitHub Pages URL).
+1. Set **After payment** â†’ redirect to `https://hackerplanet.dev/shop.html#pro-feed` (or GitHub Pages URL).
 2. Add metadata (optional): `stripe_key` = `proMonthly` or `proYearly`.
 3. Enable **Stripe Tax** for digital services in PA.
 4. Paste URLs into `stripePaymentLinks` in `payments.config.js`.
@@ -68,7 +68,7 @@ Match [services.html](../website/services.html) Blue Team tiers:
 
 Use Stripe **Payment Links** with recurring monthly billing. Typical contract: 12-month term (enforce via Stripe subscription settings or manual onboarding).
 
-MSP subscriptions do **not** auto-provision CTG Pro API keys — operators onboard after intake. Pro keys are only provisioned for `proMonthly` / `proYearly` checkout sessions.
+MSP subscriptions do **not** auto-provision CTG Pro API keys â€” operators onboard after intake. Pro keys are only provisioned for `proMonthly` / `proYearly` checkout sessions.
 
 ---
 
@@ -95,15 +95,15 @@ $env:CTG_STRIPE_WEBHOOK_SECRET = "whsec_..."
 python scripts/stripe_provision.py --port 9091
 ```
 
-Fulfillment (hardware) uses a separate route: `POST /api/fulfillment/webhook` on the CTG web server — see [ORDER_FULFILLMENT.md](ORDER_FULFILLMENT.md).
+Fulfillment (hardware) uses a separate route: `POST /api/fulfillment/webhook` on the CTG web server â€” see [ORDER_FULFILLMENT.md](ORDER_FULFILLMENT.md).
 
 ---
 
 ## 5. PayPal subscriptions (optional)
 
-Optional — PayPal for Pro or MSP billing:
+Optional â€” PayPal for Pro or MSP billing:
 
-1. [PayPal Developer](https://developer.paypal.com/dashboard/) → **Subscriptions** → create plans.
+1. [PayPal Developer](https://developer.paypal.com/dashboard/) â†’ **Subscriptions** â†’ create plans.
 2. Copy plan IDs (`P-XXXXXXXX`) into `payments.config.js`:
 
 ```javascript
@@ -118,7 +118,7 @@ paypal: { clientId: "YOUR_CLIENT_ID", currency: "USD" },
 ```
 
 3. Shop loads PayPal SDK with `vault=true&intent=subscription` when any plan ID is set.
-4. PayPal subscription lifecycle is managed in PayPal Dashboard — no card data on our site.
+4. PayPal subscription lifecycle is managed in PayPal Dashboard â€” no card data on our site.
 
 ---
 
@@ -138,7 +138,7 @@ Storage key: `hpl_customer_prefill_v1`. User can clear via **Clear saved ship-to
 ## 7. Validate & deploy
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -163,25 +163,25 @@ Run these in order (one command per step when using PowerShell locally):
 
 ### Portal & products
 
-1. Open Stripe Dashboard → Settings → Billing → Customer portal → configure features → copy portal URL.
+1. Open Stripe Dashboard â†’ Settings â†’ Billing â†’ Customer portal â†’ configure features â†’ copy portal URL.
 2. Create Product **CTG Pro Feed** with recurring prices $9/mo and $99/yr.
-3. Create Payment Links for `proMonthly` and `proYearly` → paste into `payments.config.js`.
+3. Create Payment Links for `proMonthly` and `proYearly` â†’ paste into `payments.config.js`.
 4. Create Products for **MSP Monitor**, **MSP Defend**, **MSP Harden** with monthly recurring prices.
-5. Create Payment Links for `mspMonitor`, `mspDefend`, `mspHarden` → paste into `payments.config.js`.
+5. Create Payment Links for `mspMonitor`, `mspDefend`, `mspHarden` â†’ paste into `payments.config.js`.
 
 ### Tax & hardware links
 
-6. Enable Stripe Tax → add Pennsylvania nexus.
-7. Create one-time Payment Links for every hardware `stripeKey` in [PAYMENTS.md](PAYMENTS.md) → paste URLs.
+6. Enable Stripe Tax â†’ add Pennsylvania nexus.
+7. Create one-time Payment Links for every hardware `stripeKey` in [PAYMENTS.md](PAYMENTS.md) â†’ paste URLs.
 8. For each partner `ds*` link, add metadata `stripe_key` matching the config property name.
 
 ### Webhooks & go-live
 
-9. Developers → Webhooks → Add endpoint → URL `https://YOUR-HOST/stripe/webhook` → select subscription events above.
-10. Copy signing secret → `$env:CTG_STRIPE_WEBHOOK_SECRET = "whsec_..."`.
+9. Developers â†’ Webhooks â†’ Add endpoint â†’ URL `https://YOUR-HOST/stripe/webhook` â†’ select subscription events above.
+10. Copy signing secret â†’ `$env:CTG_STRIPE_WEBHOOK_SECRET = "whsec_..."`.
 11. Set `stripeCustomerPortal` and all `stripePaymentLinks` in `payments.config.js`.
-12. Set `demoMode: false` → run `python scripts/check_payments.py` (exit 0) → sync website → push.
+12. Set `demoMode: false` â†’ run `python scripts/check_payments.py` (exit 0) â†’ sync website â†’ push.
 
 ---
 
-*Hacker Planet LLC · Philadelphia, PA*
+*Hacker Planet LLC Â· Philadelphia, PA*

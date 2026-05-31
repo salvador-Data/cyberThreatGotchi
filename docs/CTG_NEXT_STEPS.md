@@ -37,7 +37,7 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 Run each command in its **own** elevated window from the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 **0. Secret vault (once per machine â€” interactive, no git)**
@@ -142,6 +142,18 @@ Weekly autorun (no password in git â€” Interactive logon):
 
 See [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md). **Never** paste Windows password into chat or scripts.
 
+
+---
+
+## Dev root (2026-05-31)
+
+| | |
+|--|--|
+| **Canonical** | ``$env:USERPROFILE\Programs\Hacker Planet LLC\cyberThreatGotchi`` |
+| **Wrong name** | ``Hackers Planet LLC`` (extra **s**) — not used on disk |
+| **Legacy** | ``Projects\cyberThreatGotchi`` — stub only; **re-open Cursor** on Programs path |
+
+Path helpers: ``scripts/windows/CTG-Paths.ps1`` (dot-sourced from ``CTG-AdminCommon.ps1``). Layout: [HACKER_PLANET_PROJECT_LAYOUT.md](HACKER_PLANET_PROJECT_LAYOUT.md).
 ---
 
 ## Kali guest — mount then scripts (if step 1 failed)
@@ -207,7 +219,7 @@ sudo bash /mnt/ctg/rogue-ap-guard.sh -k "YourHomeSSID"
 ## Website deploy (any shell â€” no Admin)
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -237,7 +249,7 @@ GitHub Pages picks up `docs/web/` on push. Custom domain: `hackerplanet.dev`.
 After monorepo changes to Kali or Windows scripts:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -273,7 +285,7 @@ VirtualBox shared folder: **ctg-backups** â†’ `C:\Users\Owner\Backups` (mou
 ## pytest before push
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 .\.venv\Scripts\activate
 pytest tests\ -v
 ```

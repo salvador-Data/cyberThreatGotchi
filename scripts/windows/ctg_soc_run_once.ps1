@@ -1,6 +1,7 @@
 ﻿# CTG one-shot SOC run (elevated). Logs to Desktop + D:\Backups if writable.
 $ErrorActionPreference = 'Continue'
-$Repo = 'C:\Users\Owner\Projects\cyberThreatGotchi'
+. (Join-Path $PSScriptRoot 'CTG-Paths.ps1')
+$Repo = Get-CtgRepoRoot -FromPath $PSScriptRoot
 $Win = Join-Path $Repo 'scripts\windows'
 . (Join-Path $Win 'CTG-AdminCommon.ps1')
 $script:CtgIsAdmin = Test-CtgIsAdmin

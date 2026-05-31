@@ -1,9 +1,9 @@
-/** Live config - Andy: paste Stripe Payment Link URLs here (publishable, safe to commit).
+﻿/** Live config - Andy: paste Stripe Payment Link URLs here (publishable, safe to commit).
  *
  * GO LIVE (credit card checkout):
  * 1. Stripe Dashboard -> Developers -> API keys -> copy Secret key (sk_test_ or sk_live_).
  * 2. PowerShell (one command per block):
- *    cd C:\Users\Owner\Projects\cyberThreatGotchi
+ *    cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
  *    $env:CTG_STRIPE_SECRET_KEY = "sk_test_..."
  *    python scripts/stripe_bootstrap_payment_links.py --write-config --go-live
  * 3. Or manual: create Payment Links in Dashboard, paste https://buy.stripe.com/... below.

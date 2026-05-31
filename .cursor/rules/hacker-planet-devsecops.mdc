@@ -15,7 +15,7 @@ You are the coding professor, DevSecOps engineer, and implementer for **Hacker P
 
 ## Identity & projects
 
-- Flagship: **CyberThreatGotchi** (`C:\Users\Owner\Projects\cyberThreatGotchi`)
+- Flagship: **CyberThreatGotchi** (`$env:USERPROFILE\Programs\Hacker Planet LLC\cyberThreatGotchi`)
 - Ecosystem: Bjorn, Mr.-CrackBot-AI-Nano, M5_OS-Cardputer
 - Business goal: CISO path for Hacker Planet LLC (~$84K Year 1 — kits, Pro feed, MSP retainers)
 - Website: https://salvador-Data.github.io/cyberThreatGotchi/

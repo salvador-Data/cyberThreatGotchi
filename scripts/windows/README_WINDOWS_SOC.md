@@ -1,6 +1,6 @@
-# Windows SOC stack — free hardening, IDS, IPS, SIEM
+﻿# Windows SOC stack â€” free hardening, IDS, IPS, SIEM
 
-**Hacker Planet LLC / CyberThreatGotchi** — defensive automation for systems you **own** or are **explicitly authorized** to administer. Do not run these scripts against third-party networks without written permission.
+**Hacker Planet LLC / CyberThreatGotchi** â€” defensive automation for systems you **own** or are **explicitly authorized** to administer. Do not run these scripts against third-party networks without written permission.
 
 ## What you get (free tier)
 
@@ -8,20 +8,20 @@
 |-------|------|------|
 | Hardening | [Harden-Windows-Security](https://github.com/Harden-Windows-Security/Module) | CIS-aligned baselines, GPO-style settings |
 | Host IDS | [Sysmon](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon) + [SwiftOnSecurity config](https://github.com/SwiftOnSecurity/sysmon-config) | Process/network/file telemetry |
-| SIEM | [Wazuh](https://wazuh.com/) | Agent → manager, rules, dashboards, FIM |
+| SIEM | [Wazuh](https://wazuh.com/) | Agent â†’ manager, rules, dashboards, FIM |
 | Network IPS | [OPNsense](https://opnsense.org/) + Suricata | Perimeter IDS/IPS (separate appliance) |
 | Endpoint AV | Microsoft Defender | ASR rules (audit before enforce) |
 
-Scripts live in `scripts/windows/`. They contain **no secrets** — set your Wazuh manager IP via environment variables only.
+Scripts live in `scripts/windows/`. They contain **no secrets** â€” set your Wazuh manager IP via environment variables only.
 
 ## Recommended install order
 
-1. **Document & backup** — restore point, snapshot VM, or gold image.
-2. **Sysmon** — host telemetry before heavy policy changes.
-3. **Harden-Windows-Security** — audit/report first, then apply.
-4. **Wazuh agent** — point at your manager (lab VM or homelab SIEM).
-5. **Defender ASR** — audit mode, review Event Viewer, then enforce.
-6. **OPNsense/Suricata** — network edge (not installed by these scripts).
+1. **Document & backup** â€” restore point, snapshot VM, or gold image.
+2. **Sysmon** â€” host telemetry before heavy policy changes.
+3. **Harden-Windows-Security** â€” audit/report first, then apply.
+4. **Wazuh agent** â€” point at your manager (lab VM or homelab SIEM).
+5. **Defender ASR** â€” audit mode, review Event Viewer, then enforce.
+6. **OPNsense/Suricata** â€” network edge (not installed by these scripts).
 
 ## Environment variables
 
@@ -41,10 +41,10 @@ Never commit manager credentials, Twilio secrets, or phone numbers to git. Use W
 Open **PowerShell as Administrator**, then run **one command per block** from the repo root.
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
-Review the orchestrator (guidance only — no hardening until you add flags):
+Review the orchestrator (guidance only â€” no hardening until you add flags):
 
 ```powershell
 .\scripts\windows\harden_windows.ps1
@@ -56,7 +56,7 @@ Install Sysmon + SwiftOnSecurity config:
 .\scripts\windows\harden_windows.ps1 -InstallSysmon
 ```
 
-Set Wazuh manager (your lab SIEM IP — example only):
+Set Wazuh manager (your lab SIEM IP â€” example only):
 
 ```powershell
 $env:CTG_WAZUH_MANAGER = '192.168.1.50'
@@ -87,21 +87,21 @@ Optional: Defender ASR audit mode:
 | `harden_windows.ps1` | Orchestrator; flags control each step |
 | `install_sysmon.ps1` | Download Sysmon + SwiftOnSecurity XML |
 | `wazuh_agent_setup.ps1` | MSI/winget/choco agent install |
-| `iphone_usb_check.ps1` | Log-only: iPhone USB attached → run `IPHONE_RUN_NOW` USB steps (no device modification) |
-| `iphone_hardening_automate.ps1` | **Primary:** interactive 21-step Phase 1+2 orchestrator — USB check, deep links, `-Resume`, `-LogOnly`, `-OpenGuide`, `-ServeOnLan` |
-| `iphone_hardening_assist.ps1` | Deprecated alias — forwards to `iphone_hardening_automate.ps1` (`-OpenRunbook` still works) |
+| `iphone_usb_check.ps1` | Log-only: iPhone USB attached â†’ run `IPHONE_RUN_NOW` USB steps (no device modification) |
+| `iphone_hardening_automate.ps1` | **Primary:** interactive 21-step Phase 1+2 orchestrator â€” USB check, deep links, `-Resume`, `-LogOnly`, `-OpenGuide`, `-ServeOnLan` |
+| `iphone_hardening_assist.ps1` | Deprecated alias â€” forwards to `iphone_hardening_automate.ps1` (`-OpenRunbook` still works) |
 | `Pause-DefenderRealtime.ps1` | **Admin:** pause/resume Defender real-time during PlatformIO builds |
-| `Pause-DefenderRealtime.bat` | Double-click UAC shim — toggles realtime pause/resume |
-| `Start-CTGLab.ps1` | **Master CTG lab autorun** — DDG, deploy Kali, Wireshark, OPNsense stub |
+| `Pause-DefenderRealtime.bat` | Double-click UAC shim â€” toggles realtime pause/resume |
+| `Start-CTGLab.ps1` | **Master CTG lab autorun** â€” DDG, deploy Kali, Wireshark, OPNsense stub |
 | `Deploy-KaliLab.ps1` | Kali lab deploy (VBox/VMware, SSH bootstrap) |
 | `Install-KaliVirtualBox.ps1` | Create Kali VM from installer ISO |
 | `Install-OpnsenseLab.ps1` | OPNsense lab VM (2 NICs) |
 | `Install-WiresharkNpcap.ps1` | Wireshark + Npcap on Windows |
-| `Start-CTGWiresharkIDS.ps1` | **Wireshark IDS** — tshark ring capture, heuristics, JSON alerts, optional SMS |
+| `Start-CTGWiresharkIDS.ps1` | **Wireshark IDS** â€” tshark ring capture, heuristics, JSON alerts, optional SMS |
 | `Send-CtgSmsAlert.ps1` | Twilio SMS alerts (env only; rate-limited) |
 | `ctg_wireshark_ids_loop.ps1` | Continuous Wireshark IDS monitoring loop |
-| `Repair-WindowsSignIn.ps1` | **Read-only** Sign-in options diagnostic (Password/PIN/Hello); safe service fixes with `-ApplySafeFixes` — never sets password |
-| `Harden-DDoSRogueWifi.ps1` | **DDoS / rogue WiFi** — `-DiagnoseOnly` (any user) or `-ApplyHardening` (Admin); see [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md) |
+| `Repair-WindowsSignIn.ps1` | **Read-only** Sign-in options diagnostic (Password/PIN/Hello); safe service fixes with `-ApplySafeFixes` â€” never sets password |
+| `Harden-DDoSRogueWifi.ps1` | **DDoS / rogue WiFi** â€” `-DiagnoseOnly` (any user) or `-ApplyHardening` (Admin); see [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md) |
 
 Check Wazuh without installing:
 
@@ -117,10 +117,10 @@ Sysmon only:
 
 ## Windows 11 Sign-in options (Password / PIN / Hello)
 
-If **Settings → Accounts → Sign-in options → Password** is greyed out, **Change** does nothing, or PIN works but password path fails:
+If **Settings â†’ Accounts â†’ Sign-in options â†’ Password** is greyed out, **Change** does nothing, or PIN works but password path fails:
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Read-only diagnostic (safe anytime):
@@ -135,13 +135,13 @@ Open Sign-in options after the report:
 .\scripts\windows\Repair-WindowsSignIn.ps1 -OpenSettings
 ```
 
-Safe service restart (Administrator — still **no password change**):
+Safe service restart (Administrator â€” still **no password change**):
 
 ```powershell
 .\scripts\windows\Repair-WindowsSignIn.ps1 -ApplySafeFixes -OpenSettings
 ```
 
-**Microsoft account:** password is often managed at [account.microsoft.com/security](https://account.microsoft.com/security), not only in Settings. **Local account:** `Ctrl+Alt+Del` → Change a password, or `Win+R` → `netplwiz`. **CTG hardening:** `ctg_soc_run_once.ps1` runs Harden-Windows-Security **audit only** by default; full HWS enforce can enable Hello-only sign-in — see `ADMIN_STEPS.md`.
+**Microsoft account:** password is often managed at [account.microsoft.com/security](https://account.microsoft.com/security), not only in Settings. **Local account:** `Ctrl+Alt+Del` â†’ Change a password, or `Win+R` â†’ `netplwiz`. **CTG hardening:** `ctg_soc_run_once.ps1` runs Harden-Windows-Security **audit only** by default; full HWS enforce can enable Hello-only sign-in â€” see `ADMIN_STEPS.md`.
 
 Log: `%USERPROFILE%\Backups\logs\repair-windows-signin.log`
 
@@ -155,21 +155,21 @@ These scripts install the **agent** only. You need a Wazuh **manager** (Linux VM
 
 ## Kali lab (VirtualBox / VMware)
 
-Authorized analyst VM bootstrap — harden, ClamAV, passive Snort, OSINT apt, Realtek detect, WiFi **Option 2 company-lab** default.
+Authorized analyst VM bootstrap â€” harden, ClamAV, passive Snort, OSINT apt, Realtek detect, WiFi **Option 2 company-lab** default.
 
 | Script | Purpose |
 |--------|---------|
 | `Deploy-KaliLab.ps1` | **Master:** detect hypervisor, NAT SSH forward, copy/run `kali-lab-bootstrap.sh` |
-| `Install-KaliVirtualBox.ps1` | Create unattended Kali VM (credentials → `Backups\kali-vm-credentials.txt`) |
+| `Install-KaliVirtualBox.ps1` | Create unattended Kali VM (credentials â†’ `Backups\kali-vm-credentials.txt`) |
 | `Install-OpnsenseLab.ps1` | Optional lab OPNsense VM (2 NICs; not edge by default) |
 | `Install-WiresharkNpcap.ps1` | Windows Wireshark + Npcap |
 
-Architecture: [docs/KALI_LAB_ARCHITECTURE.md](../../docs/KALI_LAB_ARCHITECTURE.md) · Autorun: [docs/CTG_LAB_AUTORUN.md](../../docs/CTG_LAB_AUTORUN.md) · Kali scripts: [scripts/kali/README_KALI_LAB.md](../kali/README_KALI_LAB.md)
+Architecture: [docs/KALI_LAB_ARCHITECTURE.md](../../docs/KALI_LAB_ARCHITECTURE.md) Â· Autorun: [docs/CTG_LAB_AUTORUN.md](../../docs/CTG_LAB_AUTORUN.md) Â· Kali scripts: [scripts/kali/README_KALI_LAB.md](../kali/README_KALI_LAB.md)
 
 **One-command lab autorun (recommended):**
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -200,19 +200,19 @@ sudo bash /tmp/kali-lab-bootstrap.sh --wifi-profile=company-lab
 Lab VM helper: `Install-OpnsenseLab.ps1`. Typical homelab path:
 
 1. Install OPNsense on a spare NIC/VM (script creates `OPNsense-Lab` in VirtualBox when ISO present).
-2. Enable **Intrusion Detection → Suricata**.
+2. Enable **Intrusion Detection â†’ Suricata**.
 3. Send alerts to Wazuh or syslog (optional integration).
 
 Use for **your** perimeter/lab VLANs only.
 
 ## Wireshark IDS + SMS (Windows host)
 
-Lab-oriented packet capture and basic anomaly detection — **not** a substitute for OPNsense Suricata inline IPS. Full guide: [docs/WIRESHARK_IDS_SMS.md](../../docs/WIRESHARK_IDS_SMS.md).
+Lab-oriented packet capture and basic anomaly detection â€” **not** a substitute for OPNsense Suricata inline IPS. Full guide: [docs/WIRESHARK_IDS_SMS.md](../../docs/WIRESHARK_IDS_SMS.md).
 
 Install capture stack:
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -249,7 +249,7 @@ Set Twilio + `CTG_ALERT_SMS_TO` in local `.env` (never commit). Test SMS when co
 .\scripts\windows\Send-CtgSmsAlert.ps1 -TestMessage
 ```
 
-Logs: `%USERPROFILE%\Backups\logs\wireshark-ids.log`, `wireshark-alerts.json` · pcaps: `Backups\pcap\ctg-YYYY-MM-DD.pcapng`
+Logs: `%USERPROFILE%\Backups\logs\wireshark-ids.log`, `wireshark-alerts.json` Â· pcaps: `Backups\pcap\ctg-YYYY-MM-DD.pcapng`
 
 ## Harden-Windows-Security notes
 
@@ -281,16 +281,16 @@ Test-NetConnection -ComputerName $env:CTG_WAZUH_MANAGER -Port 1514
 - Cyber range / CTG lab VMs
 - MSP customer hosts **with contract and scope**
 
-**Not authorized:** unauthorized scanning, “red team” on systems you do not own, or evasion of monitoring on networks you do not control.
+**Not authorized:** unauthorized scanning, â€œred teamâ€ on systems you do not own, or evasion of monitoring on networks you do not control.
 
 ## DDoS / rogue WiFi (under attack or hardening)
 
-Client-side posture only — **volumetric DDoS requires your ISP**. Full guide: [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md).
+Client-side posture only â€” **volumetric DDoS requires your ISP**. Full guide: [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md).
 
 Diagnose (safe without Admin):
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -319,11 +319,11 @@ Logs: `%USERPROFILE%\Backups\logs\harden-ddos-rogue.log`, `firewall.log`
 
 ## Related docs
 
-- [docs/WIRESHARK_IDS_SMS.md](../../docs/WIRESHARK_IDS_SMS.md) — Wireshark IDS, Twilio SMS, honest IPS scope
-- [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md) — DDoS, deauth, rogue captive portal layers
-- [docs/SECURITY_HARDENING.md](../../docs/SECURITY_HARDENING.md) — project-wide env vars and API hardening
-- [docs/FIREWALL_BASELINE.md](../../docs/FIREWALL_BASELINE.md) — Linux/BPI-R3 firewall (complements Windows stack)
-- [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md) · [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) · [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) — iPhone Settings + USB (preserve VPN/DNS)
+- [docs/WIRESHARK_IDS_SMS.md](../../docs/WIRESHARK_IDS_SMS.md) â€” Wireshark IDS, Twilio SMS, honest IPS scope
+- [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md) â€” DDoS, deauth, rogue captive portal layers
+- [docs/SECURITY_HARDENING.md](../../docs/SECURITY_HARDENING.md) â€” project-wide env vars and API hardening
+- [docs/FIREWALL_BASELINE.md](../../docs/FIREWALL_BASELINE.md) â€” Linux/BPI-R3 firewall (complements Windows stack)
+- [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md) Â· [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) Â· [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) â€” iPhone Settings + USB (preserve VPN/DNS)
 
 ## iPhone USB + hardening assist (Windows SOC laptop)
 
@@ -331,22 +331,22 @@ When the **iPhone 15 Pro Max** is on USB-C to this PC, hardening is done **on th
 
 | Item | Detail |
 |------|--------|
-| **Runbook** | [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) Phase 2 § 2.3 · [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) |
-| **Automate (primary)** | `iphone_hardening_automate.ps1` — 21-step interactive flow, Settings deep links, DuckDuckGo preserve warnings; [iphone_hardening_shortcuts.md](../../docs/iphone_hardening_shortcuts.md) for iOS **CTG iPhone Harden** Shortcut |
-| **Guided HTML wizard** | [docs/iphone_hardening_guide.html](../../docs/iphone_hardening_guide.html) — Prev/Next/Mark done; sync via `?step=N` with automate script |
-| **Assist (alias)** | `iphone_hardening_assist.ps1` — forwards to automate for backward compatibility |
-| **Tap-friendly web** | [iphone-run-now.html](https://salvador-Data.github.io/cyberThreatGotchi/iphone-run-now.html) — open on phone |
-| **Preserve VPN/DNS** | Do not install a second DNS VPN on the phone; verify **Settings → VPN** after hardening (DuckDuckGo/NextDNS/1.1.1.1 unchanged) |
-| **Encrypted backup** | Apple Devices → **Encrypt local backup**; align with `D:\Backups\Andy-PC-*`, `C:\Users\Owner\Backups\`, OneDrive `Backups\Andy-PC-*` (see `cloud_backup.ps1`) |
-| **Log stub** | `iphone_usb_check.ps1` — writes `Backups\logs\iphone_usb_check.log`; reminder only |
-| **Assist log** | `iphone_hardening_automate.ps1` — writes `Backups\logs\iphone_hardening_automate.log` (legacy assist log name deprecated) |
+| **Runbook** | [docs/IPHONE_RUN_NOW.md](../../docs/IPHONE_RUN_NOW.md) Phase 2 Â§ 2.3 Â· [docs/IPHONE_USB_HARDENING.md](../../docs/IPHONE_USB_HARDENING.md) |
+| **Automate (primary)** | `iphone_hardening_automate.ps1` â€” 21-step interactive flow, Settings deep links, DuckDuckGo preserve warnings; [iphone_hardening_shortcuts.md](../../docs/iphone_hardening_shortcuts.md) for iOS **CTG iPhone Harden** Shortcut |
+| **Guided HTML wizard** | [docs/iphone_hardening_guide.html](../../docs/iphone_hardening_guide.html) â€” Prev/Next/Mark done; sync via `?step=N` with automate script |
+| **Assist (alias)** | `iphone_hardening_assist.ps1` â€” forwards to automate for backward compatibility |
+| **Tap-friendly web** | [iphone-run-now.html](https://salvador-Data.github.io/cyberThreatGotchi/iphone-run-now.html) â€” open on phone |
+| **Preserve VPN/DNS** | Do not install a second DNS VPN on the phone; verify **Settings â†’ VPN** after hardening (DuckDuckGo/NextDNS/1.1.1.1 unchanged) |
+| **Encrypted backup** | Apple Devices â†’ **Encrypt local backup**; align with `D:\Backups\Andy-PC-*`, `C:\Users\Owner\Backups\`, OneDrive `Backups\Andy-PC-*` (see `cloud_backup.ps1`) |
+| **Log stub** | `iphone_usb_check.ps1` â€” writes `Backups\logs\iphone_usb_check.log`; reminder only |
+| **Assist log** | `iphone_hardening_automate.ps1` â€” writes `Backups\logs\iphone_hardening_automate.log` (legacy assist log name deprecated) |
 
 ### Automated assist (Windows + Shortcuts)
 
-Best-effort **guided** automation — full Settings hardening on stock iOS is impossible without MDM. The automate script walks all 21 steps interactively; you complete toggles on the phone.
+Best-effort **guided** automation â€” full Settings hardening on stock iOS is impossible without MDM. The automate script walks all 21 steps interactively; you complete toggles on the phone.
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Full 21-step flow + HTML wizard (recommended):
@@ -383,7 +383,7 @@ Nightly `ctg_nightly_4am.ps1` does not run Apple backup or iPhone hardening assi
 
 ## Microsoft Windows cloud (OneDrive + Defender)
 
-Interpretation: **on Windows cloud services** — Microsoft OneDrive sync, Windows Backup settings, Defender for Cloud (CSPM), and Entra ID sign-in security. Not IONOS or third-party "Ion" products.
+Interpretation: **on Windows cloud services** â€” Microsoft OneDrive sync, Windows Backup settings, Defender for Cloud (CSPM), and Entra ID sign-in security. Not IONOS or third-party "Ion" products.
 
 ### Build-time AV and OneDrive (PlatformIO / Cardputer)
 
@@ -391,21 +391,21 @@ PlatformIO builds under `Projects\` or `C:\pio\` can stall when **Microsoft Defe
 
 | Mitigation | How |
 |------------|-----|
-| **Defender pause (short window)** | **Administrator required.** `Pause-DefenderRealtime.ps1` — pause before build, **resume after**. Double-click `Pause-DefenderRealtime.bat` to toggle (UAC). |
-| **Defender exclusions (preferred long-term)** | Same script with `-AddBuildExclusions` adds `C:\pio\`, `M5_OS-Cardputer\.pio`, and `Projects\` — keeps realtime on. |
-| **OneDrive** | No reliable PowerShell pause for consumer OneDrive. **Tray icon → Pause syncing** for 2/8/24 hours, or exclude build folders from sync / use `PLATFORMIO_BUILD_DIR=C:\pio\m5os-build` outside OneDrive. |
+| **Defender pause (short window)** | **Administrator required.** `Pause-DefenderRealtime.ps1` â€” pause before build, **resume after**. Double-click `Pause-DefenderRealtime.bat` to toggle (UAC). |
+| **Defender exclusions (preferred long-term)** | Same script with `-AddBuildExclusions` adds `C:\pio\`, `M5_OS-Cardputer\.pio`, and `Projects\` â€” keeps realtime on. |
+| **OneDrive** | No reliable PowerShell pause for consumer OneDrive. **Tray icon â†’ Pause syncing** for 2/8/24 hours, or exclude build folders from sync / use `PLATFORMIO_BUILD_DIR=C:\pio\m5os-build` outside OneDrive. |
 
 Check Defender realtime status (**Admin PowerShell**):
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
 .\scripts\windows\Pause-DefenderRealtime.ps1 -Status
 ```
 
-Pause before a Cardputer flash (**Admin** — resume when done):
+Pause before a Cardputer flash (**Admin** â€” resume when done):
 
 ```powershell
 .\scripts\windows\Pause-DefenderRealtime.ps1 -Pause
@@ -423,7 +423,7 @@ Optional persistent build exclusions (Admin, one-time):
 .\scripts\windows\Pause-DefenderRealtime.ps1 -AddBuildExclusions
 ```
 
-**Warning:** Do not leave realtime protection off. Nightly `ctg_nightly_4am.ps1` runs Defender QuickScan — pausing is for manual build windows only.
+**Warning:** Do not leave realtime protection off. Nightly `ctg_nightly_4am.ps1` runs Defender QuickScan â€” pausing is for manual build windows only.
 
 ### Scripts
 
@@ -442,17 +442,17 @@ Orchestrator flag:
 
 ### Andy manual steps (required once)
 
-1. **Microsoft account** — Settings → Accounts → sign in with your Microsoft account.
-2. **OneDrive** — Install or open OneDrive; confirm folder `C:\Users\Owner\OneDrive` (or `%OneDriveCommercial%`). Allow sync for `Backups\Andy-PC-*`.
-3. **Windows Backup (Win11)** — Settings → Accounts → Windows backup → enable where offered (settings sync, OneDrive folders, File History if you use it).
-4. **Microsoft Defender for Cloud** — [Azure portal](https://portal.azure.com) → Microsoft Defender for Cloud → enable **Foundational CSPM** (free tier) on your subscription; review Secure Score recommendations.
-5. **Entra ID (personal/work)** — [Microsoft Entra admin center](https://entra.microsoft.com) → Protection → enable MFA and review sign-in risk for your account.
-6. **Optional CTG alert** — Set user/machine env vars `CTG_WEBHOOK_URL` and `CTG_WEBHOOK_SECRET` (never commit); `cloud_backup.ps1` posts a non-secret JSON event when both are set.
+1. **Microsoft account** â€” Settings â†’ Accounts â†’ sign in with your Microsoft account.
+2. **OneDrive** â€” Install or open OneDrive; confirm folder `C:\Users\Owner\OneDrive` (or `%OneDriveCommercial%`). Allow sync for `Backups\Andy-PC-*`.
+3. **Windows Backup (Win11)** â€” Settings â†’ Accounts â†’ Windows backup â†’ enable where offered (settings sync, OneDrive folders, File History if you use it).
+4. **Microsoft Defender for Cloud** â€” [Azure portal](https://portal.azure.com) â†’ Microsoft Defender for Cloud â†’ enable **Foundational CSPM** (free tier) on your subscription; review Secure Score recommendations.
+5. **Entra ID (personal/work)** â€” [Microsoft Entra admin center](https://entra.microsoft.com) â†’ Protection â†’ enable MFA and review sign-in risk for your account.
+6. **Optional CTG alert** â€” Set user/machine env vars `CTG_WEBHOOK_URL` and `CTG_WEBHOOK_SECRET` (never commit); `cloud_backup.ps1` posts a non-secret JSON event when both are set.
 
 ### Backup flow (recommended)
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -463,7 +463,7 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 .\scripts\windows\cloud_backup.ps1
 ```
 
-SSD default: drive **D:** (volume label **SSD**) → `D:\Backups\Andy-PC-YYYY-MM-DD\`.
+SSD default: drive **D:** (volume label **SSD**) â†’ `D:\Backups\Andy-PC-YYYY-MM-DD\`.
 
 ### Environment variables (cloud / CTG)
 
@@ -475,13 +475,13 @@ SSD default: drive **D:** (volume label **SSD**) → `D:\Backups\Andy-PC-YYYY-MM
 
 ## Nightly 4 AM automation
 
-> **Portfolio deep dive:** [docs/PORTFOLIO_AUTOMATION_SOC.md](../../docs/PORTFOLIO_AUTOMATION_SOC.md) · LinkedIn blurb: [PORTFOLIO_AUTOMATION_SOC_SUMMARY.md](../../docs/PORTFOLIO_AUTOMATION_SOC_SUMMARY.md)
+> **Portfolio deep dive:** [docs/PORTFOLIO_AUTOMATION_SOC.md](../../docs/PORTFOLIO_AUTOMATION_SOC.md) Â· LinkedIn blurb: [PORTFOLIO_AUTOMATION_SOC_SUMMARY.md](../../docs/PORTFOLIO_AUTOMATION_SOC_SUMMARY.md)
 
-> **Windows laptop + [hackerplanet.dev](https://hackerplanet.dev/) only — Andy's PC.**
+> **Windows laptop + [hackerplanet.dev](https://hackerplanet.dev/) only â€” Andy's PC.**
 >
-> Every run includes **ctg_website_nightly.ps1** (website backup, sync, portfolio export, health check). Does not flash or schedule anything on M5 Cardputer — that is separate manual dev work.
+> Every run includes **ctg_website_nightly.ps1** (website backup, sync, portfolio export, health check). Does not flash or schedule anything on M5 Cardputer â€” that is separate manual dev work.
 
-Daily **4:00 AM local** task for backup (SSD + OneDrive), **mandatory website sync/health**, audit scans, and logging — without running disruptive hardening every night. **Harden-Windows-Security** remains a manual or weekly elevated run (`ctg_soc_run_once.ps1` or `harden_windows.ps1`); do not schedule full hardening nightly.
+Daily **4:00 AM local** task for backup (SSD + OneDrive), **mandatory website sync/health**, audit scans, and logging â€” without running disruptive hardening every night. **Harden-Windows-Security** remains a manual or weekly elevated run (`ctg_soc_run_once.ps1` or `harden_windows.ps1`); do not schedule full hardening nightly.
 
 ### Scripts
 
@@ -495,12 +495,12 @@ Daily **4:00 AM local** task for backup (SSD + OneDrive), **mandatory website sy
 ### Orchestration order
 
 1. Timestamp + hostname header (laptop + hackerplanet.dev scope)
-2. Disk space on **C:** and **D:** (if present) — warn if &lt; 5 GB free
-3. **SSD detection** — Disk 1 / **D:** writable probe; logs `SSD: online|offline|not_ready`; `mount_ssd_d.ps1` if needed (Admin)
+2. Disk space on **C:** and **D:** (if present) â€” warn if &lt; 5 GB free
+3. **SSD detection** â€” Disk 1 / **D:** writable probe; logs `SSD: online|offline|not_ready`; `mount_ssd_d.ps1` if needed (Admin)
 4. Resolve nightly backup tree (`D:\Backups\Andy-PC-YYYY-MM-DD` or C: fallback)
-5. **selective_ssd_backup.ps1** — user data + **Projects** (skipped when `-SkipBackup`)
-6. **cloud_backup.ps1** — mirror subset to OneDrive (skipped when `-SkipBackup`)
-7. **ctg_website_nightly.ps1** — **always runs**: `website/`, `docs/web/`, portfolio → backup tree; `sync_website_to_docs.py`; GET **https://hackerplanet.dev/**
+5. **selective_ssd_backup.ps1** â€” user data + **Projects** (skipped when `-SkipBackup`)
+6. **cloud_backup.ps1** â€” mirror subset to OneDrive (skipped when `-SkipBackup`)
+7. **ctg_website_nightly.ps1** â€” **always runs**: `website/`, `docs/web/`, portfolio â†’ backup tree; `sync_website_to_docs.py`; GET **https://hackerplanet.dev/**
 8. Windows Update audit, Defender QuickScan, Sysmon, Wazuh (status), VPN preserve, Git dry-run
 9. **SOC logs** copied to `D:\Backups\logs\` when SSD online
 
@@ -509,7 +509,7 @@ Daily **4:00 AM local** task for backup (SSD + OneDrive), **mandatory website sy
 | Content | Source | SSD online (`D:\Backups\Andy-PC-YYYY-MM-DD\`) | C: fallback | OneDrive mirror |
 |---------|--------|-----------------------------------------------|-------------|-----------------|
 | Documents / Desktop / Pictures | User folders | Via selective backup | Same | Manifest + subset via `cloud_backup.ps1` |
-| **Projects** | `C:\Users\Owner\Projects` | `Projects\` (robocopy, size/exclusion caps) | Same | Manifest references |
+| **Projects** | `C:\Users\Owner\Programs\Hacker Planet LLC` | `Projects\` (robocopy, size/exclusion caps) | Same | Manifest references |
 | **Website** | `website/` | `website\` | Same | `website\` |
 | **Docs web mirror** | `docs/web/` | `docs-web\` | Same | `docs-web\` |
 | **hackerplanet.dev health** | `ctg_website_nightly.ps1` | Logged nightly | Same log on C: | N/A (live GET) |
@@ -519,7 +519,7 @@ Daily **4:00 AM local** task for backup (SSD + OneDrive), **mandatory website sy
 | **Nightly log** | `Backups\logs\nightly-*.log` | `D:\Backups\logs\` | Primary on C: | `OneDrive\Backups\logs\` |
 | **SOC log** | Desktop `ctg-soc-run-log.txt` | `D:\Backups\logs\` | Desktop | Nightly log mirrored |
 
-Deploy path: **GitHub Pages** via `.github/workflows/pages.yml` (`website/` → `gh-pages` branch). Custom domain **hackerplanet.dev** (Cloudflare DNS → GitHub Pages). Nightly run does **not** deploy unless `-DeployWebsite`.
+Deploy path: **GitHub Pages** via `.github/workflows/pages.yml` (`website/` â†’ `gh-pages` branch). Custom domain **hackerplanet.dev** (Cloudflare DNS â†’ GitHub Pages). Nightly run does **not** deploy unless `-DeployWebsite`.
 
 ### SSD behavior (Andy SDK drive)
 
@@ -534,7 +534,7 @@ When SSD is **online and writable**:
 ### Install (Admin PowerShell, one command per block)
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -553,7 +553,7 @@ Manual test run (no wait until 4 AM):
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows\ctg_nightly_4am.ps1 -VerboseLog
 ```
 
-Optional website deploy (commit/push → GitHub Actions):
+Optional website deploy (commit/push â†’ GitHub Actions):
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows\ctg_nightly_4am.ps1 -DeployWebsite -VerboseLog

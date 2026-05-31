@@ -1,4 +1,4 @@
-# Kali & lab VM disk encryption
+﻿# Kali & lab VM disk encryption
 
 Authorized **lab-only** guidance for Hacker Planet LLC. Complements Windows BitLocker ([DEVICE_ENCRYPTION.md](DEVICE_ENCRYPTION.md)).
 
@@ -7,9 +7,9 @@ Authorized **lab-only** guidance for Hacker Planet LLC. Complements Windows BitL
 **Do not** run `cryptsetup luksFormat` or full-disk re-encryption on an **existing** Kali VM disk that already has data unless you:
 
 1. Have a **verified backup** (VirtualBox snapshot + export, or `Stage-KaliLabToBackups.ps1` output).
-2. Type an explicit acknowledgment (e.g. `I_ACK_LUKS_FORMAT`) in your lab journal — CTG scripts **will not** auto-run LUKS on live disks.
+2. Type an explicit acknowledgment (e.g. `I_ACK_LUKS_FORMAT`) in your lab journal â€” CTG scripts **will not** auto-run LUKS on live disks.
 
-Fresh installs may use LUKS at install time; existing CTG Kali VMs should use **snapshot → new encrypted disk → migrate** instead of in-place format.
+Fresh installs may use LUKS at install time; existing CTG Kali VMs should use **snapshot â†’ new encrypted disk â†’ migrate** instead of in-place format.
 
 ---
 
@@ -17,8 +17,8 @@ Fresh installs may use LUKS at install time; existing CTG Kali VMs should use **
 
 During **Debian/Kali manual partitioning** (installer):
 
-1. Choose **Guided - use entire disk with encrypted LVM** *or* manual: partition → **physical volume for encryption** → `dm-crypt` → LVM → `/`, `swap`, `/home`.
-2. Set a **strong passphrase** — store in DuckDuckGo Password Manager, not git.
+1. Choose **Guided - use entire disk with encrypted LVM** *or* manual: partition â†’ **physical volume for encryption** â†’ `dm-crypt` â†’ LVM â†’ `/`, `swap`, `/home`.
+2. Set a **strong passphrase** â€” store in DuckDuckGo Password Manager, not git.
 3. Keep `/boot` unencrypted (standard Debian layout) unless you implement initramfs unlock hooks (advanced).
 
 Post-install checks (inside guest):
@@ -43,7 +43,7 @@ Ansible/CTG lab WiFi secrets: `chmod 600` on `/etc/ctg/lab-wifi.conf` per [SECRE
 
 ## VirtualBox VM encryption (recommended for existing **kali** VM)
 
-VirtualBox 7 **full VM encryption** protects the VM configuration, saved state, and related data at the hypervisor layer. This is the **safe path** for an existing CTG Kali VM — **not** in-place `cryptsetup luksFormat` on the running root disk.
+VirtualBox 7 **full VM encryption** protects the VM configuration, saved state, and related data at the hypervisor layer. This is the **safe path** for an existing CTG Kali VM â€” **not** in-place `cryptsetup luksFormat` on the running root disk.
 
 ### When to use
 
@@ -55,22 +55,22 @@ VirtualBox 7 **full VM encryption** protects the VM configuration, saved state, 
 
 Use **host BitLocker + VBox VM encryption** for CTG laptops. Add **LUKS at install** only on new gold images or spare disks.
 
-### CTG script (existing VM — interactive password)
+### CTG script (existing VM â€” interactive password)
 
 Diagnose only (safe for automation / agents):
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
 .\scripts\windows\Encrypt-KaliVm.ps1 -DiagnoseOnly
 ```
 
-Encrypt (Administrator PowerShell — **you** type the password; never commit or log it):
+Encrypt (Administrator PowerShell â€” **you** type the password; never commit or log it):
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -79,12 +79,12 @@ cd c:\Users\Owner\Projects\cyberThreatGotchi
 
 - Requires **Oracle VM VirtualBox Extension Pack** (version must match VirtualBox).
 - VM must be **powered off** (script ACPI-stops **kali** when applying).
-- Cipher: **AES-256** (VirtualBox selects GCM/XTS per component — not a separate CLI flag).
-- Password ID default: `ctg-kali` — store passphrase in **DuckDuckGo Password Manager** only.
+- Cipher: **AES-256** (VirtualBox selects GCM/XTS per component â€” not a separate CLI flag).
+- Password ID default: `ctg-kali` â€” store passphrase in **DuckDuckGo Password Manager** only.
 - Log: `%USERPROFILE%\Backups\logs\encrypt-kali-vm.log` (no secrets).
 - Optional backup: `%USERPROFILE%\Backups\vm-backup-kali\<timestamp>\`
-- **Time:** often **15–60+ minutes** depending on disk size; do not interrupt.
-- **Lost VM password = lost VM** — BitLocker does not unlock VirtualBox encryption.
+- **Time:** often **15â€“60+ minutes** depending on disk size; do not interrupt.
+- **Lost VM password = lost VM** â€” BitLocker does not unlock VirtualBox encryption.
 
 After encrypting, if VirtualBox Manager shows **Inaccessible**, register the password:
 
@@ -102,11 +102,11 @@ On a **new** VM or spare disk, use the Kali/Debian installer option **Guided - u
 
 ### NOT safe: in-place LUKS on live root
 
-**Do not** run `cryptsetup luksFormat` on the current `/` of a running CTG Kali VM — it breaks boot. Use VBox encryption above or reinstall with Encrypted LVM.
+**Do not** run `cryptsetup luksFormat` on the current `/` of a running CTG Kali VM â€” it breaks boot. Use VBox encryption above or reinstall with Encrypted LVM.
 
 ### Manual GUI (optional)
 
-VirtualBox Manager may expose encryption on some builds; Oracle 7.x often requires **VBoxManage** for existing VMs. See Oracle User Guide — *Encryption of VMs*.
+VirtualBox Manager may expose encryption on some builds; Oracle 7.x often requires **VBoxManage** for existing VMs. See Oracle User Guide â€” *Encryption of VMs*.
 
 ### CLI reference
 
@@ -122,7 +122,7 @@ cd "C:\Program Files\Oracle\VirtualBox"
 .\VBoxManage.exe encryptvm kali setencryption --cipher=AES-256 --new-password-id ctg-kali --new-password -
 ```
 
-Passwords belong in **Backups\.vault\** or password manager — **never** in git (`Backups/kali-vm-vbox-password.txt` is gitignored).
+Passwords belong in **Backups\.vault\** or password manager â€” **never** in git (`Backups/kali-vm-vbox-password.txt` is gitignored).
 
 ### CTG integration
 
@@ -138,12 +138,12 @@ Passwords belong in **Backups\.vault\** or password manager — **never** in git
 |--------|-------------|----------------|
 | Windows BitLocker | TPM unlock at boot | `Enable-BitLockerSafe.ps1 -Apply` |
 | VirtualBox full VM encryption | VM password when starting **kali** | `Encrypt-KaliVm.ps1 -Apply` (interactive) |
-| LUKS in guest (fresh install) | Passphrase at initramfs | **Guide only** — no in-place on live VM |
+| LUKS in guest (fresh install) | Passphrase at initramfs | **Guide only** â€” no in-place on live VM |
 
 ---
 
 ## References
 
-- [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) — VM sizing, snapshots
-- [SECRET_VAULT.md](SECRET_VAULT.md) — PII and credential storage
-- [DEVICE_ENCRYPTION.md](DEVICE_ENCRYPTION.md) — Windows host
+- [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) â€” VM sizing, snapshots
+- [SECRET_VAULT.md](SECRET_VAULT.md) â€” PII and credential storage
+- [DEVICE_ENCRYPTION.md](DEVICE_ENCRYPTION.md) â€” Windows host

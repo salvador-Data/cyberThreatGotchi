@@ -1,10 +1,10 @@
-# Create CyberThreatGotchi on kickstarter.com — today
+﻿# Create CyberThreatGotchi on kickstarter.com â€” today
 
-**Salvador Data · Hacker Planet LLC · Philadelphia, PA**
+**Salvador Data Â· Hacker Planet LLC Â· Philadelphia, PA**
 
 I use this runbook the day I create the live Kickstarter project. Paste copy from [KICKSTARTER_DASHBOARD_PASTE.md](KICKSTARTER_DASHBOARD_PASTE.md). After approval, I wire the live URL into the website.
 
-**Related:** [KICKSTARTER_LAUNCH_PLAN.md](../KICKSTARTER_LAUNCH_PLAN.md) · [BUSINESS_PROJECTIONS.md](../BUSINESS_PROJECTIONS.md) · Preview page [hackerplanet.dev/kickstarter.html](https://hackerplanet.dev/kickstarter.html)
+**Related:** [KICKSTARTER_LAUNCH_PLAN.md](../KICKSTARTER_LAUNCH_PLAN.md) Â· [BUSINESS_PROJECTIONS.md](../BUSINESS_PROJECTIONS.md) Â· Preview page [hackerplanet.dev/kickstarter.html](https://hackerplanet.dev/kickstarter.html)
 
 ---
 
@@ -18,7 +18,7 @@ I use this runbook the day I create the live Kickstarter project. Paste copy fro
 
 ---
 
-## Step 1 — Open Kickstarter start flow
+## Step 1 â€” Open Kickstarter start flow
 
 In my browser:
 
@@ -26,11 +26,11 @@ In my browser:
 2. Log in (or **Sign up** with salvadorData@proton.me)
 3. Click **Start a project**
 
-Kickstarter walks me through Basics → Story → Rewards → Payment → Submit.
+Kickstarter walks me through Basics â†’ Story â†’ Rewards â†’ Payment â†’ Submit.
 
 ---
 
-## Step 2 — Account verification
+## Step 2 â€” Account verification
 
 If Kickstarter prompts:
 
@@ -43,13 +43,13 @@ I do not publish until identity and bank steps show green in the dashboard.
 
 ---
 
-## Step 3 — Project basics
+## Step 3 â€” Project basics
 
 | Field | Value |
 |-------|-------|
-| Project title | `CyberThreatGotchi — Edge IPS with a Tamagotchi Soul` |
+| Project title | `CyberThreatGotchi â€” Edge IPS with a Tamagotchi Soul` |
 | Subtitle | `Real threats in. Mood out. Evidence saved. Philly-made edge IPS.` |
-| Category | Technology → Hardware |
+| Category | Technology â†’ Hardware |
 | Location | Philadelphia, PA, United States |
 | Funding goal | **$35,000** USD |
 | Duration | **30 days** |
@@ -63,25 +63,25 @@ After Kickstarter assigns the real URL, I copy it from the browser address bar o
 
 ---
 
-## Step 4 — Story tab (paste description)
+## Step 4 â€” Story tab (paste description)
 
 1. Open [KICKSTARTER_DASHBOARD_PASTE.md](KICKSTARTER_DASHBOARD_PASTE.md)
 2. Copy the **Project description** block into Kickstarter **Story**
 3. Upload hero video or embed link
-4. Add 3–5 images (core kit, e-ink mood, Cardputer, assembly bench)
+4. Add 3â€“5 images (core kit, e-ink mood, Cardputer, assembly bench)
 5. Paste **Risks and challenges** into the Risks section
 6. Paste **Environmental commitments** into Environmental commitments
 7. Add FAQ entries from the paste doc
 
 ---
 
-## Step 5 — Rewards tab (exact tiers)
+## Step 5 â€” Rewards tab (exact tiers)
 
 Create each reward from the paste doc table. Amounts must match shop/Kickstarter preview (commit `b3176e2`):
 
 | Tier | Pledge | Limit |
 |------|--------|-------|
-| Digital Defender | $15 | ∞ |
+| Digital Defender | $15 | âˆž |
 | Early Bird Core | $149 | 50 |
 | Cipherhorn Core | $219 | 300 |
 | Field Pack | $279 | 150 |
@@ -96,30 +96,30 @@ For each tier:
 1. **Reward title** and **Pledge amount** as above
 2. **Quantity limit** where listed
 3. **Description** from paste doc snippets
-4. **Estimated delivery** — Oct 2026 (Core), Nov 2026 (Field/Pro), etc. per paste doc timeline
-5. **Shipping** — Digital: none. Hardware: "Ships to certain countries" → US + select EU/CA/UK for Core/Field/Digital only (see campaign doc)
+4. **Estimated delivery** â€” Oct 2026 (Core), Nov 2026 (Field/Pro), etc. per paste doc timeline
+5. **Shipping** â€” Digital: none. Hardware: "Ships to certain countries" â†’ US + select EU/CA/UK for Core/Field/Digital only (see campaign doc)
 
 ---
 
-## Step 6 — Payment — connect bank
+## Step 6 â€” Payment â€” connect bank
 
-1. Kickstarter dashboard → **Payment** section
+1. Kickstarter dashboard â†’ **Payment** section
 2. Connect **Stripe** (Kickstarter's payment partner) with Hacker Planet LLC bank details
 3. Confirm tax/entity info for US LLC
-4. Save — wait for "Payment processing ready" status
+4. Save â€” wait for "Payment processing ready" status
 
-I never put bank secrets in the repo — dashboard only.
+I never put bank secrets in the repo â€” dashboard only.
 
 ---
 
-## Step 7 — Wire live URL to hackerplanet.dev
+## Step 7 â€” Wire live URL to hackerplanet.dev
 
 When Kickstarter shows my project preview URL (even pre-launch), I update the site config.
 
 Open the config file in my editor:
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Replace the placeholder in `website/js/kickstarter.config.js`:
@@ -145,18 +145,18 @@ Commit and push when ready (see team workflow).
 
 ---
 
-## Step 8 — Submit for review
+## Step 8 â€” Submit for review
 
-1. Kickstarter → **Review** / **Submit for review**
+1. Kickstarter â†’ **Review** / **Submit for review**
 2. Fix any validation errors (image size, reward shipping, video)
-3. Submit — review typically **1–3 business days**
+3. Submit â€” review typically **1â€“3 business days**
 4. I stay in **Preview** mode until approved; I share preview link with trusted reviewers only
 
 ---
 
-## Step 9 — Launch day (after approval)
+## Step 9 â€” Launch day (after approval)
 
-1. Kickstarter → **Launch** at scheduled time (see [KICKSTARTER_LAUNCH_PLAN.md](../KICKSTARTER_LAUNCH_PLAN.md) — target 10:00 AM ET Day 1)
+1. Kickstarter â†’ **Launch** at scheduled time (see [KICKSTARTER_LAUNCH_PLAN.md](../KICKSTARTER_LAUNCH_PLAN.md) â€” target 10:00 AM ET Day 1)
 2. Confirm `kickstarterProjectUrl` in config matches live URL
 3. Deploy website (GitHub Pages / hackerplanet.dev)
 4. Send preview email from `assets/marketing/kickstarter/kickstarter-preview.html` with `{{kickstarterProjectUrl}}` replaced
@@ -164,7 +164,7 @@ Commit and push when ready (see team workflow).
 
 ---
 
-## Quick reference — config key
+## Quick reference â€” config key
 
 | Item | Location |
 |------|----------|
@@ -179,11 +179,11 @@ Commit and push when ready (see team workflow).
 
 | Issue | Fix |
 |-------|-----|
-| Identity verification pending | Wait 24–48h; re-upload clear ID photo |
+| Identity verification pending | Wait 24â€“48h; re-upload clear ID photo |
 | Bank connection failed | Confirm LLC legal name matches bank account |
 | Reward shipping errors | Set digital tier to "No shipping"; hardware tiers need weight estimates |
-| Site still shows "Notify me" | URL still contains placeholder slug — paste exact live Kickstarter URL |
+| Site still shows "Notify me" | URL still contains placeholder slug â€” paste exact live Kickstarter URL |
 
 ---
 
-*Defensive use only · Authorized networks only · © Hacker Planet LLC*
+*Defensive use only Â· Authorized networks only Â· Â© Hacker Planet LLC*

@@ -1,8 +1,8 @@
-# eBay partner fulfillment runbook
+﻿# eBay partner fulfillment runbook
 
-**Hacker Planet LLC** — manual eBay sourcing for curated partner hardware. Customer pays HPL via Stripe → operator buys on eBay → ships to customer. **No** stored marketplace cards, **no** eBay API auto-purchase.
+**Hacker Planet LLC** â€” manual eBay sourcing for curated partner hardware. Customer pays HPL via Stripe â†’ operator buys on eBay â†’ ships to customer. **No** stored marketplace cards, **no** eBay API auto-purchase.
 
-Public language: **partner fulfillment** or **curated hardware** — never “dropship” on the website.
+Public language: **partner fulfillment** or **curated hardware** â€” never â€œdropshipâ€ on the website.
 
 ---
 
@@ -18,27 +18,27 @@ Public language: **partner fulfillment** or **curated hardware** — never “dr
 | `dsMeshtasticHeltec` | Etsy (LayerFabUK) | eBay fallback if Etsy OOS |
 | `dsNetgotchi` / Pro | Etsy (OlleAdventures) | eBay fallback search only |
 
-Philadelphia direct-ship SKUs (`coreKit`, `cydStandard`, etc.) are **not** eBay-sourced — assembled in-house.
+Philadelphia direct-ship SKUs (`coreKit`, `cydStandard`, etc.) are **not** eBay-sourced â€” assembled in-house.
 
 ---
 
 ## My operator workflow
 
-1. **Stripe webhook / fulfillment queue** — confirm payment and pull customer ship-to (never log full payment payloads).
+1. **Stripe webhook / fulfillment queue** â€” confirm payment and pull customer ship-to (never log full payment payloads).
 
 2. **Export order packet**
    ```powershell
-   cd c:\Users\Owner\Projects\cyberThreatGotchi
+   cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
    ```
    ```powershell
    python scripts/ebay_fulfillment_export.py --stripe-key dsEsp32Cyd --ship-to "Name, 123 Main St, Philadelphia PA 19103" --json
    ```
    Or batch CSV under `data/ebay_exports/`.
 
-3. **Open operator dashboard** — `website/operator/fulfillment.html` (local API + `CTG_OPERATOR_TOKEN`):
-   - **Copy ship-to** — paste into eBay checkout.
-   - **Search eBay (partner source)** — opens `ebaySearchUrl` for the SKU.
-   - **Open supplier listing** — Etsy/Tindie primary when not eBay-only.
+3. **Open operator dashboard** â€” `website/operator/fulfillment.html` (local API + `CTG_OPERATOR_TOKEN`):
+   - **Copy ship-to** â€” paste into eBay checkout.
+   - **Search eBay (partner source)** â€” opens `ebaySearchUrl` for the SKU.
+   - **Open supplier listing** â€” Etsy/Tindie primary when not eBay-only.
 
 4. **Buy on eBay manually**
    - Ship **directly to customer** (not HPL warehouse unless forwarding).
@@ -48,33 +48,33 @@ Philadelphia direct-ship SKUs (`coreKit`, `cydStandard`, etc.) are **not** eBay-
 
 5. **Record fulfillment**
    - Paste eBay order ID into fulfillment queue (`supplier_order_id`).
-   - Set status → **Ordered at supplier** → **Shipped** with carrier tracking URL.
+   - Set status â†’ **Ordered at supplier** â†’ **Shipped** with carrier tracking URL.
    - Run `python scripts/dropship_order_export.py` for non-eBay partner SKUs as needed.
 
-6. **Customer email** — HPL-branded shipment notice with tracking; include authorized-lab disclaimer for RF tools.
+6. **Customer email** â€” HPL-branded shipment notice with tracking; include authorized-lab disclaimer for RF tools.
 
 ---
 
 ## Margin check (before checkout)
 
-Export includes `retail_usd`, `supplier_cost_usd`, and `est_margin_usd`. If eBay listing exceeds retail minus Stripe/fees, **pause** and email customer (substitute SKU or partial refund) — do not eat loss without approval.
+Export includes `retail_usd`, `supplier_cost_usd`, and `est_margin_usd`. If eBay listing exceeds retail minus Stripe/fees, **pause** and email customer (substitute SKU or partial refund) â€” do not eat loss without approval.
 
 ---
 
 ## Security
 
 - Never commit eBay passwords or payment instruments.
-- Never scrape eBay listing images into the shop — link out only.
+- Never scrape eBay listing images into the shop â€” link out only.
 - Rate-limit operator API; use `CTG_WEB_API_TOKEN` on mutating routes when exposed.
 
 ---
 
 ## Related docs
 
-- [DROPSHIP_FULFILLMENT_RUNBOOK.md](DROPSHIP_FULFILLMENT_RUNBOOK.md) — Etsy / Tindie / AliExpress
-- [MARKET_PRICING_EBAY.md](MARKET_PRICING_EBAY.md) — price sanity table
-- [ORDER_FULFILLMENT.md](ORDER_FULFILLMENT.md) — queue + Stripe metadata
+- [DROPSHIP_FULFILLMENT_RUNBOOK.md](DROPSHIP_FULFILLMENT_RUNBOOK.md) â€” Etsy / Tindie / AliExpress
+- [MARKET_PRICING_EBAY.md](MARKET_PRICING_EBAY.md) â€” price sanity table
+- [ORDER_FULFILLMENT.md](ORDER_FULFILLMENT.md) â€” queue + Stripe metadata
 
 ---
 
-*Hacker Planet LLC · Philadelphia, PA*
+*Hacker Planet LLC Â· Philadelphia, PA*

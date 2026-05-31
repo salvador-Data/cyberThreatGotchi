@@ -42,11 +42,12 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 . (Join-Path $PSScriptRoot 'CTG-AdminCommon.ps1')
+. (Join-Path $PSScriptRoot 'CTG-Paths.ps1')
 
 $buildExclusionPaths = @(
     'C:\pio\',
-    'C:\Users\Owner\Projects\M5_OS-Cardputer\.pio',
-    'C:\Users\Owner\Projects'
+    (Join-Path (Get-CtgSiblingRepo 'M5_OS-Cardputer') '.pio'),
+    (Get-CtgProgramsRoot)
 )
 
 function Write-DefenderBanner {

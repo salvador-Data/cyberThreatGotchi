@@ -1,6 +1,6 @@
-# Kali on VirtualBox — seamless mode
+﻿# Kali on VirtualBox â€” seamless mode
 
-**Hacker Planet LLC · Philadelphia, PA · authorized lab use only**
+**Hacker Planet LLC Â· Philadelphia, PA Â· authorized lab use only**
 
 Seamless mode integrates the Kali guest desktop with your Windows host: Kali windows appear on the host without the VirtualBox frame. This is the preferred way to run the CTG lab VM named **kali** day to day.
 
@@ -11,7 +11,7 @@ Seamless mode integrates the Kali guest desktop with your Windows host: Kali win
 From the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 .\scripts\windows\Start-KaliSeamless.ps1
 ```
 
@@ -35,16 +35,16 @@ CTG Lab Playground option **7**, `Start-CTGLab.ps1`, and `Deploy-KaliLab.ps1 -St
 
 Seamless is best when you want Kali terminals and browsers beside Windows Wireshark and Cursor. Full screen is better for long in-guest-only sessions (e.g. Burp on a single monitor).
 
-**Host key** defaults to **Right Ctrl** unless you changed it in VirtualBox → File → Preferences → Input.
+**Host key** defaults to **Right Ctrl** unless you changed it in VirtualBox â†’ File â†’ Preferences â†’ Input.
 
 ## Requirements
 
 1. **Oracle VirtualBox** 6.1+ (7.x supported; script sets optional `GUI/SeamlessMode` extradata).
-2. **Guest Additions** in Kali — packages `virtualbox-guest-x11`, `virtualbox-guest-utils`, `dkms`.
+2. **Guest Additions** in Kali â€” packages `virtualbox-guest-x11`, `virtualbox-guest-utils`, `dkms`.
 3. Guest logged in to a graphical session (GDM/X11; autopatch sets `WaylandEnable=false` for VirtualBox stability).
 4. **`GUI/Seamless=on` extradata** on the VM (set automatically by `Start-KaliSeamless.ps1`).
 
-Without Guest Additions or without a graphical login, seamless start fails. The host script falls back to a normal GUI window and logs fix steps. On VirtualBox 7.x there is no `controlvm seamless on` — use **Host+L** after login.
+Without Guest Additions or without a graphical login, seamless start fails. The host script falls back to a normal GUI window and logs fix steps. On VirtualBox 7.x there is no `controlvm seamless on` â€” use **Host+L** after login.
 
 ## Fix missing Guest Additions
 
@@ -92,6 +92,6 @@ Toggle anytime: **Host + L** (Host key defaults to Right Ctrl).
 
 ## Related docs
 
-- [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) — master lab autorun
-- [CTG_LAB_PLAYGROUND.md](CTG_LAB_PLAYGROUND.md) — playground menu option 7
+- [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) â€” master lab autorun
+- [CTG_LAB_PLAYGROUND.md](CTG_LAB_PLAYGROUND.md) â€” playground menu option 7
 - Blank screen after login: `fix-kali-blank-screen.sh` / `Fix-KaliBlankScreen.ps1`

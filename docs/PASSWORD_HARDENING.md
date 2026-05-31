@@ -1,13 +1,13 @@
-# Password hardening — Windows, Kali, iPhone
+﻿# Password hardening â€” Windows, Kali, iPhone
 
-**Hacker Planet LLC / CyberThreatGotchi** — authorized defensive policy for **owned** systems.  
+**Hacker Planet LLC / CyberThreatGotchi** â€” authorized defensive policy for **owned** systems.  
 **No secrets in git.** Recovery material lives in **DuckDuckGo Password Manager** (DDG PM), not in this repo.
 
 **Companions:**
-- [IPHONE_HARDENING.md](IPHONE_HARDENING.md) — preserve DDG PM on iPhone; Phase 1 checklist
-- [KALI_RETBLEED.md](KALI_RETBLEED.md) — separate CPU mitigation topic
-- [scripts/windows/Repair-WindowsSignIn.ps1](../scripts/windows/Repair-WindowsSignIn.ps1) — Sign-in UI diagnostics (never sets password)
-- [scripts/windows/ADMIN_STEPS.md](../scripts/windows/ADMIN_STEPS.md) — local vs Microsoft account recovery
+- [IPHONE_HARDENING.md](IPHONE_HARDENING.md) â€” preserve DDG PM on iPhone; Phase 1 checklist
+- [KALI_RETBLEED.md](KALI_RETBLEED.md) â€” separate CPU mitigation topic
+- [scripts/windows/Repair-WindowsSignIn.ps1](../scripts/windows/Repair-WindowsSignIn.ps1) â€” Sign-in UI diagnostics (never sets password)
+- [scripts/windows/ADMIN_STEPS.md](../scripts/windows/ADMIN_STEPS.md) â€” local vs Microsoft account recovery
 
 ---
 
@@ -21,7 +21,7 @@
 | Min password length | **12+** if weaker today | OS default + strong passphrase in DDG PM |
 | Password manager | **Keep DuckDuckGo PM** | Same vault for lab login passphrase |
 
-CTG scripts **configure policy only** — they do **not** generate, read, or commit passwords.
+CTG scripts **configure policy only** â€” they do **not** generate, read, or commit passwords.
 
 ---
 
@@ -31,9 +31,9 @@ CTG scripts **configure policy only** — they do **not** generate, read, or com
 
 | Platform | Role |
 |----------|------|
-| **iPhone** | Primary mobile vault — Apple ID, Wi‑Fi, lab recovery codes ([IPHONE_HARDENING.md](IPHONE_HARDENING.md)) |
-| **Windows** | Browser extension / app — local account, VM credentials, encrypted backup passwords |
-| **Kali** | Store lab user passphrase and lockout recovery notes in DDG PM on phone/Windows — not on shared folder |
+| **iPhone** | Primary mobile vault â€” Apple ID, Wiâ€‘Fi, lab recovery codes ([IPHONE_HARDENING.md](IPHONE_HARDENING.md)) |
+| **Windows** | Browser extension / app â€” local account, VM credentials, encrypted backup passwords |
+| **Kali** | Store lab user passphrase and lockout recovery notes in DDG PM on phone/Windows â€” not on shared folder |
 
 **Recovery codes:** When enabling 2FA (Microsoft, GitHub, Apple), save codes in DDG PM immediately. CTG docs never duplicate them.
 
@@ -60,7 +60,7 @@ CTG scripts **configure policy only** — they do **not** generate, read, or com
 One command per step:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -75,9 +75,9 @@ cd c:\Users\Owner\Projects\cyberThreatGotchi
 
 | Account type | Where to reset |
 |--------------|----------------|
-| **Microsoft account** | [account.microsoft.com/security](https://account.microsoft.com/security) — PIN/Hello may mask password UI; use web or “I forgot my PIN” |
-| **Local account** | `Ctrl+Alt+Del` → Change a password; or `Win+R` → `netplwiz` |
-| **Sign-in UI broken** | `Repair-WindowsSignIn.ps1 -DiagnoseOnly` then `-ApplySafeFixes` (Admin) — still **no** automatic password change |
+| **Microsoft account** | [account.microsoft.com/security](https://account.microsoft.com/security) â€” PIN/Hello may mask password UI; use web or â€œI forgot my PINâ€ |
+| **Local account** | `Ctrl+Alt+Del` â†’ Change a password; or `Win+R` â†’ `netplwiz` |
+| **Sign-in UI broken** | `Repair-WindowsSignIn.ps1 -DiagnoseOnly` then `-ApplySafeFixes` (Admin) â€” still **no** automatic password change |
 
 ---
 
@@ -96,7 +96,7 @@ sudo bash /mnt/ctg/harden-password-policy.sh --apply --lab-user=sal
 
 **Bootstrap:** `kali-lab-bootstrap.sh` invokes `--apply` during harden phase.
 
-**SSH keys-only:** If `PasswordAuthentication no` in `sshd_config`, script **does not** re-enable password auth — faillock protects console/GDM only.
+**SSH keys-only:** If `PasswordAuthentication no` in `sshd_config`, script **does not** re-enable password auth â€” faillock protects console/GDM only.
 
 ### faillock
 
@@ -141,4 +141,4 @@ See [IPHONE_HARDENING.md](IPHONE_HARDENING.md):
 | `scripts/kali/harden-password-policy.sh` | Kali faillock + chage |
 | `scripts/kali/fix-retbleed-mitigation.sh` | CPU mitigations (separate doc) |
 
-**Authorized use:** Hacker Planet LLC lab — systems you own.
+**Authorized use:** Hacker Planet LLC lab â€” systems you own.

@@ -1,13 +1,13 @@
-# Kali lab scripts — CyberThreatGotchi
+﻿# Kali lab scripts â€” CyberThreatGotchi
 
-**Authorized defensive lab use only** · [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/)
+**Authorized defensive lab use only** Â· [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/)
 
 ## Quick start
 
-From **Windows** (master deploy — DuckDuckGo preserve **on** by default):
+From **Windows** (master deploy â€” DuckDuckGo preserve **on** by default):
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -20,7 +20,7 @@ Optional: force Kali resolv.conf to DuckDuckGo only:
 .\scripts\windows\Deploy-KaliLab.ps1 -StartVmIfStopped -DdgDnsOnly
 ```
 
-**Blank screen after login?** See [docs/CTG_LAB_AUTORUN.md](../../docs/CTG_LAB_AUTORUN.md) § Blank screen. Windows: `.\scripts\windows\Fix-KaliBlankScreen.ps1`. In-guest TTY: `sudo bash /mnt/ctg/fix-kali-blank-screen.sh`.
+**Blank screen after login?** See [docs/CTG_LAB_AUTORUN.md](../../docs/CTG_LAB_AUTORUN.md) Â§ Blank screen. Windows: `.\scripts\windows\Fix-KaliBlankScreen.ps1`. In-guest TTY: `sudo bash /mnt/ctg/fix-kali-blank-screen.sh`.
 
 From **inside Kali** (after install):
 
@@ -50,13 +50,13 @@ sudo bash /tmp/kali-lab-bootstrap.sh --no-lab-anonymity
 
 ## Rogue AP guard (passive WiFi)
 
-Detect duplicate SSIDs, open networks, and evil-twin hints — **no deauth, no jamming**.
+Detect duplicate SSIDs, open networks, and evil-twin hints â€” **no deauth, no jamming**.
 
 ```bash
 sudo bash /mnt/ctg/rogue-ap-guard.sh -k "YourHomeSSID"
 ```
 
-Install copy: `~/Backups/kali-wifi-guard/rogue-ap-guard.sh` · Log: `~/Backups/logs/rogue-ap-guard.log`
+Install copy: `~/Backups/kali-wifi-guard/rogue-ap-guard.sh` Â· Log: `~/Backups/logs/rogue-ap-guard.log`
 
 See [docs/DEFENSE_DDOS_ROGUE_WIFI.md](../../docs/DEFENSE_DDOS_ROGUE_WIFI.md).
 
@@ -66,7 +66,7 @@ Same rules as [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md):
 
 - Do **not** replace DuckDuckGo VPN/DNS on Windows, iPhone, or home router.
 - Kali: `--preserve-ddg-dns` (default) skips changes when DDG already in `resolv.conf`.
-- OPNsense lab: [docs/OPNSENSE_LAB_DNS.md](../../docs/OPNSENSE_LAB_DNS.md) — forward to `94.140.14.14` / `94.140.15.15` only; no NextDNS/Cloudflare stack.
+- OPNsense lab: [docs/OPNSENSE_LAB_DNS.md](../../docs/OPNSENSE_LAB_DNS.md) â€” forward to `94.140.14.14` / `94.140.15.15` only; no NextDNS/Cloudflare stack.
 
 ## Files
 
@@ -75,22 +75,22 @@ Same rules as [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md):
 | `kali-lab-bootstrap.sh` | Monolithic bootstrap: DDG preserve, lab anonymity (Tor/proxychains), harden, ClamAV, passive Snort, OSINT apt, Realtek detect, WiFi Option 2 |
 | `ctg-wifi-lab-autorun.sh` | USB Realtek detect, OOT driver, lab WPA3-SAE connect (WPA2 fallback), eth promisc + optional WiFi monitor |
 | `ctg-ids-ips-autorun.sh` | ClamAV + passive Snort/Suricata IDS; optional `--EnableIPS` (lab VLAN) |
-| `lab-wifi.conf.example` | Lab SSID/PSK template → `/etc/ctg/lab-wifi.conf` (mode 600, gitignored) |
-| `lab-targets.example` | Authorized targets template — copy to `lab-targets.conf` (gitignored) |
+| `lab-wifi.conf.example` | Lab SSID/PSK template â†’ `/etc/ctg/lab-wifi.conf` (mode 600, gitignored) |
+| `lab-targets.example` | Authorized targets template â€” copy to `lab-targets.conf` (gitignored) |
 | `ansible/` | Optional Ansible mirror (includes `ddg-dns` role) |
 
 ## WiFi profiles
 
 | Profile | Use |
 |---------|-----|
-| `company-lab` (default) | Hacker Planet lab VLAN / owned AP — legal regdomain, link-quality tuning |
+| `company-lab` (default) | Hacker Planet lab VLAN / owned AP â€” legal regdomain, link-quality tuning |
 | `home-conservative` | Minimal RF changes for home NAT VM |
 
 No illegal regdomain bypass or TX power overrides in this repo.
 
 ## WiFi + Ethernet capture (promisc vs monitor)
 
-**Ethernet (CAT5):** classic `ip link set promisc on` when cable is plugged — sees LAN-segment frames.  
+**Ethernet (CAT5):** classic `ip link set promisc on` when cable is plugged â€” sees LAN-segment frames.  
 **WiFi:** `promisc` on wlan is usually **not** enough; use **`airmon-ng`** monitor mode for 802.11 Wireshark capture.
 
 Both interfaces can be configured at once (different paths). See [docs/KALI_WIFI_ETH_PROMISC.md](../../docs/KALI_WIFI_ETH_PROMISC.md).
@@ -121,9 +121,9 @@ sudo bash /mnt/ctg/kali-boot-autopatch.sh --wifi-lab
 
 Copy and edit locally (gitignored):
 
-- `/etc/ctg/lab-wifi.conf` — from `lab-wifi.conf.example`
-- `/etc/environment.d/ctg-osint.env` — Shodan, Censys, VT placeholders
-- `ansible/group_vars/realtek.yml` — from `realtek.yml.example`
+- `/etc/ctg/lab-wifi.conf` â€” from `lab-wifi.conf.example`
+- `/etc/environment.d/ctg-osint.env` â€” Shodan, Censys, VT placeholders
+- `ansible/group_vars/realtek.yml` â€” from `realtek.yml.example`
 
 ## Architecture
 

@@ -1,4 +1,4 @@
-# Wireshark IDS + SMS alerts — CyberThreatGotchi Windows SOC
+﻿# Wireshark IDS + SMS alerts â€” CyberThreatGotchi Windows SOC
 
 **Authorized defensive use only** on networks and hosts you own or are explicitly permitted to monitor.
 
@@ -6,7 +6,7 @@
 
 | Capability | Windows (this stack) | Full IPS (recommended) |
 |------------|----------------------|-------------------------|
-| Packet capture | Yes — `tshark` ring buffer to `Backups\pcap\` | SPAN/tap + OPNsense |
+| Packet capture | Yes â€” `tshark` ring buffer to `Backups\pcap\` | SPAN/tap + OPNsense |
 | IDS heuristics | Port scan, SYN flood hints, DNS tunnel length, ARP duplicate MAC, CTG payload signatures | Suricata/Snort rulesets |
 | Snort (optional) | Parses alert log if Snort installed on Windows | Kali passive Snort or OPNsense |
 | SMS alerts | Twilio via env vars | Same |
@@ -19,14 +19,14 @@ Wireshark on Windows is **not** a full inline IPS. Promiscuous WiFi capture is l
 1. Install Wireshark + Npcap:
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
 .\scripts\windows\Install-WiresharkNpcap.ps1
 ```
 
-2. Configure Twilio SMS in **local `.env`** (gitignored — never commit):
+2. Configure Twilio SMS in **local `.env`** (gitignored â€” never commit):
 
 ```env
 TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -35,7 +35,7 @@ TWILIO_FROM_NUMBER=+1xxxxxxxxxx
 CTG_ALERT_SMS_TO=+1XXXXXXXXXX
 ```
 
-Use E.164 format for `CTG_ALERT_SMS_TO` (your mobile — set locally only).
+Use E.164 format for `CTG_ALERT_SMS_TO` (your mobile â€” set locally only).
 
 3. Verify diagnose mode:
 
@@ -79,7 +79,7 @@ Specify interface (from `tshark -D`):
 
 | Path | Content |
 |------|---------|
-| `%USERPROFILE%\Backups\pcap\ctg-YYYY-MM-DD.pcapng` | Ring-buffer capture (50 MB × 48 files, time rotation) |
+| `%USERPROFILE%\Backups\pcap\ctg-YYYY-MM-DD.pcapng` | Ring-buffer capture (50 MB Ã— 48 files, time rotation) |
 | `%USERPROFILE%\Backups\pcap\snippets\` | High-severity alert window extracts |
 | `%USERPROFILE%\Backups\logs\wireshark-ids.log` | Text log |
 | `%USERPROFILE%\Backups\logs\wireshark-alerts.json` | Structured alerts |
@@ -90,12 +90,12 @@ When SSD **D:** is online and writable, paths use `D:\Backups\` instead of `%USE
 
 ## Detection patterns (basic)
 
-- **Port scan** — many distinct destination ports from one source
-- **SYN flood hint** — high SYN-without-ACK count to one target/port
-- **DNS tunnel hint** — unusually long DNS query names
-- **ARP spoof hint** — same IP observed with multiple MAC addresses
-- **CTG signatures** — payload matches from `rules/signatures.py` (SQLi, RCE, etc.)
-- **Snort** — parses classic Snort alert file when present
+- **Port scan** â€” many distinct destination ports from one source
+- **SYN flood hint** â€” high SYN-without-ACK count to one target/port
+- **DNS tunnel hint** â€” unusually long DNS query names
+- **ARP spoof hint** â€” same IP observed with multiple MAC addresses
+- **CTG signatures** â€” payload matches from `rules/signatures.py` (SQLi, RCE, etc.)
+- **Snort** â€” parses classic Snort alert file when present
 
 High/critical severity triggers SMS (rate-limited) and optional pcap snippet.
 
@@ -109,7 +109,7 @@ echo '*.* @@192.168.56.1:514' | sudo tee /etc/rsyslog.d/50-ctg-forward.conf
 sudo systemctl restart rsyslog
 ```
 
-On Windows, ingest with Wazuh agent or a syslog receiver; correlate with `wireshark-alerts.json`. Kali bootstrap installs passive Snort — primary network IPS remains **Suricata on OPNsense**.
+On Windows, ingest with Wazuh agent or a syslog receiver; correlate with `wireshark-alerts.json`. Kali bootstrap installs passive Snort â€” primary network IPS remains **Suricata on OPNsense**.
 
 See [scripts/kali/README_KALI_LAB.md](../scripts/kali/README_KALI_LAB.md) and [CTG_SHIELD_SIEM_PLAYBOOK.md](CTG_SHIELD_SIEM_PLAYBOOK.md).
 
@@ -131,5 +131,5 @@ See [scripts/kali/README_KALI_LAB.md](../scripts/kali/README_KALI_LAB.md) and [C
 
 - Never commit `.env`, Twilio tokens, or phone numbers
 - SMS bodies avoid full packet payloads or secrets
-- `-BlockRepeatOffenders` can lock out legitimate IPs if mis-tuned — lab only
+- `-BlockRepeatOffenders` can lock out legitimate IPs if mis-tuned â€” lab only
 - Full production IPS: deploy OPNsense + Suricata on your perimeter VLAN

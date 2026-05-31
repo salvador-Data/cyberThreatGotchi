@@ -1,4 +1,4 @@
-# Windows Wi-Fi repair (conservative)
+﻿# Windows Wi-Fi repair (conservative)
 
 Authorized use on **Andy-owned** Windows SOC laptops. Does not attack networks or delete saved SSIDs.
 
@@ -10,7 +10,7 @@ Authorized use on **Andy-owned** Windows SOC laptops. Does not attack networks o
 |------|----------------|
 | Default / `-DiagnoseOnly` | WlanSvc, adapters, netsh WLAN state, profile **count** (names preview), DDG DNS check, DDG VPN preserve |
 | `-ApplyFixes` (Admin) | Restart **WlanSvc**, **enable** disabled Wi-Fi adapters, **`ipconfig /flushdns`** only |
-| `-ResetStack` (with `-ApplyFixes`) | **Explicit only:** `netsh winsock reset` + `netsh int ip reset` — reboot required; may disturb VPN until reconnect |
+| `-ResetStack` (with `-ApplyFixes`) | **Explicit only:** `netsh winsock reset` + `netsh int ip reset` â€” reboot required; may disturb VPN until reconnect |
 
 **Never from this script:** mass profile deletion, changing DNS servers, installing alternate VPNs, router changes.
 
@@ -38,12 +38,12 @@ Kali guest WiFi (WPA3-SAE): see [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md).
 ## Run
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 .\scripts\windows\Repair-WindowsWifi.ps1 -DiagnoseOnly
 ```
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 .\scripts\windows\Run-AsAdmin.ps1 -TargetScript .\scripts\windows\Repair-WindowsWifi.ps1 -TargetArguments '-ApplyFixes'
 ```
 

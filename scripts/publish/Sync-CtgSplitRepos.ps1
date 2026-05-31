@@ -20,10 +20,11 @@
 param()
 
 $ErrorActionPreference = 'Stop'
-$MonoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$Projects = Split-Path $MonoRoot -Parent
-$KaliRepo = Join-Path $Projects 'ctg-kali-lab'
-$WinRepo = Join-Path $Projects 'ctg-windows-soc'
+. (Join-Path $PSScriptRoot '..\windows\CTG-Paths.ps1')
+$MonoRoot = Get-CtgRepoRoot -FromPath $PSScriptRoot
+$Programs = Get-CtgProgramsRoot
+$KaliRepo = Join-Path $Programs 'ctg-kali-lab'
+$WinRepo = Join-Path $Programs 'ctg-windows-soc'
 
 function Copy-CtgTree {
     param(

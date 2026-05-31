@@ -1,13 +1,13 @@
-# SEO — Salvador do now (hackerplanet.dev)
+﻿# SEO â€” Salvador do now (hackerplanet.dev)
 
-One page, run in order from repo root (`c:\Users\Owner\Projects\cyberThreatGotchi`). Last automated run: checklist **PASS**, IndexNow **200 (14 URLs)**, `CF_API_TOKEN` **not set** (I use manual DNS or set token before step 2).
+One page, run in order from repo root (`C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi`). Last automated run: checklist **PASS**, IndexNow **200 (14 URLs)**, `CF_API_TOKEN` **not set** (I use manual DNS or set token before step 2).
 
 ## 1. Confirm live site (30 sec)
 
 Go to the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Run the automated go-live checklist:
@@ -25,10 +25,10 @@ Expect: `PASS - all automated checks OK`.
 Go to the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
-Optional — set Cloudflare token in this session only (never commit the token):
+Optional â€” set Cloudflare token in this session only (never commit the token):
 
 ```powershell
 $env:CF_API_TOKEN = "your_cloudflare_edit_zone_dns_token"
@@ -45,7 +45,7 @@ Run the all-engines go-live script:
 Go to the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Skip DNS prompts and open dashboards + IndexNow:
@@ -59,7 +59,7 @@ Skip DNS prompts and open dashboards + IndexNow:
 Go to the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Print GSC/Bing DNS record shapes:
@@ -75,7 +75,7 @@ Add GSC **TXT** on `@` and Bing **CNAME** (grey cloud / DNS only) in [Cloudflare
 Go to the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Apply Google Search Console TXT via Cloudflare API:
@@ -94,16 +94,16 @@ Replace `PASTE_FROM_GSC` with the **exact** TXT value Google Search Console show
 
 ### Troubleshooting: Cloudflare API error 9109
 
-If the script prints `"code": 9109` (often `Unauthorized to access requested resource` or `Cannot use the access token from location`), the token is rejected before DNS can be created. **Never paste API tokens in chat, commits, or screenshots** — revoke any leaked token at [API tokens](https://dash.cloudflare.com/profile/api-tokens) and create a new one.
+If the script prints `"code": 9109` (often `Unauthorized to access requested resource` or `Cannot use the access token from location`), the token is rejected before DNS can be created. **Never paste API tokens in chat, commits, or screenshots** â€” revoke any leaked token at [API tokens](https://dash.cloudflare.com/profile/api-tokens) and create a new one.
 
 **Cloudflare token permission checklist (exact)**
 
 | Setting | Required value |
 |--------|----------------|
 | Token type | Custom token or **Edit zone DNS** template |
-| Permission 1 | **Zone → DNS → Edit** |
-| Permission 2 | **Zone → Zone → Read** |
-| Zone resources | **Include → Specific zone → `hackerplanet.dev`** (not a different zone) |
+| Permission 1 | **Zone â†’ DNS â†’ Edit** |
+| Permission 2 | **Zone â†’ Zone â†’ Read** |
+| Zone resources | **Include â†’ Specific zone â†’ `hackerplanet.dev`** (not a different zone) |
 | Account | `a819200afa7f246ea8bdb770f634ab84` |
 | Zone ID (script default) | `c81e69edbf957423a22392798309fc35` |
 | Optional override | `$env:CF_ZONE_ID = "c81e69edbf957423a22392798309fc35"` |
@@ -111,12 +111,12 @@ If the script prints `"code": 9109` (often `Unauthorized to access requested res
 
 Create or edit token: [dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens)
 
-**Verify token can read the zone (session only — use real token locally):**
+**Verify token can read the zone (session only â€” use real token locally):**
 
 Go to the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Set token for this PowerShell session only:
@@ -136,7 +136,7 @@ If verify fails with 9109, fix permissions/zone scope or IP filter, then retry. 
 Go to the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Apply Google Search Console TXT (replace with value copied from GSC):
@@ -145,19 +145,19 @@ Apply Google Search Console TXT (replace with value copied from GSC):
 py scripts/seo_verification_dns.py --google-txt "google-site-verification=YOUR_ACTUAL_GSC_VALUE"
 ```
 
-**Manual alternative — Google Search Console TXT (no API token)**
+**Manual alternative â€” Google Search Console TXT (no API token)**
 
 Use this when 9109 persists or I prefer the dashboard.
 
-1. Open [Google Search Console](https://search.google.com/search-console) → **Add property** → **Domain** → enter `hackerplanet.dev`.
-2. GSC shows a **TXT** record — copy the **full** content, e.g. `google-site-verification=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` (value differs per property).
-3. Open [Cloudflare DNS for hackerplanet.dev](https://dash.cloudflare.com/a819200afa7f246ea8bdb770f634ab84/hackerplanet.dev/dns/records) → **Add record**.
-4. Set **Type** = `TXT`, **Name** = `@` (apex; Cloudflare may display as `hackerplanet.dev`), **Content** = paste the exact GSC value, **TTL** = Auto → **Save**.
-5. Wait 1–5 minutes for DNS propagation, then in GSC click **Verify**.
-6. Optional — confirm TXT exists from repo root:
+1. Open [Google Search Console](https://search.google.com/search-console) â†’ **Add property** â†’ **Domain** â†’ enter `hackerplanet.dev`.
+2. GSC shows a **TXT** record â€” copy the **full** content, e.g. `google-site-verification=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` (value differs per property).
+3. Open [Cloudflare DNS for hackerplanet.dev](https://dash.cloudflare.com/a819200afa7f246ea8bdb770f634ab84/hackerplanet.dev/dns/records) â†’ **Add record**.
+4. Set **Type** = `TXT`, **Name** = `@` (apex; Cloudflare may display as `hackerplanet.dev`), **Content** = paste the exact GSC value, **TTL** = Auto â†’ **Save**.
+5. Wait 1â€“5 minutes for DNS propagation, then in GSC click **Verify**.
+6. Optional â€” confirm TXT exists from repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -168,14 +168,14 @@ Print-only; compares shapes to what I added in the dashboard.
 
 ## 3. Submit sitemap + request indexing
 
-In [Google Search Console](https://search.google.com/search-console) and [Bing Webmaster](https://www.bing.com/webmasters): property `hackerplanet.dev` → Sitemaps → `https://hackerplanet.dev/sitemap.xml` → URL inspection / Request indexing for `/`, `/hacker-planet.html`, `/cybersecurity-philadelphia.html`.
+In [Google Search Console](https://search.google.com/search-console) and [Bing Webmaster](https://www.bing.com/webmasters): property `hackerplanet.dev` â†’ Sitemaps â†’ `https://hackerplanet.dev/sitemap.xml` â†’ URL inspection / Request indexing for `/`, `/hacker-planet.html`, `/cybersecurity-philadelphia.html`.
 
 ## 4. Ping IndexNow (all sitemap URLs)
 
 Go to the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Ping IndexNow for all sitemap URLs:
@@ -186,7 +186,7 @@ py scripts/ping_indexnow.py
 
 Expect: `IndexNow OK (200)`.
 
-## 5. Check indexing (daily for 1–2 weeks)
+## 5. Check indexing (daily for 1â€“2 weeks)
 
 Search: `site:hackerplanet.dev` then `hacker planet philadelphia`. Early signal: homepage may appear before inner pages.
 
@@ -197,7 +197,7 @@ Search: `site:hackerplanet.dev` then `hacker planet philadelphia`. Early signal:
 Go to the repo root:
 
 ```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 Run go-live without DNS prompts (no token needed):
@@ -212,4 +212,4 @@ For API DNS apply, set `$env:CF_API_TOKEN` in a separate step first, then run wi
 .\scripts\seo_all_engines_go_live.ps1
 ```
 
-Detail: `docs/SEO_INDEXING_NOW.md` · Ranking: `docs/SEO_GET_ON_TOP.md`
+Detail: `docs/SEO_INDEXING_NOW.md` Â· Ranking: `docs/SEO_GET_ON_TOP.md`

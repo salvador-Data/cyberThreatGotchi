@@ -68,7 +68,7 @@ Write-Host ''
 Write-Step '--- Link this host to your Signal account (recommended) ---' 'Cyan'
 Write-Step 'Scan QR from your phone (Signal > Settings > Linked Devices > Link New Device):'
 Write-Step ''
-Write-Step 'cd C:\Users\Owner\Projects\cyberThreatGotchi' 'White'
+Write-Step "cd $(Get-CtgRepoRoot -FromPath $PSScriptRoot)" 'White'
 Write-Step ''
 if ($cli) {
     Write-Step "`"$cli`" --config `"$configDir`" link -n CTG-SOC" 'White'

@@ -1,19 +1,19 @@
-# Portfolio — Nightly Automation & Windows SOC Operations
+﻿# Portfolio â€” Nightly Automation & Windows SOC Operations
 
-**Author:** Andy Kowal · **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
-**GitHub:** [salvador-Data](https://github.com/salvador-Data) · **Flagship repo:** [CyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi)
+**Author:** Andy Kowal Â· **Organization:** [Hacker Planet LLC](https://salvador-Data.github.io/cyberThreatGotchi/) (Philadelphia, PA)  
+**GitHub:** [salvador-Data](https://github.com/salvador-Data) Â· **Flagship repo:** [CyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi)
 
-**Companions:** [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) — layered defensive stack (Sysmon, Wazuh, HWS, backups, VPN preserve) · [PORTFOLIO_FIRMWARE_OS.md](PORTFOLIO_FIRMWARE_OS.md) — M5 OS Cardputer firmware/OS (manual dev; **not** part of nightly task).
+**Companions:** [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md) â€” layered defensive stack (Sysmon, Wazuh, HWS, backups, VPN preserve) Â· [PORTFOLIO_FIRMWARE_OS.md](PORTFOLIO_FIRMWARE_OS.md) â€” M5 OS Cardputer firmware/OS (manual dev; **not** part of nightly task).
 
 ---
 
 ## Overview
 
-This portfolio piece documents **unattended Windows laptop automation** built for a founder workstation: a daily **4:00 AM** scheduled task that orchestrates resilient backup, **hackerplanet.dev** website hygiene, security posture checks, and auditable logging—without running disruptive full hardening every night.
+This portfolio piece documents **unattended Windows laptop automation** built for a founder workstation: a daily **4:00 AM** scheduled task that orchestrates resilient backup, **hackerplanet.dev** website hygiene, security posture checks, and auditable loggingâ€”without running disruptive full hardening every night.
 
 The design separates **gentle nightly maintenance** from **elevated SOC passes** (`ctg_soc_run_once.ps1`). Nightly work is idempotent, flag-gated, and honest about hardware reality (external SDK SSD often **No Media**, UAC, low **C:** disk). Nothing in scripts commits secrets; webhook and Wazuh manager values live in environment variables only.
 
-**Scope boundary:** **Windows laptop + hackerplanet.dev only.** M5Stack Cardputer PlatformIO uploads and microSD app installs remain **manual**—never scheduled by `HackerPlanet-CTG-Nightly-4AM`.
+**Scope boundary:** **Windows laptop + hackerplanet.dev only.** M5Stack Cardputer PlatformIO uploads and microSD app installs remain **manual**â€”never scheduled by `HackerPlanet-CTG-Nightly-4AM`.
 
 **Authorized use only:** systems you own or are explicitly permitted to administer (personal lab, CTG development host, future MSP kit narratives). Not for unauthorized monitoring or evasion.
 
@@ -79,18 +79,18 @@ flowchart TB
 
 ```
 04:00 Task Scheduler (Highest, WakeToRun)
-        ↓
+        â†“
 ctg_nightly_4am.ps1
-        ↓
-  Disk space C: / D:  →  SSD probe (Disk 1, D:\ writable)
-        ↓
+        â†“
+  Disk space C: / D:  â†’  SSD probe (Disk 1, D:\ writable)
+        â†“
   selective_ssd_backup  +  cloud_backup  (unless -SkipBackup)
-        ↓
+        â†“
   ctg_website_nightly  (ALWAYS: website/, docs/web/, portfolio, health GET)
-        ↓
+        â†“
   WU audit | Defender QuickScan | Sysmon | Wazuh | VPN preserve | Git dry-run
-        ↓
-  SOC logs → D:\Backups\logs\ (when SSD online) + OneDrive mirror
+        â†“
+  SOC logs â†’ D:\Backups\logs\ (when SSD online) + OneDrive mirror
 ```
 
 ---
@@ -119,21 +119,21 @@ Central orchestrator in `scripts/windows/ctg_nightly_4am.ps1`. Uses `CTG-AdminCo
 
 ### Orchestration order
 
-1. **Header** — timestamp, hostname, user, admin flag, scope (laptop + hackerplanet.dev)
-2. **Disk space** — **C:** and **D:** (if present); **WARN** if free &lt; 5 GB
-3. **SSD status** — `Get-CtgSsdStatus`: Disk 1 operational state, **No Media** detection, `mount_ssd_d.ps1` if offline (Admin), write probe under `D:\Backups`
-4. **Backup root resolution** — `D:\Backups\Andy-PC-YYYY-MM-DD` when SSD online/writable; else `C:\Users\Owner\Backups\Andy-PC-YYYY-MM-DD`
-5. **selective_ssd_backup.ps1** — user data + Projects (skipped with `-SkipBackup`)
-6. **cloud_backup.ps1** — manifest and log mirror to OneDrive (skipped with `-SkipBackup`)
-7. **ctg_website_nightly.ps1** — **always runs** (see below)
-8. **Windows Update audit** — list pending updates; install only with `-ApplyUpdates`
-9. **Defender QuickScan** — async `Start-MpScan -ScanType QuickScan`
-10. **Sysmon service** — status and start type (no install nightly)
-11. **Wazuh agent** — service status if `CTG_WAZUH_MANAGER` / `WAZUH_MANAGER` set
-12. **Preserve-DuckDuckGoVpn.ps1** — Defender exclusions for DDG WireGuard; no competing VPN installers
-13. **Git repos** — dry-run `git fetch` + `status` unless `-SyncRepos` (`git pull --ff-only`)
-14. **SOC log copy** — nightly + desktop logs to `D:\Backups\logs\` when SSD online
-15. **Summary line** — SSD status, backup root, error count, flag states
+1. **Header** â€” timestamp, hostname, user, admin flag, scope (laptop + hackerplanet.dev)
+2. **Disk space** â€” **C:** and **D:** (if present); **WARN** if free &lt; 5 GB
+3. **SSD status** â€” `Get-CtgSsdStatus`: Disk 1 operational state, **No Media** detection, `mount_ssd_d.ps1` if offline (Admin), write probe under `D:\Backups`
+4. **Backup root resolution** â€” `D:\Backups\Andy-PC-YYYY-MM-DD` when SSD online/writable; else `C:\Users\Owner\Backups\Andy-PC-YYYY-MM-DD`
+5. **selective_ssd_backup.ps1** â€” user data + Projects (skipped with `-SkipBackup`)
+6. **cloud_backup.ps1** â€” manifest and log mirror to OneDrive (skipped with `-SkipBackup`)
+7. **ctg_website_nightly.ps1** â€” **always runs** (see below)
+8. **Windows Update audit** â€” list pending updates; install only with `-ApplyUpdates`
+9. **Defender QuickScan** â€” async `Start-MpScan -ScanType QuickScan`
+10. **Sysmon service** â€” status and start type (no install nightly)
+11. **Wazuh agent** â€” service status if `CTG_WAZUH_MANAGER` / `WAZUH_MANAGER` set
+12. **Preserve-DuckDuckGoVpn.ps1** â€” Defender exclusions for DDG WireGuard; no competing VPN installers
+13. **Git repos** â€” dry-run `git fetch` + `status` unless `-SyncRepos` (`git pull --ff-only`)
+14. **SOC log copy** â€” nightly + desktop logs to `D:\Backups\logs\` when SSD online
+15. **Summary line** â€” SSD status, backup root, error count, flag states
 
 ---
 
@@ -143,16 +143,16 @@ Mandatory child script; invoked on **every** orchestrator run regardless of `-Sk
 
 | Step | Action |
 |------|--------|
-| **Robocopy backup** | `website/` → `{BackupRoot}\website\` |
-| | `docs/web/` → `{BackupRoot}\docs-web\` |
-| **Portfolio backup** | Copy `docs/PORTFOLIO_*.md` → `{BackupRoot}\portfolio\` |
-| **Portfolio HTML** | `python scripts/export_portfolio_html.py` → `{BackupRoot}\portfolio_export\` |
-| **Canonical sync** | `python scripts/sync_website_to_docs.py` (`website/` → `docs/web/`) |
+| **Robocopy backup** | `website/` â†’ `{BackupRoot}\website\` |
+| | `docs/web/` â†’ `{BackupRoot}\docs-web\` |
+| **Portfolio backup** | Copy `docs/PORTFOLIO_*.md` â†’ `{BackupRoot}\portfolio\` |
+| **Portfolio HTML** | `python scripts/export_portfolio_html.py` â†’ `{BackupRoot}\portfolio_export\` |
+| **Canonical sync** | `python scripts/sync_website_to_docs.py` (`website/` â†’ `docs/web/`) |
 | **Git review** | `git status --porcelain website/ docs/web/` |
-| **Optional deploy** | With `-DeployWebsite`: commit + push to `main` → GitHub Actions `pages.yml` → `gh-pages` |
+| **Optional deploy** | With `-DeployWebsite`: commit + push to `main` â†’ GitHub Actions `pages.yml` â†’ `gh-pages` |
 | **Health checks** | GET `https://hackerplanet.dev/` and GitHub Pages mirror |
 
-Default nightly behavior: **backup + sync + health only**—no automatic commit/push. Deploy is opt-in to avoid surprise production publishes.
+Default nightly behavior: **backup + sync + health only**â€”no automatic commit/push. Deploy is opt-in to avoid surprise production publishes.
 
 ---
 
@@ -161,7 +161,7 @@ Default nightly behavior: **backup + sync + health only**—no automatic commit/
 | Content | Source | SSD online (`D:\Backups\Andy-PC-YYYY-MM-DD\`) | C: fallback | OneDrive mirror |
 |---------|--------|-----------------------------------------------|-------------|-----------------|
 | Documents / Desktop / Pictures | User folders | Via selective backup | Same | Manifest + subset via `cloud_backup.ps1` |
-| **Projects** | `C:\Users\Owner\Projects` | `Projects\` (robocopy, caps/exclusions) | Same | Manifest references |
+| **Projects** | `C:\Users\Owner\Programs\Hacker Planet LLC` | `Projects\` (robocopy, caps/exclusions) | Same | Manifest references |
 | **Website** | `website/` | `website\` | Same | `website\` |
 | **Docs web mirror** | `docs/web/` | `docs-web\` | Same | `docs-web\` |
 | **Portfolio md** | `docs/PORTFOLIO_*.md` | `portfolio\` | Same | `portfolio\` |
@@ -171,13 +171,13 @@ Default nightly behavior: **backup + sync + health only**—no automatic commit/
 | **SOC log** | Desktop `ctg-soc-run-log.txt` | `D:\Backups\logs\` | Desktop | Nightly log mirrored |
 | **Elevated SOC log** | `ctg-soc-run-log-elevated.txt` | `D:\Backups\logs\` | scripts/windows | When present |
 
-**Resolver chain** (when SSD unavailable): `D:\Backups\` → other fixed letters with space → `OneDrive\Backups\` → `%USERPROFILE%\Backups\`.
+**Resolver chain** (when SSD unavailable): `D:\Backups\` â†’ other fixed letters with space â†’ `OneDrive\Backups\` â†’ `%USERPROFILE%\Backups\`.
 
 ---
 
 ## Logging strategy
 
-Every step writes to a **dated nightly log** and **appends** to the desktop SOC history file—operators can review recent automation without opening Task Scheduler.
+Every step writes to a **dated nightly log** and **appends** to the desktop SOC history fileâ€”operators can review recent automation without opening Task Scheduler.
 
 | Path | Purpose |
 |------|---------|
@@ -188,7 +188,7 @@ Every step writes to a **dated nightly log** and **appends** to the desktop SOC 
 | `D:\Backups\logs\ctg-soc-run-log-elevated.txt` | Elevated pass mirror (from `ctg_soc_run_once.ps1`) |
 | `%OneDrive%\Backups\logs\nightly-YYYY-MM-DD.log` | Cloud mirror via `cloud_backup.ps1` |
 
-Desktop write uses a **3-attempt retry** (250 ms backoff) to survive OneDrive file locks—a lesson from elevated SOC logging.
+Desktop write uses a **3-attempt retry** (250 ms backoff) to survive OneDrive file locksâ€”a lesson from elevated SOC logging.
 
 Example summary line (end of run):
 
@@ -200,7 +200,7 @@ SUMMARY: Host=ANDY-PC SSD=online BackupRoot=D:\Backups\Andy-PC-2026-05-30 Errors
 
 ## Security scans and posture checks (nightly)
 
-These are **audit/status** steps—not full hardening installs.
+These are **audit/status** stepsâ€”not full hardening installs.
 
 | Check | Nightly behavior | Notes |
 |-------|------------------|-------|
@@ -223,9 +223,9 @@ These are **audit/status** steps—not full hardening installs.
 | `-SyncRepos` | off | `git pull --ff-only` instead of dry-run fetch/status |
 | `-VerboseLog` | off | Echo each log line to console |
 
-**Typical scheduled run:** all flags off—backup, website sync/health, audit scans, log mirror.
+**Typical scheduled run:** all flags offâ€”backup, website sync/health, audit scans, log mirror.
 
-**Manual elevated path:** `ctg_soc_run_once.ps1` (restore point → backup → Sysmon → HWS audit → ASR audit → Wazuh) — documented in [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md). Nightly task does **not** replace this.
+**Manual elevated path:** `ctg_soc_run_once.ps1` (restore point â†’ backup â†’ Sysmon â†’ HWS audit â†’ ASR audit â†’ Wazuh) â€” documented in [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md). Nightly task does **not** replace this.
 
 ---
 
@@ -268,7 +268,7 @@ These are **audit/status** steps—not full hardening installs.
 | **Idempotent scripts** | Robocopy mirrors, service status checks, skip missing optional modules |
 | **Test surface** | Python CI (pytest, bandit); PowerShell runbooks in `README_WINDOWS_SOC.md` |
 
-Platform policy: [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · Windows runbook: [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)
+Platform policy: [SECURITY_HARDENING.md](SECURITY_HARDENING.md) Â· Windows runbook: [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)
 
 ---
 
@@ -276,13 +276,13 @@ Platform policy: [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · Windows runbo
 
 For **Year 1** (~$84K target: kits, Pro feed, MSP retainers), this automation demonstrates:
 
-1. **Reproducible operator runbooks** — install task once, review logs daily from desktop mirror
-2. **Tiered backup** — SSD when present, cloud manifest always, no full-disk imaging tax
-3. **Website + portfolio DR** — nightly robocopy of public site and portfolio artifacts
-4. **Honest hardware docs** — No Media SSD, UAC, 740 errors documented for customer onboarding
-5. **Separation of concerns** — gentle nightly vs quarterly hardening = fewer break-fix calls
+1. **Reproducible operator runbooks** â€” install task once, review logs daily from desktop mirror
+2. **Tiered backup** â€” SSD when present, cloud manifest always, no full-disk imaging tax
+3. **Website + portfolio DR** â€” nightly robocopy of public site and portfolio artifacts
+4. **Honest hardware docs** â€” No Media SSD, UAC, 740 errors documented for customer onboarding
+5. **Separation of concerns** â€” gentle nightly vs quarterly hardening = fewer break-fix calls
 
-MSP deliverable shape: register task + env template + log review checklist—not opaque RMM black boxes.
+MSP deliverable shape: register task + env template + log review checklistâ€”not opaque RMM black boxes.
 
 ---
 
@@ -291,7 +291,7 @@ MSP deliverable shape: register task + env template + log review checklist—not
 Admin PowerShell (one command per block):
 
 ```powershell
-cd C:\Users\Owner\Projects\cyberThreatGotchi
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
 ```powershell
@@ -342,4 +342,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows\ctg_nightl
 
 ---
 
-*Nightly automation & SOC operations — Hacker Planet LLC · Philadelphia, PA*
+*Nightly automation & SOC operations â€” Hacker Planet LLC Â· Philadelphia, PA*
