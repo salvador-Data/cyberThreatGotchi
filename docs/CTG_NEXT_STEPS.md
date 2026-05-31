@@ -29,13 +29,23 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 ### Paused (do not chase)
 - Automated guest flash / guestcontrol retry loops — use CLICK-ME or share trigger instead.
 
+**Host trigger (no SSH):**
+
+```powershell
+New-Item C:\Users\Owner\Backups\CTG_RUN_AUTORUN_NOW -ItemType File -Force
+```
+
+```powershell
+.\scripts\windows\Invoke-CtgKaliGuestFlash.ps1 -UseSecretVault -TriggerOnly
+```
+
 ---
 
 ## Session status (automated vs manual)
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Kali seamless host script | **Done** | `Start-KaliSeamless.ps1` â€” VB7 extradata, diagnose, lock retry |
+| Kali seamless host script | **Done** | `Start-KaliSeamless.ps1` — VB7 extradata, diagnose, lock retry |
 | Kali guest seamless prerequisites | **Done** | `kali-boot-autopatch.sh`, `ctg-seamless-guest.sh`, staged to Backups |
 | Seamless toggle on running VM | **Manual** | Log in to Kali GUI, then **Host+L** (VB7 has no `controlvm seamless`) |
 | CPU safe optimize scripts | **Done** | `Optimize-CpuPerformance.ps1`, `Register-CtgCpuOptimizeTask.ps1`, docs |
@@ -47,7 +57,7 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 | pytest + push | **Done** | 429 passed (2026-05-31); main `0e9b8ce` pushed |
 | RETBleed `--spec-ctrl on` | **Done (live)** | VBox `<SpecCtrl enabled="true"/>` — **reboot Kali**, then `bash /mnt/ctg/ctg-retbleed-check.sh` |
 | Kali scripts staged to Backups | **Done** | `Stage-KaliLabToBackups.ps1` — CLICK-ME + triggers on `ctg-backups` share |
-| Guest script flash | **Manual (CLICK-ME)** | Prefer desktop one-click or `CTG_RUN_AUTORUN_NOW`; optional `-UseSecretVault` flash when SSH works | SSH:2222 not ready — paste block below at Kali console after GUI login |
+| Guest script flash | **Manual (CLICK-ME)** | Desktop one-click or `CTG_RUN_AUTORUN_NOW` on share; skip host guest-flash retry loops |
 | Seamless View menu | **Manual (GUI login)** | `GUI/Seamless=on` set; menu stays gray until **LoggedInUsers>0** — log in Xfce, then Host+L |
 | Seamless menu glitch | **Manual (guest)** | ``bash /mnt/ctg/ctg-seamless-guest.sh`` if needed; host: ``Start-KaliSeamless.ps1 -DiagnoseOnly`` |
 
@@ -290,6 +300,8 @@ Then commit and push [ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-la
 | Asset | Purpose |
 |-------|---------|
 | `RUN-KALI-LAB-NOW.sh` | One-paste full lab when SSH fails |
+| `CLICK-ME-RUN-IN-KALI.sh` | Double-click Thunar one-action lab chain |
+| `ctg-run-on-share-trigger.sh` | Minimal chain when `CTG_RUN_AUTORUN_NOW` exists on share |
 | `ctg-mount-share.sh` | Mount `ctg-backups` at `/mnt/ctg` (run before other guest scripts) |
 | `ctg-display-scale.sh` | HiDPI / terminal font scale (after GUI login + mount) |
 | `ctg-seamless-guest.sh` | Seamless panel + VBoxClient (after GUI login + mount) |
