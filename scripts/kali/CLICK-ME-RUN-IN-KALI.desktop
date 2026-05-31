@@ -1,0 +1,8 @@
+﻿[Desktop Entry]
+Type=Application
+Name=CTG Run Lab (click me)
+Comment=Hacker Planet LLC — one-click Kali lab chain from share
+Exec=bash -lc 'chmod +x /media/sf_ctg-backups/CLICK-ME-RUN-IN-KALI.sh 2>/dev/null; bash /media/sf_ctg-backups/CLICK-ME-RUN-IN-KALI.sh || bash /mnt/ctg/CLICK-ME-RUN-IN-KALI.sh'
+Icon=utilities-terminal
+Terminal=false
+Categories=System;

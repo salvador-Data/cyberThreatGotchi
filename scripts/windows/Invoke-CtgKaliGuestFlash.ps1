@@ -4,13 +4,14 @@ param(
     [string]$VmName = 'kali',
     [string]$CredentialsFile = 'C:\Users\Owner\Backups\kali-vm-credentials.txt',
     [string]$BackupRoot = 'C:\Users\Owner\Backups',
-    [string]$TriggerFileName = 'CTG_TRIGGER_AUTORUN',
+    [string]$TriggerFileName = 'CTG_RUN_AUTORUN_NOW',
     [int]$SshPort = 2222,
-    [int]$TriggerWaitSec = 180,
+    [int]$TriggerWaitSec = 300,
     [switch]$SkipStage,
     [switch]$SkipSeamless,
     [switch]$TriggerOnly,
-    [switch]$WhatIf
+    [switch]$WhatIf,
+    [switch]$UseSecretVault
 )
 $ErrorActionPreference = 'Stop'
 $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
@@ -38,8 +39,33 @@ function Get-CtgVBoxManagePath {
     return $null
 }
 
+
+function Get-CtgKaliCredentialsFromVault {
+    $vaultScript = Join-Path $PSScriptRoot 'Protect-CtgSecrets.ps1'
+    if (-not (Test-Path $vaultScript)) { return $null }
+    . $vaultScript
+    $vaultFile = Get-CtgSecretVaultFilePath
+    if (-not (Test-Path $vaultFile)) { return $null }
+    $user = Get-CtgProtectedSecret -SecretName 'KALI_SSH_USER' -VaultFile $vaultFile
+    $password = Get-CtgProtectedSecret -SecretName 'KALI_SSH_PASSWORD' -VaultFile $vaultFile
+    if ([string]::IsNullOrWhiteSpace($user) -or [string]::IsNullOrWhiteSpace($password)) { return $null }
+    return @{
+        User     = $user.Trim()
+        Password = $password
+        Source   = 'DPAPI vault (Protect-CtgSecrets.ps1)'
+    }
+}
+
 function Get-CtgKaliCredentials {
-    param([string]$Path)
+    param(
+        [string]$Path,
+        [switch]$PreferVault
+    )
+    if ($PreferVault) {
+        $fromVault = Get-CtgKaliCredentialsFromVault
+        if ($fromVault) { return $fromVault }
+        Write-CtgFlashLog 'UseSecretVault: vault missing KALI_SSH_USER/KALI_SSH_PASSWORD - falling back to credentials file'
+    }
     $result = @{ User = 'sal'; Password = $null; Source = 'none' }
     if (Test-Path $Path) {
         $text = Get-Content -Path $Path -Raw
@@ -47,7 +73,9 @@ function Get-CtgKaliCredentials {
         if ($text -match '(?m)^Password:\s*(.+)$') { $result.Password = $Matches[1].Trim() }
         $result.Source = $Path
     }
-    if (-not $result.Password) { throw "No credentials in $Path" }
+    if (-not $result.Password) {
+        throw "No Kali credentials (vault empty and no Password in $Path). Run Protect-CtgSecrets.ps1 -SetSecret for KALI_SSH_USER and KALI_SSH_PASSWORD."
+    }
     return $result
 }
 
@@ -259,12 +287,12 @@ if (-not $SkipStage -and -not $WhatIf) {
     }
 }
 
-$creds = Get-CtgKaliCredentials -Path $CredentialsFile
+$creds = Get-CtgKaliCredentials -Path $CredentialsFile -PreferVault:$UseSecretVault
 $chain = Get-CtgGuestLabChainBash
 $vbox = Get-CtgVBoxManagePath
 $guiUser = if ($vbox) { Get-CtgGuestLoggedInUsersList -VBoxManage $vbox -Vm $VmName } else { '' }
 $tryUsers = @($guiUser, 'sal', 'kali', $creds.User) | Where-Object { $_ } | Select-Object -Unique
-Write-CtgFlashLog ("cred user={0} ssh port={1} tryUsers={2}" -f $creds.User, $SshPort, ($tryUsers -join ','))
+Write-CtgFlashLog ("cred source={0} user={1} ssh port={2} tryUsers={3}" -f $creds.Source, $creds.User, $SshPort, ($tryUsers -join ','))
 
 $loggedIn = 0
 
@@ -334,5 +362,3 @@ if (-not $ok) {
 
 Write-CtgFlashLog '=== Guest flash complete ==='
 exit 0
-
-

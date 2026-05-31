@@ -1,4 +1,4 @@
- Start VirtualBox Kali VM in seamless mode (Guest Additions + graphical login required).
+# Start VirtualBox Kali VM in seamless mode (Guest Additions + graphical login required).
 # Authorized defensive lab use only - Hacker Planet LLC - Philadelphia, PA
 param(
     [string]$VmName = 'kali',
@@ -632,7 +632,7 @@ function Get-CtgSeamlessDiagnostics {
         $issues += "GUI/AutoresizeGuest is '$($guiExtra['GUI/AutoresizeGuest'])' - guest may wrap/clip; script sets this true"
     }
     if (Test-CtgGuestSizeHintOversized -Hint $guiExtra['GUI/LastGuestSizeHint']) {
-        $issues += "GUI/LastGuestSizeHint is '$($guiExtra['GUI/LastGuestSizeHint'])' - tiny UI; script clears hints >2560×1600"
+        $issues += "GUI/LastGuestSizeHint is '$($guiExtra['GUI/LastGuestSizeHint'])' - tiny UI; script clears hints >2560x1600"
     }
     if ($vram -ne '128MB') { $issues += "VRAM is $vram (recommend 128MB - Fix-KaliBlankScreen.ps1)" }
     if ($gfx -notmatch 'VMSVGA|VBoxSVGA') { $issues += "Graphics controller is $gfx (recommend VMSVGA)" }

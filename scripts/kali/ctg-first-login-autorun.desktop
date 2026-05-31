@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
 Name=CTG First Login Lab Autorun
-Comment=Hacker Planet LLC — mount share, fit-window scale, seamless, SSH, RUN-KALI-LAB-NOW
-Exec=sh -c 'sleep 8; (bash /mnt/ctg/ctg-first-login-autorun.sh 2>/dev/null || bash /media/sf_ctg-backups/ctg-first-login-autorun.sh); (bash /mnt/ctg/ctg-watch-trigger.sh 2>/dev/null || bash /media/sf_ctg-backups/ctg-watch-trigger.sh) &'
+Comment=Hacker Planet LLC — mount share, triggers, fit-window, RUN-KALI-LAB-NOW
+Exec=sh -c 'sleep 5; (bash /media/sf_ctg-backups/ctg-run-on-share-trigger.sh 2>/dev/null || bash /mnt/ctg/ctg-run-on-share-trigger.sh); (bash /media/sf_ctg-backups/ctg-first-login-autorun.sh 2>/dev/null || bash /mnt/ctg/ctg-first-login-autorun.sh); (bash /media/sf_ctg-backups/ctg-watch-trigger.sh 2>/dev/null || bash /mnt/ctg/ctg-watch-trigger.sh) &'
 X-GNOME-Autostart-enabled=true
 NoDisplay=true
 OnlyShowIn=XFCE;GNOME;

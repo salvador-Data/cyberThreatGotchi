@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# CTG Kali — poll vboxsf share for Windows host trigger files (no SSH/password).
-# Hacker Planet LLC · authorized lab use only.
+# CTG Kali - poll vboxsf share for Windows host trigger files (no SSH/password).
+# Hacker Planet LLC - authorized lab use only.
 #
 # Windows (no guest password):
 #   New-Item C:\Users\Owner\Backups\CTG_TRIGGER_AUTORUN -ItemType File -Force
@@ -57,10 +57,23 @@ run_nmap_install_trigger() {
     local root="$1"
     local helper="$root/ctg-nmap-ask-install-trigger.sh"
     if [[ ! -f "$helper" ]]; then
-        log "Missing $helper — re-stage: Stage-KaliLabToBackups.ps1"
+        log "Missing $helper - re-stage: Stage-KaliLabToBackups.ps1"
         return 1
     fi
     log "Running ctg-nmap-ask-install-trigger.sh (CTG_TRIGGER_NMAP_INSTALL)"
+    bash "$helper"
+}
+
+
+
+run_minimal_share_trigger() {
+    local root="$1"
+    local helper="$root/ctg-run-on-share-trigger.sh"
+    if [[ ! -f "$helper" ]]; then
+        log "Missing $helper"
+        return 1
+    fi
+    log "Running ctg-run-on-share-trigger.sh (CTG_RUN_AUTORUN_NOW)"
     bash "$helper"
 }
 
@@ -68,7 +81,7 @@ run_autorun_chain() {
     local root="$1"
     local autorun="$root/ctg-first-login-autorun.sh"
     if [[ ! -f "$autorun" ]]; then
-        log "Missing $autorun — re-stage on Windows: Stage-KaliLabToBackups.ps1"
+        log "Missing $autorun - re-stage on Windows: Stage-KaliLabToBackups.ps1"
         return 1
     fi
     log "Running ctg-first-login-autorun.sh (triggered from share)"
@@ -78,7 +91,7 @@ run_autorun_chain() {
 mkdir -p "$(dirname "$LOG_FILE")" 2>/dev/null || true
 
 share="$(find_share_root)" || {
-    log "Share not visible yet — waiting for /media/sf_ctg-backups (log in + Guest Additions)"
+    log "Share not visible yet - waiting for /media/sf_ctg-backups (log in + Guest Additions)"
     share=""
 }
 
