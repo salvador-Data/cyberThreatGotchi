@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+  <meta name="referrer" content="strict-origin-when-cross-origin"/>
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.paypal.com https://www.paypalobjects.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://www.paypal.com; frame-src https://www.paypal.com; base-uri 'self'; form-action 'self' https://www.paypal.com https://buy.stripe.com https://cash.app https://account.venmo.com;"/>
+<meta charset="UTF-8"/>
+  <!-- hpl-seo:start -->
+  <title>Hacker Planet | CTG Pro Threat Feed API</title>
+  <meta name="description" content="CyberThreatGotchi Pro threat feed hub  -  poll signature packs, YARA rules, and SHA256 deny lists via X-CTG-Pro-Key. MSP and edge IPS integration docs for Hacker Planet LLC subscribers."/>
+  <meta name="keywords" content="Hacker Planet, CTG Pro feed, threat intelligence API, YARA rules, signature pack, CyberThreatGotchi MSP"/>
+  <meta name="author" content="Salvador Data"/>
+  <meta name="robots" content="index, follow, max-image-preview:large"/>
+  <meta name="geo.region" content="US-PA"/>
+  <meta name="geo.placename" content="Philadelphia"/>
+  <link rel="canonical" href="https://hackerplanet.dev/feeds.html"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link rel="alternate" hreflang="en-us" href="https://hackerplanet.dev/feeds.html"/>
+  <link rel="alternate" href="https://salvador-Data.github.io/cyberThreatGotchi/feeds.html"/>
+  <meta name="apple-mobile-web-app-title" content="Hacker Planet"/>
+  <link rel="icon" href="https://hackerplanet.dev/images/og-cybertech.png" type="image/png"/>
+  <link rel="apple-touch-icon" href="https://hackerplanet.dev/images/og-cybertech.png"/>
+  <meta property="og:site_name" content="Hacker Planet"/>
+  <meta property="og:locale" content="en_US"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Hacker Planet | CTG Pro Threat Feed API"/>
+  <meta property="og:description" content="CyberThreatGotchi Pro threat feed hub  -  poll signature packs, YARA rules, and SHA256 deny lists via X-CTG-Pro-Key. MSP and edge IPS integration docs for Hacker Planet LLC subscribers."/>
+  <meta property="og:url" content="https://hackerplanet.dev/feeds.html"/>
+  <meta property="og:image" content="https://hackerplanet.dev/images/og-cybertech.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Hacker Planet | CTG Pro Threat Feed API"/>
+  <meta name="twitter:description" content="CyberThreatGotchi Pro threat feed hub  -  poll signature packs, YARA rules, and SHA256 deny lists via X-CTG-Pro-Key. MSP and edge IPS integration docs for Hacker Planet LLC subscribers."/>
+  <meta name="twitter:image" content="https://hackerplanet.dev/images/og-cybertech.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Hacker Planet","alternateName":["HackerPlanet","Hacker Planet LLC","hackerplanet.dev"],"legalName":"Hacker Planet LLC","url":"https://hackerplanet.dev/","logo":"https://hackerplanet.dev/images/og-cybertech.png","email":"salvadorData@proton.me","telephone":"+12158398738","address":{"@type":"PostalAddress","addressLocality":"Philadelphia","addressRegion":"PA","addressCountry":"US"},"areaServed":[{"@type":"City","name":"Philadelphia","containedInPlace":{"@type":"State","name":"PA","containedInPlace":{"@type":"Country","name":"United States"}}},{"@type":"AdministrativeArea","name":"Greater Philadelphia"},{"@type":"AdministrativeArea","name":"Delaware Valley"},{"@type":"AdministrativeArea","name":"Pennsylvania"},{"@type":"Country","name":"United States"}],"sameAs":["https://hackerplanet.dev","https://github.com/salvador-Data","https://github.com/salvador-Data/cyberThreatGotchi","https://www.reddit.com/user/SalvadorData/","https://www.linkedin.com/in/andy-kowal"],"description":"Hacker Planet LLC - Philadelphia cybersecurity hardware lab. Blue Team, Red Team, OSINT, remote US consulting, and authorized ethical hacking lab hardware. City-only public address; no walk-in retail."}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":["LocalBusiness","Organization"],"name":"Hacker Planet","alternateName":["HackerPlanet","Hacker Planet LLC","hackerplanet.dev"],"legalName":"Hacker Planet LLC","url":"https://hackerplanet.dev/","logo":"https://hackerplanet.dev/images/og-cybertech.png","email":"salvadorData@proton.me","telephone":"+12158398738","address":{"@type":"PostalAddress","addressLocality":"Philadelphia","addressRegion":"PA","addressCountry":"US"},"areaServed":[{"@type":"City","name":"Philadelphia","containedInPlace":{"@type":"State","name":"PA","containedInPlace":{"@type":"Country","name":"United States"}}},{"@type":"AdministrativeArea","name":"Greater Philadelphia"},{"@type":"AdministrativeArea","name":"Delaware Valley"},{"@type":"AdministrativeArea","name":"Pennsylvania"},{"@type":"Country","name":"United States"}],"sameAs":["https://hackerplanet.dev","https://github.com/salvador-Data","https://github.com/salvador-Data/cyberThreatGotchi","https://www.reddit.com/user/SalvadorData/","https://www.linkedin.com/in/andy-kowal"],"description":"Hacker Planet LLC - Philadelphia cybersecurity hardware lab. Blue Team, Red Team, OSINT, remote US consulting, and authorized ethical hacking lab hardware. City-only public address; no walk-in retail."}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Hacker Planet","item":"https://hackerplanet.dev/"},{"@type":"ListItem","position":2,"name":"Feeds","item":"https://hackerplanet.dev/feeds.html"}]}</script>
+  <!-- hpl-seo:end -->
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="logo" href="index.html" aria-label="Hacker Planet LLC home">
+        <img class="logo-img" src="images/hacker-planet-logo.png" width="134" height="32" alt="Hacker Planet LLC" decoding="async" />
+        <span class="logo-brand">Hacker Planet LLC</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Menu">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="cyberthreatgotchi.html">CyberThreatGotchi</a></li>
+        <li><a href="crackbot.html">CrackBot</a></li>
+        <li><a href="cardputer.html">Cardputer</a></li>
+        <li><a href="ecosystem.html">Ecosystem</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="feeds.html" class="active">Pro feeds</a></li>
+        <li><a href="github.html">On GitHub</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="https://github.com/salvador-Data/cyberThreatGotchi" class="nav-cta" target="_blank" rel="noopener">GitHub -&gt;</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <header class="page-hero reveal">
+      <p class="section-label">Platform | MSP-ready</p>
+      <h1 class="title-stack">
+        <span class="title-stack-main">CTG Pro threat feed</span>
+        <span class="title-stack-layer">Signatures, YARA, hash deny list</span>
+      </h1>
+      <p class="lead">
+        Subscribers poll three JSON channels from the same CyberThreatGotchi web server that powers your edge IPS dashboard.
+        Authenticate with the <code>X-CTG-Pro-Key</code> header. Keys ship after Stripe checkout or MSP onboarding.
+        <a href="shop.html#pro-feed">Subscribe in shop -&gt;</a>
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="shop.html#pro-feed">Get Pro key</a>
+        <a class="btn btn-ghost" href="https://github.com/salvador-Data/cyberThreatGotchi/blob/main/docs/WEB.md" target="_blank" rel="noopener">API docs on GitHub -&gt;</a>
+      </div>
+    </header>
+
+    <section class="reveal">
+      <p class="section-label">Channels</p>
+      <h2 class="section-title">Three Pro JSON endpoints</h2>
+      <p class="section-sub" style="max-width:42rem">
+        Base URL is your CTG instance (simulation default <code>http://127.0.0.1:8765</code>).
+        Production edge kits bind <code>0.0.0.0:8765</code> on the LAN. All routes require the Pro key header.
+      </p>
+      <div class="card-grid" style="margin-top:1.5rem">
+        <article class="card">
+          <div class="card-icon card-accent-ctg">SIG</div>
+          <h3>Signature pack</h3>
+          <p>IPS signature pack updates for the CTG engine - port-scan heuristics, block rules, and curated defensive patterns.</p>
+          <p style="margin-bottom:0.5rem"><code>GET /api/pro/feed/signatures</code></p>
+          <pre class="code-block" style="font-size:0.82rem"><code>curl -s -H "X-CTG-Pro-Key: YOUR_KEY" \
+  http://127.0.0.1:8765/api/pro/feed/signatures | jq .</code></pre>
+        </article>
+        <article class="card">
+          <div class="card-icon card-accent-bj">YARA</div>
+          <h3>YARA rules bundle</h3>
+          <p>Rule pack for the ClamAV + YARA scoring pipeline on edge sensors and lab VMs.</p>
+          <p style="margin-bottom:0.5rem"><code>GET /api/pro/feed/yara</code></p>
+          <pre class="code-block" style="font-size:0.82rem"><code>curl -s -H "X-CTG-Pro-Key: YOUR_KEY" \
+  http://127.0.0.1:8765/api/pro/feed/yara | jq .</code></pre>
+        </article>
+        <article class="card">
+          <div class="card-icon card-accent-cb">HASH</div>
+          <h3>SHA256 deny list</h3>
+          <p>Deny-list hashes for the AV scoring pipeline - block known-bad samples on authorized networks.</p>
+          <p style="margin-bottom:0.5rem"><code>GET /api/pro/feed/hashes</code></p>
+          <pre class="code-block" style="font-size:0.82rem"><code>curl -s -H "X-CTG-Pro-Key: YOUR_KEY" \
+  http://127.0.0.1:8765/api/pro/feed/hashes | jq .</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="reveal section-compact">
+      <p class="section-label">Local dev</p>
+      <h2 class="section-title">Try simulation mode</h2>
+      <pre class="code-block"><code>python main.py --simulation --web
+curl -s -H "X-CTG-Pro-Key: demo" http://127.0.0.1:8765/api/pro/feed/signatures | jq .</code></pre>
+      <p style="font-size:0.9rem;color:var(--muted);max-width:42rem">
+        Demo key <code>demo</code> works when <code>CTG_PRO_API_KEY</code> is unset.
+        Production: set a strong secret; Stripe webhook provisions per-customer keys.
+        See <a href="github.html">On GitHub</a> for full stack docs and CI.
+      </p>
+    </section>
+
+    <section class="reveal">
+      <div class="card" style="max-width:42rem;border-color:var(--accent)">
+        <h2 class="section-title" style="margin-top:0">MSP integration</h2>
+        <ul class="feature-list">
+          <li>Poll interval: hourly or on SIEM playbook trigger</li>
+          <li>Store keys in your vault - never commit to git</li>
+          <li>Pair with <a href="services.html#blue-team">Blue Team retainers</a> for operator-led rule tuning</li>
+          <li>Audit exports: <code>/api/export/audit.json</code> with <code>CTG_AUDIT_SECRET</code></li>
+        </ul>
+        <p style="margin-bottom:0">
+          <a href="shop.html#pro-feed">Pro Monthly $9</a> |
+          <a href="shop.html#pro-feed">Pro Yearly $99</a> |
+          <a href="contact.html">MSP quote -&gt;</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <ul class="footer-links">
+      <li><a href="index.html">Hacker Planet</a></li>
+      <li><a href="shop.html#pro-feed">Subscribe</a></li>
+      <li><a href="github.html">Source</a></li>
+    </ul>
+    <p>&copy; <span id="year"></span> Hacker Planet LLC | Philadelphia, PA | Defensive use only</p>
+  </footer>
+  <script src="js/payments.config.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/payments.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
