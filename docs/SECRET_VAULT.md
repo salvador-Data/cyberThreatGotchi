@@ -188,6 +188,32 @@ Or dot-source and call `Get-CtgProtectedSecret` (see script header).
 
 ---
 
+## Sensitive config blobs (`Protect-CtgSensitiveScripts.ps1`)
+
+For **lab-only config templates** (not credentials, not offensive tooling):
+
+| Item | Store | Never in git |
+|------|-------|--------------|
+| `lab-wifi.conf` placeholders | `-EncryptFile -Name LabWifiTemplate` | Real SSID/PSK |
+| Event bus / IMAP path sidecars | `-EncryptFile -Name EventBusPaths` | Operator paths with PII |
+| GitHub notify metadata | Vault title `Proton IMAP` | Real Proton address |
+
+```powershell
+.\scripts\windows\Protect-CtgSensitiveScripts.ps1 -DiagnoseOnly
+```
+
+```powershell
+.\scripts\windows\Protect-CtgSensitiveScripts.ps1 -EncryptFile -Name LabWifiTemplate -SourcePath C:\Users\Owner\Backups\lab-wifi.conf
+```
+
+Output: `%USERPROFILE%\Backups\.vault\sensitive\*.dpapi` (gitignored).
+
+**Explicitly refused:** DPAPI-wrapping or concealing jammer overload, deauth attack, or RF countermeasure scripts. See [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) and [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md).
+
+Private split repos: `Set-CtgPrivateRepos.ps1 -DiagnoseOnly` — see [GITHUB_REPOS_PLAN.md](GITHUB_REPOS_PLAN.md).
+
+---
+
 ## Why not hash passwords inside committed scripts?
 
 Some automation ideas store a **SHA-256 hash** of a Windows or lab password directly in a `.ps1` file "so git never sees the plaintext." That pattern **does not help** for CTG lab scripts:

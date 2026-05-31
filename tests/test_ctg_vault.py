@@ -187,6 +187,8 @@ def test_cli_init_and_get(temp_vault_path: Path):
             "add",
             "--vault-path",
             str(temp_vault_path),
+            "--master-password",
+            FAKE_MASTER,
             "--title",
             FAKE_TITLE,
             "--username",
@@ -198,7 +200,7 @@ def test_cli_init_and_get(temp_vault_path: Path):
         timeout=60,
         env=run_env,
     )
-    assert add.returncode == 0, add.stderr
+    assert add.returncode == 0, add.stderr or add.stdout
     get = subprocess.run(
         [
             sys.executable,
@@ -206,6 +208,8 @@ def test_cli_init_and_get(temp_vault_path: Path):
             "get",
             "--vault-path",
             str(temp_vault_path),
+            "--master-password",
+            FAKE_MASTER,
             "--title",
             FAKE_TITLE,
         ],

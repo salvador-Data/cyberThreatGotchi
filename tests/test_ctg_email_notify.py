@@ -98,6 +98,21 @@ def test_is_high_priority_subject():
     assert not notify.is_high_priority_subject("Newsletter weekly digest")
 
 
+def test_is_github_ctg_email():
+    assert notify.is_github_ctg_email(
+        "notifications@github.com",
+        "[salvador-Data/cyberThreatGotchi] Run failed: CI",
+    )
+    assert not notify.is_github_ctg_email(
+        "notifications@github.com",
+        "[other-org/other-repo] Run failed: CI",
+    )
+    assert not notify.is_github_ctg_email(
+        "news@example.com",
+        "cyberThreatGotchi newsletter",
+    )
+
+
 def test_cli_dedup_test_subprocess():
     import subprocess
     import sys

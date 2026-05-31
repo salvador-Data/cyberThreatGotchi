@@ -141,6 +141,7 @@ def test_kali_encrypt_diagnose_only_exits_zero():
     assert not re.search(r"(?i)new-password=\S+", combined)
 
 
+@pytest.mark.skipif(shutil.which("powershell") is None, reason="powershell not available")
 def test_bitlocker_diagnose_only_exits_zero():
     r = subprocess.run(
         [

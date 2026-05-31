@@ -115,8 +115,8 @@ class ParsedEmail:
     def dedup_keys(self) -> tuple[str | None, str]:
         return self.message_id_key, self.content_hash
 
-    def to_notification_dict(self) -> dict[str, Any]:
-        return {
+    def to_notification_dict(self, *, labels: list[str] | None = None) -> dict[str, Any]:
+        payload = {
             "uid": self.uid,
             "message_id": self.message_id,
             "in_reply_to": self.in_reply_to,
@@ -127,6 +127,9 @@ class ParsedEmail:
             "content_hash": self.content_hash,
             "notified_at": datetime.now(timezone.utc).isoformat(),
         }
+        if labels:
+            payload["labels"] = labels
+        return payload
 
 
 @dataclass
@@ -225,6 +228,27 @@ def is_high_priority_subject(subject: str, patterns: list[str] | None = None) ->
     return bool(re.search(combined, subject or "", re.IGNORECASE))
 
 
+def is_github_ctg_email(
+    from_addr: str,
+    subject: str,
+    *,
+    repo_name: str = "cyberThreatGotchi",
+) -> bool:
+    """True when email looks like GitHub Actions/CI for the CTG monorepo."""
+    from_lower = (from_addr or "").lower()
+    subj = subject or ""
+    if "github.com" not in from_lower and "notifications@github.com" not in from_lower:
+        return False
+    if repo_name.lower() not in subj.lower():
+        return False
+    return bool(
+        re.search(
+            r"(?i)(workflow run|action|failed|ci\b|github actions)",
+            subj,
+        )
+    )
+
+
 @dataclass
 class ImapSettings:
     host: str = "127.0.0.1"
@@ -242,6 +266,8 @@ def poll_imap_once(
     state: EmailNotifyState,
     *,
     max_messages: int = 50,
+    github_only: bool = False,
+    github_repo: str = "cyberThreatGotchi",
 ) -> tuple[list[ParsedEmail], list[ParsedEmail]]:
     """
     Poll unread IMAP messages. Returns (new_messages, skipped_duplicates).
@@ -279,6 +305,10 @@ def poll_imap_once(
             if not isinstance(raw, bytes):
                 continue
             parsed = parse_imap_message(uid, raw)
+            if github_only and not is_github_ctg_email(
+                parsed.from_addr, parsed.subject, repo_name=github_repo
+            ):
+                continue
             mid_key, chash = parsed.dedup_keys()
             if state.is_duplicate(mid_key, chash, parsed.in_reply_to):
                 skipped.append(parsed)
