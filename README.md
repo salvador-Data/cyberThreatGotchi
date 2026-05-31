@@ -31,7 +31,18 @@ Built for the **Banana Pi BPI-R3 Mini** (2× 2.5GbE, Wi-Fi 6) and dev machines. 
   <br/><sub><strong>CypherTek Rache</strong> — Tamagotchi-style edge IPS shell (BPI-R3 Mini + 2.13″ e-ink). STLs → <a href="hardware/README.md">hardware/</a></sub>
 </p>
 
-Full story → **[docs/ABOUT.md](docs/ABOUT.md)** · Company → **[docs/ABOUT_HACKER_PLANET.md](docs/ABOUT_HACKER_PLANET.md)** · **Website** → **[website/](website/)** ([GitHub Pages](https://salvador-Data.github.io/cyberThreatGotchi/)) · Web UI → **[docs/WEB.md](docs/WEB.md)** · Export → **[docs/EXPORT.md](docs/EXPORT.md)** · Cardputer → **[docs/CARDPUTER.md](docs/CARDPUTER.md)** · **Launch kit** → **[docs/social/LAUNCH.md](docs/social/LAUNCH.md)** · Integrations → **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)** · CISO playbook → **[docs/CISO_PLAYBOOK.md](docs/CISO_PLAYBOOK.md)** · Hardware → **[hardware/README.md](hardware/README.md)** · Ecosystem → **[docs/ECOSYSTEM.md](docs/ECOSYSTEM.md)** · Security → **[docs/SECURITY_HARDENING.md](docs/SECURITY_HARDENING.md)** · iPhone hardening → **[docs/IPHONE_HARDENING.md](docs/IPHONE_HARDENING.md)**
+Full story → **[docs/ABOUT.md](docs/ABOUT.md)** · Company → **[docs/ABOUT_HACKER_PLANET.md](docs/ABOUT_HACKER_PLANET.md)** · **Website** → **[website/](website/)** ([GitHub Pages](https://salvador-Data.github.io/cyberThreatGotchi/)) · Web UI → **[docs/WEB.md](docs/WEB.md)** · Export → **[docs/EXPORT.md](docs/EXPORT.md)** · Cardputer → **[docs/CARDPUTER.md](docs/CARDPUTER.md)** · **Launch kit** → **[docs/social/LAUNCH.md](docs/social/LAUNCH.md)** · Integrations → **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)** · CISO playbook → **[docs/CISO_PLAYBOOK.md](docs/CISO_PLAYBOOK.md)** · Hardware → **[hardware/README.md](hardware/README.md)** · Ecosystem → **[docs/ECOSYSTEM.md](docs/ECOSYSTEM.md)** · Security → **[docs/SECURITY_HARDENING.md](docs/SECURITY_HARDENING.md)** · iPhone hardening → **[docs/IPHONE_HARDENING.md](docs/IPHONE_HARDENING.md)** · **Scripts catalog** → **[docs/SCRIPTS_CATALOG.md](docs/SCRIPTS_CATALOG.md)**
+
+## Ecosystem repos
+
+Focused public repos (split from this monorepo for lab clones):
+
+| Repo | What's inside |
+|------|----------------|
+| [**ctg-kali-lab**](https://github.com/salvador-Data/ctg-kali-lab) | `scripts/kali/` — bootstrap, IDS/IPS, WiFi lab, Tor scrambler, Kali docs |
+| [**ctg-windows-soc**](https://github.com/salvador-Data/ctg-windows-soc) | `scripts/windows/` + Wireshark IDS — hardening, Sysmon, Wazuh, nightly 4 AM, iPhone assist |
+
+Plan and manual `gh` steps → **[docs/GITHUB_REPOS_PLAN.md](docs/GITHUB_REPOS_PLAN.md)**. iPhone hardening stays here (thin surface — three assist scripts in windows-soc).
 
 ## Features
 
