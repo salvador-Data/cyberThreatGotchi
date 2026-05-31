@@ -1,5 +1,5 @@
-# Start VirtualBox Kali VM in seamless mode (Guest Additions + graphical login required).
-# Authorized defensive lab use only - Hacker Planet LLC · Philadelphia, PA
+﻿# Start VirtualBox Kali VM in seamless mode (Guest Additions + graphical login required).
+# Authorized defensive lab use only - Hacker Planet LLC ┬╖ Philadelphia, PA
 param(
     [string]$VmName = 'kali',
     [string[]]$VmNameCandidates = @('kali', 'Kali-Lab', 'Kali', 'kali-linux'),
@@ -131,6 +131,13 @@ function Get-CtgExtradataValue {
     return $null
 }
 
+function Test-CtgExtradataTruthy {
+    param([string]$Value)
+    if (-not $Value) { return $false }
+    $v = $Value.ToLowerInvariant()
+    return $v -in @('on', 'true', '1', 'yes')
+}
+
 function Set-CtgSeamlessExtradata {
     param([string]$Name, [string]$VBoxManage)
     if ($SkipExtradata) { return $true }
@@ -147,8 +154,8 @@ function Set-CtgSeamlessExtradata {
         }
     }
     $seamless = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Seamless'
-    if ($seamless -ne 'on') {
-        Write-CtgSeamlessLog "WARNING: GUI/Seamless extradata is '$seamless' (expected on) - close other VBoxManage sessions and re-run"
+    if (-not (Test-CtgExtradataTruthy -Value $seamless)) {
+        Write-CtgSeamlessLog "WARNING: GUI/Seamless extradata is '$seamless' (expected on/true) - close other VBoxManage sessions and re-run"
         return $false
     }
     return $true
@@ -214,7 +221,9 @@ function Get-CtgSeamlessDiagnostics {
     $issues = @()
     if (-not $gaReady) { $issues += 'Guest Additions not reporting (install virtualbox-guest-x11)' }
     if ($state -eq 'running' -and -not $desktop) { $issues += 'No graphical login - log in at Kali console' }
-    if ($extradataSeamless -ne 'on') { $issues += 'GUI/Seamless extradata not on (script sets this)' }
+    if (-not (Test-CtgExtradataTruthy -Value $extradataSeamless)) {
+        $issues += "GUI/Seamless extradata not enabled (got '$extradataSeamless')"
+    }
     if ($vram -ne '128MB') { $issues += "VRAM is $vram (recommend 128MB - Fix-KaliBlankScreen.ps1)" }
     if ($gfx -notmatch 'VMSVGA|VBoxSVGA') { $issues += "Graphics controller is $gfx (recommend VMSVGA)" }
     if ($gaVer -and $ver.Raw -notmatch [regex]::Escape($gaVer.Split('.')[0])) {
