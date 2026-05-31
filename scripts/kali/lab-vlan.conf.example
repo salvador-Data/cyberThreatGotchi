@@ -1,0 +1,30 @@
+# CTG lab VLAN template — placeholders only. Copy to Backups/lab-vlan.conf (gitignored).
+# Authorized defensive lab use — Hacker Planet LLC.
+
+# Recommended segmentation (adjust for your router/firewall)
+VLAN_MGMT_ID=10
+VLAN_MGMT_NAME=ctg-mgmt
+VLAN_MGMT_CIDR=192.168.10.0/24
+
+VLAN_LAB_ID=20
+VLAN_LAB_NAME=ctg-lab
+VLAN_LAB_CIDR=192.168.20.0/24
+
+VLAN_GUEST_IOT_ID=30
+VLAN_GUEST_IOT_NAME=ctg-guest-iot
+VLAN_GUEST_IOT_CIDR=192.168.30.0/24
+
+# Firewall platform (pfSense | OPNsense | other)
+LAB_FIREWALL=OPNsense
+LAB_FIREWALL_HOST=192.168.1.1
+
+# Kali VM (VirtualBox) — host-only adapter
+KALI_HOSTONLY_NETWORK=192.168.56.0/24
+
+# Windows SOC host — management VLAN
+WIN_SOC_VLAN=${VLAN_MGMT_ID}
+
+# Inter-VLAN rules (document in LAB_VLAN.md)
+# - LAB -> WAN: deny by default
+# - MGMT -> LAB: allow 22/tcp (SSH), 1514/tcp (Wazuh agent), 445/tcp (ctg-backups share)
+# - GUEST_IOT -> LAB: deny

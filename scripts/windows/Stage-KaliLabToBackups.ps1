@@ -91,6 +91,12 @@ if (-not $WhatIf) {
 }
 Write-CtgStageLog "SIEM log dir: $siemLogDir"
 
+$emailNotifyDir = Join-Path $BackupRoot 'ctg-email-notify'
+if (-not $WhatIf) {
+    New-Item -ItemType Directory -Path $emailNotifyDir -Force | Out-Null
+}
+Write-CtgStageLog "Email notify dir: $emailNotifyDir"
+
 $docs = @(
     @{ Src = 'docs\KALI_SIEM_STACK.md'; Dest = 'KALI_SIEM_STACK.md' },
     @{ Src = 'docs\KALI_IDS_IPS_CLAMAV.md'; Dest = 'KALI_IDS_IPS_CLAMAV.md' },
@@ -102,6 +108,9 @@ $docs = @(
     @{ Src = 'docs\PASSWORD_HARDENING.md'; Dest = 'PASSWORD_HARDENING.md' },
     @{ Src = 'docs\KALI_DISPLAY_SCALING.md'; Dest = 'KALI_DISPLAY_SCALING.md' },
     @{ Src = 'docs\KALI_SEAMLESS_MODE.md'; Dest = 'KALI_SEAMLESS_MODE.md' },
+    @{ Src = 'docs\LAB_MATURITY.md'; Dest = 'LAB_MATURITY.md' },
+    @{ Src = 'docs\LAB_VLAN.md'; Dest = 'LAB_VLAN.md' },
+    @{ Src = 'docs\EMAIL_NOTIFICATIONS.md'; Dest = 'EMAIL_NOTIFICATIONS.md' },
     @{ Src = 'docs\NMAP_ASK_ANALYSIS.md'; Dest = 'NMAP_ASK_ANALYSIS.md' }
 )
 foreach ($d in $docs) {

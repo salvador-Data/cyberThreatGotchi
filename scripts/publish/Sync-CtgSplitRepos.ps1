@@ -79,7 +79,7 @@ if (-not (Test-Path -LiteralPath $KaliRepo)) {
             'CTG_LAB_AUTORUN.md', 'CTG_LAB_PLAYGROUND.md', 'KALI_WIFI_ETH_PROMISC.md',
             'KALI_IDS_IPS_CLAMAV.md', 'KALI_SIEM_STACK.md', 'KALI_LAB_ARCHITECTURE.md',
             'KALI_RETBLEED.md', 'KALI_VIRTUALBOX_SEAMLESS.md', 'KALI_SEAMLESS_MODE.md', 'DEFENSE_DDOS_ROGUE_WIFI.md',
-            'OPNSENSE_LAB_DNS.md', 'PASSWORD_HARDENING.md'
+            'OPNSENSE_LAB_DNS.md', 'PASSWORD_HARDENING.md', 'LAB_MATURITY.md', 'LAB_VLAN.md', 'EMAIL_NOTIFICATIONS.md'
         )) {
         $src = Join-Path $MonoRoot "docs\$doc"
         $dst = Join-Path $KaliRepo "docs\$doc"
@@ -104,7 +104,8 @@ if (-not (Test-Path -LiteralPath $WinRepo)) {
             'SECURITY_HARDENING.md', 'IPHONE_HARDENING.md', 'IPHONE_RUN_NOW.md',
             'IPHONE_USB_HARDENING.md', 'DEFENSE_DDOS_ROGUE_WIFI.md', 'PORTFOLIO_SYSTEM_HARDENING.md',
             'PORTFOLIO_AUTOMATION_SOC.md', 'OPNSENSE_LAB_DNS.md', 'PASSWORD_HARDENING.md',
-            'SECRET_VAULT.md', 'CPU_PERFORMANCE.md', 'KALI_VIRTUALBOX_SEAMLESS.md', 'KALI_SEAMLESS_MODE.md', 'WIRESHARK_IDS_SMS.md'
+            'SECRET_VAULT.md', 'CPU_PERFORMANCE.md', 'KALI_VIRTUALBOX_SEAMLESS.md', 'KALI_SEAMLESS_MODE.md', 'WIRESHARK_IDS_SMS.md',
+            'LAB_MATURITY.md', 'LAB_VLAN.md', 'EMAIL_NOTIFICATIONS.md'
         )) {
         $src = Join-Path $MonoRoot "docs\$doc"
         $dst = Join-Path $WinRepo "docs\$doc"

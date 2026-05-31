@@ -481,6 +481,35 @@ If you later unify Windows + mobile under one program, Intune can deploy Defende
 
 ---
 
+## Supervised device / Apple Configurator checklist (optional)
+
+For **fleet or lab test devices** (not required for personal daily driver):
+
+| Step | Action |
+|------|--------|
+| 1 | Encrypted backup in Finder/iTunes before supervision |
+| 2 | Mac: **Apple Configurator 2** → Prepare → Manual → **Supervise** |
+| 3 | Settings → General → VPN & Device Management — verify only trusted profiles |
+| 4 | Restrict USB when locked (Face ID → USB Accessories) |
+| 5 | Preserve **DuckDuckGo VPN/DNS** — do not add second DNS VPN |
+| 6 | Passwords: DDG Password Manager for web; CTG lab creds in Windows vault separately |
+
+**Read-only export (Windows SOC):**
+
+```powershell
+cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
+```
+
+```powershell
+.\scripts\iphone\Export-CtgIosProfileChecklist.ps1
+```
+
+Log saved under `%USERPROFILE%\Backups\logs\ios-profile-checklist-*.txt` (gitignored).
+
+See [LAB_MATURITY.md](LAB_MATURITY.md) for maturity scoring (mobile Protect domain).
+
+---
+
 ## Tie-in: Hacker Planet defensive program
 
 | Surface | Control |

@@ -1,0 +1,50 @@
+# CTG Wazuh single-node lab stack (local only — data dirs gitignored)
+# Manager + indexer + dashboard. Authorized defensive lab use only.
+services:
+  wazuh.manager:
+    image: wazuh/wazuh-manager:4.9.2
+    hostname: wazuh.manager
+    restart: unless-stopped
+    ports:
+      - "1514:1514"
+      - "1515:1515"
+      - "514:514/udp"
+      - "55000:55000"
+    environment:
+      - INDEXER_URL=https://wazuh.indexer:9200
+      - INDEXER_USERNAME=admin
+      - INDEXER_PASSWORD=SecretPassword
+      - FILEBEAT_SSL_VERIFICATION_MODE=none
+    volumes:
+      - ./data/wazuh-manager:/var/ossec/data
+      - ./data/wazuh-logs:/var/ossec/logs
+
+  wazuh.indexer:
+    image: wazuh/wazuh-indexer:4.9.2
+    hostname: wazuh.indexer
+    restart: unless-stopped
+    ports:
+      - "9200:9200"
+    environment:
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./data/wazuh-indexer:/var/lib/wazuh-indexer
+
+  wazuh.dashboard:
+    image: wazuh/wazuh-dashboard:4.9.2
+    hostname: wazuh.dashboard
+    restart: unless-stopped
+    ports:
+      - "5601:5601"
+    environment:
+      - INDEXER_USERNAME=admin
+      - INDEXER_PASSWORD=SecretPassword
+      - WAZUH_API_URL=https://wazuh.manager
+    depends_on:
+      - wazuh.indexer
+      - wazuh.manager
+    volumes:
+      - ./data/wazuh-dashboard:/usr/share/wazuh-dashboard/data
+
+# After up: set CTG_WAZUH_MANAGER to host LAN IP (not 127.0.0.1 from Kali guest).
+# Forward Snort/Suricata JSON via Filebeat or custom logcollector — see docs/LAB_MATURITY.md

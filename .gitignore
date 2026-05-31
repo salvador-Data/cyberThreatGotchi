@@ -43,6 +43,11 @@ scripts/kali/lab-targets.conf
 scripts/kali/lab-wifi.conf
 Backups/opnsense-*.xml
 Backups/kali-vm-credentials.txt
+email-notify-state.json
+**/email-notify-state.json
+Backups/ctg-email-notify/
+scripts/wazuh-lab/data/
+scripts/wazuh-lab/.env
 Backups/kali-vm-vbox-password.txt
 Backups/ctg-cve-cache/
 scripts/windows/ctg-soc-run-log*.txt

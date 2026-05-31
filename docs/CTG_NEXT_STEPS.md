@@ -2,7 +2,44 @@
 
 One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized defensive use only.
 
-**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) Â· [SECURITY_HARDENING.md](SECURITY_HARDENING.md) Â· [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) Â· [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) Â· [SECRET_VAULT.md](SECRET_VAULT.md) Â· [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) Â· [KALI_RETBLEED.md](KALI_RETBLEED.md) Â· [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) Â· [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) Â· [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [LAB_MATURITY.md](LAB_MATURITY.md) · [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) · [LAB_VLAN.md](LAB_VLAN.md) · [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+
+---
+
+## Lab maturity 8–9/10 (2026-05-31)
+
+**Rubric:** [LAB_MATURITY.md](LAB_MATURITY.md) (NIST CSF self-score 1–10)
+
+| Area | Script / doc | Andy manual |
+|------|----------------|-------------|
+| EDR baseline | `Harden-CtgWindowsDefender.ps1 -DiagnoseOnly` | `-ApplySafe` (Admin) after ASR audit review |
+| VLAN | `Test-CtgLabNetworkSegment.ps1`, [LAB_VLAN.md](LAB_VLAN.md) | Copy `lab-vlan.conf.example` → Backups |
+| SIEM sink | `Install-CtgWazuhLab.ps1 -DiagnoseOnly` | Docker + `-ApplySafe`; set `CTG_WAZUH_MANAGER` |
+| Golden Kali | `Snapshot-CtgKaliGolden.ps1` after CLICK-ME success | `-ApplySafe` when lab chain clean |
+| Restore drill | `Invoke-CtgRestoreDrill.ps1 -ReportOnly` | `Register-CtgRestoreDrillTask.ps1` (Admin) |
+| CIS subset | `Test-CtgCisBenchmarkDiagnose.ps1` | Review WARN lines |
+| Email → Kali | [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) | `Initialize-CtgEmailVault.ps1`; Proton Bridge |
+| iOS MDM checklist | `Export-CtgIosProfileChecklist.ps1` | Supervision optional (fleet only) |
+
+**Email vault titles needed:** `Proton IMAP` (or `CTG_EMAIL_IMAP`); optional `Microsoft Account`.
+
+**Quick diagnose batch (no creds required):**
+
+```powershell
+cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
+```
+
+```powershell
+.\scripts\windows\Initialize-CtgEmailVault.ps1 -DiagnoseOnly
+```
+
+```powershell
+.\scripts\windows\Harden-CtgWindowsDefender.ps1 -DiagnoseOnly
+```
+
+```powershell
+.\scripts\windows\Invoke-CtgRestoreDrill.ps1 -DiagnoseOnly
+```
 
 ---
 
