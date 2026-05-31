@@ -3,13 +3,14 @@
 # Hacker Planet LLC · Philadelphia, PA
 #
 # Default (--fit-window): guest resolution FITS the VM window (VBoxClient + xrandr --auto);
-# never force oversized modes; then medium text (DPI 108, Sans 11, Monospace 12) — saved via xfconf.
+# never force oversized modes; then medium text (DPI 110, Sans 12, Monospace 12) — ~15% over tiny baseline.
 #
-# Use --text-medium for medium fonts only (same as fit-window text layer; no geometry change).
+# Use --text-medium / --text-plus15 for medium fonts only (same as fit-window text layer; no geometry change).
 # Use --text-large for larger text (DPI 120, Sans 13, Monospace 15) — no geometry change.
 # Use --fonts-only for lighter text (minimal xrandr; after fit-window once).
 # Use --aggressive for legacy resolution-based DPI (120/144), panel scale — NOT with host Scaled.
-# Use --login-scale for GDM/lightdm sign-in greeter (text ~35%; root; before GUI login).
+# Use --login-scale for GDM/lightdm sign-in greeter (text ~15%; root; before GUI login).
+# Use --cursor-neon for neon lemon-yellow pointer + black outline, ~10% larger (X11/Xfce only).
 # Use --reset to undo over-scaling from prior runs or Scaled + high DPI.
 #
 # Prereq: mount share first:
@@ -27,30 +28,36 @@ FIT_WINDOW=true
 FONTS_ONLY=false
 TEXT_MEDIUM=false
 TEXT_LARGE=false
+TEXT_PLUS15=false
 AGGRESSIVE=false
 LOGIN_SCALE=false
+CURSOR_NEON=false
 
-CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.35}"
-CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-Sans 14}"
-CTG_LOGIN_CURSOR_SIZE="${CTG_LOGIN_CURSOR_SIZE:-14}"
+CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.15}"
+CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-Sans 12}"
+CTG_LOGIN_CURSOR_SIZE="${CTG_LOGIN_CURSOR_SIZE:-12}"
+CTG_CURSOR_THEME="${CTG_CURSOR_THEME:-CTG-Neon-Lemon}"
+CTG_CURSOR_SIZE="${CTG_CURSOR_SIZE:-26}"
 
 for arg in "$@"; do
     case "$arg" in
         --diagnose-only|--diagnose) DIAGNOSE_ONLY=true ;;
-        --login-scale) LOGIN_SCALE=true; DIAGNOSE_ONLY=false; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_LARGE=false; AGGRESSIVE=false; RESET_MODE=false ;;
-        --reset) RESET_MODE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_LARGE=false; AGGRESSIVE=false; LOGIN_SCALE=false ;;
-        --fit-window) FIT_WINDOW=true; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_LARGE=false; AGGRESSIVE=false ;;
-        --fonts-only) FONTS_ONLY=true; FIT_WINDOW=false; TEXT_MEDIUM=false; TEXT_LARGE=false; AGGRESSIVE=false ;;
-        --text-medium) TEXT_MEDIUM=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_LARGE=false; AGGRESSIVE=false ;;
-        --text-large) TEXT_LARGE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; AGGRESSIVE=false ;;
-        --aggressive|--full-scale) AGGRESSIVE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_LARGE=false ;;
+        --login-scale) LOGIN_SCALE=true; DIAGNOSE_ONLY=false; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false; RESET_MODE=false ;;
+        --cursor-neon) CURSOR_NEON=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false; RESET_MODE=false ;;
+        --reset) RESET_MODE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false; LOGIN_SCALE=false ;;
+        --fit-window) FIT_WINDOW=true; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false ;;
+        --fonts-only) FONTS_ONLY=true; FIT_WINDOW=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false ;;
+        --text-medium|--text-plus15) TEXT_MEDIUM=true; TEXT_PLUS15=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_LARGE=false; AGGRESSIVE=false ;;
+        --text-large) TEXT_LARGE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; AGGRESSIVE=false ;;
+        --aggressive|--full-scale) AGGRESSIVE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false ;;
         -h|--help)
-            echo "Usage: bash $(basename "$0") [--fit-window] [--text-medium] [--text-large] [--fonts-only] [--login-scale] [--reset] [--aggressive] [--diagnose-only]"
-            echo "  Default apply: --fit-window (VBoxClient + xrandr fit; medium DPI 108; Sans 11; Monospace 12)"
-            echo "  --text-medium Text layer only — medium fonts (DPI 108; Sans 11; Monospace 12)"
+            echo "Usage: bash $(basename "$0") [--fit-window] [--text-medium] [--text-plus15] [--text-large] [--fonts-only] [--login-scale] [--cursor-neon] [--reset] [--aggressive] [--diagnose-only]"
+            echo "  Default apply: --fit-window (VBoxClient + xrandr fit; medium DPI 110; Sans 12; Monospace 12)"
+            echo "  --text-medium / --text-plus15  Text layer only — ~15% over tiny baseline (DPI 110; Sans 12)"
             echo "  --text-large  Text layer only — DPI 120, Sans 13, Monospace 15 (no oversized xrandr)"
             echo "  --fonts-only  Lighter DPI/fonts only — minimal xrandr (after fit-window once)"
-            echo "  --login-scale GDM/lightdm greeter text ~35% / Sans 14 (sudo; post-login medium unchanged)"
+            echo "  --login-scale GDM/lightdm greeter text ~15% / Sans 12 (sudo; greeter only)"
+            echo "  --cursor-neon CTG-Neon-Lemon cursor (yellow + black ring), size ${CTG_CURSOR_SIZE} (~10% over 24; X11)"
             echo "  --reset       Undo over-scale (DPI 96, default fonts, xrandr --auto)"
             echo "  --aggressive  Legacy HiDPI (DPI 120/144, panel scale) — not with host Scaled"
             echo "  --diagnose-only  Show resolution, DPI, fonts (no changes)"
@@ -184,7 +191,7 @@ apply_lightdm_gtk_greeter_fonts() {
     local drop_file="${drop_dir}/50-ctg-login-scale.conf"
     install -d -m 0755 "$drop_dir"
     cat >"$drop_file" <<EOF
-# CTG login greeter scale (Hacker Planet lab) — medium-equivalent (Sans 14)
+# CTG login greeter scale (Hacker Planet lab) — ~15% over default (Sans 12)
 [greeter]
 theme-font-name=${font}
 clock-font-name=${font}
@@ -218,7 +225,7 @@ fix_login_greeter_scale() {
     font="$CTG_LIGHTDM_GREETER_FONT"
     cursor="$CTG_LOGIN_CURSOR_SIZE"
     sddm_pt="${font#Sans }"
-    [[ "$sddm_pt" == "$font" ]] && sddm_pt=14
+    [[ "$sddm_pt" == "$font" ]] && sddm_pt=12
     log "=== CTG login greeter scale (${scale} text / ${font} / cursor ${cursor}) ==="
     log "Display manager: $dm"
     case "$dm" in
@@ -247,8 +254,69 @@ fix_login_greeter_scale() {
             fi
             ;;
     esac
-    log "Post-login desktop unchanged — still use --fit-window (medium DPI 108) after Xfce login"
+    log "Post-login desktop unchanged — still use --fit-window (medium DPI 110, Sans 12) after Xfce login"
     log "Reboot or log out to see greeter changes"
+    return 0
+}
+
+resolve_ctg_neon_cursor_assets() {
+    local candidate script_dir
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    for candidate in \
+        "${script_dir}/assets/ctg-neon-cursor" \
+        /mnt/ctg/assets/ctg-neon-cursor \
+        /opt/ctg/assets/ctg-neon-cursor \
+        /media/sf_ctg-backups/assets/ctg-neon-cursor; do
+        if [[ -f "${candidate}/build-cursor-theme.sh" ]]; then
+            printf '%s' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+install_ctg_neon_cursor_theme() {
+    local asset_dir build_sh install_root user_icons
+    asset_dir="$(resolve_ctg_neon_cursor_assets)" || {
+        warn "CTG neon cursor assets not found (assets/ctg-neon-cursor)"
+        return 1
+    }
+    build_sh="${asset_dir}/build-cursor-theme.sh"
+    install_root="/opt/ctg/cursors/${CTG_CURSOR_THEME}"
+    if [[ $EUID -eq 0 ]]; then
+        bash "$build_sh" "$install_root" || return 1
+        user_icons="/home/${DESKTOP_USER}/.icons/${CTG_CURSOR_THEME}"
+        install -d -m 0755 "/home/${DESKTOP_USER}/.icons"
+        rm -rf "$user_icons" 2>/dev/null || true
+        cp -a "$install_root" "$user_icons" 2>/dev/null || ln -sf "$install_root" "$user_icons" 2>/dev/null || true
+        chown -R "${DESKTOP_USER}:${DESKTOP_USER}" "/home/${DESKTOP_USER}/.icons/${CTG_CURSOR_THEME}" 2>/dev/null || true
+        log "Installed cursor theme system + user: ${CTG_CURSOR_THEME} -> ${install_root}"
+    else
+        install_root="/home/${DESKTOP_USER}/.icons/${CTG_CURSOR_THEME}"
+        bash "$build_sh" "$install_root" || return 1
+        log "Installed cursor theme user: ${CTG_CURSOR_THEME} -> ${install_root}"
+    fi
+    return 0
+}
+
+apply_cursor_neon() {
+    if ! detect_desktop_user; then
+        return 1
+    fi
+    log "=== CTG neon cursor (${CTG_CURSOR_THEME}, size ${CTG_CURSOR_SIZE}; X11 only) ==="
+    run_optional "install CTG-Neon-Lemon theme" install_ctg_neon_cursor_theme
+    if as_user bash -lc 'command -v xfconf-query >/dev/null 2>&1'; then
+        log "XFCE cursor: ${CTG_CURSOR_THEME} size ${CTG_CURSOR_SIZE}"
+        as_user xfconf-query -c xsettings -p /Gtk/CursorThemeName --create -t string -s "$CTG_CURSOR_THEME" 2>/dev/null \
+            || as_user xfconf-query -c xsettings -p /Gtk/CursorThemeName -s "$CTG_CURSOR_THEME" 2>/dev/null || true
+        as_user xfconf-query -c xsettings -p /Gtk/CursorThemeSize --create -t int -s "$CTG_CURSOR_SIZE" 2>/dev/null \
+            || as_user xfconf-query -c xsettings -p /Gtk/CursorThemeSize -s "$CTG_CURSOR_SIZE" 2>/dev/null || true
+    fi
+    if as_user bash -lc 'command -v gsettings >/dev/null 2>&1'; then
+        as_user gsettings set org.gnome.desktop.interface cursor-theme "$CTG_CURSOR_THEME" 2>/dev/null || true
+        as_user gsettings set org.gnome.desktop.interface cursor-size "$CTG_CURSOR_SIZE" 2>/dev/null || true
+    fi
+    log "Cursor: neon lemon-yellow circle + black ring (~10% over default 24px). Wayland not supported in VBox lab."
     return 0
 }
 
@@ -269,9 +337,9 @@ find_vboxclient() {
 }
 
 apply_medium_text() {
-    TARGET_DPI=108
+    TARGET_DPI=110
     TERM_FONT="Monospace 12"
-    GTK_FONT="Sans 11"
+    GTK_FONT="Sans 12"
     PANEL_SIZE=30
 }
 
@@ -346,6 +414,11 @@ compute_target_dpi() {
         GTK_FONT="Sans 10"
         PANEL_SIZE=30
         log "Fonts-only ${w}x${h} -> DPI=$TARGET_DPI font=$TERM_FONT gtk=$GTK_FONT"
+        return 0
+    fi
+
+    if ! $FIT_WINDOW; then
+        APPLY_MODE="none"
         return 0
     fi
 
@@ -498,6 +571,7 @@ fix_gnome_scale() {
     elif [[ "$APPLY_MODE" == "fonts-only" || "$APPLY_MODE" == "fit-window" || "$APPLY_MODE" == "text-medium" || "$APPLY_MODE" == "text-large" ]]; then
         case "$TARGET_DPI" in
             120) factor="1.12" ;;
+            110) factor="1.06" ;;
             108) factor="1.05" ;;
             105) factor="1.03" ;;
         esac
@@ -525,7 +599,7 @@ ctg_display_autostart_desktop() {
 Type=Application
 Name=CTG Display Scale
 Comment=Hacker Planet CTG lab — fit-window medium fonts + VBoxClient at login (before seamless)
-Exec=sh -c 'sleep 2; bash /mnt/ctg/ctg-display-scale.sh --fit-window 2>/dev/null || bash /opt/ctg/ctg-display-scale.sh --fit-window 2>/dev/null || true'
+Exec=sh -c 'sleep 2; bash /mnt/ctg/ctg-display-scale.sh --fit-window --cursor-neon 2>/dev/null || bash /opt/ctg/ctg-display-scale.sh --fit-window --cursor-neon 2>/dev/null || true'
 X-GNOME-Autostart-Delay=2
 X-GNOME-Autostart-enabled=true
 NoDisplay=true
@@ -542,7 +616,7 @@ install_autostart() {
     ctg_display_autostart_desktop >"$f"
     chown "$DESKTOP_USER:$DESKTOP_USER" "$f" 2>/dev/null || true
     chmod 644 "$f" 2>/dev/null || true
-    log "Installed user autostart: $f (--fit-window medium, before seamless)"
+    log "Installed user autostart: $f (--fit-window medium + --cursor-neon, before seamless)"
     if [[ $EUID -eq 0 ]]; then
         install -d -m 0755 /etc/xdg/autostart
         ctg_display_autostart_desktop >/etc/xdg/autostart/ctg-display-scale.desktop
@@ -568,9 +642,9 @@ print_diagnose() {
     res="$(get_current_resolution)"
     read -r RES_W RES_H <<< "$res"
     log "Resolution: ${RES_W}x${RES_H}"
-    local fo_dpi=108 fo_term="Monospace 12" fo_gtk="Sans 11"
-    log "Recommended default: --fit-window (VBoxClient + xrandr fit + medium DPI=$fo_dpi)"
-    log "Medium text only (no geometry): --text-medium -> DPI=$fo_dpi $fo_gtk $fo_term"
+    local fo_dpi=110 fo_term="Monospace 12" fo_gtk="Sans 12"
+    log "Recommended default: --fit-window (VBoxClient + xrandr fit + medium DPI=$fo_dpi ~15%)"
+    log "Medium text only (no geometry): --text-medium / --text-plus15 -> DPI=$fo_dpi $fo_gtk $fo_term"
     log "Larger text: --text-large -> DPI=120 Sans 13 Monospace 15"
     log "Smaller text: --fonts-only -> DPI=105 Sans 10 Monospace 11"
     if [[ "$RES_W" -gt 2560 ]] || [[ "$RES_H" -gt 1600 ]]; then
@@ -616,7 +690,8 @@ print_diagnose() {
         log "Desktop toolkit: xfconf/gsettings not available"
     fi
     log "Host (cut-off / blown out): .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gui (not Scaled)"
-    log "Login greeter tiny text: sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale (guest only; keep login box size)"
+    log "Login greeter tiny text: sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale (~15%; greeter only)"
+    log "Neon cursor: bash /mnt/ctg/ctg-display-scale.sh --cursor-neon (or with --fit-window)"
     log "Guest fix: bash /mnt/ctg/ctg-display-scale.sh --fit-window  |  medium: --text-medium  |  large: --text-large  |  undo: --reset"
     log "Docs: docs/KALI_DISPLAY_SCALING.md"
     if [[ $ISSUES -gt 0 ]]; then
@@ -633,13 +708,14 @@ elif $AGGRESSIVE; then mode_label="aggressive"
 elif $TEXT_LARGE; then mode_label="text-large"
 elif $TEXT_MEDIUM; then mode_label="text-medium"
 elif $FONTS_ONLY; then mode_label="fonts-only"
+elif $CURSOR_NEON && ! $FIT_WINDOW; then mode_label="cursor-neon"
 fi
 if $LOGIN_SCALE; then
     fix_login_greeter_scale
     exit $?
 fi
 
-log "=== CTG display scale ($mode_label) ==="
+log "=== CTG display scale ($mode_label${CURSOR_NEON:+, cursor-neon}) ==="
 check_crlf || true
 
 if $DIAGNOSE_ONLY; then
@@ -648,6 +724,11 @@ fi
 
 if ! detect_desktop_user; then
     exit 1
+fi
+
+if $CURSOR_NEON && ! $FIT_WINDOW && ! $RESET_MODE && ! $AGGRESSIVE && ! $TEXT_MEDIUM && ! $TEXT_LARGE && ! $FONTS_ONLY; then
+    apply_cursor_neon
+    exit $?
 fi
 
 res="$(get_current_resolution)"
@@ -659,6 +740,9 @@ log "Mode: $APPLY_MODE (use --help for --reset / --aggressive)"
 run_optional "VBoxClient autoresize" fix_vbox_autoresize
 run_optional "xrandr autoresize" fix_xrandr
 run_optional "desktop DPI/font scale" fix_desktop_scale
+if $CURSOR_NEON; then
+    run_optional "neon lemon cursor" apply_cursor_neon
+fi
 if ! $RESET_MODE; then
     run_optional "autostart install" install_autostart
 fi

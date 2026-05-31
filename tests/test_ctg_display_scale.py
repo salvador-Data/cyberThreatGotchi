@@ -6,6 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCALE = ROOT / "scripts" / "kali" / "ctg-display-scale.sh"
+CURSOR_ASSETS = ROOT / "scripts" / "kali" / "assets" / "ctg-neon-cursor"
 
 
 def _body() -> str:
@@ -18,12 +19,14 @@ def test_display_scale_script_exists():
     assert "Hacker Planet" in body
     assert "--fit-window" in body
     assert "--text-medium" in body
+    assert "--text-plus15" in body
     assert "--text-large" in body
     assert "--fonts-only" in body
     assert "--reset" in body
     assert "--aggressive" in body
     assert "--diagnose-only" in body
     assert "--login-scale" in body
+    assert "--cursor-neon" in body
 
 
 def test_login_greeter_scale_gdm_and_dm_detect():
@@ -31,11 +34,21 @@ def test_login_greeter_scale_gdm_and_dm_detect():
     assert "fix_login_greeter_scale" in body
     assert "detect_ctg_display_manager" in body
     assert "greeter.dconf-defaults" in body
-    assert 'CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.35}"' in body
-    assert 'CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-Sans 14}"' in body
+    assert 'CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.15}"' in body
+    assert 'CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-Sans 12}"' in body
     assert "CTG_LOGIN_CURSOR_SIZE" in body
     assert "gdm_greeter_set_key" in body
     assert "50-ctg-login-scale.conf" in body
+
+
+def test_neon_cursor_assets_and_wiring():
+    body = _body()
+    assert "apply_cursor_neon" in body
+    assert "CTG-Neon-Lemon" in body
+    assert 'CTG_CURSOR_SIZE="${CTG_CURSOR_SIZE:-26}"' in body
+    assert (CURSOR_ASSETS / "build-cursor-theme.sh").is_file()
+    assert (CURSOR_ASSETS / "index.theme").is_file()
+    assert (CURSOR_ASSETS / "gen-neon-cursor-png.py").is_file()
 
 
 def test_fit_window_is_default_mode():
@@ -56,6 +69,7 @@ def test_never_force_oversized_resolution():
 def test_fit_window_in_autostart_and_wiring():
     body = _body()
     assert "--fit-window" in body
+    assert "--cursor-neon" in body
     assert "ctg-display-scale.desktop" in body
 
     seamless = (ROOT / "scripts" / "kali" / "ctg-seamless-guest.sh").read_text(encoding="utf-8")
@@ -64,9 +78,11 @@ def test_fit_window_in_autostart_and_wiring():
 
     first_login = (ROOT / "scripts" / "kali" / "ctg-first-login-autorun.sh").read_text(encoding="utf-8")
     assert "--fit-window" in first_login
+    assert "--cursor-neon" in first_login
 
     autopatch = (ROOT / "scripts" / "kali" / "kali-boot-autopatch.sh").read_text(encoding="utf-8")
     assert "--fit-window" in autopatch
+    assert "--cursor-neon" in autopatch
     assert "fix_login_greeter_scale" in autopatch
     assert "--login-scale" in autopatch
     assert "/etc/xdg/autostart/ctg-display-scale.desktop" in autopatch
@@ -79,7 +95,7 @@ def test_medium_text_defaults():
     body = _body()
     assert "apply_medium_text()" in body
     assert re.search(
-        r"apply_medium_text\(\) \{.*?TARGET_DPI=108.*?GTK_FONT=\"Sans 11\".*?Monospace 12",
+        r"apply_medium_text\(\) \{.*?TARGET_DPI=110.*?GTK_FONT=\"Sans 12\".*?Monospace 12",
         body,
         re.DOTALL,
     )
@@ -130,11 +146,13 @@ def test_help_documents_all_flags():
     for flag in (
         "--fit-window",
         "--text-medium",
+        "--text-plus15",
         "--text-large",
         "--fonts-only",
         "--reset",
         "--aggressive",
         "--diagnose-only",
         "--login-scale",
+        "--cursor-neon",
     ):
         assert flag in body

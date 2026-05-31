@@ -169,14 +169,14 @@ XEOF
 [Desktop Entry]
 Type=Application
 Name=CTG Display Scale
-Comment=CTG lab — fit-window medium fonts + VBoxClient at login (before seamless)
-Exec=sh -c 'sleep 2; bash /mnt/ctg/ctg-display-scale.sh --fit-window 2>/dev/null || bash /opt/ctg/ctg-display-scale.sh --fit-window 2>/dev/null || true'
+Comment=CTG lab — fit-window medium fonts + neon cursor + VBoxClient at login (before seamless)
+Exec=sh -c 'sleep 2; bash /mnt/ctg/ctg-display-scale.sh --fit-window --cursor-neon 2>/dev/null || bash /opt/ctg/ctg-display-scale.sh --fit-window --cursor-neon 2>/dev/null || true'
 X-GNOME-Autostart-Delay=2
 X-GNOME-Autostart-enabled=true
 NoDisplay=true
 DESK
     chmod 644 "$scale_autostart"
-    log "Installed $scale_autostart (--fit-window medium DPI 108; persists via xfconf)"
+    log "Installed $scale_autostart (--fit-window medium DPI 110 + --cursor-neon; persists via xfconf)"
     local autostart=/etc/xdg/autostart/vboxclient-seamless.desktop
     cat >"$autostart" <<'DESK'
 [Desktop Entry]
@@ -210,10 +210,10 @@ DESK
         fi
     done
     if [[ -f "$scale_fix" ]] && who 2>/dev/null | grep -q ':0'; then
-        log "Running display scale (fit-window): $scale_fix --fit-window"
-        bash "$scale_fix" --fit-window || log "ctg-display-scale returned non-zero (login may still be in progress)"
+        log "Running display scale (fit-window + cursor-neon): $scale_fix --fit-window --cursor-neon"
+        bash "$scale_fix" --fit-window --cursor-neon || log "ctg-display-scale returned non-zero (login may still be in progress)"
     else
-        log "Display scale: bash /mnt/ctg/ctg-display-scale.sh --fit-window after GUI login"
+        log "Display scale: bash /mnt/ctg/ctg-display-scale.sh --fit-window --cursor-neon after GUI login"
     fi
     log "Seamless toggle on Windows host: Host+L; menu: Host+Home; toolbar: docs/KALI_SEAMLESS_MODE.md"
     log "Display scale: docs/KALI_DISPLAY_SCALING.md"
@@ -282,7 +282,7 @@ EOF
 }
 
 fix_login_greeter_scale() {
-    log "Phase: login greeter text scale (1.35 / Sans 14 — GDM/lightdm sign-in)"
+    log "Phase: login greeter text scale (1.15 / Sans 12 — GDM/lightdm sign-in ~15%)"
     local scale_sh=""
     for candidate in "${SCRIPT_DIR}/ctg-display-scale.sh" /opt/ctg/ctg-display-scale.sh /mnt/ctg/ctg-display-scale.sh /media/sf_ctg-backups/ctg-display-scale.sh; do
         if [[ -f "$candidate" ]]; then
