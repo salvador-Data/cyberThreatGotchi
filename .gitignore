@@ -33,6 +33,7 @@ Backups/.vault/
 *.vault
 *.vault.backup
 credentials.vault*
+credentials.session.dpapi
 Backups/vault-backups/
 **/credentials-export*.csv
 *.hash

@@ -64,8 +64,8 @@ def cmd_unlock(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_lock(_args: argparse.Namespace) -> int:
-    vault.lock_session()
+def cmd_lock(args: argparse.Namespace) -> int:
+    vault.lock_session(vault_path=args.vault_path)
     _emit({"ok": True})
     return 0
 
@@ -75,9 +75,9 @@ def cmd_status(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_list(_args: argparse.Namespace) -> int:
+def cmd_list(args: argparse.Namespace) -> int:
     try:
-        items = vault.list_credentials()
+        items = vault.list_credentials(vault_path=args.vault_path)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
     _emit({"ok": True, "credentials": items})
@@ -86,7 +86,7 @@ def cmd_list(_args: argparse.Namespace) -> int:
 
 def cmd_get(args: argparse.Namespace) -> int:
     try:
-        entry = vault.get_credential(args.title)
+        entry = vault.get_credential(args.title, vault_path=args.vault_path)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
     except vault.CredentialNotFoundError as exc:
@@ -105,6 +105,7 @@ def cmd_add(args: argparse.Namespace) -> int:
             url=args.url,
             notes=args.notes,
             tags=[t.strip() for t in (args.tags or "").split(",") if t.strip()],
+            vault_path=args.vault_path,
         )
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
@@ -125,6 +126,7 @@ def cmd_set(args: argparse.Namespace) -> int:
             password=password,
             url=args.url,
             notes=args.notes,
+            vault_path=args.vault_path,
         )
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
@@ -136,7 +138,7 @@ def cmd_set(args: argparse.Namespace) -> int:
 
 def cmd_remove(args: argparse.Namespace) -> int:
     try:
-        vault.remove_credential(args.title)
+        vault.remove_credential(args.title, vault_path=args.vault_path)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
     except vault.CredentialNotFoundError as exc:
@@ -156,7 +158,7 @@ def cmd_export(args: argparse.Namespace) -> int:
 
 def cmd_import_csv(args: argparse.Namespace) -> int:
     try:
-        added = vault.import_from_csv(args.csv_path)
+        added = vault.import_from_csv(args.csv_path, vault_path=args.vault_path)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
     except vault.VaultError as exc:
@@ -165,9 +167,9 @@ def cmd_import_csv(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_enable_dpapi(_args: argparse.Namespace) -> int:
+def cmd_enable_dpapi(args: argparse.Namespace) -> int:
     try:
-        vault.enable_dpapi_wrap()
+        vault.enable_dpapi_wrap(args.vault_path)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
     except vault.VaultError as exc:
@@ -184,38 +186,40 @@ def cmd_verify(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="CTG encrypted credential vault CLI")
-    parser.add_argument(
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument(
         "--vault-path",
         default=str(vault.DEFAULT_VAULT_PATH),
         help="Path to credentials.vault file",
     )
+
+    parser = argparse.ArgumentParser(description="CTG encrypted credential vault CLI")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_init = sub.add_parser("init")
+    p_init = sub.add_parser("init", parents=[common])
     p_init.add_argument("--master-password", default="")
     p_init.add_argument("--enable-dpapi-wrap", action="store_true")
     p_init.set_defaults(func=cmd_init)
 
-    p_unlock = sub.add_parser("unlock")
+    p_unlock = sub.add_parser("unlock", parents=[common])
     p_unlock.add_argument("--master-password", default="")
     p_unlock.add_argument("--use-dpapi", action="store_true")
     p_unlock.set_defaults(func=cmd_unlock)
 
-    p_lock = sub.add_parser("lock")
+    p_lock = sub.add_parser("lock", parents=[common])
     p_lock.set_defaults(func=cmd_lock)
 
-    p_status = sub.add_parser("status")
+    p_status = sub.add_parser("status", parents=[common])
     p_status.set_defaults(func=cmd_status)
 
-    p_list = sub.add_parser("list")
+    p_list = sub.add_parser("list", parents=[common])
     p_list.set_defaults(func=cmd_list)
 
-    p_get = sub.add_parser("get")
+    p_get = sub.add_parser("get", parents=[common])
     p_get.add_argument("--title", required=True)
     p_get.set_defaults(func=cmd_get)
 
-    p_add = sub.add_parser("add")
+    p_add = sub.add_parser("add", parents=[common])
     p_add.add_argument("--title", required=True)
     p_add.add_argument("--username", default="")
     p_add.add_argument("--password", default="")
@@ -224,7 +228,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_add.add_argument("--tags", default="")
     p_add.set_defaults(func=cmd_add)
 
-    p_set = sub.add_parser("set")
+    p_set = sub.add_parser("set", parents=[common])
     p_set.add_argument("--title", required=True)
     p_set.add_argument("--username", default="")
     p_set.add_argument("--password", default="")
@@ -233,22 +237,22 @@ def build_parser() -> argparse.ArgumentParser:
     p_set.add_argument("--notes", default="")
     p_set.set_defaults(func=cmd_set)
 
-    p_remove = sub.add_parser("remove")
+    p_remove = sub.add_parser("remove", parents=[common])
     p_remove.add_argument("--title", required=True)
     p_remove.set_defaults(func=cmd_remove)
 
-    p_export = sub.add_parser("export")
+    p_export = sub.add_parser("export", parents=[common])
     p_export.add_argument("--destination", required=True)
     p_export.set_defaults(func=cmd_export)
 
-    p_import = sub.add_parser("import-csv")
+    p_import = sub.add_parser("import-csv", parents=[common])
     p_import.add_argument("--csv-path", required=True)
     p_import.set_defaults(func=cmd_import_csv)
 
-    p_dpapi = sub.add_parser("enable-dpapi")
+    p_dpapi = sub.add_parser("enable-dpapi", parents=[common])
     p_dpapi.set_defaults(func=cmd_enable_dpapi)
 
-    p_verify = sub.add_parser("verify")
+    p_verify = sub.add_parser("verify", parents=[common])
     p_verify.add_argument("--master-password", default="")
     p_verify.set_defaults(func=cmd_verify)
 

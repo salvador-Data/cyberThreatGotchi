@@ -35,6 +35,7 @@ SCRYPT_R = 8
 SCRYPT_P = 1
 
 _SESSION: Optional["VaultSession"] = None
+SESSION_FILE_NAME = "credentials.session.dpapi"
 
 
 class VaultError(Exception):
@@ -295,25 +296,108 @@ class VaultSession:
         self.cipher_meta = cipher_meta
 
 
+def get_session_file_path(vault_path: Path | str = DEFAULT_VAULT_PATH) -> Path:
+    return Path(vault_path).parent / SESSION_FILE_NAME
+
+
+def _save_session_sidecar(session: VaultSession) -> None:
+    if sys.platform != "win32":
+        return
+    sidecar = get_session_file_path(session.vault_path)
+    sidecar.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "vault_path": str(session.vault_path.resolve()),
+        "unlocked_at": session.unlocked_at,
+        "wrapped_key": _b64e(dpapi_protect_bytes(session.content_key)),
+    }
+    sidecar.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
+
+
+def _load_session_sidecar(vault_path: Path, timeout_sec: int = SESSION_TIMEOUT_SEC) -> Optional[VaultSession]:
+    if sys.platform != "win32":
+        return None
+    sidecar = get_session_file_path(vault_path)
+    if not sidecar.is_file():
+        return None
+    try:
+        payload = json.loads(sidecar.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+    if str(payload.get("vault_path", "")) != str(vault_path.resolve()):
+        return None
+    import time
+
+    unlocked_at = float(payload.get("unlocked_at", 0))
+    if (time.time() - unlocked_at) >= timeout_sec:
+        _clear_session_sidecar(vault_path)
+        return None
+    try:
+        content_key = dpapi_unprotect_bytes(str(payload["wrapped_key"]))
+    except VaultAuthError:
+        return None
+    document = _load_vault_document(vault_path)
+    cipher_meta = dict(document["cipher"])
+    ciphertext = _b64d(str(document["ciphertext"]))
+    try:
+        inner = _decrypt_payload(content_key, cipher_meta, ciphertext)
+    except VaultAuthError:
+        return None
+    entries = [CredentialEntry.from_dict(item) for item in inner.get("entries", [])]
+    return VaultSession(
+        vault_path=vault_path,
+        content_key=content_key,
+        entries=entries,
+        unlocked_at=unlocked_at,
+        kdf_params=dict(document["kdf"]),
+        cipher_meta=cipher_meta,
+        dpapi_wrapped_key=document.get("dpapi_wrapped_key"),
+    )
+
+
+def _clear_session_sidecar(vault_path: Path | str) -> None:
+    sidecar = get_session_file_path(vault_path)
+    if sidecar.is_file():
+        sidecar.unlink()
+
+
 def _set_session(session: VaultSession) -> VaultSession:
     global _SESSION
     _SESSION = session
+    _save_session_sidecar(session)
     return session
 
 
-def get_active_session(timeout_sec: int = SESSION_TIMEOUT_SEC) -> VaultSession:
+def get_active_session(
+    timeout_sec: int = SESSION_TIMEOUT_SEC,
+    vault_path: Path | str | None = None,
+) -> VaultSession:
     global _SESSION
-    if _SESSION is None:
-        raise VaultLockedError("Vault is locked")
-    if _SESSION.is_expired(timeout_sec):
-        _SESSION = None
-        raise VaultLockedError("Vault session expired")
-    _SESSION.touch()
-    return _SESSION
+    if _SESSION is not None and not _SESSION.is_expired(timeout_sec):
+        _SESSION.touch()
+        _save_session_sidecar(_SESSION)
+        return _SESSION
+    _SESSION = None
+    paths_to_try: list[Path] = []
+    if vault_path is not None:
+        paths_to_try.append(Path(vault_path))
+    elif DEFAULT_VAULT_PATH.is_file():
+        paths_to_try.append(DEFAULT_VAULT_PATH)
+    for path in paths_to_try:
+        candidate = _load_session_sidecar(path, timeout_sec)
+        if candidate is not None:
+            candidate.touch()
+            _SESSION = candidate
+            _save_session_sidecar(_SESSION)
+            return _SESSION
+    raise VaultLockedError("Vault is locked")
 
 
-def lock_session() -> None:
+def lock_session(vault_path: Path | str | None = None) -> None:
     global _SESSION
+    if _SESSION is not None:
+        _clear_session_sidecar(_SESSION.vault_path)
+    elif vault_path is not None:
+        _clear_session_sidecar(vault_path)
     _SESSION = None
 
 
@@ -401,7 +485,7 @@ def unlock_vault(
 
 
 def enable_dpapi_wrap(vault_path: Path | str = DEFAULT_VAULT_PATH) -> None:
-    session = get_active_session()
+    session = get_active_session(vault_path=vault_path)
     if Path(vault_path) != session.vault_path:
         raise VaultError("Active session vault path mismatch")
     if sys.platform != "win32":
@@ -418,8 +502,11 @@ def _find_entry_index(session: VaultSession, title: str) -> int:
     return -1
 
 
-def list_credentials(session: Optional[VaultSession] = None) -> list[dict[str, Any]]:
-    sess = session or get_active_session()
+def list_credentials(
+    session: Optional[VaultSession] = None,
+    vault_path: Path | str | None = None,
+) -> list[dict[str, Any]]:
+    sess = session or get_active_session(vault_path=vault_path)
     return [
         {
             "id": e.id,
@@ -434,8 +521,12 @@ def list_credentials(session: Optional[VaultSession] = None) -> list[dict[str, A
     ]
 
 
-def get_credential(title: str, session: Optional[VaultSession] = None) -> CredentialEntry:
-    sess = session or get_active_session()
+def get_credential(
+    title: str,
+    session: Optional[VaultSession] = None,
+    vault_path: Path | str | None = None,
+) -> CredentialEntry:
+    sess = session or get_active_session(vault_path=vault_path)
     idx = _find_entry_index(sess, title)
     if idx < 0:
         raise CredentialNotFoundError(f"Credential not found: {title}")
@@ -451,8 +542,9 @@ def add_credential(
     notes: str = "",
     tags: Optional[list[str]] = None,
     session: Optional[VaultSession] = None,
+    vault_path: Path | str | None = None,
 ) -> CredentialEntry:
-    sess = session or get_active_session()
+    sess = session or get_active_session(vault_path=vault_path)
     if _find_entry_index(sess, title) >= 0:
         raise VaultError(f"Credential already exists: {title}")
     now = _utc_now_iso()
@@ -481,8 +573,9 @@ def set_credential(
     notes: Optional[str] = None,
     tags: Optional[list[str]] = None,
     session: Optional[VaultSession] = None,
+    vault_path: Path | str | None = None,
 ) -> CredentialEntry:
-    sess = session or get_active_session()
+    sess = session or get_active_session(vault_path=vault_path)
     idx = _find_entry_index(sess, title)
     if idx < 0:
         raise CredentialNotFoundError(f"Credential not found: {title}")
@@ -502,8 +595,12 @@ def set_credential(
     return entry
 
 
-def remove_credential(title: str, session: Optional[VaultSession] = None) -> None:
-    sess = session or get_active_session()
+def remove_credential(
+    title: str,
+    session: Optional[VaultSession] = None,
+    vault_path: Path | str | None = None,
+) -> None:
+    sess = session or get_active_session(vault_path=vault_path)
     idx = _find_entry_index(sess, title)
     if idx < 0:
         raise CredentialNotFoundError(f"Credential not found: {title}")
@@ -536,8 +633,9 @@ def import_from_csv(
     url_column: str = "url",
     notes_column: str = "notes",
     session: Optional[VaultSession] = None,
+    vault_path: Path | str | None = None,
 ) -> int:
-    sess = session or get_active_session()
+    sess = session or get_active_session(vault_path=vault_path)
     path = Path(csv_path)
     if not path.is_file():
         raise VaultError(f"CSV not found: {path}")
@@ -574,20 +672,30 @@ def verify_master_password(master_password: str, vault_path: Path | str = DEFAUL
 
 def vault_status(vault_path: Path | str = DEFAULT_VAULT_PATH) -> dict[str, Any]:
     path = Path(vault_path)
+    sidecar_active = False
+    entry_count = 0
+    if path.is_file() and sys.platform == "win32":
+        try:
+            sidecar_session = _load_session_sidecar(path)
+            if sidecar_session is not None:
+                sidecar_active = True
+                entry_count = len(sidecar_session.entries)
+        except VaultError:
+            sidecar_active = False
     status: dict[str, Any] = {
         "vault_path": str(path),
         "exists": path.is_file(),
-        "locked": _SESSION is None or (_SESSION is not None and _SESSION.is_expired()),
-        "session_active": _SESSION is not None and not _SESSION.is_expired(),
-        "entry_count": 0,
+        "locked": not sidecar_active and (_SESSION is None or (_SESSION is not None and _SESSION.is_expired())),
+        "session_active": sidecar_active or (_SESSION is not None and not _SESSION.is_expired()),
+        "entry_count": entry_count,
         "kdf": None,
         "dpapi_wrapped": False,
     }
+    if _SESSION is not None and not _SESSION.is_expired() and _SESSION.vault_path == path:
+        status["entry_count"] = len(_SESSION.entries)
+        status["locked"] = False
     if path.is_file():
         doc = _load_vault_document(path)
         status["kdf"] = doc.get("kdf", {}).get("name")
         status["dpapi_wrapped"] = bool(doc.get("dpapi_wrapped_key"))
-        if _SESSION is not None and not _SESSION.is_expired() and _SESSION.vault_path == path:
-            status["entry_count"] = len(_SESSION.entries)
-            status["locked"] = False
     return status
