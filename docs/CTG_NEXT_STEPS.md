@@ -18,15 +18,19 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 - Host: `Start-KaliSeamless.ps1` diagnostic string fixes; `Invoke-CtgKaliNmapAskInstall.ps1` for nmap-ask install trigger
 - Lab tree re-staged: `Stage-KaliLabToBackups.ps1` (2026-05-31 — full tree on `ctg-backups` share)
 - Path helpers: `CTG-Paths.ps1` resolves Programs root + canonical repo
-- Tests: **445 passed, 4 skipped** (`pytest tests/ -q`, 2026-05-31 good-build pass)
+- Tests: **450 passed, 4 skipped** (`pytest tests/ -q`, 2026-05-31 CPU/GPU pass)
 
 ### Good build run log (2026-05-31, Windows SOC)
 | Command | Outcome |
 |---------|---------|
-| `pytest tests/ -q` (canonical `.venv`) | **445 passed**, 4 skipped (~3 min) |
+| `pytest tests/ -q` (canonical `.venv`) | **450 passed**, 4 skipped (~2.5 min) |
+| `Optimize-CpuPerformance.ps1 -DiagnoseOnly` | OK — i9-8950HK, High performance plan active |
+| `Optimize-GpuPerformance.ps1 -ApplySafe` | Visual effects applied; NVIDIA `-pm` needs Admin |
+| `Optimize-CpuPerformance.ps1 -ApplySafe` | **Needs Admin UAC** — use `Run-AsAdmin.ps1` |
+| `Register-CtgCpuOptimizeTask.ps1` | **Manual (Admin)** — not registered this session |
 | `Stage-KaliLabToBackups.ps1` | OK — 35+ `.sh`, CLICK-ME, docs → `C:\Users\Owner\Backups` |
-| `CTG-Paths.ps1` dot-source | ProgramsRoot=`Programs\Hacker Planet LLC`; RepoRoot=canonical path |
-| `Get-ScheduledTask HackerPlanet-CTG-*` | None registered (CPU/nightly still manual Admin) |
+| `Set-CtgPrivateRepos.ps1 -DiagnoseOnly` | Verify ctg-kali-lab, ctg-windows-soc, ctg-device-hardening |
+| `Get-ScheduledTask HackerPlanet-CTG-*` | CPU task manual Admin registration |
 | `Invoke-CtgKaliGuestFlash.ps1` | **Not run** (live creds/guest login — use CLICK-ME or share trigger) |
 
 ### Manual (Kali / Windows)
@@ -60,7 +64,9 @@ New-Item C:\Users\Owner\Backups\CTG_RUN_AUTORUN_NOW -ItemType File -Force
 | Kali guest seamless prerequisites | **Done** | `kali-boot-autopatch.sh`, `ctg-seamless-guest.sh`, staged to Backups |
 | Seamless toggle on running VM | **Manual** | Log in to Kali GUI, then **Host+L** (VB7 has no `controlvm seamless`) |
 | CPU safe optimize scripts | **Done** | `Optimize-CpuPerformance.ps1`, `Register-CtgCpuOptimizeTask.ps1`, docs |
-| CPU `-ApplySafe` / scheduled task | **Manual (Admin)** | UAC required â€” see step 7 below |
+| GPU safe optimize script | **Done** | `Optimize-GpuPerformance.ps1`, docs/CPU_PERFORMANCE.md GPU section |
+| CPU `-ApplySafe` / scheduled task | **Manual (Admin)** | UAC required — see step 7 below |
+| GPU `-ApplySafe` (NVIDIA `-pm`) | **Partial** | Visual effects applied; `-pm 1` needs Admin |
 | PII privacy Cursor rule | **Done** | `.cursor/rules/no-pii-in-repo.mdc` |
 | Wi-Fi repair | **Manual (Admin)** | Wi-Fi disconnected; DDG VPN up â€” run `Repair-WindowsWifi.ps1 -ApplyFixes` elevated |
 | Kali SSH autopatch | **Manual (TTY)** | If 127.0.0.1:2222 fails: `sudo bash /mnt/ctg/RUN-KALI-LAB-NOW.sh` |
@@ -75,7 +81,7 @@ New-Item C:\Users\Owner\Backups\CTG_RUN_AUTORUN_NOW -ItemType File -Force
 
 **Seamless (2026-05-31 live):** VM **running headless** — `DesktopReady: False` (log in at Kali GUI). After login: `Start-KaliSeamless.ps1` (GUI session) or **Host+L**; if menu reverts: `bash /mnt/ctg/ctg-seamless-guest.sh`. **spec-ctrl:** ON (`Harden-KaliVmSpectre.ps1 -DiagnoseOnly`).
 
-**CPU diagnose (Andy laptop):** Intel i9-8950HK, likely laptop, High performance plan active â€” **script OC: N**; manual BIOS/XTU only if desired.
+**CPU/GPU diagnose (Andy laptop, 2026-05-31):** Dell Precision 5530 · Intel i9-8950HK · Intel UHD 630 + NVIDIA Quadro P2000 · High performance plan active · GPU visual effects Best performance · script OC: **N**; Dell Power Manager + Graphics Settings per-app: manual.
 
 ---
 

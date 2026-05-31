@@ -103,6 +103,30 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **Admin:** Triggers UAC if not admin
 - **Docs:** [README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)
 
+### `Optimize-CpuPerformance.ps1`
+- **Path:** `scripts/windows/Optimize-CpuPerformance.ps1`
+- **Tagline:** *Safe CPU power posture — powercfg only, no script OC.*
+- **Does:** `-DiagnoseOnly` (default): CPU model, laptop heuristic, power plan, thermals. `-ApplySafe`: High/Ultimate performance, aggressive boost, min/max 100% AC, core parking off on AC; Balanced on battery by default.
+- **When:** SOC laptop tune-up or weekly via scheduled task.
+- **Admin:** **For `-ApplySafe`**
+- **Docs:** [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md)
+
+### `Register-CtgCpuOptimizeTask.ps1`
+- **Path:** `scripts/windows/Register-CtgCpuOptimizeTask.ps1`
+- **Tagline:** *Weekly safe CPU re-apply — Interactive + Highest, no password in git.*
+- **Does:** Registers `HackerPlanet-CTG-Cpu-Optimize` (Sunday 03:30 or `-Schedule AtLogon`).
+- **When:** After first successful `-ApplySafe` run.
+- **Admin:** **Yes**
+- **Docs:** [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md)
+
+### `Optimize-GpuPerformance.ps1`
+- **Path:** `scripts/windows/Optimize-GpuPerformance.ps1`
+- **Tagline:** *Safe GPU posture — NVIDIA persistence + visual effects, no OC offsets.*
+- **Does:** `-DiagnoseOnly`: adapters, nvidia-smi, visual effects. `-ApplySafe`: `nvidia-smi -pm 1` when elevated; HKCU Best performance visual preset.
+- **When:** After CPU tune or when dGPU workloads feel sluggish.
+- **Admin:** **Recommended for NVIDIA `-pm`**
+- **Docs:** [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md)
+
 ### `CTG-AdminCommon.ps1`
 - **Path:** `scripts/windows/CTG-AdminCommon.ps1`
 - **Tagline:** *Shared "are we admin yet?" for the SOC scripts.*

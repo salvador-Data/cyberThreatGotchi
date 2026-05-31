@@ -1,8 +1,35 @@
-﻿# CPU performance â€” safe Windows tuning (no script OC)
+﻿# CPU & GPU performance — safe Windows tuning (no script OC)
 
-**Hacker Planet LLC Â· Philadelphia, PA Â· authorized lab use only**
+**Hacker Planet LLC · Philadelphia, PA · authorized lab use only**
 
-Conservative CPU and power posture for the Windows SOC laptop. This stack **does not** change voltage, multiplier, or BIOS settings from scripts.
+Conservative CPU, GPU, and power posture for the Windows SOC laptop. This stack **does not** change voltage, multiplier, BIOS settings, or Spectre/RETBleed mitigations from scripts.
+
+## Andy laptop snapshot (2026-05-31)
+
+| Item | Detected |
+|------|----------|
+| Model | **Dell Precision 5530** |
+| CPU | **Intel Core i9-8950HK** (6C/12T @ 2.90 GHz base) |
+| iGPU | **Intel UHD Graphics 630** |
+| dGPU | **NVIDIA Quadro P2000** (driver 556.12 via nvidia-smi) |
+| Form factor | Laptop (battery present) — script OC **not** recommended |
+
+### Applied this session (automated)
+
+| Action | Result |
+|--------|--------|
+| CPU `-DiagnoseOnly` | OK — High performance plan already active |
+| CPU `-ApplySafe` | **Needs Admin UAC** — re-run via `Run-AsAdmin.ps1` (tunes boost, min/max 100% AC, core parking) |
+| GPU visual effects | **Applied** — HKCU `VisualFXSetting=2` (Best performance) |
+| NVIDIA `-pm 1` | **Skipped** — requires Admin; mobile Quadro often reports persistence mode `[N/A]` |
+| Scheduled task | **Not registered** — run `Register-CtgCpuOptimizeTask.ps1` elevated |
+
+### Manual (Dell / GPU / thermals)
+
+- **Dell Power Manager** — install from Dell support; set **Ultra Performance** on AC when thermals allow (not scripted — user consent).
+- **Windows Graphics Settings** — Settings → System → Display → Graphics → add VirtualBox, Cursor, Chrome → **High performance** (Quadro P2000).
+- **Intel XTU / ThrottleStop undervolt** — optional manual only if BIOS allows; monitor thermals; not scripted.
+- **Revert CPU plan** — `powercfg /setactive 381b4222-f694-41f0-9685-ff5bb260df2e` (Balanced).
 
 ## Why not hash your Windows password in the script?
 
@@ -29,9 +56,21 @@ Apply safe Windows-level tweaks (Administrator):
 .\scripts\windows\Run-AsAdmin.ps1 -TargetScript .\scripts\windows\Optimize-CpuPerformance.ps1 -TargetArguments '-ApplySafe'
 ```
 
-Log: `C:\Users\Owner\Backups\logs\optimize-cpu.log` â€” **no secrets in git**.
+Log: `C:\Users\Owner\Backups\logs\optimize-cpu.log` — **no secrets in git**.
 
-## What `-ApplySafe` does
+GPU diagnose / apply:
+
+```powershell
+.\scripts\windows\Optimize-GpuPerformance.ps1 -DiagnoseOnly
+```
+
+```powershell
+.\scripts\windows\Run-AsAdmin.ps1 -TargetScript .\scripts\windows\Optimize-GpuPerformance.ps1 -TargetArguments '-ApplySafe'
+```
+
+Log: `C:\Users\Owner\Backups\logs\optimize-gpu.log`
+
+## What `-ApplySafe` does (CPU)
 
 On **AC power** (when plugged in):
 
@@ -53,6 +92,16 @@ With **BalancedOnBattery** (default ON):
 | BIOS changes | **Manual only** |
 
 Use `-ApplyUnsafe` to print BIOS/vendor-tool guidance; it will **not** apply changes.
+
+## What `-ApplySafe` does (GPU)
+
+When a discrete GPU is present:
+
+- **NVIDIA:** `nvidia-smi -pm 1` (persistence mode) when elevated and supported — no clock/voltage offsets
+- **Visual effects:** HKCU Best performance preset (disable animations/shadows) unless `-SkipVisualEffects`
+- **Intel-only systems:** discrete GPU actions skipped; per-app GPU preference remains manual
+
+Does **not** change power-limit offsets, enable aggressive OC, or disable Hyper-V/VirtualBox GPU passthrough policies.
 
 ## Scheduled task (optional)
 
