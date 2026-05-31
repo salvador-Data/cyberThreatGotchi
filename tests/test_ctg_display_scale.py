@@ -17,6 +17,7 @@ def test_display_scale_script_exists():
     body = _body()
     assert "Hacker Planet" in body
     assert "--fit-window" in body
+    assert "--text-large" in body
     assert "--fonts-only" in body
     assert "--reset" in body
     assert "--aggressive" in body
@@ -58,11 +59,10 @@ def test_fit_window_in_autostart_and_wiring():
     assert "--fit-window" in flash
 
 
-def test_dpi_range_modest_not_aggressive_default():
+def test_fit_window_applies_readable_fonts_not_geometry_only():
     body = _body()
-    assert "TARGET_DPI=105" in body
     fit = re.search(
-        r'# fit-window \(default\): modest DPI after resolution fits VM window.*?'
+        r"# fit-window \(default\): geometry fit \+ readable text.*?"
         r'log "Fit-window \$\{w\}x\$\{h\} -> DPI=\$TARGET_DPI',
         body,
         re.DOTALL,
@@ -70,11 +70,44 @@ def test_dpi_range_modest_not_aggressive_default():
     assert fit, "fit-window compute_target_dpi block not found"
     block = fit.group(0)
     assert "TARGET_DPI=112" in block
-    assert "TARGET_DPI=144" not in block
-    assert "TARGET_DPI=120" not in block
+    assert 'GTK_FONT="Sans 12"' in block
+    assert "Monospace 14" in block
+    assert "1400" in block
+    assert "fonts included" in block.lower() or "readable text" in block.lower()
+
+
+def test_text_large_mode_values():
+    body = _body()
+    assert "TEXT_LARGE=true" in body
+    assert 'APPLY_MODE="text-large"' in body
+    assert re.search(
+        r'if \$TEXT_LARGE.*?TARGET_DPI=120.*?GTK_FONT="Sans 13".*?Monospace 15',
+        body,
+        re.DOTALL,
+    )
+
+
+def test_fit_window_dpi_120_only_for_narrow_window():
+    body = _body()
+    assert re.search(r'\[\[ "\$w" -gt 0 && "\$w" -lt 1400 \]\]', body)
+    fit = re.search(
+        r"# fit-window \(default\):.*?log \"Fit-window",
+        body,
+        re.DOTALL,
+    )
+    assert fit
+    assert "TARGET_DPI=120" in fit.group(0)
+    assert "TARGET_DPI=144" not in fit.group(0)
 
 
 def test_help_documents_all_flags():
     body = _body()
-    for flag in ("--fit-window", "--fonts-only", "--reset", "--aggressive", "--diagnose-only"):
+    for flag in (
+        "--fit-window",
+        "--text-large",
+        "--fonts-only",
+        "--reset",
+        "--aggressive",
+        "--diagnose-only",
+    ):
         assert flag in body

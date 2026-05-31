@@ -3,9 +3,10 @@
 # Hacker Planet LLC · Philadelphia, PA
 #
 # Default (--fit-window): guest resolution FITS the VM window (VBoxClient + xrandr --auto);
-# never force oversized modes; then modest Xft DPI (105–112) and readable terminal/Gtk fonts.
+# never force oversized modes; then readable Xft DPI (112, 120 if width <1400) + Gtk/terminal fonts.
 #
-# Use --fonts-only for text bump only (minimal xrandr; autoresize unchanged).
+# Use --text-large for Andy text bump only (DPI 120, Sans 13, Monospace 15) — no geometry change.
+# Use --fonts-only for lighter text bump (minimal xrandr; after fit-window once).
 # Use --aggressive for legacy resolution-based DPI (120/144), panel scale — NOT with host Scaled.
 # Use --reset to undo over-scaling from prior runs or Scaled + high DPI.
 #
@@ -22,19 +23,22 @@ DIAGNOSE_ONLY=false
 RESET_MODE=false
 FIT_WINDOW=true
 FONTS_ONLY=false
+TEXT_LARGE=false
 AGGRESSIVE=false
 
 for arg in "$@"; do
     case "$arg" in
         --diagnose-only|--diagnose) DIAGNOSE_ONLY=true ;;
-        --reset) RESET_MODE=true; FIT_WINDOW=false; FONTS_ONLY=false; AGGRESSIVE=false ;;
-        --fit-window) FIT_WINDOW=true; FONTS_ONLY=false; AGGRESSIVE=false ;;
-        --fonts-only) FONTS_ONLY=true; FIT_WINDOW=false; AGGRESSIVE=false ;;
-        --aggressive|--full-scale) AGGRESSIVE=true; FIT_WINDOW=false; FONTS_ONLY=false ;;
+        --reset) RESET_MODE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_LARGE=false; AGGRESSIVE=false ;;
+        --fit-window) FIT_WINDOW=true; FONTS_ONLY=false; TEXT_LARGE=false; AGGRESSIVE=false ;;
+        --fonts-only) FONTS_ONLY=true; FIT_WINDOW=false; TEXT_LARGE=false; AGGRESSIVE=false ;;
+        --text-large) TEXT_LARGE=true; FIT_WINDOW=false; FONTS_ONLY=false; AGGRESSIVE=false ;;
+        --aggressive|--full-scale) AGGRESSIVE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_LARGE=false ;;
         -h|--help)
-            echo "Usage: bash $(basename "$0") [--fit-window] [--fonts-only] [--reset] [--aggressive] [--diagnose-only]"
-            echo "  Default apply: --fit-window (VBoxClient + xrandr fit; DPI 105–112; never oversized res)"
-            echo "  --fonts-only  Modest DPI/fonts only — minimal xrandr (after fit-window once)"
+            echo "Usage: bash $(basename "$0") [--fit-window] [--text-large] [--fonts-only] [--reset] [--aggressive] [--diagnose-only]"
+            echo "  Default apply: --fit-window (VBoxClient + xrandr fit; DPI 112/120; Sans 12; Monospace 14)"
+            echo "  --text-large  Text layer only — DPI 120, Sans 13, Monospace 15 (no oversized xrandr)"
+            echo "  --fonts-only  Lighter DPI/fonts only — minimal xrandr (after fit-window once)"
             echo "  --reset       Undo over-scale (DPI 96, default fonts, xrandr --auto)"
             echo "  --aggressive  Legacy HiDPI (DPI 120/144, panel scale) — not with host Scaled"
             echo "  --diagnose-only  Show resolution, DPI, fonts (no changes)"
@@ -170,14 +174,24 @@ compute_target_dpi() {
         return 0
     fi
 
+    if $TEXT_LARGE; then
+        APPLY_MODE="text-large"
+        TARGET_DPI=120
+        TERM_FONT="Monospace 15"
+        GTK_FONT="Sans 13"
+        PANEL_SIZE=36
+        log "Text-large ${w}x${h} -> DPI=$TARGET_DPI font=$TERM_FONT gtk=$GTK_FONT (geometry unchanged)"
+        return 0
+    fi
+
     if $FONTS_ONLY; then
         APPLY_MODE="fonts-only"
-        TARGET_DPI=105
+        TARGET_DPI=108
         TERM_FONT="Monospace 13"
         GTK_FONT="Sans 11"
-        PANEL_SIZE=30
+        PANEL_SIZE=32
         if [[ "$w" -ge 1920 ]] || [[ "$h" -ge 1080 ]]; then
-            TARGET_DPI=108
+            TARGET_DPI=112
             TERM_FONT="Monospace 14"
             GTK_FONT="Sans 12"
         fi
@@ -185,21 +199,17 @@ compute_target_dpi() {
         return 0
     fi
 
-    # fit-window (default): modest DPI after resolution fits VM window
+    # fit-window (default): geometry fit + readable text (not geometry-only)
     APPLY_MODE="fit-window"
-    TARGET_DPI=105
-    TERM_FONT="Monospace 13"
-    GTK_FONT="Sans 11"
-    PANEL_SIZE=30
-    if [[ "$w" -ge 1920 ]] || [[ "$h" -ge 1080 ]]; then
-        TARGET_DPI=108
-        TERM_FONT="Monospace 14"
-        GTK_FONT="Sans 12"
+    TARGET_DPI=112
+    TERM_FONT="Monospace 14"
+    GTK_FONT="Sans 12"
+    PANEL_SIZE=34
+    if [[ "$w" -gt 0 && "$w" -lt 1400 ]]; then
+        TARGET_DPI=120
+        TERM_FONT="Monospace 15"
     fi
-    if [[ "$w" -ge 2560 ]] || [[ "$h" -ge 1440 ]]; then
-        TARGET_DPI=112
-    fi
-    log "Fit-window ${w}x${h} -> DPI=$TARGET_DPI (VBoxClient+xrandr fit; no forced upscale) font=$TERM_FONT gtk=$GTK_FONT"
+    log "Fit-window ${w}x${h} -> DPI=$TARGET_DPI (VBoxClient+xrandr fit; fonts included) font=$TERM_FONT gtk=$GTK_FONT panel=$PANEL_SIZE"
 }
 
 fix_vbox_autoresize() {
@@ -301,7 +311,7 @@ fix_xfce_scale() {
     as_user xfconf-query -c xsettings -p /Gtk/FontName --create -t string -s "$GTK_FONT" 2>/dev/null \
         || as_user xfconf-query -c xsettings -p /Gtk/FontName -s "$GTK_FONT" 2>/dev/null || true
 
-    if [[ "$APPLY_MODE" == "aggressive" ]]; then
+    if [[ "$APPLY_MODE" == "aggressive" || "$APPLY_MODE" == "fit-window" || "$APPLY_MODE" == "text-large" ]]; then
         local panel_idx
         for panel_idx in 0 1 2; do
             as_user xfconf-query -c xfce4-panel -p "/panels/panel-${panel_idx}/size" --create -t int -s "$PANEL_SIZE" 2>/dev/null \
@@ -342,11 +352,11 @@ fix_gnome_scale() {
             144) factor="1.5" ;;
             120) factor="1.25" ;;
         esac
-    elif [[ "$APPLY_MODE" == "fonts-only" || "$APPLY_MODE" == "fit-window" ]]; then
+    elif [[ "$APPLY_MODE" == "fonts-only" || "$APPLY_MODE" == "fit-window" || "$APPLY_MODE" == "text-large" ]]; then
         case "$TARGET_DPI" in
+            120) factor="1.12" ;;
             112) factor="1.08" ;;
             108) factor="1.05" ;;
-            105) factor="1.03" ;;
         esac
     fi
     log "GNOME: text-scaling-factor=$factor"
@@ -405,17 +415,14 @@ print_diagnose() {
     res="$(get_current_resolution)"
     read -r RES_W RES_H <<< "$res"
     log "Resolution: ${RES_W}x${RES_H}"
-    local fo_dpi=105 fo_term="Monospace 13" fo_gtk="Sans 11"
-    if [[ "$RES_W" -ge 1920 ]] || [[ "$RES_H" -ge 1080 ]]; then
-        fo_dpi=108
-        fo_term="Monospace 14"
-        fo_gtk="Sans 12"
+    local fo_dpi=112 fo_term="Monospace 14" fo_gtk="Sans 12"
+    if [[ "$RES_W" -gt 0 && "$RES_W" -lt 1400 ]]; then
+        fo_dpi=120
+        fo_term="Monospace 15"
     fi
-    if [[ "$RES_W" -ge 2560 ]] || [[ "$RES_H" -ge 1440 ]]; then
-        fo_dpi=112
-    fi
-    log "Recommended default: --fit-window (VBoxClient + xrandr fit + DPI=$fo_dpi)"
-    log "Text-only bump after fit: --fonts-only -> DPI=$fo_dpi terminal=$fo_term gtk=$fo_gtk"
+    log "Recommended default: --fit-window (VBoxClient + xrandr fit + DPI=$fo_dpi + fonts)"
+    log "Andy text bump (no geometry): --text-large -> DPI=120 Sans 13 Monospace 15"
+    log "Lighter text-only after fit: --fonts-only -> DPI 108–112 terminal=$fo_term gtk=$fo_gtk"
     if [[ "$RES_W" -gt 2560 ]] || [[ "$RES_H" -gt 1600 ]]; then
         warn "Resolution ${RES_W}x${RES_H} exceeds VM window — cut-off likely; run --fit-window or --reset"
         note_issue
@@ -445,9 +452,11 @@ print_diagnose() {
         log "XFCE Gtk/FontName: $gtk (fit-window target: $fo_gtk)"
         log "XFCE panel-0 size: $panel"
         log "XFCE terminal font: $font (fit-window target: $fo_term)"
-        if [[ "$dpi" != unset && "$dpi" -ge 120 ]]; then
-            warn "DPI $dpi is high — guest may look huge; try --reset then --fit-window"
+        if [[ "$dpi" != unset && "$dpi" -ge 144 ]]; then
+            warn "DPI $dpi is very high — whole desktop may look huge; try --reset then --fit-window"
             note_issue
+        elif [[ "$dpi" != unset && "$dpi" -eq 120 && "$RES_W" -ge 2560 ]]; then
+            warn "DPI 120 on wide guest — OK for --text-large; if chrome huge use --reset then --fit-window"
         fi
     elif as_user bash -lc 'command -v gsettings >/dev/null 2>&1'; then
         local gsf
@@ -457,7 +466,7 @@ print_diagnose() {
         log "Desktop toolkit: xfconf/gsettings not available"
     fi
     log "Host (cut-off / blown out): .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gui (not Scaled)"
-    log "Guest fix: bash /mnt/ctg/ctg-display-scale.sh --fit-window  |  undo: --reset"
+    log "Guest fix: bash /mnt/ctg/ctg-display-scale.sh --fit-window  |  text: --text-large  |  undo: --reset"
     log "Docs: docs/KALI_DISPLAY_SCALING.md"
     if [[ $ISSUES -gt 0 ]]; then
         err "Diagnose found $ISSUES issue(s)"
@@ -470,6 +479,7 @@ print_diagnose() {
 mode_label="fit-window"
 if $RESET_MODE; then mode_label="reset"
 elif $AGGRESSIVE; then mode_label="aggressive"
+elif $TEXT_LARGE; then mode_label="text-large"
 elif $FONTS_ONLY; then mode_label="fonts-only"
 fi
 log "=== CTG display scale ($mode_label) ==="
@@ -499,6 +509,8 @@ fi
 log "Done — open a new terminal window if font size unchanged in existing tabs."
 if [[ "$APPLY_MODE" == "fit-window" ]]; then
     log "Host: .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gui (AutoresizeGuest; clear bad LastGuestSizeHint)"
+elif [[ "$APPLY_MODE" == "text-large" ]]; then
+    log "Host: .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gui (text-large — geometry should already be fit)"
 elif [[ "$APPLY_MODE" == "fonts-only" ]]; then
     log "Host: .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gui (fonts-only assumes fit-window already applied)"
 else

@@ -5,8 +5,8 @@ param(
     [string[]]$VmNameCandidates = @('kali', 'Kali-Lab', 'Kali', 'kali-linux'),
     [int]$GuestAdditionsWaitSec = 60,
     [int]$DesktopWaitSec = 120,
-    # Text too small (not whole desktop): use -DisplayMode Gui + guest ctg-display-scale.sh --fonts-only
-    # Avoid -DisplayMode Scaled with high guest DPI (144) — makes entire VM huge; see docs/KALI_DISPLAY_SCALING.md
+    # Text too small: -DisplayMode Gui + guest ctg-display-scale.sh --fit-window (fonts included) or --text-large
+    # Avoid -DisplayMode Scaled with guest DPI 144 — whole desktop huge; see docs/KALI_DISPLAY_SCALING.md
     [ValidateSet('Seamless', 'Scaled', 'Gui')]
     [string]$DisplayMode = 'Seamless',
     [switch]$SkipExtradata,
@@ -341,7 +341,7 @@ function Write-CtgHostToolbarHint {
     Write-CtgSeamlessLog 'Host toolbar: top screen edge for mini toolbar (pin thumbtack), or Host+Home (Right Ctrl+Home) for full VM menu'
     Write-CtgSeamlessLog 'Guest cut-off fix: bash /mnt/ctg/ctg-display-scale.sh --fit-window (default at login)'
     Write-CtgSeamlessLog 'Guest panel: bash /mnt/ctg/ctg-seamless-guest.sh - see docs/KALI_SEAMLESS_MODE.md'
-    Write-CtgSeamlessLog 'Guest text-only bump: bash /mnt/ctg/ctg-display-scale.sh --fonts-only (after --fit-window)'
+    Write-CtgSeamlessLog 'Guest text bump: bash /mnt/ctg/ctg-display-scale.sh --text-large (or --fit-window includes fonts)'
     Write-CtgSeamlessLog 'Undo over-scale: bash /mnt/ctg/ctg-display-scale.sh --reset'
     Write-CtgSeamlessLog 'Host blown-out fix: -DisplayMode Gui (AutoresizeGuest, Scale=false) — docs/KALI_DISPLAY_SCALING.md'
 }
@@ -625,7 +625,7 @@ function Start-CtgKaliSeamless {
     if ($Mode -eq 'Seamless') {
         Write-CtgSeamlessLog 'Seamless preflight: needs graphical X11 login + VBoxClient --seamless in guest.'
         Write-CtgSeamlessLog 'Before Host+L in Kali run: bash /mnt/ctg/ctg-seamless-guest.sh (fixes Wayland glitch-revert)'
-        Write-CtgSeamlessLog 'Text too small only: -DisplayMode Gui + guest ctg-display-scale.sh --fit-window (avoid Scaled + high DPI)'
+        Write-CtgSeamlessLog 'Text too small: -DisplayMode Gui + guest ctg-display-scale.sh --fit-window or --text-large (avoid Scaled + DPI 144)'
         Write-CtgSeamlessLog 'For visible menu/scrollbars: -DisplayMode Scaled or Gui (Scaled enlarges whole desktop — not for font-only fix)'
     }
 
