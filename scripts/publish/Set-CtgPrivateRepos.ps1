@@ -34,12 +34,14 @@ $ErrorActionPreference = 'Stop'
 $Script:CtgPrivateRepoAllowlist = @(
     'ctg-kali-lab'
     'ctg-windows-soc'
+    'ctg-device-hardening'
 )
 
 # Public repos that are hardening/lab-sensitive (recommend private - not auto-applied unless allowlisted)
 $Script:CtgSensitiveRepoCandidates = @(
     'ctg-kali-lab'
     'ctg-windows-soc'
+    'ctg-device-hardening'
 )
 
 # Never suggest privatizing (public site, firmware, forks, portfolio)

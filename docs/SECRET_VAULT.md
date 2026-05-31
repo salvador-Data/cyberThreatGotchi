@@ -22,6 +22,92 @@ Chat and SMS are **not secret channels**. Assume anything typed there may be ret
 
 ---
 
+## Encrypted credential vault (`Ctg-CredentialVault.ps1`) — canonical lab logins
+
+**Preferred store** for username/password pairs (Kali SSH, router admin, IDS dashboards, etc.). One master password unlocks a structured vault; optional **DPAPI quick-unlock** binds to your Windows login.
+
+| Layer | Control |
+|-------|---------|
+| **KDF** | Argon2id (fallback: scrypt via stdlib) — master password → 256-bit key |
+| **Cipher** | AES-256-GCM (authenticated encryption via `cryptography`) |
+| **File** | `%USERPROFILE%\Backups\.vault\credentials.vault` — **gitignored** |
+| **Session** | In-memory only; 15-minute idle lock |
+| **DPAPI** | Optional `-WithDpapiWrap` / `-UseWindowsUser` for convenience on SOC laptop |
+| **Compare** | `hmac.compare_digest` / constant-time paths in Python and PowerShell helpers |
+
+Crypto implementation: `core/ctg_vault.py` + `scripts/ctg_vault_cli.py`. PowerShell wrapper never logs the master password.
+
+### First-time setup (interactive — one command per step)
+
+```powershell
+cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
+```
+
+```powershell
+pip install cryptography argon2-cffi
+```
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -InitVault -WithDpapiWrap
+```
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -UnlockVault
+```
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -AddCredential -Title 'Kali SSH' -Username sal
+```
+
+When prompted, enter the Kali password as a **SecureString** (hidden). Use title **`Kali SSH`** so `Deploy-KaliLab.ps1 -UseSecretVault` and `Invoke-CtgKaliGuestFlash.ps1 -UseSecretVault` resolve it automatically.
+
+### Daily use
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -UnlockVault -UseWindowsUser
+```
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -ListCredentials
+```
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -GetCredential -Title 'Kali SSH' -Quiet
+```
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -LockVault
+```
+
+### Backup and CSV import (local only — never commit)
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -ExportVaultBackup
+```
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -ImportFromCsv -CsvPath C:\Users\Owner\Backups\local-export.csv
+```
+
+CSV columns: `title`, `username`, `password`, `url`, `notes`. Keep exports gitignored.
+
+### Threat model (credential vault)
+
+| Threat | Mitigation |
+|--------|------------|
+| Git leak | Vault blob gitignored; only open-source crypto code in repo |
+| Wrong password | GCM auth tag fails; no oracle beyond success/fail |
+| Memory scrape | Session timeout; `-LockVault` clears Python session |
+| Stolen vault file | Argon2id/scrypt slows offline guessing — use long master password |
+| Stolen laptop | BitLocker + master password; DPAPI adds Windows-user binding |
+| Agent/chat paste | Never store real passwords in rules, docs, or commits |
+
+**Recovery:** export encrypted backup to `%USERPROFILE%\Backups\vault-backups\` (gitignored). Master password is **not** recoverable if lost — store in DuckDuckGo Password Manager.
+
+Legacy **DPAPI flat secrets** (`Protect-CtgSecrets.ps1`) remain for script API keys and PII phone; `-UseSecretVault` tries **credential vault first**, then DPAPI `KALI_SSH_*` keys.
+
+---
+
 ## Why SMS autofill for passwords is wrong
 
 | Risk | Why it matters |
@@ -299,6 +385,7 @@ Unregister reminder task:
 | Script | Purpose |
 |--------|---------|
 | `Protect-CtgSecrets.ps1` | DPAPI set/get/list/remove; `-SetPii` / `-GetPii` / `-SetPiiHash`; optional `-SetSecretHash` / `-TestSecretHash` |
+| `Ctg-CredentialVault.ps1` | Encrypted username/password vault (Argon2id + AES-256-GCM); `-InitVault` / `-UnlockVault` / `-AddCredential` / `-GetCredential` |
 | `Redact-CtgPiiInText.ps1` | Replace vault PII in strings with `[REDACTED:tag]` |
 | `Deploy-KaliLab.ps1 -UseSecretVault` | Kali bootstrap using vault |
 | `Send-CtgSmsAlert.ps1 -UseSecretVault` | Twilio SMS using `CTG_PII_PHONE` or vault `CTG_ALERT_SMS_TO` |

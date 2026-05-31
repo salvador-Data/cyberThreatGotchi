@@ -135,6 +135,22 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **Admin:** No
 - **Docs:** [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md)
 
+### `Ctg-CredentialVault.ps1`
+- **Path:** `scripts/windows/Ctg-CredentialVault.ps1`
+- **Tagline:** *Argon2id + AES-256-GCM username/password vault — master password + optional DPAPI.*
+- **Does:** Structured lab credentials (title, username, password, url, notes, tags); session cache with 15-minute timeout; encrypted backup export.
+- **When:** First SOC setup; before Kali deploy with `-UseSecretVault` (title `Kali SSH`).
+- **Admin:** No
+- **Docs:** [SECRET_VAULT.md](SECRET_VAULT.md) — [SECURITY_HARDENING.md](SECURITY_HARDENING.md)
+
+### `Set-CtgPrivateRepos.ps1`
+- **Path:** `scripts/publish/Set-CtgPrivateRepos.ps1`
+- **Tagline:** *Allowlist-gated GitHub visibility for lab split repos — diagnose then Apply.*
+- **Does:** Lists public CTG ops repos; `-Apply` sets `private` only for names in committed `$Script:CtgPrivateRepoAllowlist` (`ctg-kali-lab`, `ctg-windows-soc`, `ctg-device-hardening`).
+- **When:** After lab consolidation or when adding new ops split repos.
+- **Admin:** No (requires `gh auth`)
+- **Docs:** [GITHUB_REPOS_PLAN.md](GITHUB_REPOS_PLAN.md) — [SECURITY_HARDENING.md](SECURITY_HARDENING.md)
+
 ### `Protect-CtgSecrets.ps1` / `Register-CtgSecretRotationReminder.ps1` / `Invoke-CtgSecretRotationSms.ps1`
 - **Path:** `scripts/windows/Protect-CtgSecrets.ps1` - rotation helpers
 - **Tagline:** *DPAPI vault on disk - names in git, values never.*

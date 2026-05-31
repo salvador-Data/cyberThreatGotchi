@@ -182,6 +182,13 @@ function Write-CtgLabChecklistStatus {
     foreach ($item in $items) { Write-CtgLog "  [doc+script] $item" }
 }
 
+function Get-CtgKaliCredentialsFromCredentialVault {
+    $credVaultScript = Join-Path $PSScriptRoot 'Ctg-CredentialVault.ps1'
+    if (-not (Test-Path $credVaultScript)) { return $null }
+    . $credVaultScript
+    return Get-CtgLabCredentialFromVault -Title 'Kali SSH'
+}
+
 function Get-CtgKaliCredentialsFromVault {
     $vaultScript = Join-Path $PSScriptRoot 'Protect-CtgSecrets.ps1'
     if (-not (Test-Path $vaultScript)) { return $null }
@@ -211,9 +218,11 @@ function Get-CtgKaliCredentials {
         Source = 'default kali/kali'
     }
     if ($PreferVault) {
+        $fromCredVault = Get-CtgKaliCredentialsFromCredentialVault
+        if ($fromCredVault) { return $fromCredVault }
         $fromVault = Get-CtgKaliCredentialsFromVault
         if ($fromVault) { return $fromVault }
-        Write-CtgLog 'UseSecretVault: vault missing KALI_SSH_USER/KALI_SSH_PASSWORD - falling back to credentials file or default'
+        Write-CtgLog 'UseSecretVault: credential vault and DPAPI vault missing Kali creds - falling back to credentials file or default'
     }
     if (Test-Path $Path) {
         $text = Get-Content -Path $Path -Raw

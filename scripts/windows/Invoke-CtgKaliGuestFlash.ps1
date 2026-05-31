@@ -40,6 +40,13 @@ function Get-CtgVBoxManagePath {
 }
 
 
+function Get-CtgKaliCredentialsFromCredentialVault {
+    $credVaultScript = Join-Path $PSScriptRoot 'Ctg-CredentialVault.ps1'
+    if (-not (Test-Path $credVaultScript)) { return $null }
+    . $credVaultScript
+    return Get-CtgLabCredentialFromVault -Title 'Kali SSH'
+}
+
 function Get-CtgKaliCredentialsFromVault {
     $vaultScript = Join-Path $PSScriptRoot 'Protect-CtgSecrets.ps1'
     if (-not (Test-Path $vaultScript)) { return $null }
@@ -62,9 +69,11 @@ function Get-CtgKaliCredentials {
         [switch]$PreferVault
     )
     if ($PreferVault) {
+        $fromCredVault = Get-CtgKaliCredentialsFromCredentialVault
+        if ($fromCredVault) { return $fromCredVault }
         $fromVault = Get-CtgKaliCredentialsFromVault
         if ($fromVault) { return $fromVault }
-        Write-CtgFlashLog 'UseSecretVault: vault missing KALI_SSH_USER/KALI_SSH_PASSWORD - falling back to credentials file'
+        Write-CtgFlashLog 'UseSecretVault: credential vault and DPAPI vault missing Kali creds - falling back to credentials file'
     }
     $result = @{ User = 'sal'; Password = $null; Source = 'none' }
     if (Test-Path $Path) {

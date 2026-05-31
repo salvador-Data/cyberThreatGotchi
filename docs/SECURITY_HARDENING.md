@@ -42,6 +42,38 @@ Defensive coding and deployment practices for Hacker Planet LLC projects.
 
 Set with `Protect-CtgSecrets.ps1 -SetPii`; hash sidecars in `%USERPROFILE%\Backups\.vault\*.hash` (gitignored). See [SECRET_VAULT.md](SECRET_VAULT.md).
 
+### Encrypted credential vault (Windows SOC — username/password manager)
+
+| Item | Detail |
+|------|--------|
+| **Script** | `scripts/windows/Ctg-CredentialVault.ps1` |
+| **Crypto module** | `core/ctg_vault.py` — Argon2id KDF, AES-256-GCM, `hmac.compare_digest` |
+| **Vault file** | `%USERPROFILE%\Backups\.vault\credentials.vault` (gitignored) |
+| **Master password** | Never logged, never in git; store recovery copy in DuckDuckGo Password Manager |
+| **DPAPI hybrid** | Optional `-WithDpapiWrap` for `-UnlockVault -UseWindowsUser` |
+| **Lab integration** | `-UseSecretVault` on deploy/flash scripts reads title **`Kali SSH`** first |
+
+Dependencies: `cryptography`, `argon2-cffi` in `requirements.txt` (CI: bandit + pip-audit). See [SECRET_VAULT.md](SECRET_VAULT.md).
+
+### GitHub repo visibility (lab ops vs portfolio)
+
+| Visibility | Repos | Rationale |
+|------------|-------|-----------|
+| **Private** | `ctg-kali-lab`, `ctg-windows-soc`, `ctg-device-hardening` | Lab automation, hardening scripts, IDS patterns — no public attack surface |
+| **Public** | `cyberThreatGotchi` (monorepo + GitHub Pages), firmware (`M5_OS-Cardputer`, `Mr.-CrackBot-AI-Nano`, `Bjorn`, etc.) | Portfolio, marketing, open-source firmware |
+
+Apply with allowlist-gated helper (review before `-Apply`):
+
+```powershell
+.\scripts\publish\Set-CtgPrivateRepos.ps1 -DiagnoseOnly
+```
+
+```powershell
+.\scripts\publish\Set-CtgPrivateRepos.ps1 -Apply
+```
+
+Only names in `$Script:CtgPrivateRepoAllowlist` inside the script are changed. Plan: [GITHUB_REPOS_PLAN.md](GITHUB_REPOS_PLAN.md).
+
 ## Windows SOC (lab / authorized hosts)
 
 Free stack orchestration: `scripts/windows/README_WINDOWS_SOC.md`. Scripts use env vars only — no embedded manager secrets. Run PowerShell **as Administrator** on systems you own; use explicit flags on `harden_windows.ps1` (default is guidance-only).

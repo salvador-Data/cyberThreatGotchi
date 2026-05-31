@@ -30,6 +30,11 @@ scripts/kali/.vault_pass
 .vault/
 **/.vault/
 Backups/.vault/
+*.vault
+*.vault.backup
+credentials.vault*
+Backups/vault-backups/
+**/credentials-export*.csv
 *.hash
 bitlocker-recovery*.txt
 **/bitlocker-recovery*.txt

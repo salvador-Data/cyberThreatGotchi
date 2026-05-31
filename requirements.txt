@@ -28,3 +28,7 @@ pyclamd>=0.4.0
 # Dev / test
 pytest>=8.0.0
 pytest-cov>=4.1.0
+
+# Credential vault (AES-256-GCM + Argon2id KDF)
+cryptography>=42.0.0
+argon2-cffi>=23.1.0

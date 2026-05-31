@@ -16,7 +16,7 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 - Host: `Invoke-CtgKaliGuestFlash.ps1 -UseSecretVault` (DPAPI vault; no passwords in git)
 - Host: `Start-KaliSeamless.ps1` diagnostic string fixes; `Invoke-CtgKaliNmapAskInstall.ps1` for nmap-ask install trigger
 - Lab tree re-staged: `Stage-KaliLabToBackups.ps1`
-- Tests: **429 passed, 4 skipped** (`.\.venv\Scripts\python.exe -m pytest -q`)
+- Tests: **429 passed, 4 skipped** (`pytest tests/ -q`, 2026-05-31 good-build pass)
 
 ### Manual (Kali / Windows)
 | Step | Action |
@@ -53,8 +53,9 @@ New-Item C:\Users\Owner\Backups\CTG_RUN_AUTORUN_NOW -ItemType File -Force
 | PII privacy Cursor rule | **Done** | `.cursor/rules/no-pii-in-repo.mdc` |
 | Wi-Fi repair | **Manual (Admin)** | Wi-Fi disconnected; DDG VPN up â€” run `Repair-WindowsWifi.ps1 -ApplyFixes` elevated |
 | Kali SSH autopatch | **Manual (TTY)** | If 127.0.0.1:2222 fails: `sudo bash /mnt/ctg/RUN-KALI-LAB-NOW.sh` |
-| Vault secrets | **Manual** | `Protect-CtgSecrets.ps1 -SetSecret` for KALI_SSH_* (never in git) |
-| pytest + push | **Done** | 429 passed (2026-05-31); main `0e9b8ce` pushed |
+| Vault secrets | **Manual** | `Ctg-CredentialVault.ps1` (title `Kali SSH`) or `Protect-CtgSecrets.ps1` — never in git |
+| Lab split repos private | **Done** | `Set-CtgPrivateRepos.ps1 -Apply` — ctg-kali-lab, ctg-windows-soc, ctg-device-hardening |
+| pytest + push | **Done** | Run before each push; see pytest section below |
 | RETBleed `--spec-ctrl on` | **Done (live)** | VBox `<SpecCtrl enabled="true"/>` — **reboot Kali**, then `bash /mnt/ctg/ctg-retbleed-check.sh` |
 | Kali scripts staged to Backups | **Done** | `Stage-KaliLabToBackups.ps1` — CLICK-ME + triggers on `ctg-backups` share |
 | Guest script flash | **Manual (CLICK-ME)** | Desktop one-click or `CTG_RUN_AUTORUN_NOW` on share; skip host guest-flash retry loops |
@@ -75,7 +76,27 @@ Run each command in its **own** elevated window from the repo root:
 cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 ```
 
-**0. Secret vault (once per machine â€” interactive, no git)**
+**0. Encrypted credential vault (once per machine — interactive, no git)**
+
+```powershell
+pip install cryptography argon2-cffi
+```
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -InitVault -WithDpapiWrap
+```
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -UnlockVault
+```
+
+```powershell
+.\scripts\windows\Ctg-CredentialVault.ps1 -AddCredential -Title 'Kali SSH' -Username sal
+```
+
+See [SECRET_VAULT.md](SECRET_VAULT.md). Never paste passwords into chat or SMS.
+
+**0b. Legacy DPAPI secrets (optional — API keys / PII phone)**
 
 ```powershell
 .\scripts\windows\Protect-CtgSecrets.ps1 -SetSecret -Name KALI_SSH_USER
@@ -291,7 +312,23 @@ cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 .\scripts\publish\Sync-CtgSplitRepos.ps1
 ```
 
-Then commit and push [ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-lab) and [ctg-windows-soc](https://github.com/salvador-Data/ctg-windows-soc). Plan: [GITHUB_REPOS_PLAN.md](GITHUB_REPOS_PLAN.md).
+Then commit and push split repos (all **private** — see portfolio table). Plan: [GITHUB_REPOS_PLAN.md](GITHUB_REPOS_PLAN.md).
+
+**Privatize lab ops repos (once per machine with `gh auth`):**
+
+```powershell
+.\scripts\publish\Set-CtgPrivateRepos.ps1 -DiagnoseOnly
+```
+
+```powershell
+.\scripts\publish\Set-CtgPrivateRepos.ps1 -Apply
+```
+
+Device-hardening subtree sync:
+
+```powershell
+.\scripts\publish\Sync-CtgDeviceHardeningRepo.ps1
+```
 
 ---
 
@@ -341,16 +378,17 @@ Expected: **277 collected**, all pass (3 firewall bash tests skip on Windows).
 
 ## Portfolio index (GitHub + site)
 
-| Project | GitHub | Site page | Branch | Status |
-|---------|--------|-----------|--------|--------|
-| **cyberThreatGotchi** (monorepo) | [salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) | [hackerplanet.dev](https://hackerplanet.dev/) Â· [Pages mirror](https://salvador-Data.github.io/cyberThreatGotchi/) | `main` | Flagship â€” CI, Pages, releases |
-| **ctg-kali-lab** | [salvador-Data/ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-lab) | [github.html](https://hackerplanet.dev/github.html) | `main` | Split â€” Kali scripts + docs |
-| **ctg-windows-soc** | [salvador-Data/ctg-windows-soc](https://github.com/salvador-Data/ctg-windows-soc) | [github.html](https://hackerplanet.dev/github.html) | `main` | Split â€” Windows SOC + Wireshark IDS |
-| **Bjorn** | [salvador-Data/Bjorn](https://github.com/salvador-Data/Bjorn) | [ecosystem.html](https://hackerplanet.dev/ecosystem.html) | `main` | Pi assessment fork |
-| **Mr. CrackBot AI Nano** | [salvador-Data/Mr.-CrackBot-AI-Nano](https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano) | [crackbot.html](https://hackerplanet.dev/crackbot.html) | `main` | Jetson bench lab |
-| **M5 OS Cardputer** | [salvador-Data/M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer) | [cardputer.html](https://hackerplanet.dev/cardputer.html) | `main` | Pocket launcher firmware |
-| **BLE Bot Cardputer** | [salvador-Data/BLE-Bot-Cardputer](https://github.com/salvador-Data/BLE-Bot-Cardputer) | [github.html](https://hackerplanet.dev/github.html) | `main` | BLE scout firmware |
-| **Remote Possibility** | [salvador-Data/Remote-Possibility](https://github.com/salvador-Data/Remote-Possibility) | [github.html](https://hackerplanet.dev/github.html) | `main` | IR remote (legacy CTG client archived) |
+| Project | GitHub | Visibility | Site page | Branch | Status |
+|---------|--------|------------|-----------|--------|--------|
+| **cyberThreatGotchi** (monorepo) | [salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) | **Public** (Pages) | [hackerplanet.dev](https://hackerplanet.dev/) · [Pages mirror](https://salvador-Data.github.io/cyberThreatGotchi/) | `main` | Flagship — CI, Pages, releases |
+| **ctg-kali-lab** | [salvador-Data/ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-lab) | **Private** | [github.html](https://hackerplanet.dev/github.html) | `main` | Split — Kali scripts + docs |
+| **ctg-windows-soc** | [salvador-Data/ctg-windows-soc](https://github.com/salvador-Data/ctg-windows-soc) | **Private** | [github.html](https://hackerplanet.dev/github.html) | `main` | Split — Windows SOC + Wireshark IDS |
+| **ctg-device-hardening** | [salvador-Data/ctg-device-hardening](https://github.com/salvador-Data/ctg-device-hardening) | **Private** | [github.html](https://hackerplanet.dev/github.html) | `main` | Split — iPhone/RAM/CVE hardening docs |
+| **Bjorn** | [salvador-Data/Bjorn](https://github.com/salvador-Data/Bjorn) | Public | [ecosystem.html](https://hackerplanet.dev/ecosystem.html) | `main` | Pi assessment fork |
+| **Mr. CrackBot AI Nano** | [salvador-Data/Mr.-CrackBot-AI-Nano](https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano) | Public | [crackbot.html](https://hackerplanet.dev/crackbot.html) | `main` | Jetson bench lab |
+| **M5 OS Cardputer** | [salvador-Data/M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer) | Public | [cardputer.html](https://hackerplanet.dev/cardputer.html) | `main` | Pocket launcher firmware |
+| **BLE Bot Cardputer** | [salvador-Data/BLE-Bot-Cardputer](https://github.com/salvador-Data/BLE-Bot-Cardputer) | Public | [github.html](https://hackerplanet.dev/github.html) | `main` | BLE scout firmware |
+| **Remote Possibility** | [salvador-Data/Remote-Possibility](https://github.com/salvador-Data/Remote-Possibility) | Public | [github.html](https://hackerplanet.dev/github.html) | `main` | IR remote (legacy CTG client archived) |
 
 **Sync split repos after monorepo script changes:** `.\scripts\publish\Sync-CtgSplitRepos.ps1` then commit/push each split clone. Plan: [GITHUB_REPOS_PLAN.md](GITHUB_REPOS_PLAN.md).
 

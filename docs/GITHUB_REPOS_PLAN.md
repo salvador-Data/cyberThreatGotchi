@@ -25,7 +25,7 @@ Primary docs stay in the monorepo ([IPHONE_HARDENING.md](IPHONE_HARDENING.md), [
 
 ## Privatize lab repos (allowlist)
 
-`scripts/publish/Set-CtgPrivateRepos.ps1 -DiagnoseOnly` lists **ctg-kali-lab** and **ctg-windows-soc** as sensitive candidates. `-Apply` only privatizes names in the committed `$Script:CtgPrivateRepoAllowlist` â€” review before Apply. **cyberThreatGotchi** (public site) and firmware repos (M5_OS-Cardputer, etc.) are excluded.
+`scripts/publish/Set-CtgPrivateRepos.ps1 -DiagnoseOnly` lists **ctg-kali-lab**, **ctg-windows-soc**, and **ctg-device-hardening** as sensitive candidates. `-Apply` only privatizes names in the committed `$Script:CtgPrivateRepoAllowlist` — review before Apply. **cyberThreatGotchi** (public site/Pages) and firmware repos (M5_OS-Cardputer, Bjorn, etc.) stay public for portfolio.
 
 ## Manual recreate (if `gh` fails)
 
