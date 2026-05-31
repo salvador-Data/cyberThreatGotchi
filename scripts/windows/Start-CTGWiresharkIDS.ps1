@@ -23,7 +23,10 @@
   Skip SMS even on high-severity alerts.
 
 .PARAMETER OptimizeCapture
-  Tune ring buffer: 128 MB files, 96-file ring, snaplen 1600 (lab IDS defaults).
+  Tune ring buffer: 128 MB files, 96-file ring, snaplen 1600 (lab IDS defaults). ON by default; use -NoOptimizeCapture to disable.
+
+.PARAMETER NoOptimizeCapture
+  Disable optimized ring buffer (legacy 50 MB x48, full snaplen).
 
 .EXAMPLE
   .\scripts\windows\Start-CTGWiresharkIDS.ps1 -DiagnoseOnly
@@ -38,10 +41,16 @@ param(
     [string] $Interface = '',
     [switch] $BlockRepeatOffenders,
     [switch] $NoSms,
-    [switch] $OptimizeCapture
+    [switch] $OptimizeCapture,
+    [switch] $NoOptimizeCapture
 )
 
 $ErrorActionPreference = 'Continue'
+
+# OptimizeCapture ON by default (lab IDS ring buffer); pass -NoOptimizeCapture to disable
+if (-not $PSBoundParameters.ContainsKey('OptimizeCapture') -and -not $NoOptimizeCapture) {
+    $OptimizeCapture = $true
+}
 . (Join-Path $PSScriptRoot 'CTG-AdminCommon.ps1')
 . (Join-Path $PSScriptRoot 'CTG-WiresharkCommon.ps1')
 

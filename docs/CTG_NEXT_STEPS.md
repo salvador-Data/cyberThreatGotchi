@@ -1,0 +1,240 @@
+# CTG — start here (Andy)
+
+One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized defensive use only.
+
+**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+
+---
+
+## Tonight (Windows — Admin PowerShell)
+
+Run each command in its **own** elevated window from the repo root:
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+**0. Secret vault (once per machine — interactive, no git)**
+
+```powershell
+.\scripts\windows\Protect-CtgSecrets.ps1 -SetSecret -Name KALI_SSH_USER
+```
+
+```powershell
+.\scripts\windows\Protect-CtgSecrets.ps1 -SetSecret -Name KALI_SSH_PASSWORD
+```
+
+See [SECRET_VAULT.md](SECRET_VAULT.md). Never paste passwords into chat or SMS.
+
+**1. Password policy (diagnose, then apply if Admin)**
+
+```powershell
+.\scripts\windows\Harden-PasswordPolicy.ps1 -DiagnoseOnly
+```
+
+```powershell
+.\scripts\windows\Harden-PasswordPolicy.ps1 -ApplyPolicy
+```
+
+Log: `C:\Users\Owner\Backups\logs\harden-password-policy.log`. See [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md).
+
+**2. DDoS / rogue WiFi hardening (diagnose first, then apply)**
+
+```powershell
+.\scripts\windows\Harden-DDoSRogueWifi.ps1 -DiagnoseOnly
+```
+
+Review `C:\Users\Owner\Backups\logs\harden-ddos-rogue.log`. If posture looks right:
+
+```powershell
+.\scripts\windows\Harden-DDoSRogueWifi.ps1 -ApplyHardening
+```
+
+**3. Kali lab full deploy (VM already has shared folder + VRAM 128 VMSVGA)**
+
+```powershell
+.\scripts\windows\Deploy-KaliBootAutopatch.ps1 -RunBlankScreenFix -StartVmIfStopped
+```
+
+Or master autorun (uses DPAPI vault when `-UseSecretVault`):
+
+```powershell
+.\scripts\windows\Start-CTGLab.ps1 -FullBootstrap -UseSecretVault
+```
+
+Seamless mode (Guest Additions required):
+
+```powershell
+.\scripts\windows\Start-KaliSeamless.ps1
+```
+
+See [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md).
+
+**4. Compartmentalized audit (weekly or pre-travel)**
+
+```powershell
+.\scripts\windows\CTG-AuditAutorun.ps1 -HardenAndAudit
+```
+
+Runs under `Backups\audit\YYYY-MM-DD\run-HHmmss\`.
+
+**5. CTG Shield status (read-only)**
+
+```powershell
+.\scripts\windows\CTG-Shield-Status.ps1
+```
+
+**6. Wireshark IDS (OptimizeCapture ON by default)**
+
+```powershell
+.\scripts\windows\Start-CTGWiresharkIDS.ps1 -DiagnoseOnly
+```
+
+```powershell
+.\scripts\windows\Start-CTGWiresharkIDS.ps1 -CaptureMinutes 10
+```
+
+Twilio SMS: set vars in local `.env` only — see [WIRESHARK_IDS_SMS.md](WIRESHARK_IDS_SMS.md).
+
+---
+
+## Kali TTY one-liner (if SSH on 127.0.0.1:2222 fails)
+
+At the Kali console (Ctrl+Alt+F2 if blank screen):
+
+```bash
+sudo bash /mnt/ctg/RUN-KALI-LAB-NOW.sh
+```
+
+Or manual chain:
+
+```bash
+sudo mkdir -p /mnt/ctg && sudo mount -t vboxsf ctg-backups /mnt/ctg && sudo bash /mnt/ctg/kali-boot-autopatch.sh --install && sudo bash /mnt/ctg/ctg-lab-autorun.sh
+```
+
+RETBleed / microcode check (in-guest):
+
+```bash
+sudo bash /mnt/ctg/fix-retbleed-mitigation.sh --diagnose
+```
+
+See [KALI_RETBLEED.md](KALI_RETBLEED.md).
+
+Verify autopatch:
+
+```bash
+systemctl status ctg-kali-autopatch.service
+tail -20 /var/log/ctg-boot-autopatch.log
+```
+
+Rogue AP guard (authorized lab SSID):
+
+```bash
+sudo bash /mnt/ctg/rogue-ap-guard.sh -k "YourHomeSSID"
+```
+
+---
+
+## Website deploy (any shell — no Admin)
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\.venv\Scripts\python.exe scripts\sync_seo.py
+```
+
+```powershell
+.\.venv\Scripts\python.exe scripts\sync_website_to_docs.py
+```
+
+```powershell
+pytest tests\ -v
+```
+
+```powershell
+git add website docs/web
+git commit -m "website: sync feeds hub and SEO"
+git push origin main
+```
+
+GitHub Pages picks up `docs/web/` on push. Custom domain: `hackerplanet.dev`.
+
+---
+
+## Split repos (optional publish)
+
+After monorepo changes to Kali or Windows scripts:
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\publish\Sync-CtgSplitRepos.ps1
+```
+
+Then commit and push [ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-lab) and [ctg-windows-soc](https://github.com/salvador-Data/ctg-windows-soc). Plan: [GITHUB_REPOS_PLAN.md](GITHUB_REPOS_PLAN.md).
+
+---
+
+## Staged in `C:\Users\Owner\Backups`
+
+| Asset | Purpose |
+|-------|---------|
+| `RUN-KALI-LAB-NOW.sh` | One-paste full lab when SSH fails |
+| `ctg-lab-autorun.sh` | Master Kali lab autorun |
+| `kali-lab-bootstrap.sh` | Full Ansible/bootstrap |
+| `kali-boot-autopatch.sh` | Boot-time GNOME/VBox fixes |
+| `fix-kali-blank-screen.sh` | VRAM/Wayland recovery |
+| `fix-retbleed-mitigation.sh` | RETBleed / IBRS diagnose |
+| `rogue-ap-guard.sh` | Passive evil-twin scan |
+| `tor-http-scrambler/` | CTG Shield + scrambler |
+| `CTG-Shield-Status.ps1` | Windows host status |
+| `CTG_SHIELD_SIEM_PLAYBOOK.md` | SIEM hook playbook |
+
+VirtualBox shared folder: **ctg-backups** → `C:\Users\Owner\Backups` (mount at `/mnt/ctg`).
+
+---
+
+## pytest before push
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+.\.venv\Scripts\activate
+pytest tests\ -v
+```
+
+Expected: **277 collected**, all pass (3 firewall bash tests skip on Windows).
+
+---
+
+## New pages / links
+
+- **Pro feeds hub:** [website/feeds.html](../website/feeds.html) — signatures, YARA, hashes API
+- **Shop Pro tier:** [shop.html#pro-feed](https://hackerplanet.dev/shop.html#pro-feed)
+- **Kickstarter:** [kickstarter.html](https://hackerplanet.dev/kickstarter.html) — config in `website/js/kickstarter.config.js`
+
+---
+
+## Portfolio index (GitHub + site)
+
+| Project | GitHub | Site page | Branch | Status |
+|---------|--------|-----------|--------|--------|
+| **cyberThreatGotchi** (monorepo) | [salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) | [hackerplanet.dev](https://hackerplanet.dev/) · [Pages mirror](https://salvador-Data.github.io/cyberThreatGotchi/) | `main` | Flagship — CI, Pages, releases |
+| **ctg-kali-lab** | [salvador-Data/ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-lab) | [github.html](https://hackerplanet.dev/github.html) | `main` | Split — Kali scripts + docs |
+| **ctg-windows-soc** | [salvador-Data/ctg-windows-soc](https://github.com/salvador-Data/ctg-windows-soc) | [github.html](https://hackerplanet.dev/github.html) | `main` | Split — Windows SOC + Wireshark IDS |
+| **Bjorn** | [salvador-Data/Bjorn](https://github.com/salvador-Data/Bjorn) | [ecosystem.html](https://hackerplanet.dev/ecosystem.html) | `main` | Pi assessment fork |
+| **Mr. CrackBot AI Nano** | [salvador-Data/Mr.-CrackBot-AI-Nano](https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano) | [crackbot.html](https://hackerplanet.dev/crackbot.html) | `main` | Jetson bench lab |
+| **M5 OS Cardputer** | [salvador-Data/M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer) | [cardputer.html](https://hackerplanet.dev/cardputer.html) | `main` | Pocket launcher firmware |
+| **BLE Bot Cardputer** | [salvador-Data/BLE-Bot-Cardputer](https://github.com/salvador-Data/BLE-Bot-Cardputer) | [github.html](https://hackerplanet.dev/github.html) | `main` | BLE scout firmware |
+| **Remote Possibility** | [salvador-Data/Remote-Possibility](https://github.com/salvador-Data/Remote-Possibility) | [github.html](https://hackerplanet.dev/github.html) | `main` | IR remote (legacy CTG client archived) |
+
+**Sync split repos after monorepo script changes:** `.\scripts\publish\Sync-CtgSplitRepos.ps1` then commit/push each split clone. Plan: [GITHUB_REPOS_PLAN.md](GITHUB_REPOS_PLAN.md).
+
+---
+
+## SSH note
+
+NAT forward **2222 → 22** is configured on VM `kali`. Credentials: DPAPI vault (`Protect-CtgSecrets.ps1`) or local `Backups\kali-vm-credentials.txt` (gitignored). If banner exchange fails, use TTY one-liner above — guest SSH may need `sudo apt install -y openssh-server && sudo systemctl enable --now ssh`.

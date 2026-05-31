@@ -176,6 +176,15 @@
       "ogImage": "/images/hero-cybertech.png",
       "jsonLd": ["organization", "localBusiness", "breadcrumb"]
     },
+    "feeds.html": {
+      "title": "Hacker Planet | CTG Pro Threat Feed API",
+      "description": "CyberThreatGotchi Pro threat feed hub  -  poll signature packs, YARA rules, and SHA256 deny lists via X-CTG-Pro-Key. MSP and edge IPS integration docs for Hacker Planet LLC subscribers.",
+      "keywords": "Hacker Planet, CTG Pro feed, threat intelligence API, YARA rules, signature pack, CyberThreatGotchi MSP",
+      "ogType": "website",
+      "ogImage": "/images/og-cybertech.png",
+      "jsonLd": ["organization", "localBusiness", "breadcrumb"],
+      "sitemapPriority": "0.85"
+    },
     "kickstarter.html": {
       "title": "Hacker Planet | CyberThreatGotchi Kickstarter - Edge IPS Kits Philadelphia",
       "description": "Back CyberThreatGotchi on Kickstarter - Philadelphia edge IPS kits with Cipherhorn e-ink. Early Bird Core $149, Field Pack $279. Pledge on kickstarter.com; hackerplanet.dev never collects card data.",

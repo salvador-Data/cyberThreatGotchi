@@ -45,6 +45,7 @@ while ($true) {
     if ($BlockRepeatOffenders) {
         $args += '-BlockRepeatOffenders'
     }
+    $args += '-OptimizeCapture'
     Write-CtgWiresharkLog "Loop cycle begin $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" $paths.IdsLog
     & powershell @args
     Write-CtgWiresharkLog 'Loop cycle end - sleeping 30s before next cycle' $paths.IdsLog

@@ -74,7 +74,7 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 .\scripts\publish\Sync-CtgSplitRepos.ps1
 ```
 
-*(Optional future helper — today: robocopy or manual `Copy-Item` per README in each split repo.)*
+Copies `scripts/kali` → ctg-kali-lab and `scripts/windows` + `wireshark_ids` → ctg-windows-soc with doc subsets. No `.env`, `Backups/`, or lab conf secrets.
 
 ## What not to publish
 
