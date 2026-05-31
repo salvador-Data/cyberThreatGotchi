@@ -275,6 +275,29 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **Admin:** **sudo**
 - **Docs:** [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) - [KALI_RETBLEED.md](KALI_RETBLEED.md)
 
+### `Enforce-CtgMemoryProtection.ps1` / `Enforce-CtgRamMitigations.ps1`
+- **Path:** `scripts/windows/Enforce-CtgMemoryProtection.ps1` (alias) - `scripts/windows/Enforce-CtgRamMitigations.ps1`
+- **Tagline:** *Host memory protection enforcer — VBS/HVCI, Kernel DMA, spec-ctrl, vault TTL — NOT network IPS.*
+- **Does:** `-DiagnoseOnly` reports VBS, HVCI, Credential Guard, Kernel DMA, DEP/ASLR, Hyper-V/VirtualBox notes, Kali VM spec-ctrl/nested virt; `-ApplySafe` WU scan + Memory integrity registry; `-Monitor` Signal alert on regression.
+- **When:** Weekly audit (`Register-CtgMemoryProtectionTask.ps1`); after Windows Update; SOC hardening review.
+- **Admin:** **ApplySafe** Memory integrity write needs Admin; diagnose is user-level
+- **Docs:** [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) - [RAM_MITIGATION_IPS.md](RAM_MITIGATION_IPS.md)
+
+### `Register-CtgMemoryProtectionTask.ps1`
+- **Path:** `scripts/windows/Register-CtgMemoryProtectionTask.ps1`
+- **Tagline:** *Weekly memory protection audit + Signal on regression.*
+- **Does:** Registers `HackerPlanet-CTG-Memory-Protection` (delegates to RamMitigation task registrar).
+- **When:** After first `-DiagnoseOnly` baseline on SOC laptop.
+- **Admin:** **Yes** (Interactive + Highest)
+
+### `ctg-ram-mitigation-enforcer.sh`
+- **Path:** `scripts/kali/ctg-ram-mitigation-enforcer.sh`
+- **Tagline:** *Guest CPU vulnerability sysfs + optional cryptswap — diagnose by default.*
+- **Does:** All `/sys/.../vulnerabilities/*`; mlock note; `--setup-cryptswap` opt-in; `--apply-safe` security apt.
+- **When:** Boot autopatch diagnose; `RUN-KALI-LAB-NOW.sh` verify phase.
+- **Admin:** **sudo** for apply/cryptswap
+- **Docs:** [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md)
+
 ### `Harden-KaliVmCpu.ps1`
 - **Path:** `scripts/windows/Harden-KaliVmCpu.ps1`
 - **Tagline:** *The real RETBleed VM fix - expose SPEC_CTRL/PRED_CMD MSRs to the guest.*

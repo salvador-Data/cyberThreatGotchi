@@ -27,6 +27,7 @@ VAULT_VERSION = 1
 DEFAULT_VAULT_DIR = Path.home() / "Backups" / ".vault"
 DEFAULT_VAULT_PATH = DEFAULT_VAULT_DIR / "credentials.vault"
 SESSION_TIMEOUT_SEC = 900
+DEFAULT_SESSION_TIMEOUT_SEC = SESSION_TIMEOUT_SEC
 ARGON2_TIME_COST = 3
 ARGON2_MEMORY_KIB = 65536
 ARGON2_PARALLELISM = 2
@@ -60,6 +61,49 @@ class VaultAuthError(VaultError):
 
 class CredentialNotFoundError(VaultError):
     """No matching credential entry."""
+
+
+def get_session_timeout_sec() -> int:
+    """Session idle TTL in seconds. Override with env CTG_VAULT_SESSION_TTL (default 900)."""
+    raw = os.environ.get("CTG_VAULT_SESSION_TTL", "").strip()
+    if raw:
+        try:
+            val = int(raw)
+            if val > 0:
+                return val
+        except ValueError:
+            pass
+    return DEFAULT_SESSION_TIMEOUT_SEC
+
+
+def zero_bytearray_best_effort(buf: bytearray) -> None:
+    """Best-effort in-place zero of mutable byte buffers."""
+    for i in range(len(buf)):
+        buf[i] = 0
+
+
+def zero_sensitive_best_effort(value: str | bytes | bytearray | None) -> None:
+    """Best-effort cleanup after credential reads.
+
+    Python ``str`` objects are immutable — this cannot guarantee RAM is cleared.
+    On Windows, ``VirtualLock`` / ``SecureZeroMemory`` require native code; CTG
+    relies on session lock + short TTL instead. See docs/SECRET_VAULT.md.
+    """
+    if value is None:
+        return
+    if isinstance(value, bytearray):
+        zero_bytearray_best_effort(value)
+        return
+    if isinstance(value, bytes):
+        zero_bytearray_best_effort(bytearray(value))
+
+
+def session_seconds_remaining(session: "VaultSession", timeout_sec: int | None = None) -> int:
+    import time
+
+    ttl = timeout_sec if timeout_sec is not None else get_session_timeout_sec()
+    elapsed = time.time() - session.unlocked_at
+    return max(0, int(ttl - elapsed))
 
 
 def constant_time_equal(a: str, b: str) -> bool:
@@ -274,10 +318,11 @@ class VaultSession:
     cipher_meta: dict[str, str]
     dpapi_wrapped_key: Optional[str] = None
 
-    def is_expired(self, timeout_sec: int = SESSION_TIMEOUT_SEC) -> bool:
+    def is_expired(self, timeout_sec: int | None = None) -> bool:
         import time
 
-        return (time.time() - self.unlocked_at) >= timeout_sec
+        ttl = timeout_sec if timeout_sec is not None else get_session_timeout_sec()
+        return (time.time() - self.unlocked_at) >= ttl
 
     def touch(self) -> None:
         import time
@@ -313,9 +358,10 @@ def _save_session_sidecar(session: VaultSession) -> None:
     sidecar.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
 
 
-def _load_session_sidecar(vault_path: Path, timeout_sec: int = SESSION_TIMEOUT_SEC) -> Optional[VaultSession]:
+def _load_session_sidecar(vault_path: Path, timeout_sec: int | None = None) -> Optional[VaultSession]:
     if sys.platform != "win32":
         return None
+    ttl = timeout_sec if timeout_sec is not None else get_session_timeout_sec()
     sidecar = get_session_file_path(vault_path)
     if not sidecar.is_file():
         return None
@@ -328,7 +374,7 @@ def _load_session_sidecar(vault_path: Path, timeout_sec: int = SESSION_TIMEOUT_S
     import time
 
     unlocked_at = float(payload.get("unlocked_at", 0))
-    if (time.time() - unlocked_at) >= timeout_sec:
+    if (time.time() - unlocked_at) >= ttl:
         _clear_session_sidecar(vault_path)
         return None
     try:
@@ -368,11 +414,12 @@ def _set_session(session: VaultSession) -> VaultSession:
 
 
 def get_active_session(
-    timeout_sec: int = SESSION_TIMEOUT_SEC,
+    timeout_sec: int | None = None,
     vault_path: Path | str | None = None,
 ) -> VaultSession:
     global _SESSION
-    if _SESSION is not None and not _SESSION.is_expired(timeout_sec):
+    ttl = timeout_sec if timeout_sec is not None else get_session_timeout_sec()
+    if _SESSION is not None and not _SESSION.is_expired(ttl):
         _SESSION.touch()
         _save_session_sidecar(_SESSION)
         return _SESSION
@@ -383,7 +430,7 @@ def get_active_session(
     elif DEFAULT_VAULT_PATH.is_file():
         paths_to_try.append(DEFAULT_VAULT_PATH)
     for path in paths_to_try:
-        candidate = _load_session_sidecar(path, timeout_sec)
+        candidate = _load_session_sidecar(path, ttl)
         if candidate is not None:
             candidate.touch()
             _SESSION = candidate
@@ -533,6 +580,21 @@ def get_credential(
     return sess.entries[idx]
 
 
+def get_credential_dict(
+    title: str,
+    session: Optional[VaultSession] = None,
+    vault_path: Path | str | None = None,
+) -> dict[str, Any]:
+    """Return credential dict; best-effort zero password byte buffer after building response."""
+    entry = get_credential(title, session=session, vault_path=vault_path)
+    payload = entry.to_dict()
+    pwd_buf = bytearray(str(payload.get("password", "")).encode("utf-8"))
+    try:
+        return payload
+    finally:
+        zero_bytearray_best_effort(pwd_buf)
+
+
 def add_credential(
     title: str,
     username: str,
@@ -672,14 +734,17 @@ def verify_master_password(master_password: str, vault_path: Path | str = DEFAUL
 
 def vault_status(vault_path: Path | str = DEFAULT_VAULT_PATH) -> dict[str, Any]:
     path = Path(vault_path)
+    ttl = get_session_timeout_sec()
     sidecar_active = False
     entry_count = 0
+    seconds_remaining = 0
     if path.is_file() and sys.platform == "win32":
         try:
-            sidecar_session = _load_session_sidecar(path)
+            sidecar_session = _load_session_sidecar(path, ttl)
             if sidecar_session is not None:
                 sidecar_active = True
                 entry_count = len(sidecar_session.entries)
+                seconds_remaining = session_seconds_remaining(sidecar_session, ttl)
         except VaultError:
             sidecar_active = False
     status: dict[str, Any] = {
@@ -687,6 +752,8 @@ def vault_status(vault_path: Path | str = DEFAULT_VAULT_PATH) -> dict[str, Any]:
         "exists": path.is_file(),
         "locked": not sidecar_active and (_SESSION is None or (_SESSION is not None and _SESSION.is_expired())),
         "session_active": sidecar_active or (_SESSION is not None and not _SESSION.is_expired()),
+        "session_timeout_sec": ttl,
+        "session_seconds_remaining": seconds_remaining,
         "entry_count": entry_count,
         "kdf": None,
         "dpapi_wrapped": False,
@@ -694,6 +761,7 @@ def vault_status(vault_path: Path | str = DEFAULT_VAULT_PATH) -> dict[str, Any]:
     if _SESSION is not None and not _SESSION.is_expired() and _SESSION.vault_path == path:
         status["entry_count"] = len(_SESSION.entries)
         status["locked"] = False
+        status["session_seconds_remaining"] = session_seconds_remaining(_SESSION, ttl)
     if path.is_file():
         doc = _load_vault_document(path)
         status["kdf"] = doc.get("kdf", {}).get("name")

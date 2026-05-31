@@ -8,13 +8,15 @@
   monitor posture, and alert via Signal when exposure is detected.
 
   -DiagnoseOnly: SpeculationControl module (if available), RETBleed hints, HVCI/Memory integrity,
-    DEP, ASLR, Windows Update pending reboot, VirtualBox Kali spec-ctrl via VBoxManage
+    VBS/Core isolation, Kernel DMA protection, Credential Guard, DEP, ASLR, hypervisor/VBox lab notes,
+    Windows Update pending reboot, VirtualBox Kali spec-ctrl + nested virt via VBoxManage,
+    vault session TTL recommendation (CTG_VAULT_SESSION_TTL)
   -ApplySafe: WU security scan (via Update-CtgExploitMitigations), enable Memory integrity if
     disabled (reboot may be required), Intel microcode guidance link, Kali VM diagnose
   -Monitor: single-pass check; if vulnerable, Send-CtgIdsAlert via Signal (companion task:
     Register-CtgRamMitigationTask.ps1)
 
-  See docs/RAM_MITIGATION_IPS.md
+  See docs/MEMORY_PROTECTION.md and docs/RAM_MITIGATION_IPS.md
 
 .PARAMETER DiagnoseOnly
   Report posture only (default when no action switch is set).
@@ -188,6 +190,147 @@ function Get-CtgWuSecurityPending {
     return @{ Pending = $pending; Summary = "RebootPending=$pending ($detail)" }
 }
 
+function Get-CtgDeviceGuardReport {
+    try {
+        $dg = Get-CimInstance -Namespace 'root/Microsoft/Windows/DeviceGuard' `
+            -ClassName Win32_DeviceGuard -ErrorAction Stop
+        $vbsStatus = $dg.VirtualizationBasedSecurityStatus
+        $vbsText = switch ($vbsStatus) {
+            0 { 'VBS disabled' }
+            1 { 'VBS enabled but not running (reboot or firmware check)' }
+            2 { 'VBS enabled and running' }
+            default { "VBS status=$vbsStatus" }
+        }
+        $running = @($dg.SecurityServicesRunning)
+        $configured = @($dg.SecurityServicesConfigured)
+        $credGuard = ($running -contains 1)
+        $hvci = ($running -contains 2)
+        $sysGuard = ($running -contains 3)
+        return @{
+            VbsSummary          = $vbsText
+            VbsRunning          = ($vbsStatus -eq 2)
+            CredentialGuard     = $credGuard
+            HvciRunning         = $hvci
+            SystemGuard         = $sysGuard
+            ServicesRunning     = ($running -join ',')
+            ServicesConfigured  = ($configured -join ',')
+            AvailableProperties = ($dg.AvailableSecurityProperties -join ',')
+            RequiredProperties  = ($dg.RequiredSecurityProperties -join ',')
+        }
+    } catch {
+        return @{
+            VbsSummary         = "DeviceGuard WMI unavailable: $($_.Exception.Message)"
+            VbsRunning         = $null
+            CredentialGuard    = $null
+            HvciRunning        = $null
+            SystemGuard        = $null
+            ServicesRunning    = ''
+            ServicesConfigured = ''
+            AvailableProperties = ''
+            RequiredProperties  = ''
+        }
+    }
+}
+
+function Get-CtgKernelDmaProtectionStatus {
+    $enabled = $null
+    $summary = 'Kernel DMA protection status unavailable'
+    try {
+        $regPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\KernelDmaProtection'
+        if (Test-Path $regPath) {
+            $enabled = (Get-ItemProperty -Path $regPath -Name 'Enabled' -ErrorAction Stop).Enabled
+            $summary = "Kernel DMA protection registry Enabled=$enabled"
+        }
+    } catch { }
+    if ($null -eq $enabled) {
+        try {
+            $dg = Get-CimInstance -Namespace 'root/Microsoft/Windows/DeviceGuard' `
+                -ClassName Win32_DeviceGuard -ErrorAction Stop
+            $avail = @($dg.AvailableSecurityProperties)
+            $dmaAvail = ($avail -contains 3) -or ($avail -contains 1)
+            $summary = "AvailableSecurityProperties=$($avail -join ','); DMA-capable firmware hint=$dmaAvail"
+            if ($dmaAvail) { $enabled = $true }
+        } catch {
+            $summary = 'Kernel DMA protection: check msinfo32 -> System Summary -> Kernel DMA Protection'
+        }
+    }
+    if ($enabled -eq 0) {
+        Add-CtgRamFinding 'Kernel DMA protection disabled - Thunderbolt/PCIe DMA attack surface (enable in firmware + Device Guard)'
+    }
+    return @{ Enabled = $enabled; Summary = $summary }
+}
+
+function Get-CtgHypervisorVBoxLabNotes {
+    $notes = @()
+    $hypervisorLaunch = 'unknown'
+    try {
+        $bcd = (& bcdedit /enum '{current}' 2>&1 | Out-String)
+        if ($bcd -match 'hypervisorlaunchtype\s+(\S+)') {
+            $hypervisorLaunch = $Matches[1]
+        }
+    } catch { }
+    $notes += "hypervisorlaunchtype=$hypervisorLaunch"
+
+    $vmp = $null
+    $hyperv = $null
+    try {
+        $vmp = Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -ErrorAction SilentlyContinue
+        if ($vmp) { $notes += "VirtualMachinePlatform=$($vmp.State)" }
+    } catch { }
+    try {
+        $hyperv = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -ErrorAction SilentlyContinue
+        if ($hyperv) { $notes += "Hyper-V-All=$($hyperv.State)" }
+    } catch { }
+
+    $notes += 'CTG policy: NEVER disable Memory integrity/VBS/HVCI for VirtualBox speed - see docs/MEMORY_PROTECTION.md'
+    $notes += 'Microsoft: VBS/Hyper-V and third-party hypervisors share VT-x - VBox may use emulated (slow) mode while VBS runs'
+    $notes += 'Lab: keep --spec-ctrl on for Kali guest; accept perf tradeoff or schedule heavy VM work when posture allows'
+
+    if ($hypervisorLaunch -eq 'Auto' -or $hypervisorLaunch -eq 'On') {
+        $notes += 'Host hypervisor active (expected with VBS/HVCI) - verify VBox not in green-turtle emulated mode'
+    }
+    return ($notes -join ' | ')
+}
+
+function Get-CtgKaliVmHypervisorDiagnose {
+    $vbox = Join-Path ${env:ProgramFiles} 'Oracle\VirtualBox\VBoxManage.exe'
+    if (-not (Test-Path $vbox)) {
+        return 'VBoxManage not found - skip nested/spec-ctrl extended diagnose'
+    }
+    $helper = Join-Path $PSScriptRoot 'Harden-KaliVmCpu.ps1'
+    if (Test-Path $helper) {
+        Invoke-CtgKaliVmSpecCtrlDiagnose
+    }
+    $vmName = $null
+    $list = (& $vbox list vms 2>&1 | Out-String)
+    foreach ($candidate in @('kali', 'Kali-Lab', 'Kali', 'kali-linux')) {
+        if ($list -match "`"$([regex]::Escape($candidate))`"") { $vmName = $candidate; break }
+    }
+    if (-not $vmName) {
+        Write-CtgRamLog '  No Kali VM found for nested-virt diagnose' 'Gray'
+        return
+    }
+    Write-CtgRamLog '--- Kali VM hypervisor flags (nested virt, spec-ctrl) ---' 'Cyan'
+    $info = (& $vbox showvminfo $vmName --machinereadable 2>&1 | Out-String)
+    $nested = if ($info -match 'nestedpaging="([^"]+)"') { $Matches[1] } else { 'unknown' }
+    $virt = if ($info -match 'virtvms="([^"]+)"') { $Matches[1] } else { 'unknown' }
+    $largePages = if ($info -match 'largepages="([^"]+)"') { $Matches[1] } else { 'unknown' }
+    Write-CtgRamLog "  VM=$vmName nestedpaging=$nested virtvms=$virt largepages=$largePages"
+    if ($nested -eq 'off') {
+        Add-CtgRamFinding 'Kali VM nested paging OFF - guest CPU mitigations may be degraded'
+    }
+}
+
+function Get-CtgVaultSessionRecommendation {
+    $ttl = $env:CTG_VAULT_SESSION_TTL
+    if (-not $ttl) { $ttl = '900 (default 15 min)' }
+    return @{
+        TtlEnv   = $env:CTG_VAULT_SESSION_TTL
+        Summary  = "CTG_VAULT_SESSION_TTL=$ttl - lock vault when idle: .\Ctg-CredentialVault.ps1 -LockVault"
+        DocLink  = 'docs/SECRET_VAULT.md#session-timeout-and-memory-limits'
+    }
+}
+
 function Invoke-CtgKaliVmSpecCtrlDiagnose {
     $helper = Join-Path $PSScriptRoot 'Harden-KaliVmCpu.ps1'
     if (-not (Test-Path $helper)) {
@@ -246,12 +389,32 @@ function Invoke-CtgRamDiagnose {
     Write-CtgRamLog '--- RETBleed / speculation registry ---' 'Cyan'
     Write-CtgRamLog ("  {0}" -f (Get-CtgRetBleedRegistryHint))
 
+    Write-CtgRamLog '--- VBS / Core isolation / Device Guard ---' 'Cyan'
+    $dg = Get-CtgDeviceGuardReport
+    Write-CtgRamLog ("  {0}" -f $dg.VbsSummary) $(if ($dg.VbsRunning) { 'Green' } else { 'Yellow' })
+    Write-CtgRamLog ("  ServicesRunning={0}; Configured={1}" -f $dg.ServicesRunning, $dg.ServicesConfigured) 'Gray'
+    if ($dg.VbsRunning -eq $false) {
+        Add-CtgRamFinding 'VBS not running - Core isolation stack may be inactive (reboot after enable)'
+    }
+
     Write-CtgRamLog '--- HVCI / Memory integrity ---' 'Cyan'
     $mi = Get-CtgMemoryIntegrityStatus
     Write-CtgRamLog ("  {0}" -f $mi.Summary) $(if ($mi.HvciRunning) { 'Green' } else { 'Yellow' })
     if ($mi.HvciRunning -eq $false) {
         Add-CtgRamFinding 'Memory integrity / HVCI not running'
     }
+
+    Write-CtgRamLog '--- Credential Guard ---' 'Cyan'
+    $cgOn = $dg.CredentialGuard
+    $cgText = if ($null -eq $cgOn) { 'unavailable' } elseif ($cgOn) { 'running (SecurityServicesRunning contains 1)' } else { 'not running (optional on standalone Win11 Pro)' }
+    Write-CtgRamLog ("  {0}" -f $cgText) $(if ($cgOn) { 'Green' } else { 'Gray' })
+
+    Write-CtgRamLog '--- Kernel DMA protection ---' 'Cyan'
+    $dma = Get-CtgKernelDmaProtectionStatus
+    Write-CtgRamLog ("  {0}" -f $dma.Summary) $(if ($dma.Enabled) { 'Green' } else { 'Yellow' })
+
+    Write-CtgRamLog '--- Hypervisor / VirtualBox lab (never disable mitigations for perf) ---' 'Cyan'
+    Write-CtgRamLog ("  {0}" -f (Get-CtgHypervisorVBoxLabNotes)) 'Gray'
 
     Write-CtgRamLog '--- DEP / ASLR ---' 'Cyan'
     Write-CtgRamLog ("  {0}" -f (Get-CtgDepAslrStatus))
@@ -260,7 +423,12 @@ function Invoke-CtgRamDiagnose {
     $wu = Get-CtgWuSecurityPending
     Write-CtgRamLog ("  {0}" -f $wu.Summary) $(if ($wu.Pending) { 'Yellow' } else { 'Green' })
 
-    Invoke-CtgKaliVmSpecCtrlDiagnose
+    Get-CtgKaliVmHypervisorDiagnose
+
+    Write-CtgRamLog '--- Credential vault session ---' 'Cyan'
+    $vaultRec = Get-CtgVaultSessionRecommendation
+    Write-CtgRamLog ("  {0}" -f $vaultRec.Summary) 'Gray'
+    Write-CtgRamLog ("  See {0}" -f $vaultRec.DocLink) 'DarkGray'
 
     Write-CtgRamLog '--- Intel RETBleed microcode guidance ---' 'Cyan'
     Write-CtgRamLog '  https://www.intel.com/content/www/us/en/security-center/advisory/intel-sa-00702.html' 'Gray'

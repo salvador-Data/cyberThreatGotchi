@@ -39,7 +39,9 @@ NEW_PS1 = [
     IPHONE / "iphone_tethering_privacy_checklist.ps1",
     WIN / "Update-CtgExploitMitigations.ps1",
     WIN / "Enforce-CtgRamMitigations.ps1",
+    WIN / "Enforce-CtgMemoryProtection.ps1",
     WIN / "Register-CtgRamMitigationTask.ps1",
+    WIN / "Register-CtgMemoryProtectionTask.ps1",
     WIN / "Sync-CtgVulnerabilityFeeds.ps1",
     WIN / "Start-CtgIphoneTetherIds.ps1",
     PUBLISH / "Set-CtgPrivateRepos.ps1",
@@ -95,10 +97,13 @@ def test_ram_mitigation_enforcer_windows_script():
         "SpeculationControl",
         "RETBleed",
         "Memory integrity",
+        "Credential Guard",
+        "Kernel DMA",
         "Send-CtgIdsAlert",
         "Update-CtgExploitMitigations",
         "Harden-KaliVmCpu",
         "NOT network IPS",
+        "NEVER disable",
     ):
         assert needle in text, needle
     assert "CTG_PII_PHONE" not in text
@@ -118,9 +123,10 @@ def test_kali_ram_mitigation_enforcer_shell():
     body = script.read_text(encoding="utf-8")
     assert "authorized" in body.lower()
     assert "vulnerabilities" in body
-    assert "retbleed" in body
+    assert "retbleed" in body.lower() or "RETBleed" in body or "KALI_RETBLEED" in body
     assert "--apply-safe" in body
     assert "mitigations=auto" in body
+    assert "--setup-cryptswap" in body
     assert "Snort" in body or "Suricata" in body
     assert "Vulnerable" in body
 

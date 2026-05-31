@@ -31,7 +31,7 @@ Chat and SMS are **not secret channels**. Assume anything typed there may be ret
 | **KDF** | Argon2id (fallback: scrypt via stdlib) — master password → 256-bit key |
 | **Cipher** | AES-256-GCM (authenticated encryption via `cryptography`) |
 | **File** | `%USERPROFILE%\Backups\.vault\credentials.vault` — **gitignored** |
-| **Session** | In-memory only; 15-minute idle lock |
+| **Session** | In-memory only; **15-minute idle lock** (override: `$env:CTG_VAULT_SESSION_TTL` seconds) |
 | **DPAPI** | Optional `-WithDpapiWrap` / `-UseWindowsUser` for convenience on SOC laptop |
 | **Compare** | `hmac.compare_digest` / constant-time paths in Python and PowerShell helpers |
 
@@ -103,6 +103,17 @@ CSV columns: `title`, `username`, `password`, `url`, `notes`. Keep exports gitig
 | Agent/chat paste | Never store real passwords in rules, docs, or commits |
 
 **Recovery:** export encrypted backup to `%USERPROFILE%\Backups\vault-backups\` (gitignored). Master password is **not** recoverable if lost — store in DuckDuckGo Password Manager.
+
+### Session timeout and memory limits
+
+| Setting | Default | Override |
+|---------|---------|----------|
+| Idle session TTL | 900 s (15 min) | `$env:CTG_VAULT_SESSION_TTL = '600'` (seconds) |
+| Lock on idle | Automatic expiry | `.\Ctg-CredentialVault.ps1 -LockVault` |
+| Password buffer zero | Best-effort in `ctg_vault_cli.py get` | Python `str` is immutable — cannot guarantee RAM wipe |
+| VirtualLock (Windows) | **Not used** | Would require native `VirtualLock`/`SecureZeroMemory`; CTG uses short TTL + lock instead |
+
+See [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) for hypervisor + swap layers. **mlock** on Linux can pin vault pages if you build a native helper — not required for CTG lab vault on Windows SOC.
 
 Legacy **DPAPI flat secrets** (`Protect-CtgSecrets.ps1`) remain for script API keys and PII phone; `-UseSecretVault` tries **credential vault first**, then DPAPI `KALI_SSH_*` keys.
 

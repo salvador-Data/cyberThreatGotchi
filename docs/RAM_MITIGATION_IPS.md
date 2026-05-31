@@ -1,5 +1,7 @@
 ﻿# RAM mitigation "IPS" â€” honest scope (Hacker Planet LLC)
 
+**Full memory protection guide:** [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) (VBS/HVCI, hypervisor, cryptswap, research citations).
+
 **Authorized defensive lab use only.** CyberThreatGotchi uses the term **RAM IPS** for a **Host Exploit Mitigation Enforcer**, not a network intrusion prevention system.
 
 ## Professor honesty (mandatory)
@@ -32,6 +34,8 @@ Split repo for hardening-only consumers: [salvador-Data/ctg-device-hardening](ht
 | Script | Role |
 |--------|------|
 | `scripts/windows/Enforce-CtgRamMitigations.ps1` | **RAM IPS enforcer**: `-DiagnoseOnly`, `-ApplySafe`, `-Monitor` + Signal alert |
+| `scripts/windows/Enforce-CtgMemoryProtection.ps1` | Alias wrapper (same parameters) |
+| `scripts/windows/Register-CtgMemoryProtectionTask.ps1` | Weekly memory protection audit + Signal |
 | `scripts/windows/Register-CtgRamMitigationTask.ps1` | Weekly/at-logon scheduled `-Monitor` (Interactive + Highest) |
 | `scripts/windows/Update-CtgExploitMitigations.ps1` | WU scan + Kali VM spec-ctrl diagnose (delegates extended RAM check to Enforce) |
 | `scripts/windows/Harden-KaliVmCpu.ps1` | VirtualBox `--spec-ctrl on` for Kali guest MSRs |
@@ -41,6 +45,10 @@ Split repo for hardening-only consumers: [salvador-Data/ctg-device-hardening](ht
 
 ```powershell
 cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\Enforce-CtgMemoryProtection.ps1 -DiagnoseOnly
 ```
 
 ```powershell
@@ -77,10 +85,15 @@ sudo bash /mnt/ctg/ctg-ram-mitigation-enforcer.sh --apply-safe
 sudo bash /mnt/ctg/ctg-ram-mitigation-enforcer.sh --apply-safe --apply
 ```
 
+```bash
+sudo bash /mnt/ctg/ctg-ram-mitigation-enforcer.sh --setup-cryptswap
+```
+
 Exit **non-zero** if any `/sys/devices/system/cpu/vulnerabilities/*` entry contains **Vulnerable** â€” suitable for CTG audit hooks.
 
 ## Related docs
 
+- [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) â€” hypervisor stack, threat model, citations
 - [SECURITY_HARDENING.md](SECURITY_HARDENING.md) â€” IDS vs CPU side-channel table
 - [KALI_RETBLEED_SPECTRE.md](KALI_RETBLEED_SPECTRE.md) â€” VirtualBox + guest verification
 - [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md) â€” Signal-first alert routing

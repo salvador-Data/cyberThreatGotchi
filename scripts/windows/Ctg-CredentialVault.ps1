@@ -211,6 +211,17 @@ function Read-CtgPasswordSecure {
     return ConvertTo-CtgPlainSecureString -Secure $secure
 }
 
+function Get-CtgVaultSessionTimeoutMinutes {
+    $raw = $env:CTG_VAULT_SESSION_TTL
+    if ($raw -match '^\d+$') {
+        $sec = [int]$raw
+        if ($sec -gt 0) {
+            return [math]::Max(1, [math]::Round($sec / 60.0))
+        }
+    }
+    return 15
+}
+
 function Invoke-CtgVaultCli {
     param(
         [Parameter(Mandatory = $true)]
@@ -310,12 +321,13 @@ if ($UnlockVault) {
     }
     $result = Invoke-CtgVaultCli -CliArgs $args -StdinPlain $stdin
     if (-not $result.ok) { throw $result.error }
-    Write-Host "Vault unlocked ($($result.entry_count) entries). Session timeout: 15 minutes."
+    $mins = Get-CtgVaultSessionTimeoutMinutes
+    Write-Host "Vault unlocked ($($result.entry_count) entries). Session timeout: $mins minutes (CTG_VAULT_SESSION_TTL / lock with -LockVault)."
     exit 0
 }
 
 if ($LockVault) {
-    $result = Invoke-CtgVaultCli -CliArgs @('lock')
+    $result = Invoke-CtgVaultCli -CliArgs @('lock') + $commonVaultArgs
     if (-not $result.ok) { throw $result.error }
     Write-Host 'Vault locked.'
     exit 0

@@ -2,7 +2,7 @@
 
 One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized defensive use only.
 
-**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) Â· [SECURITY_HARDENING.md](SECURITY_HARDENING.md) Â· [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) Â· [SECRET_VAULT.md](SECRET_VAULT.md) Â· [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) Â· [KALI_RETBLEED.md](KALI_RETBLEED.md) Â· [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) Â· [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) Â· [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) Â· [SECURITY_HARDENING.md](SECURITY_HARDENING.md) Â· [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) Â· [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) Â· [SECRET_VAULT.md](SECRET_VAULT.md) Â· [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) Â· [KALI_RETBLEED.md](KALI_RETBLEED.md) Â· [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) Â· [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) Â· [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
 
 ---
 
@@ -15,6 +15,7 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 - One-click in guest: `CLICK-ME-RUN-IN-KALI.sh` + `CLICK-ME-RUN-IN-KALI.desktop` (staged to `C:\Users\Owner\Backups` / vboxsf)
 - Host: `Invoke-CtgKaliGuestFlash.ps1 -UseSecretVault` (credential vault → DPAPI → credentials file; no passwords in git)
 - Encrypted credential vault: `Ctg-CredentialVault.ps1`, `core/ctg_vault.py`, `scripts/ctg_vault_cli.py`
+- **Memory protection:** `Enforce-CtgMemoryProtection.ps1`, `Register-CtgMemoryProtectionTask.ps1`, Kali `ctg-ram-mitigation-enforcer.sh` — see [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md)
 - Host: `Start-KaliSeamless.ps1` diagnostic string fixes; `Invoke-CtgKaliNmapAskInstall.ps1` for nmap-ask install trigger
 - Lab tree re-staged: `Stage-KaliLabToBackups.ps1` (2026-05-31 — full tree on `ctg-backups` share)
 - Path helpers: `CTG-Paths.ps1` resolves Programs root + canonical repo

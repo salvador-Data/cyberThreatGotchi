@@ -52,13 +52,16 @@ $files = @(
     @{ S = 'docs\SECURITY_HARDENING.md'; D = 'docs\SECURITY_HARDENING.md' }
     @{ S = 'docs\KALI_RETBLEED_SPECTRE.md'; D = 'docs\KALI_RETBLEED_SPECTRE.md' }
     @{ S = 'docs\RAM_MITIGATION_IPS.md'; D = 'docs\RAM_MITIGATION_IPS.md' }
+    @{ S = 'docs\MEMORY_PROTECTION.md'; D = 'docs\MEMORY_PROTECTION.md' }
     @{ S = 'docs\device-hardening\README.md'; D = 'README.md' }
     @{ S = 'scripts\iphone\iphone_tethering_privacy_checklist.ps1'; D = 'scripts\iphone\iphone_tethering_privacy_checklist.ps1' }
     @{ S = 'scripts\windows\Start-CtgIphoneTetherIds.ps1'; D = 'scripts\windows\Start-CtgIphoneTetherIds.ps1' }
     @{ S = 'scripts\kali\ctg-tether-bridge-ids.sh'; D = 'scripts\kali\ctg-tether-bridge-ids.sh' }
     @{ S = 'scripts\windows\Update-CtgExploitMitigations.ps1'; D = 'scripts\windows\Update-CtgExploitMitigations.ps1' }
     @{ S = 'scripts\windows\Enforce-CtgRamMitigations.ps1'; D = 'scripts\windows\Enforce-CtgRamMitigations.ps1' }
+    @{ S = 'scripts\windows\Enforce-CtgMemoryProtection.ps1'; D = 'scripts\windows\Enforce-CtgMemoryProtection.ps1' }
     @{ S = 'scripts\windows\Register-CtgRamMitigationTask.ps1'; D = 'scripts\windows\Register-CtgRamMitigationTask.ps1' }
+    @{ S = 'scripts\windows\Register-CtgMemoryProtectionTask.ps1'; D = 'scripts\windows\Register-CtgMemoryProtectionTask.ps1' }
     @{ S = 'scripts\windows\Sync-CtgVulnerabilityFeeds.ps1'; D = 'scripts\windows\Sync-CtgVulnerabilityFeeds.ps1' }
     @{ S = 'scripts\windows\Harden-KaliVmCpu.ps1'; D = 'scripts\windows\Harden-KaliVmCpu.ps1' }
     @{ S = 'scripts\kali\ctg-exploit-mitigations-check.sh'; D = 'scripts\kali\ctg-exploit-mitigations-check.sh' }

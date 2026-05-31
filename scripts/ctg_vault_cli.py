@@ -86,12 +86,12 @@ def cmd_list(args: argparse.Namespace) -> int:
 
 def cmd_get(args: argparse.Namespace) -> int:
     try:
-        entry = vault.get_credential(args.title, vault_path=args.vault_path)
+        cred = vault.get_credential_dict(args.title, vault_path=args.vault_path)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
     except vault.CredentialNotFoundError as exc:
         return _fail(str(exc), 5)
-    _emit({"ok": True, "credential": entry.to_dict()})
+    _emit({"ok": True, "credential": cred})
     return 0
 
 

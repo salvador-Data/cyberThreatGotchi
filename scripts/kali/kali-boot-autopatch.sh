@@ -449,6 +449,22 @@ run_siem_autorun() {
     bash "$siem_script" "${siem_args[@]}" || log "SIEM autorun returned non-zero (continuing boot autopatch)"
 }
 
+run_memory_protection_diagnose() {
+    log "Phase: memory protection diagnose (non-destructive)"
+    local mp_script="$SCRIPT_DIR/ctg-ram-mitigation-enforcer.sh"
+    for candidate in /mnt/ctg/ctg-ram-mitigation-enforcer.sh /opt/ctg/ctg-ram-mitigation-enforcer.sh /media/sf_ctg-backups/ctg-ram-mitigation-enforcer.sh; do
+        if [[ -f "$candidate" ]]; then
+            mp_script="$candidate"
+            break
+        fi
+    done
+    if [[ ! -f "$mp_script" ]]; then
+        log "ctg-ram-mitigation-enforcer.sh not found — skip memory protection diagnose"
+        return 0
+    fi
+    bash "$mp_script" --diagnose-only || log "memory protection diagnose returned non-zero (continuing)"
+}
+
 run_retbleed_mitigation() {
     log "Phase: RETBleed mitigation (retbleed=$DO_RETBLEED upgrade=$DO_UPGRADE)"
     local rb_script="$SCRIPT_DIR/fix-retbleed-mitigation.sh"
@@ -709,6 +725,7 @@ fi
 fix_gdm_wayland_blank_screen
 fix_login_greeter_scale
 ensure_ctg_backups_mount_hint
+run_memory_protection_diagnose
 run_retbleed_mitigation
 run_optional_upgrade
 scan_journal_boot_errors
