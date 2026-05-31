@@ -1,8 +1,8 @@
-# CTG — start here (Andy)
+﻿# CTG â€” start here (Andy)
 
 One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized defensive use only.
 
-**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) Â· [SECURITY_HARDENING.md](SECURITY_HARDENING.md) Â· [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) Â· [SECRET_VAULT.md](SECRET_VAULT.md) Â· [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) Â· [KALI_RETBLEED.md](KALI_RETBLEED.md) Â· [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) Â· [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) Â· [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
 
 ---
 
@@ -10,24 +10,26 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Kali seamless host script | **Done** | `Start-KaliSeamless.ps1` — VB7 extradata, diagnose, lock retry |
+| Kali seamless host script | **Done** | `Start-KaliSeamless.ps1` â€” VB7 extradata, diagnose, lock retry |
 | Kali guest seamless prerequisites | **Done** | `kali-boot-autopatch.sh`, `ctg-seamless-guest.sh`, staged to Backups |
 | Seamless toggle on running VM | **Manual** | Log in to Kali GUI, then **Host+L** (VB7 has no `controlvm seamless`) |
 | CPU safe optimize scripts | **Done** | `Optimize-CpuPerformance.ps1`, `Register-CtgCpuOptimizeTask.ps1`, docs |
-| CPU `-ApplySafe` / scheduled task | **Manual (Admin)** | UAC required — see step 7 below |
+| CPU `-ApplySafe` / scheduled task | **Manual (Admin)** | UAC required â€” see step 7 below |
 | PII privacy Cursor rule | **Done** | `.cursor/rules/no-pii-in-repo.mdc` |
-| Wi-Fi repair | **Manual (Admin)** | Wi-Fi disconnected; DDG VPN up — run `Repair-WindowsWifi.ps1 -ApplyFixes` elevated |
+| Wi-Fi repair | **Manual (Admin)** | Wi-Fi disconnected; DDG VPN up â€” run `Repair-WindowsWifi.ps1 -ApplyFixes` elevated |
 | Kali SSH autopatch | **Manual (TTY)** | If 127.0.0.1:2222 fails: `sudo bash /mnt/ctg/RUN-KALI-LAB-NOW.sh` |
 | Vault secrets | **Manual** | `Protect-CtgSecrets.ps1 -SetSecret` for KALI_SSH_* (never in git) |
 | pytest + push | **Done when green** | Run `pytest tests\ -q` then commit/push main + split repos |
+| RETBleed host ``--spec-ctrl on`` | **Done (host)** | ``Harden-KaliVmSpectre.ps1`` applied — **reboot Kali**, then ``bash /mnt/ctg/ctg-retbleed-check.sh`` |
+| Seamless menu glitch | **Manual (guest)** | ``bash /mnt/ctg/ctg-seamless-guest.sh`` if needed; host: ``Start-KaliSeamless.ps1 -DiagnoseOnly`` |
 
-**Seamless root cause (2026-05-31 diagnose):** VM `kali` running, Guest Additions 7.0.14 OK, VRAM 128 VMSVGA OK, `GUI/Seamless=on` — **no graphical login** (`DesktopReady: False`). Fix: log in at Kali console, optional `bash /mnt/ctg/ctg-seamless-guest.sh`, then Host+L.
+**Seamless root cause (2026-05-31 diagnose):** VM `kali` running, Guest Additions 7.0.14 OK, VRAM 128 VMSVGA OK, `GUI/Seamless=on` â€” **no graphical login** (`DesktopReady: False`). Fix: log in at Kali console, optional `bash /mnt/ctg/ctg-seamless-guest.sh`, then Host+L.
 
-**CPU diagnose (Andy laptop):** Intel i9-8950HK, likely laptop, High performance plan active — **script OC: N**; manual BIOS/XTU only if desired.
+**CPU diagnose (Andy laptop):** Intel i9-8950HK, likely laptop, High performance plan active â€” **script OC: N**; manual BIOS/XTU only if desired.
 
 ---
 
-## Tonight (Windows — Admin PowerShell)
+## Tonight (Windows â€” Admin PowerShell)
 
 Run each command in its **own** elevated window from the repo root:
 
@@ -35,7 +37,7 @@ Run each command in its **own** elevated window from the repo root:
 cd c:\Users\Owner\Projects\cyberThreatGotchi
 ```
 
-**0. Secret vault (once per machine — interactive, no git)**
+**0. Secret vault (once per machine â€” interactive, no git)**
 
 ```powershell
 .\scripts\windows\Protect-CtgSecrets.ps1 -SetSecret -Name KALI_SSH_USER
@@ -115,9 +117,9 @@ Runs under `Backups\audit\YYYY-MM-DD\run-HHmmss\`.
 .\scripts\windows\Start-CTGWiresharkIDS.ps1 -CaptureMinutes 10
 ```
 
-Twilio SMS: set vars in local `.env` only — see [WIRESHARK_IDS_SMS.md](WIRESHARK_IDS_SMS.md).
+Twilio SMS: set vars in local `.env` only â€” see [WIRESHARK_IDS_SMS.md](WIRESHARK_IDS_SMS.md).
 
-**7. CPU performance (diagnose — safe Windows tweaks, no script OC)**
+**7. CPU performance (diagnose â€” safe Windows tweaks, no script OC)**
 
 ```powershell
 .\scripts\windows\Optimize-CpuPerformance.ps1 -DiagnoseOnly
@@ -129,7 +131,7 @@ Apply safe AC tweaks (Admin):
 .\scripts\windows\Run-AsAdmin.ps1 -TargetScript .\scripts\windows\Optimize-CpuPerformance.ps1 -TargetArguments '-ApplySafe'
 ```
 
-Weekly autorun (no password in git — Interactive logon):
+Weekly autorun (no password in git â€” Interactive logon):
 
 ```powershell
 .\scripts\windows\Register-CtgCpuOptimizeTask.ps1
@@ -176,7 +178,7 @@ sudo bash /mnt/ctg/rogue-ap-guard.sh -k "YourHomeSSID"
 
 ---
 
-## Website deploy (any shell — no Admin)
+## Website deploy (any shell â€” no Admin)
 
 ```powershell
 cd c:\Users\Owner\Projects\cyberThreatGotchi
@@ -235,7 +237,7 @@ Then commit and push [ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-la
 | `CTG-Shield-Status.ps1` | Windows host status |
 | `CTG_SHIELD_SIEM_PLAYBOOK.md` | SIEM hook playbook |
 
-VirtualBox shared folder: **ctg-backups** → `C:\Users\Owner\Backups` (mount at `/mnt/ctg`).
+VirtualBox shared folder: **ctg-backups** â†’ `C:\Users\Owner\Backups` (mount at `/mnt/ctg`).
 
 ---
 
@@ -253,9 +255,9 @@ Expected: **277 collected**, all pass (3 firewall bash tests skip on Windows).
 
 ## New pages / links
 
-- **Pro feeds hub:** [website/feeds.html](../website/feeds.html) — signatures, YARA, hashes API
+- **Pro feeds hub:** [website/feeds.html](../website/feeds.html) â€” signatures, YARA, hashes API
 - **Shop Pro tier:** [shop.html#pro-feed](https://hackerplanet.dev/shop.html#pro-feed)
-- **Kickstarter:** [kickstarter.html](https://hackerplanet.dev/kickstarter.html) — config in `website/js/kickstarter.config.js`
+- **Kickstarter:** [kickstarter.html](https://hackerplanet.dev/kickstarter.html) â€” config in `website/js/kickstarter.config.js`
 
 ---
 
@@ -263,9 +265,9 @@ Expected: **277 collected**, all pass (3 firewall bash tests skip on Windows).
 
 | Project | GitHub | Site page | Branch | Status |
 |---------|--------|-----------|--------|--------|
-| **cyberThreatGotchi** (monorepo) | [salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) | [hackerplanet.dev](https://hackerplanet.dev/) · [Pages mirror](https://salvador-Data.github.io/cyberThreatGotchi/) | `main` | Flagship — CI, Pages, releases |
-| **ctg-kali-lab** | [salvador-Data/ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-lab) | [github.html](https://hackerplanet.dev/github.html) | `main` | Split — Kali scripts + docs |
-| **ctg-windows-soc** | [salvador-Data/ctg-windows-soc](https://github.com/salvador-Data/ctg-windows-soc) | [github.html](https://hackerplanet.dev/github.html) | `main` | Split — Windows SOC + Wireshark IDS |
+| **cyberThreatGotchi** (monorepo) | [salvador-Data/cyberThreatGotchi](https://github.com/salvador-Data/cyberThreatGotchi) | [hackerplanet.dev](https://hackerplanet.dev/) Â· [Pages mirror](https://salvador-Data.github.io/cyberThreatGotchi/) | `main` | Flagship â€” CI, Pages, releases |
+| **ctg-kali-lab** | [salvador-Data/ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-lab) | [github.html](https://hackerplanet.dev/github.html) | `main` | Split â€” Kali scripts + docs |
+| **ctg-windows-soc** | [salvador-Data/ctg-windows-soc](https://github.com/salvador-Data/ctg-windows-soc) | [github.html](https://hackerplanet.dev/github.html) | `main` | Split â€” Windows SOC + Wireshark IDS |
 | **Bjorn** | [salvador-Data/Bjorn](https://github.com/salvador-Data/Bjorn) | [ecosystem.html](https://hackerplanet.dev/ecosystem.html) | `main` | Pi assessment fork |
 | **Mr. CrackBot AI Nano** | [salvador-Data/Mr.-CrackBot-AI-Nano](https://github.com/salvador-Data/Mr.-CrackBot-AI-Nano) | [crackbot.html](https://hackerplanet.dev/crackbot.html) | `main` | Jetson bench lab |
 | **M5 OS Cardputer** | [salvador-Data/M5_OS-Cardputer](https://github.com/salvador-Data/M5_OS-Cardputer) | [cardputer.html](https://hackerplanet.dev/cardputer.html) | `main` | Pocket launcher firmware |
@@ -278,4 +280,4 @@ Expected: **277 collected**, all pass (3 firewall bash tests skip on Windows).
 
 ## SSH note
 
-NAT forward **2222 → 22** is configured on VM `kali`. Credentials: DPAPI vault (`Protect-CtgSecrets.ps1`) or local `Backups\kali-vm-credentials.txt` (gitignored). If banner exchange fails, use TTY one-liner above — guest SSH may need `sudo apt install -y openssh-server && sudo systemctl enable --now ssh`.
+NAT forward **2222 â†’ 22** is configured on VM `kali`. Credentials: DPAPI vault (`Protect-CtgSecrets.ps1`) or local `Backups\kali-vm-credentials.txt` (gitignored). If banner exchange fails, use TTY one-liner above â€” guest SSH may need `sudo apt install -y openssh-server && sudo systemctl enable --now ssh`.

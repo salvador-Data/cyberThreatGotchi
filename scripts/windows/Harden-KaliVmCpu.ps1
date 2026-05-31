@@ -1,4 +1,4 @@
-# Harden VirtualBox Kali VM CPU side-channel posture (RETBleed / Spectre v2).
+﻿# Harden VirtualBox Kali VM CPU side-channel posture (RETBleed / Spectre v2).
 # Authorized defensive lab use only - Hacker Planet LLC - Philadelphia, PA.
 #
 # WHY: On a RETBleed-affected host CPU (e.g. Intel Coffee Lake i9-8950HK) the Kali
@@ -77,6 +77,7 @@ function Get-CtgSpecCtrlState {
     if (-not $CfgFile -or -not (Test-Path $CfgFile)) { return 'unknown' }
     $xml = Get-Content -Path $CfgFile -Raw
     if ($xml -match 'SpectreControl="true"') { return 'on' }
+    if ($xml -match 'SpecCtrl enabled="true"') { return 'on' }
     return 'off'
 }
 

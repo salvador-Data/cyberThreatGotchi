@@ -147,3 +147,29 @@ def test_professor_cybersec_rule():
     assert "professor" in text.lower()
     assert "authorized" in text.lower()
     assert "DuckDuckGo" in text
+
+def test_harden_kali_vm_spectre_wrapper():
+    wrapper = WIN / "Harden-KaliVmSpectre.ps1"
+    assert wrapper.is_file()
+    text = wrapper.read_text(encoding="utf-8")
+    assert "Harden-KaliVmCpu.ps1" in text
+    _parse_ps1(wrapper)
+
+
+def test_ctg_retbleed_check_script():
+    script = KALI / "ctg-retbleed-check.sh"
+    assert script.is_file()
+    body = script.read_text(encoding="utf-8")
+    assert "retbleed" in body
+    assert "vulnerabilities" in body
+    assert "Harden-KaliVmCpu.ps1" in body
+    assert "\r" not in body
+
+
+def test_retbleed_spectre_doc():
+    doc = ROOT / "docs" / "KALI_RETBLEED_SPECTRE.md"
+    assert doc.is_file()
+    text = doc.read_text(encoding="utf-8")
+    assert "--spec-ctrl on" in text
+    assert "ctg-retbleed-check.sh" in text
+    assert "mitigations=off" in text

@@ -627,3 +627,17 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 ---
 
 <p align="center"><sub>Catalog maintained with the monorepo - star <a href="https://github.com/salvador-Data/cyberThreatGotchi">cyberThreatGotchi</a> if Cipherhorn guards your network.</sub></p>
+
+### `Harden-KaliVmSpectre.ps1`
+- **Path:** `scripts/windows/Harden-KaliVmSpectre.ps1`
+- **Tagline:** *Alias wrapper for Harden-KaliVmCpu.ps1 (RETBleed / spec-ctrl).*
+- **Does:** Same as `Harden-KaliVmCpu.ps1` — `-DiagnoseOnly`, `-StopVmIfRunning`, `-StartAfter`.
+- **Docs:** [KALI_RETBLEED_SPECTRE.md](KALI_RETBLEED_SPECTRE.md)
+
+### `ctg-retbleed-check.sh`
+- **Path:** `scripts/kali/ctg-retbleed-check.sh`
+- **Tagline:** *Quick /sys vulnerabilities readout in the Kali guest.*
+- **Does:** Prints retbleed/spectre_v2 verdicts; exit 1 if RETBleed-vulnerable with host fix hint.
+- **When:** After host `--spec-ctrl on` and guest reboot.
+- **Docs:** [KALI_RETBLEED_SPECTRE.md](KALI_RETBLEED_SPECTRE.md)
+

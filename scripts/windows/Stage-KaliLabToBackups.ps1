@@ -1,5 +1,5 @@
-# Stage entire scripts/kali tree to C:\Users\Owner\Backups for VirtualBox ctg-backups share.
-# Authorized defensive lab use only — Hacker Planet LLC.
+﻿# Stage entire scripts/kali tree to C:\Users\Owner\Backups for VirtualBox ctg-backups share.
+# Authorized defensive lab use only â€” Hacker Planet LLC.
 param(
     [string]$BackupRoot = 'C:\Users\Owner\Backups',
     [string]$RepoRoot = '',
@@ -98,6 +98,7 @@ $docs = @(
     @{ Src = 'docs\CTG_LAB_PLAYGROUND.md'; Dest = 'CTG_LAB_PLAYGROUND.md' },
     @{ Src = 'docs\CTG_LAB_AUTORUN.md'; Dest = 'CTG_LAB_AUTORUN.md' },
     @{ Src = 'docs\KALI_RETBLEED.md'; Dest = 'KALI_RETBLEED.md' },
+    @{ Src = 'docs\KALI_RETBLEED_SPECTRE.md'; Dest = 'KALI_RETBLEED_SPECTRE.md' },
     @{ Src = 'docs\PASSWORD_HARDENING.md'; Dest = 'PASSWORD_HARDENING.md' }
 )
 foreach ($d in $docs) {
