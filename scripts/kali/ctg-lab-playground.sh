@@ -190,8 +190,8 @@ play_clamav_scan() {
     fi
     mkdir -p "$CLAM_LOG" 2>/dev/null || true
     local out="${CLAM_LOG}/playground-scan.log"
-    log "Scanning /home (max 50 files, excludes hidden cache) — log: $out"
-    clamscan -r --max-files=50 --exclude-dir='^/home/.+' /home 2>&1 | tee "$out" | tail -n 15
+    log "Scanning /home (max 50 files) — log: $out"
+    clamscan -r --max-files=50 /home 2>&1 | tee "$out" | tail -n 15
     log "Full scheduled scan: systemctl list-timers ctg-clamav-scan.timer"
 }
 
