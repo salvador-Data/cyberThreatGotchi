@@ -1,15 +1,15 @@
 # Core
-rich>=13.7.0
-psutil>=5.9.8
-pyyaml>=6.0.1
-flask>=3.0.0
-pillow>=10.0.0
+rich>=15.0.0
+psutil>=7.2.2
+pyyaml>=6.0.3
+flask>=3.1.3
+pillow>=12.2.0
 
 # Network (optional on Windows — simulation mode used if missing)
-scapy>=2.5.0; platform_system != "Windows" or python_version >= "3.10"
+scapy>=2.7.0; platform_system != "Windows" or python_version >= "3.10"
 
 # Threat intelligence (Linux/BPI recommended)
-yara-python>=4.5.0; platform_system != "Windows"
+yara-python>=4.5.4; platform_system != "Windows"
 
 # Antivirus integrations (optional)
 pyclamd>=0.4.0
@@ -26,9 +26,9 @@ pyclamd>=0.4.0
 # torch>=2.0.0
 
 # Dev / test
-pytest>=8.0.0
-pytest-cov>=4.1.0
+pytest>=9.0.3
+pytest-cov>=7.1.0
 
 # Credential vault (AES-256-GCM + Argon2id KDF)
-cryptography>=42.0.0
-argon2-cffi>=23.1.0
+cryptography>=48.0.0
+argon2-cffi>=25.1.0
