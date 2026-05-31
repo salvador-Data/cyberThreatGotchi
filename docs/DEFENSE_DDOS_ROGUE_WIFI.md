@@ -8,6 +8,7 @@
 - iPhone layers: [IPHONE_HARDENING.md](IPHONE_HARDENING.md)
 - CTG API / env: [SECURITY_HARDENING.md](SECURITY_HARDENING.md)
 - Perimeter (homelab): [FIREWALL_BASELINE.md](FIREWALL_BASELINE.md)
+- **UTMS Wi-Fi event bus + jam/deauth detect:** [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md)
 
 ---
 
@@ -34,6 +35,9 @@
 - Keep CTG web API on **127.0.0.1** only when running locally
 - Turn on **DuckDuckGo VPN** â€” hides home IP for some attack types and encrypts traffic on untrusted WiFi
 - **Passive** Kali scan for duplicate SSIDs and open networks (`rogue-ap-guard.sh`)
+- **Passive** Kali deauth frame counter in monitor mode (`ctg-deauth-watch.sh` — detection only)
+- **Windows** disconnect-storm / gateway-loss heuristic (`Detect-CtgWifiJam.ps1`)
+- **CTG event bus** deduped LAN publish (`core/ctg_event_bus.py`, [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md))
 - iPhone: Private Wiâ€‘Fi Address, VPN, no creds on unexpected portals ([IPHONE_HARDENING.md](IPHONE_HARDENING.md))
 
 ### Cannot (honest limits)
@@ -57,7 +61,9 @@
    - Disconnect from WiFi; use **wired Ethernet** or **cellular + VPN**
    - Do **not** enter passwords on a captive portal you did not expect
    - Run Windows diagnose: `Harden-DDoSRogueWifi.ps1 -DiagnoseOnly`
-   - On Kali (authorized lab): `sudo bash rogue-ap-guard.sh -k "YourHomeSSID"`
+   - Run Windows jam detect: `Detect-CtgWifiJam.ps1 -DiagnoseOnly` ([UTMS_WIFI_AI.md](UTMS_WIFI_AI.md))
+   - On Kali (authorized lab): `sudo bash rogue-ap-guard.sh -k "YourLabSSID"`
+   - On Kali monitor mode: `sudo bash ctg-deauth-watch.sh --diagnose` then `-i wlan0mon --watch`
 
 3. **Suspected credential capture**
    - Change passwords from a **trusted network** (cellular + VPN)

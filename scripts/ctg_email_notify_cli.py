@@ -41,18 +41,28 @@ def cmd_poll(args: argparse.Namespace) -> int:
     )
     try:
         new_msgs, skipped = notify.poll_imap_once(
-            settings, state, max_messages=args.max_messages
+            settings,
+            state,
+            max_messages=args.max_messages,
+            github_only=args.github_only,
+            github_repo=args.github_repo,
         )
     except Exception as exc:
         return _fail(str(exc))
 
     out_dir = Path(args.output_dir)
+    github_dir = out_dir / "github"
     out_dir.mkdir(parents=True, exist_ok=True)
+    github_dir.mkdir(parents=True, exist_ok=True)
     written: list[str] = []
     for msg in new_msgs:
-        note = msg.to_notification_dict()
+        labels: list[str] = []
+        if notify.is_github_ctg_email(msg.from_addr, msg.subject, repo_name=args.github_repo):
+            labels.append("github-ctg")
+        note = msg.to_notification_dict(labels=labels or None)
+        base_dir = github_dir if "github-ctg" in labels else out_dir
         fname = f"email-{msg.content_hash[:16]}.json"
-        target = out_dir / fname
+        target = base_dir / fname
         target.write_text(json.dumps(note, indent=2), encoding="utf-8")
         written.append(str(target))
 
@@ -115,6 +125,16 @@ def main() -> int:
         ),
     )
     poll.add_argument("--max-messages", type=int, default=50)
+    poll.add_argument(
+        "--github-only",
+        action="store_true",
+        help="Only ingest GitHub CI/Actions mail for --github-repo",
+    )
+    poll.add_argument(
+        "--github-repo",
+        default=os.environ.get("CTG_GITHUB_REPO_FILTER", "cyberThreatGotchi"),
+        help="Repo name substring for GitHub filter",
+    )
     poll.set_defaults(func=cmd_poll)
 
     dedup = sub.add_parser("dedup-test", help="Compute dedup keys (tests)")

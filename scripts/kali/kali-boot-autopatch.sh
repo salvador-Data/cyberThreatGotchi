@@ -506,6 +506,32 @@ run_wifi_lab_autorun() {
         wifi_args+=(--install)
     fi
     bash "$wifi_script" "${wifi_args[@]}" || log "WiFi lab autorun returned non-zero (continuing boot autopatch)"
+    run_wifi_event_diagnose
+}
+
+run_wifi_event_diagnose() {
+    log "Phase: CTG WiFi event bus helpers (diagnose-only)"
+    local emit_script="$SCRIPT_DIR/ctg-wifi-event-emit.sh"
+    local deauth_script="$SCRIPT_DIR/ctg-deauth-watch.sh"
+    local lab_ap_script="$SCRIPT_DIR/ctg-lab-ap-setup.sh"
+    for candidate in /mnt/ctg/ctg-wifi-event-emit.sh /media/sf_ctg-backups/ctg-wifi-event-emit.sh; do
+        [[ -f "$candidate" ]] && emit_script="$candidate" && break
+    done
+    for candidate in /mnt/ctg/ctg-deauth-watch.sh /media/sf_ctg-backups/ctg-deauth-watch.sh; do
+        [[ -f "$candidate" ]] && deauth_script="$candidate" && break
+    done
+    for candidate in /mnt/ctg/ctg-lab-ap-setup.sh /media/sf_ctg-backups/ctg-lab-ap-setup.sh; do
+        [[ -f "$candidate" ]] && lab_ap_script="$candidate" && break
+    done
+    if [[ -f "$lab_ap_script" ]]; then
+        bash "$lab_ap_script" --diagnose || log "ctg-lab-ap-setup diagnose non-fatal"
+    fi
+    if [[ -f "$deauth_script" ]]; then
+        bash "$deauth_script" --diagnose || log "ctg-deauth-watch diagnose non-fatal"
+    fi
+    if [[ -f "$emit_script" ]]; then
+        bash "$emit_script" --diagnose || log "ctg-wifi-event-emit diagnose non-fatal"
+    fi
 }
 
 enable_openssh_server() {

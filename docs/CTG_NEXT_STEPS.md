@@ -2,7 +2,7 @@
 
 One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized defensive use only.
 
-**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [LAB_MATURITY.md](LAB_MATURITY.md) · [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) · [LAB_VLAN.md](LAB_VLAN.md) · [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) · [LAB_MATURITY.md](LAB_MATURITY.md) · [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) · [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md) · [LAB_VLAN.md](LAB_VLAN.md) · [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
 
 ---
 
@@ -19,6 +19,8 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 | Restore drill | `Invoke-CtgRestoreDrill.ps1 -ReportOnly` | `Register-CtgRestoreDrillTask.ps1` (Admin) |
 | CIS subset | `Test-CtgCisBenchmarkDiagnose.ps1` | Review WARN lines |
 | Email → Kali | [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) | `Initialize-CtgEmailVault.ps1`; Proton Bridge |
+| GitHub CI mail | [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md) | Proton filter + fix CI first |
+| UTMS Wi-Fi AI | [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) | Event bus + jam/deauth detect (no RF counter-jam) |
 | iOS MDM checklist | `Export-CtgIosProfileChecklist.ps1` | Supervision optional (fleet only) |
 
 **Email vault titles needed:** `Proton IMAP` (or `CTG_EMAIL_IMAP`); optional `Microsoft Account`.
@@ -41,6 +43,10 @@ cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
 .\scripts\windows\Invoke-CtgRestoreDrill.ps1 -DiagnoseOnly
 ```
 
+```powershell
+.\scripts\windows\Start-CtgEventBus.ps1 -DiagnoseOnly
+```
+
 ---
 
 ## Good build snapshot (2026-05-31)
@@ -48,6 +54,8 @@ cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
 **Canonical repo path:** `C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi` — reopen Cursor here (not `Projects\cyberThreatGotchi` unless you sync clones).
 
 ### Done on main
+- **UTMS Wi-Fi AI stack:** [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) — event bus, jam/deauth detect, threat-pack OTA, Cardputer bridge
+- `core/ctg_event_bus.py`, `core/ctg_event_summarize.py`, Windows/Kali scripts (see [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md))
 - Kali share path: `ctg-run-on-share-trigger.sh`, `CTG_RUN_AUTORUN_NOW` trigger, `ctg-watch-trigger.sh` polling
 - One-click in guest: `CLICK-ME-RUN-IN-KALI.sh` + `CLICK-ME-RUN-IN-KALI.desktop` (staged to `C:\Users\Owner\Backups` / vboxsf)
 - Host: `Invoke-CtgKaliGuestFlash.ps1 -UseSecretVault` (credential vault → DPAPI → credentials file; no passwords in git)
@@ -56,7 +64,7 @@ cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
 - Host: `Start-KaliSeamless.ps1` diagnostic string fixes; `Invoke-CtgKaliNmapAskInstall.ps1` for nmap-ask install trigger
 - Lab tree re-staged: `Stage-KaliLabToBackups.ps1` (2026-05-31 — full tree on `ctg-backups` share)
 - Path helpers: `CTG-Paths.ps1` resolves Programs root + canonical repo
-- Tests: **450 passed, 4 skipped** (`pytest tests/ -q`, 2026-05-31 CPU/GPU pass)
+- Tests: **496 passed, 4 skipped** (`pytest tests/ -q`, 2026-05-31 UTMS Wi-Fi AI pass)
 
 ### Good build run log (2026-05-31, Windows SOC)
 | Command | Outcome |

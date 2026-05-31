@@ -62,6 +62,30 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **Admin:** **Yes**
 - **Docs:** [DEFENSE_DDOS_ROGUE_WIFI.md](DEFENSE_DDOS_ROGUE_WIFI.md)
 
+### `Detect-CtgWifiJam.ps1`
+- **Path:** `scripts/windows/Detect-CtgWifiJam.ps1`
+- **Tagline:** *Disconnect-storm and gateway-loss detection — failover guidance, not counter-jam.*
+- **Does:** DiagnoseOnly or Watch loop; emits `CTGEvent` JSON; optional deduped Signal via `Send-CtgIdsAlert.ps1`.
+- **When:** Suspected deauth/jam on owned Wi-Fi; pairs with Kali `ctg-deauth-watch.sh`.
+- **Admin:** **No** (diagnose); Watch runs as user
+- **Docs:** [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) - [DEFENSE_DDOS_ROGUE_WIFI.md](DEFENSE_DDOS_ROGUE_WIFI.md)
+
+### `Start-CtgEventBus.ps1`
+- **Path:** `scripts/windows/Start-CtgEventBus.ps1`
+- **Tagline:** *Local CTG event bus on 127.0.0.1:8766 — deduped Wi-Fi and UTMS events.*
+- **Does:** Runs `python -m core.ctg_event_bus serve`; persists to `Backups/ctg-events/`.
+- **When:** SOC session with Kali/Cardputer publishers on share or HTTP.
+- **Admin:** **No**
+- **Docs:** [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md)
+
+### `Start-CtgUtmsThreatBroadcast.ps1`
+- **Path:** `scripts/windows/Start-CtgUtmsThreatBroadcast.ps1`
+- **Tagline:** *Stage signed UTMS pack manifest to Backups for Cardputer/Kali OTA pull.*
+- **Does:** Wraps `scripts/utms_threat_pack.py`; emits `utms.broadcast` event.
+- **When:** Before field kit update or lab exercise.
+- **Admin:** **No**
+- **Docs:** [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) - [CARDPUTER_UTMS_WIFI.md](CARDPUTER_UTMS_WIFI.md)
+
 ### `Preserve-DuckDuckGoVpn.ps1`
 - **Path:** `scripts/windows/Preserve-DuckDuckGoVpn.ps1`
 - **Tagline:** *Don't let SOC scripts kick DuckDuckGo off the wire.*
@@ -353,6 +377,38 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **When:** Home WiFi audit or travel AP survey (authorized).
 - **Admin:** **sudo**
 - **Docs:** [DEFENSE_DDOS_ROGUE_WIFI.md](DEFENSE_DDOS_ROGUE_WIFI.md)
+
+### `ctg-wifi-event-emit.sh`
+- **Path:** `scripts/kali/ctg-wifi-event-emit.sh`
+- **Tagline:** *rogue-ap-guard wrapper that publishes CTGEvent JSON to the share inbox.*
+- **Does:** Runs passive scan; on warnings writes `wifi.rogue_ap` event for Windows bus / notify.
+- **When:** Scheduled lab scan or post-boot diagnose chain.
+- **Admin:** **sudo**
+- **Docs:** [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md)
+
+### `ctg-deauth-watch.sh`
+- **Path:** `scripts/kali/ctg-deauth-watch.sh`
+- **Tagline:** *Monitor-mode deauth counter — detect only, never transmit.*
+- **Does:** tcpdump/tshark count deauth/disassoc frames; threshold emit to `ctg-events/inbox`.
+- **When:** Authorized lab monitor iface (`wlan0mon`) during deauth drill or suspected attack.
+- **Admin:** **sudo**
+- **Docs:** [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) - [DEFENSE_DDOS_ROGUE_WIFI.md](DEFENSE_DDOS_ROGUE_WIFI.md)
+
+### `ctg-event-notify.sh`
+- **Path:** `scripts/kali/ctg-event-notify.sh`
+- **Tagline:** *Desktop toast once per CTG event id.*
+- **Does:** Polls share inbox; `notify-send` with analyst summary; tracks seen ids locally.
+- **When:** Kali Xfce session while Windows publishers emit events.
+- **Admin:** **No**
+- **Docs:** [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md)
+
+### `ctg-lab-ap-setup.sh`
+- **Path:** `scripts/kali/ctg-lab-ap-setup.sh`
+- **Tagline:** *CTG-UTMS-LAB soft AP profile — isolated lab only.*
+- **Does:** Diagnose hostapd prerequisites; `--apply` writes `/etc/ctg/hostapd-lab.conf` from `lab-wifi.conf`.
+- **When:** Field kit lab AP bring-up ([LAB_AP_UTMS.md](LAB_AP_UTMS.md)).
+- **Admin:** **sudo**
+- **Docs:** [LAB_AP_UTMS.md](LAB_AP_UTMS.md) - [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md)
 
 ### `ctg-nmap-ask.sh` (`a$k`)
 - **Path:** `scripts/kali/ctg-nmap-ask.sh` - `scripts/kali/nse/ctg-ask-recon.nse`

@@ -30,6 +30,34 @@ def _fail(message: str, code: int = 1) -> int:
     return code
 
 
+def _session_active(args: argparse.Namespace) -> bool:
+    try:
+        vault.get_active_session(vault_path=args.vault_path)
+        return True
+    except vault.VaultLockedError:
+        return False
+
+
+def _maybe_unlock(args: argparse.Namespace) -> bool:
+    """Unlock with --master-password when no session; return True if transient."""
+    if _session_active(args):
+        return False
+    master = getattr(args, "master_password", "") or ""
+    if not master:
+        return False
+    vault.unlock_vault(master_password=master, vault_path=args.vault_path)
+    return True
+
+
+def _run_unlocked(args: argparse.Namespace, fn):
+    transient = _maybe_unlock(args)
+    try:
+        return fn()
+    finally:
+        if transient:
+            vault.lock_session(vault_path=args.vault_path)
+
+
 def cmd_init(args: argparse.Namespace) -> int:
     password = args.master_password or _read_password_stdin()
     try:
@@ -76,28 +104,35 @@ def cmd_status(args: argparse.Namespace) -> int:
 
 
 def cmd_list(args: argparse.Namespace) -> int:
-    try:
+    def _list():
         items = vault.list_credentials(vault_path=args.vault_path)
+        _emit({"ok": True, "credentials": items})
+        return 0
+
+    try:
+        return _run_unlocked(args, _list)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
-    _emit({"ok": True, "credentials": items})
-    return 0
 
 
 def cmd_get(args: argparse.Namespace) -> int:
-    try:
+    def _get():
         cred = vault.get_credential_dict(args.title, vault_path=args.vault_path)
+        _emit({"ok": True, "credential": cred})
+        return 0
+
+    try:
+        return _run_unlocked(args, _get)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
     except vault.CredentialNotFoundError as exc:
         return _fail(str(exc), 5)
-    _emit({"ok": True, "credential": cred})
-    return 0
 
 
 def cmd_add(args: argparse.Namespace) -> int:
     password = args.password or _read_password_stdin()
-    try:
+
+    def _add():
         entry = vault.add_credential(
             args.title,
             args.username,
@@ -107,19 +142,23 @@ def cmd_add(args: argparse.Namespace) -> int:
             tags=[t.strip() for t in (args.tags or "").split(",") if t.strip()],
             vault_path=args.vault_path,
         )
+        _emit({"ok": True, "credential": {k: entry.to_dict()[k] for k in ("id", "title", "username", "created")}})
+        return 0
+
+    try:
+        return _run_unlocked(args, _add)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
     except vault.VaultError as exc:
         return _fail(str(exc))
-    _emit({"ok": True, "credential": {k: entry.to_dict()[k] for k in ("id", "title", "username", "created")}})
-    return 0
 
 
 def cmd_set(args: argparse.Namespace) -> int:
     password = args.password
     if args.password_from_stdin:
         password = _read_password_stdin()
-    try:
+
+    def _set():
         entry = vault.set_credential(
             args.title,
             username=args.username,
@@ -128,23 +167,29 @@ def cmd_set(args: argparse.Namespace) -> int:
             notes=args.notes,
             vault_path=args.vault_path,
         )
+        _emit({"ok": True, "credential": {"id": entry.id, "title": entry.title, "updated": entry.updated}})
+        return 0
+
+    try:
+        return _run_unlocked(args, _set)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
     except vault.CredentialNotFoundError as exc:
         return _fail(str(exc), 5)
-    _emit({"ok": True, "credential": {"id": entry.id, "title": entry.title, "updated": entry.updated}})
-    return 0
 
 
 def cmd_remove(args: argparse.Namespace) -> int:
-    try:
+    def _remove():
         vault.remove_credential(args.title, vault_path=args.vault_path)
+        _emit({"ok": True})
+        return 0
+
+    try:
+        return _run_unlocked(args, _remove)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
     except vault.CredentialNotFoundError as exc:
         return _fail(str(exc), 5)
-    _emit({"ok": True})
-    return 0
 
 
 def cmd_export(args: argparse.Namespace) -> int:
@@ -157,14 +202,17 @@ def cmd_export(args: argparse.Namespace) -> int:
 
 
 def cmd_import_csv(args: argparse.Namespace) -> int:
-    try:
+    def _import():
         added = vault.import_from_csv(args.csv_path, vault_path=args.vault_path)
+        _emit({"ok": True, "imported": added})
+        return 0
+
+    try:
+        return _run_unlocked(args, _import)
     except vault.VaultLockedError as exc:
         return _fail(str(exc), 4)
     except vault.VaultError as exc:
         return _fail(str(exc))
-    _emit({"ok": True, "imported": added})
-    return 0
 
 
 def cmd_enable_dpapi(args: argparse.Namespace) -> int:
@@ -213,13 +261,16 @@ def build_parser() -> argparse.ArgumentParser:
     p_status.set_defaults(func=cmd_status)
 
     p_list = sub.add_parser("list", parents=[common])
+    p_list.add_argument("--master-password", default="")
     p_list.set_defaults(func=cmd_list)
 
     p_get = sub.add_parser("get", parents=[common])
     p_get.add_argument("--title", required=True)
+    p_get.add_argument("--master-password", default="")
     p_get.set_defaults(func=cmd_get)
 
     p_add = sub.add_parser("add", parents=[common])
+    p_add.add_argument("--master-password", default="")
     p_add.add_argument("--title", required=True)
     p_add.add_argument("--username", default="")
     p_add.add_argument("--password", default="")
@@ -229,6 +280,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_add.set_defaults(func=cmd_add)
 
     p_set = sub.add_parser("set", parents=[common])
+    p_set.add_argument("--master-password", default="")
     p_set.add_argument("--title", required=True)
     p_set.add_argument("--username", default="")
     p_set.add_argument("--password", default="")
@@ -238,6 +290,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_set.set_defaults(func=cmd_set)
 
     p_remove = sub.add_parser("remove", parents=[common])
+    p_remove.add_argument("--master-password", default="")
     p_remove.add_argument("--title", required=True)
     p_remove.set_defaults(func=cmd_remove)
 
@@ -246,6 +299,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_export.set_defaults(func=cmd_export)
 
     p_import = sub.add_parser("import-csv", parents=[common])
+    p_import.add_argument("--master-password", default="")
     p_import.add_argument("--csv-path", required=True)
     p_import.set_defaults(func=cmd_import_csv)
 

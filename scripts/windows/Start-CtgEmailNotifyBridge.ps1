@@ -29,6 +29,9 @@
 .PARAMETER SignalHighPriority
   Invoke Send-CtgIdsAlert.ps1 for urgent subjects.
 
+.PARAMETER GithubOnly
+  Poll only GitHub CI/Actions emails for cyberThreatGotchi (dedupe still applies).
+
 .EXAMPLE
   .\scripts\windows\Start-CtgEmailNotifyBridge.ps1 -DiagnoseOnly
 
@@ -44,6 +47,7 @@ param(
     [switch] $UseSecretVault,
     [string] $VaultTitle = '',
     [switch] $SignalHighPriority,
+    [switch] $GithubOnly,
     [string] $ImapHost = '127.0.0.1',
     [int] $ImapPort = 1143,
     [string] $Mailbox = 'INBOX'
@@ -114,6 +118,12 @@ function Invoke-CtgEmailPollOnce {
     $env:CTG_EMAIL_NOTIFY_STATE = $StatePath
     $env:CTG_EMAIL_NOTIFY_OUT = $OutDir
 
+    $pollArgs = @($Cli, 'poll')
+    if ($GithubOnly) {
+        $pollArgs += '--github-only'
+        Write-CtgEmailLog 'GithubOnly: filtering notifications@github.com + cyberThreatGotchi subjects' 'Gray'
+    }
+
     $py = Get-Command python -ErrorAction SilentlyContinue
     if (-not $py) { $py = Get-Command python3 -ErrorAction SilentlyContinue }
     if (-not $py) {
@@ -123,7 +133,7 @@ function Invoke-CtgEmailPollOnce {
 
     $titleLabel = if ($cred.Title) { $cred.Title } else { $VaultTitle }
     Write-CtgEmailLog ("Polling IMAP {0}:{1} as vault title '{2}'" -f $ImapHost, $ImapPort, $titleLabel) 'Cyan'
-    $output = & $py.Path $Cli poll 2>&1 | Out-String
+    $output = & $py.Path @pollArgs 2>&1 | Out-String
     try {
         $result = $output | ConvertFrom-Json
     } catch {

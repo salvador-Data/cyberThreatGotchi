@@ -50,5 +50,7 @@ scripts/wazuh-lab/data/
 scripts/wazuh-lab/.env
 Backups/kali-vm-vbox-password.txt
 Backups/ctg-cve-cache/
+Backups/ctg-events/
+Backups/.vault/ctg-event-state.json
 scripts/windows/ctg-soc-run-log*.txt
 M5_OS-Cardputer/

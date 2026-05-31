@@ -1,0 +1,41 @@
+{
+  "schema": "ctg-utms-threat-pack-v1",
+  "version": 1,
+  "issued_at": "2026-05-31T00:00:00+00:00",
+  "issuer": "Hacker Planet LLC — lab example only",
+  "description": "Placeholder UTMS indicators for authorized CTG lab exercises. Not live threat intel.",
+  "indicators": [
+    {
+      "id": "lab-ex-001",
+      "type": "domain",
+      "value": "example-malware.lab.invalid",
+      "severity": "medium",
+      "tags": ["utms", "lab-only", "dns-block-test"]
+    },
+    {
+      "id": "lab-ex-002",
+      "type": "ipv4",
+      "value": "198.51.100.50",
+      "severity": "low",
+      "tags": ["utms", "lab-only", "rfc5737"]
+    },
+    {
+      "id": "lab-ex-003",
+      "type": "ssid",
+      "value": "YourLabSSID",
+      "severity": "info",
+      "tags": ["wifi", "known-good-baseline"]
+    },
+    {
+      "id": "lab-ex-004",
+      "type": "bssid",
+      "value": "aa:bb:cc:dd:ee:ff",
+      "severity": "info",
+      "tags": ["wifi", "placeholder-bssid"]
+    }
+  ],
+  "mitre_defense": [
+    {"technique": "T1557", "note": "Adversary-in-the-middle — defend with VPN + BSSID verification"},
+    {"technique": "T1498", "note": "Network DoS — detect link loss; ISP escalation for volumetric"}
+  ]
+}

@@ -155,6 +155,18 @@ fi
 if [[ -f "$CTG_MOUNT/ctg-ids-ips-autorun.sh" ]]; then
     log "Phase verify-d: ctg-ids-ips-autorun (also via ctg-lab-autorun Phase 3)"
 fi
+if [[ -f "$CTG_MOUNT/ctg-wifi-event-emit.sh" ]]; then
+    log "Phase verify-e: ctg-wifi-event-emit.sh --diagnose"
+    bash "$CTG_MOUNT/ctg-wifi-event-emit.sh" --diagnose || log "wifi-event-emit diagnose non-fatal"
+fi
+if [[ -f "$CTG_MOUNT/ctg-deauth-watch.sh" ]]; then
+    log "Phase verify-f: ctg-deauth-watch.sh --diagnose"
+    bash "$CTG_MOUNT/ctg-deauth-watch.sh" --diagnose || log "deauth-watch diagnose non-fatal"
+fi
+if [[ -f "$CTG_MOUNT/ctg-lab-ap-setup.sh" ]]; then
+    log "Phase verify-g: ctg-lab-ap-setup.sh --diagnose"
+    bash "$CTG_MOUNT/ctg-lab-ap-setup.sh" --diagnose || log "lab-ap-setup diagnose non-fatal"
+fi
 log "=== Verify ==="
 for svc in ctg-kali-autopatch.service tor ctg-wifi-lab.service ctg-ids-ips.service; do
     st="$(systemctl is-active "$svc" 2>/dev/null || echo inactive)"
