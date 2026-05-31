@@ -11,7 +11,7 @@ set -uo pipefail
 POLL_SEC="${CTG_TRIGGER_POLL_SEC:-8}"
 MAX_LOOPS="${CTG_TRIGGER_MAX_LOOPS:-0}"
 LOG_FILE="/var/log/ctg-watch-trigger.log"
-TRIGGER_NAMES=(CTG_TRIGGER_AUTORUN CTG_RUN_AUTORUN_NOW)
+TRIGGER_NAMES=(CTG_TRIGGER_NMAP_INSTALL CTG_TRIGGER_AUTORUN CTG_RUN_AUTORUN_NOW)
 
 log() {
     local msg="[$(date -Iseconds)] [ctg-watch-trigger] $*"
@@ -52,6 +52,18 @@ remove_trigger() {
     return 1
 }
 
+
+run_nmap_install_trigger() {
+    local root="$1"
+    local helper="$root/ctg-nmap-ask-install-trigger.sh"
+    if [[ ! -f "$helper" ]]; then
+        log "Missing $helper — re-stage: Stage-KaliLabToBackups.ps1"
+        return 1
+    fi
+    log "Running ctg-nmap-ask-install-trigger.sh (CTG_TRIGGER_NMAP_INSTALL)"
+    bash "$helper"
+}
+
 run_autorun_chain() {
     local root="$1"
     local autorun="$root/ctg-first-login-autorun.sh"
@@ -80,7 +92,13 @@ while true; do
         trigger="$(find_trigger "$share")" || trigger=""
         if [[ -n "$trigger" ]]; then
             log "Trigger detected: $trigger"
-            if run_autorun_chain "$share"; then
+            if [[ "$(basename "$trigger")" == "CTG_TRIGGER_NMAP_INSTALL" ]]; then
+                if run_nmap_install_trigger "$share"; then
+                    remove_trigger "$trigger" || true
+                else
+                    log "nmap-ask install trigger failed (sudo/password)"
+                fi
+            elif run_autorun_chain "$share"; then
                 remove_trigger "$trigger" || true
             else
                 log "Autorun chain returned non-zero (trigger kept for retry)"

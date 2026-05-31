@@ -1,5 +1,5 @@
-# Flash latest CTG Kali scripts from vboxsf share. Zero-touch via trigger when guestcontrol/SSH fail.
-# Authorized lab use only — Hacker Planet LLC.
+﻿# Flash latest CTG Kali scripts from vboxsf share. Zero-touch via trigger when guestcontrol/SSH fail.
+# Authorized lab use only â€” Hacker Planet LLC.
 param(
     [string]$VmName = 'kali',
     [string]$CredentialsFile = 'C:\Users\Owner\Backups\kali-vm-credentials.txt',
@@ -51,6 +51,13 @@ function Get-CtgKaliCredentials {
     return $result
 }
 
+
+function Get-CtgGuestLoggedInUsersList {
+    param([string]$VBoxManage, [string]$Vm)
+    $raw = (& $VBoxManage guestproperty get $Vm '/VirtualBox/GuestInfo/OS/LoggedInUsersList' 2>&1 | Out-String).Trim()
+    if ($raw -match 'Value:\s*(.+)') { return $Matches[1].Trim() }
+    return ''
+}
 function Get-CtgGuestLoggedInUsers {
     param([string]$VBoxManage, [string]$Vm)
     $raw = (& $VBoxManage guestproperty get $Vm '/VirtualBox/GuestInfo/OS/LoggedInUsers' 2>&1 | Out-String).Trim()
@@ -228,17 +235,17 @@ function Wait-CtgTriggerConsumed {
     Write-CtgFlashLog "Waiting up to ${TimeoutSec}s for guest (trigger removed or CTG_AUTORUN_DONE)..."
     while ((Get-Date) -lt $deadline) {
         if (-not (Test-Path $TriggerPath)) {
-            Write-CtgFlashLog 'Trigger file removed — guest autorun likely ran'
+            Write-CtgFlashLog 'Trigger file removed â€” guest autorun likely ran'
             return $true
         }
         if (Test-Path $donePath) {
-            Write-CtgFlashLog 'CTG_AUTORUN_DONE on share — guest chain completed'
+            Write-CtgFlashLog 'CTG_AUTORUN_DONE on share â€” guest chain completed'
             Remove-Item $TriggerPath -Force -ErrorAction SilentlyContinue
             return $true
         }
         Start-Sleep -Seconds 5
     }
-    Write-CtgFlashLog 'Trigger still present — guest may need kali-boot-autopatch.sh --install or ctg-watch-trigger running'
+    Write-CtgFlashLog 'Trigger still present â€” guest may need kali-boot-autopatch.sh --install or ctg-watch-trigger running'
     return $false
 }
 
@@ -254,16 +261,18 @@ if (-not $SkipStage -and -not $WhatIf) {
 
 $creds = Get-CtgKaliCredentials -Path $CredentialsFile
 $chain = Get-CtgGuestLabChainBash
-$tryUsers = @('sal', 'kali', $creds.User) | Where-Object { $_ } | Select-Object -Unique
+$vbox = Get-CtgVBoxManagePath
+$guiUser = if ($vbox) { Get-CtgGuestLoggedInUsersList -VBoxManage $vbox -Vm $VmName } else { '' }
+$tryUsers = @($guiUser, 'sal', 'kali', $creds.User) | Where-Object { $_ } | Select-Object -Unique
 Write-CtgFlashLog ("cred user={0} ssh port={1} tryUsers={2}" -f $creds.User, $SshPort, ($tryUsers -join ','))
 
-$vbox = Get-CtgVBoxManagePath
 $loggedIn = 0
+
 if ($vbox) {
     $loggedIn = Get-CtgGuestLoggedInUsers -VBoxManage $vbox -Vm $VmName
     Write-CtgFlashLog "Guest LoggedInUsers=$loggedIn vm=$VmName"
 } else {
-    Write-CtgFlashLog 'VBoxManage not found — SSH/trigger paths only'
+    Write-CtgFlashLog 'VBoxManage not found â€” SSH/trigger paths only'
 }
 
 if ($WhatIf) {
@@ -288,17 +297,17 @@ if (-not $ok -and $vbox) {
     if ($guestControlOk) {
         $ok = Invoke-CtgKaliFlashViaGuestControl -VBoxManage $vbox -Vm $VmName -Creds $creds -ChainBash $chain -TryUsers $tryUsers
     } else {
-        Write-CtgFlashLog 'guestcontrol auth failed — sync kali-vm-credentials.txt with sal password OR use share trigger'
+        Write-CtgFlashLog 'guestcontrol auth failed â€” sync kali-vm-credentials.txt with sal password OR use share trigger'
     }
 }
 
 $triggerPath = $null
 if (-not $ok) {
     if ($loggedIn -ge 1) {
-        Write-CtgFlashLog 'LoggedInUsers>=1 — zero-touch share trigger (no Windows guest password)'
+        Write-CtgFlashLog 'LoggedInUsers>=1 â€” zero-touch share trigger (no Windows guest password)'
         $triggerPath = Set-CtgAutorunTrigger -Root $BackupRoot -Name $TriggerFileName
     } else {
-        Write-CtgFlashLog 'LoggedInUsers=0 — log into Kali Xfce GUI, then re-run this script or create trigger manually'
+        Write-CtgFlashLog 'LoggedInUsers=0 â€” log into Kali Xfce GUI, then re-run this script or create trigger manually'
         $triggerPath = Set-CtgAutorunTrigger -Root $BackupRoot -Name $TriggerFileName
     }
     if ($triggerPath) {
@@ -325,3 +334,5 @@ if (-not $ok) {
 
 Write-CtgFlashLog '=== Guest flash complete ==='
 exit 0
+
+

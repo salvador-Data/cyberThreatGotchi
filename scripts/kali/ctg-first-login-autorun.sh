@@ -63,6 +63,15 @@ run_chain() {
         return 1
     }
 
+
+    if [[ -f "$CTG_MOUNT/kali-boot-autopatch.sh" ]]; then
+        log "Phase: kali-boot-autopatch.sh --install (nmap-ask, systemd, sudoers)"
+        if sudo_ctg bash "$CTG_MOUNT/kali-boot-autopatch.sh" --install; then
+            log "kali-boot-autopatch --install complete"
+        else
+            log "kali-boot-autopatch --install skipped (sudo password once)"
+        fi
+    fi
     mount_share || log "Mount skipped — using /media/sf_ctg-backups if present"
 
     if [[ -x "$CTG_MOUNT/ctg-display-scale.sh" ]] || [[ -f "$CTG_MOUNT/ctg-display-scale.sh" ]]; then
