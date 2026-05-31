@@ -2,7 +2,7 @@
 
 One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized defensive use only.
 
-**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
 
 ---
 
@@ -95,6 +95,26 @@ Runs under `Backups\audit\YYYY-MM-DD\run-HHmmss\`.
 ```
 
 Twilio SMS: set vars in local `.env` only — see [WIRESHARK_IDS_SMS.md](WIRESHARK_IDS_SMS.md).
+
+**7. CPU performance (diagnose — safe Windows tweaks, no script OC)**
+
+```powershell
+.\scripts\windows\Optimize-CpuPerformance.ps1 -DiagnoseOnly
+```
+
+Apply safe AC tweaks (Admin):
+
+```powershell
+.\scripts\windows\Run-AsAdmin.ps1 -TargetScript .\scripts\windows\Optimize-CpuPerformance.ps1 -TargetArguments '-ApplySafe'
+```
+
+Weekly autorun (no password in git — Interactive logon):
+
+```powershell
+.\scripts\windows\Register-CtgCpuOptimizeTask.ps1
+```
+
+See [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md). **Never** paste Windows password into chat or scripts.
 
 ---
 

@@ -20,6 +20,9 @@
 .PARAMETER SkipSsdBackup
   Skip selective_ssd_backup.ps1 even when SSD is online.
 
+.PARAMETER CpuOptimize
+  Run Optimize-CpuPerformance.ps1 -ApplySafe when elevated (diagnose-only if not Admin).
+
 .EXAMPLE
   .\scripts\windows\CTG-AuditAutorun.ps1 -AuditOnly
 
@@ -31,7 +34,8 @@ param(
     [switch] $AuditOnly,
     [switch] $HardenAndAudit,
     [switch] $SinkCloud,
-    [switch] $SkipSsdBackup
+    [switch] $SkipSsdBackup,
+    [switch] $CpuOptimize
 )
 
 $ErrorActionPreference = 'Continue'
@@ -188,6 +192,22 @@ function Invoke-CtgHardenPass {
         }
     } else {
         Add-AuditError 'Harden-PasswordPolicy.ps1 missing'
+    }
+
+    if ($CpuOptimize) {
+        $cpuScript = Join-Path $Win 'Optimize-CpuPerformance.ps1'
+        if (Test-Path $cpuScript) {
+            $cpuOut = Join-Path $hardenDir 'cpu-optimize.txt'
+            if ($script:CtgIsAdmin) {
+                Write-AuditLog 'Harden: Optimize-CpuPerformance -ApplySafe (elevated)'
+                & $cpuScript -ApplySafe *>&1 | Tee-Object -FilePath $cpuOut
+            } else {
+                Write-AuditLog 'Harden: Optimize-CpuPerformance -DiagnoseOnly (not Admin)'
+                & $cpuScript -DiagnoseOnly *>&1 | Tee-Object -FilePath $cpuOut
+            }
+        } else {
+            Add-AuditError 'Optimize-CpuPerformance.ps1 missing'
+        }
     }
 }
 
@@ -458,7 +478,7 @@ function Invoke-CtgCloudSink {
 
 # --- Main ---
 Write-AuditLog "=== CTG Audit Autorun started === run=$RunId Admin=$script:CtgIsAdmin ==="
-Write-AuditLog "Mode: $(if ($HardenAndAudit) { 'HardenAndAudit' } else { 'AuditOnly' }) SinkCloud=$($SinkCloud.IsPresent)"
+Write-AuditLog "Mode: $(if ($HardenAndAudit) { 'HardenAndAudit' } else { 'AuditOnly' }) SinkCloud=$($SinkCloud.IsPresent) CpuOptimize=$($CpuOptimize.IsPresent)"
 
 New-Item -ItemType Directory -Path $RunRoot -Force | Out-Null
 foreach ($c in @('windows-security', 'network-ids', 'soc-ctg', 'kali-bridge')) {
@@ -487,6 +507,24 @@ if (-not $script:SsdOnline -and $script:CtgIsAdmin) {
 
 if ($HardenAndAudit) {
     Invoke-CtgHardenPass
+}
+
+if ($CpuOptimize -and -not $HardenAndAudit) {
+    $cpuScript = Join-Path $Win 'Optimize-CpuPerformance.ps1'
+    $wsDirEarly = Join-Path $RunRoot 'windows-security'
+    New-Item -ItemType Directory -Path $wsDirEarly -Force | Out-Null
+    if (Test-Path $cpuScript) {
+        $cpuOut = Join-Path $wsDirEarly 'cpu-optimize.txt'
+        if ($script:CtgIsAdmin) {
+            Write-AuditLog 'CpuOptimize: Optimize-CpuPerformance -ApplySafe (elevated)'
+            & $cpuScript -ApplySafe *>&1 | Tee-Object -FilePath $cpuOut
+        } else {
+            Write-AuditLog 'CpuOptimize: Optimize-CpuPerformance -DiagnoseOnly (not Admin)'
+            & $cpuScript -DiagnoseOnly *>&1 | Tee-Object -FilePath $cpuOut
+        }
+    } else {
+        Add-AuditError 'Optimize-CpuPerformance.ps1 missing'
+    }
 }
 
 $wsDir = Join-Path $RunRoot 'windows-security'
