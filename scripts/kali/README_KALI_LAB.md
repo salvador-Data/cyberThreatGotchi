@@ -73,7 +73,7 @@ Same rules as [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md):
 | File | Purpose |
 |------|---------|
 | `kali-lab-bootstrap.sh` | Monolithic bootstrap: DDG preserve, lab anonymity (Tor/proxychains), harden, ClamAV, passive Snort, OSINT apt, Realtek detect, WiFi Option 2 |
-| `ctg-wifi-lab-autorun.sh` | USB Realtek detect, OOT driver, lab WPA2 connect, eth promisc + optional WiFi monitor |
+| `ctg-wifi-lab-autorun.sh` | USB Realtek detect, OOT driver, lab WPA3-SAE connect (WPA2 fallback), eth promisc + optional WiFi monitor |
 | `ctg-ids-ips-autorun.sh` | ClamAV + passive Snort/Suricata IDS; optional `--EnableIPS` (lab VLAN) |
 | `lab-wifi.conf.example` | Lab SSID/PSK template → `/etc/ctg/lab-wifi.conf` (mode 600, gitignored) |
 | `lab-targets.example` | Authorized targets template — copy to `lab-targets.conf` (gitignored) |
@@ -98,7 +98,7 @@ Both interfaces can be configured at once (different paths). See [docs/KALI_WIFI
 ```bash
 sudo cp /mnt/ctg/lab-wifi.conf.example /etc/ctg/lab-wifi.conf
 sudo chmod 600 /etc/ctg/lab-wifi.conf
-sudo nano /etc/ctg/lab-wifi.conf
+sudo nano /etc/ctg/lab-wifi.conf   # SSID, PSK, CTG_LAB_WIFI_KEY_MGMT=wpa3 (WPA2 fallback if Realtek lacks SAE)
 ```
 
 ```bash

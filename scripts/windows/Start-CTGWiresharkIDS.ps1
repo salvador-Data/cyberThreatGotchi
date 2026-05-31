@@ -22,11 +22,14 @@
 .PARAMETER NoSms
   Skip SMS even on high-severity alerts.
 
+.PARAMETER OptimizeCapture
+  Tune ring buffer: 128 MB files, 96-file ring, snaplen 1600 (lab IDS defaults).
+
 .EXAMPLE
   .\scripts\windows\Start-CTGWiresharkIDS.ps1 -DiagnoseOnly
 
 .EXAMPLE
-  .\scripts\windows\Start-CTGWiresharkIDS.ps1 -CaptureMinutes 10 -Interface 5
+  .\scripts\windows\Start-CTGWiresharkIDS.ps1 -CaptureMinutes 10 -Interface 5 -OptimizeCapture
 #>
 [CmdletBinding()]
 param(
@@ -34,7 +37,8 @@ param(
     [int] $CaptureMinutes = 5,
     [string] $Interface = '',
     [switch] $BlockRepeatOffenders,
-    [switch] $NoSms
+    [switch] $NoSms,
+    [switch] $OptimizeCapture
 )
 
 $ErrorActionPreference = 'Continue'
@@ -104,6 +108,9 @@ function Invoke-CtgDiagnose {
     }
     if ($BlockRepeatOffenders -and -not $script:CtgIsAdmin) {
         Write-IdsLog '-BlockRepeatOffenders requires Administrator' 'Yellow'
+    }
+    if ($OptimizeCapture) {
+        Write-IdsLog 'OptimizeCapture: ring 128MB x96 files, snaplen 1600'
     }
     Write-IdsLog "DiagnoseOnly result: $(if ($ok) { 'PASS' } else { 'FAIL' })"
     return $ok
@@ -189,15 +196,27 @@ function Start-CtgRingBufferCapture {
     New-Item -ItemType Directory -Path $paths.PcapDir -Force | Out-Null
     New-Item -ItemType Directory -Path $paths.LogsDir -Force | Out-Null
     $durationSec = [Math]::Max(60, $Minutes * 60)
+    $ringSize = 52428800
+    $ringFiles = 48
+    $snapLen = 0
+    if ($OptimizeCapture) {
+        $ringSize = 134217728
+        $ringFiles = 96
+        $snapLen = 1600
+    }
     $args = @(
         '-i', $iface,
         '-w', $paths.PcapFile,
-        '-b', 'filesize:52428800',
-        '-b', 'files:48',
+        '-b', "filesize:$ringSize",
+        '-b', "files:$ringFiles",
         '-b', "duration:$durationSec",
         '-q'
     )
-    Write-IdsLog "Starting tshark ring capture iface=$iface duration=${Minutes}m -> $($paths.PcapFile)" 'Cyan'
+    if ($snapLen -gt 0) {
+        $args += @('-s', "$snapLen")
+    }
+    $optNote = if ($OptimizeCapture) { ' optimized' } else { '' }
+    Write-IdsLog "Starting tshark ring capture${optNote} iface=$iface duration=${Minutes}m -> $($paths.PcapFile)" 'Cyan'
     $proc = Start-Process -FilePath $tshark -ArgumentList $args -PassThru -WindowStyle Hidden
     return $proc
 }

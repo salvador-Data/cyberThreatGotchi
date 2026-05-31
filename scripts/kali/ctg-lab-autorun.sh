@@ -16,6 +16,8 @@ WIFI_AUTORUN="/mnt/ctg/ctg-wifi-lab-autorun.sh"
 REPO_WIFI="$(dirname "$0")/ctg-wifi-lab-autorun.sh"
 IDS_AUTORUN="/mnt/ctg/ctg-ids-ips-autorun.sh"
 REPO_IDS="$(dirname "$0")/ctg-ids-ips-autorun.sh"
+SIEM_AUTORUN="/mnt/ctg/ctg-siem-autorun.sh"
+REPO_SIEM="$(dirname "$0")/ctg-siem-autorun.sh"
 
 log() { printf '[ctg-lab-autorun] %s\n' "$*"; }
 
@@ -53,9 +55,19 @@ if [[ ! -f "$IDS_AUTORUN" && -f "$REPO_IDS" ]]; then
 fi
 if [[ -f "$IDS_AUTORUN" ]]; then
     log "Running IDS/IPS + ClamAV autorun: $IDS_AUTORUN"
-    bash "$IDS_AUTORUN" || log "IDS/IPS autorun returned non-zero (continuing)"
+    bash "$IDS_AUTORUN" --optimize --skip-snort || log "IDS/IPS autorun returned non-zero (continuing)"
 else
     log "IDS/IPS script not found (optional) — stage ctg-ids-ips-autorun.sh on ctg share"
+fi
+
+if [[ ! -f "$SIEM_AUTORUN" && -f "$REPO_SIEM" ]]; then
+    SIEM_AUTORUN="$REPO_SIEM"
+fi
+if [[ -f "$SIEM_AUTORUN" ]]; then
+    log "Running SIEM export autorun: $SIEM_AUTORUN"
+    bash "$SIEM_AUTORUN" --skip-wazuh || log "SIEM autorun returned non-zero (continuing)"
+else
+    log "SIEM script not found (optional) — stage ctg-siem-autorun.sh on ctg share"
 fi
 
 if [[ ! -f "$BOOTSTRAP" && -f "$REPO_BOOT" ]]; then
@@ -108,3 +120,4 @@ log "Targets: /etc/ctg/lab-targets.conf (from lab-targets.example)"
 log "DDG preserve: --preserve-ddg-dns ON by default — see docs/IPHONE_HARDENING.md"
 log "WiFi/Eth capture: docs/KALI_WIFI_ETH_PROMISC.md · config: /etc/ctg/lab-wifi.conf"
 log "IDS/IPS/ClamAV: docs/KALI_IDS_IPS_CLAMAV.md · logs: /var/log/ctg-snort/"
+log "SIEM stack: docs/KALI_SIEM_STACK.md · export: Backups/logs/siem/"

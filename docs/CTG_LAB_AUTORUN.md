@@ -145,7 +145,7 @@ Runs `ctg-wifi-lab-autorun.sh` after Guest Additions fix. Also invoked from `ctg
 
 ## WiFi + Ethernet lab autorun
 
-USB **Realtek** dongle detect, OOT driver (`rtl8812au`), WPA2 connect from `/etc/ctg/lab-wifi.conf`, **eth promisc** when CAT5 link is up, optional **WiFi monitor** (`airmon-ng`).
+USB **Realtek** dongle detect, OOT driver (`rtl8812au`), **WPA3-SAE** connect (WPA2-PSK fallback) from `/etc/ctg/lab-wifi.conf`, **eth promisc** when CAT5 link is up, optional **WiFi monitor** (`airmon-ng`).
 
 **Professor answer:** Wired Ethernet uses **classic promisc**; WiFi 802.11 capture needs **monitor mode** — see [KALI_WIFI_ETH_PROMISC.md](KALI_WIFI_ETH_PROMISC.md).
 
@@ -156,7 +156,7 @@ USB **Realtek** dongle detect, OOT driver (`rtl8812au`), WPA2 connect from `/etc
 ```bash
 sudo cp /mnt/ctg/lab-wifi.conf.example /etc/ctg/lab-wifi.conf
 sudo chmod 600 /etc/ctg/lab-wifi.conf
-sudo nano /etc/ctg/lab-wifi.conf
+sudo nano /etc/ctg/lab-wifi.conf   # set SSID, PSK, CTG_LAB_WIFI_KEY_MGMT=wpa3
 ```
 
 ```bash

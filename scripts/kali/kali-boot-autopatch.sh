@@ -7,7 +7,8 @@
 #   sudo bash kali-boot-autopatch.sh --upgrade      # apt full-upgrade
 #   sudo bash kali-boot-autopatch.sh --firmware     # firmware-linux-nonfree if driver errors
 #   sudo bash kali-boot-autopatch.sh --wifi-lab     # Realtek dongle + lab WiFi + promisc/monitor
-#   sudo bash kali-boot-autopatch.sh --ids-ips      # ClamAV + passive Snort/Suricata (detect-only)
+#   sudo bash kali-boot-autopatch.sh --ids-ips      # ClamAV + Suricata-primary (detect-only)
+#   sudo bash kali-boot-autopatch.sh --siem         # JSON export to Backups/logs/siem/
 #   sudo bash kali-boot-autopatch.sh --install      # install systemd unit for boot
 set -euo pipefail
 
@@ -24,6 +25,8 @@ DO_FIRMWARE=false
 DO_INSTALL=false
 DO_WIFI_LAB=false
 DO_IDS_IPS=false
+DO_SIEM=false
+DO_IDS_OPTIMIZE=false
 
 log() {
     local msg="[$(date -Iseconds)] [ctg-boot-autopatch] $*"
@@ -39,7 +42,9 @@ CTG Kali boot autopatch — authorized defensive lab use only.
   sudo bash $0 --upgrade       Also run apt update && apt full-upgrade -y
   sudo bash $0 --firmware      Install firmware-linux-nonfree if driver errors seen
   sudo bash $0 --wifi-lab      Run ctg-wifi-lab-autorun after guest additions fix
-  sudo bash $0 --ids-ips       Run ctg-ids-ips-autorun (ClamAV + Snort/Suricata detect-only)
+  sudo bash $0 --ids-ips       Run ctg-ids-ips-autorun (Suricata-primary + ClamAV)
+  sudo bash $0 --ids-ips --optimize  Pass --optimize to IDS autorun
+  sudo bash $0 --siem          Run ctg-siem-autorun (JSON export for Windows tail)
   sudo bash $0 --install       Install ${SERVICE_NAME} for boot-time runs
   sudo bash $0 --help
 
@@ -55,6 +60,8 @@ while [[ $# -gt 0 ]]; do
         --install) DO_INSTALL=true ;;
         --wifi-lab) DO_WIFI_LAB=true ;;
         --ids-ips) DO_IDS_IPS=true ;;
+        --optimize) DO_IDS_OPTIMIZE=true ;;
+        --siem) DO_SIEM=true ;;
         --help|-h) usage; exit 0 ;;
         *) log "Unknown option: $1"; usage; exit 1 ;;
     esac
@@ -70,7 +77,7 @@ mkdir -p /var/lib/ctg "$(dirname "$LOG_FILE")"
 touch "$LOG_FILE"
 chmod 644 "$LOG_FILE"
 
-log "=== CTG Kali boot autopatch start (upgrade=$DO_UPGRADE firmware=$DO_FIRMWARE wifi_lab=$DO_WIFI_LAB ids_ips=$DO_IDS_IPS) ==="
+log "=== CTG Kali boot autopatch start (upgrade=$DO_UPGRADE firmware=$DO_FIRMWARE wifi_lab=$DO_WIFI_LAB ids_ips=$DO_IDS_IPS siem=$DO_SIEM optimize=$DO_IDS_OPTIMIZE) ==="
 
 resolv_has_ddg() {
     [[ -f /etc/resolv.conf ]] && grep -qE '94\.140\.(14\.14|15\.15)' /etc/resolv.conf
@@ -263,11 +270,34 @@ run_ids_ips_autorun() {
         log "ctg-ids-ips-autorun.sh not found — skip IDS/IPS phase"
         return 0
     fi
-    local ids_args=()
+    local ids_args=(--skip-snort)
+    if $DO_IDS_OPTIMIZE; then
+        ids_args+=(--optimize)
+    fi
     if $DO_INSTALL; then
         ids_args+=(--install)
     fi
     bash "$ids_script" "${ids_args[@]}" || log "IDS/IPS autorun returned non-zero (continuing boot autopatch)"
+}
+
+run_siem_autorun() {
+    log "Phase: ctg-siem-autorun (--siem)"
+    local siem_script="$SCRIPT_DIR/ctg-siem-autorun.sh"
+    for candidate in /mnt/ctg/ctg-siem-autorun.sh /opt/ctg/ctg-siem-autorun.sh /media/sf_ctg-backups/ctg-siem-autorun.sh; do
+        if [[ -f "$candidate" ]]; then
+            siem_script="$candidate"
+            break
+        fi
+    done
+    if [[ ! -f "$siem_script" ]]; then
+        log "ctg-siem-autorun.sh not found — skip SIEM phase"
+        return 0
+    fi
+    local siem_args=(--skip-wazuh)
+    if $DO_INSTALL; then
+        siem_args+=(--install)
+    fi
+    bash "$siem_script" "${siem_args[@]}" || log "SIEM autorun returned non-zero (continuing boot autopatch)"
 }
 
 run_wifi_lab_autorun() {
@@ -342,6 +372,9 @@ if $DO_WIFI_LAB; then
 fi
 if $DO_IDS_IPS; then
     run_ids_ips_autorun
+fi
+if $DO_SIEM; then
+    run_siem_autorun
 fi
 fix_gdm_wayland_blank_screen
 ensure_ctg_backups_mount_hint
