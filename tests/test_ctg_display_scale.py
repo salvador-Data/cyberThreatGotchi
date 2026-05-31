@@ -57,13 +57,16 @@ def test_login_greeter_scale_gdm_and_dm_detect():
     assert "--greeter-session" in body
     assert "CTG_GREETER_REFRESH" in body
     assert "run_greeter_session_refresh" in body
+    assert "install_systemd_sleep_greeter_hook" in body
+    assert "system-sleep" in body
 
 
 def test_neon_cursor_assets_and_wiring():
     body = _body()
     assert "apply_cursor_neon" in body
     assert "CTG-Neon-Lemon" in body
-    assert 'CTG_CURSOR_SIZE="${CTG_CURSOR_SIZE:-26}"' in body
+    assert 'CTG_CURSOR_SIZE="${CTG_CURSOR_SIZE:-42}"' in body
+    assert 'CTG_LOGIN_CURSOR_SIZE="${CTG_LOGIN_CURSOR_SIZE:-36}"' in body
     assert (CURSOR_ASSETS / "build-cursor-theme.sh").is_file()
     assert (CURSOR_ASSETS / "index.theme").is_file()
     assert (CURSOR_ASSETS / "gen-neon-cursor-png.py").is_file()

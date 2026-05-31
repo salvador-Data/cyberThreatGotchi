@@ -26,6 +26,7 @@ if (-not $Name) { exit 2 }
 $triggerPath = Join-Path $BackupRoot 'CTG_GREETER_REFRESH'
 $lastLoggedIn = -1
 $lastTriggerStamp = $null
+$greeterBaselineSaved = $false
 
 Write-CtgSeamlessLog "Watch-CtgGreeterLogout: monitoring $Name (poll ${PollSec}s; share trigger $triggerPath)"
 
@@ -38,9 +39,16 @@ while ($true) {
 
     $loggedIn = Get-CtgGuestLoggedInUserCount -Name $Name -VBoxManage $VBoxManage
 
-    if ($lastLoggedIn -le 0 -and $loggedIn -gt 0) {
-        Save-CtgGreeterSizeHint -Name $Name -VBoxManage $VBoxManage
-    } elseif ($lastLoggedIn -gt 0 -and $loggedIn -eq 0) {
+    # Capture first-boot greeter size while LoggedInUsers=0 (do NOT overwrite with desktop session hint on login)
+    if ($loggedIn -eq 0) {
+        $saved = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key 'CTG/GreeterSizeHint'
+        if (-not $greeterBaselineSaved -and (-not $saved -or $saved -match 'No value set')) {
+            Save-CtgGreeterSizeHint -Name $Name -VBoxManage $VBoxManage
+            $greeterBaselineSaved = $true
+        }
+    }
+
+    if ($lastLoggedIn -gt 0 -and $loggedIn -eq 0) {
         Invoke-CtgLoginGreeterRefresh -Name $Name -VBoxManage $VBoxManage -LoginScale $LoginWindowScale -Reason 'LoggedInUsers 0 (logout)' | Out-Null
     }
 

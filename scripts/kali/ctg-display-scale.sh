@@ -10,7 +10,7 @@
 # Use --fonts-only for lighter text (minimal xrandr; after fit-window once).
 # Use --aggressive for legacy resolution-based DPI (120/144), panel scale — NOT with host Scaled.
 # Use --login-scale for GDM/lightdm sign-in greeter (medium fonts; root; before GUI login).
-# Use --cursor-neon for neon lemon-yellow pointer + black outline, ~10% larger (X11/Xfce only).
+# Use --cursor-neon for neon lemon-yellow pointer + black outline, large (42px desktop; X11/Xfce only).
 # Use --reset to undo over-scaling from prior runs or Scaled + high DPI.
 #
 # Prereq: mount share first:
@@ -54,9 +54,9 @@ CTG_GREETER_MIN_H=768
 
 CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.0}"
 CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-$CTG_TEXT_MEDIUM_GTK}"
-CTG_LOGIN_CURSOR_SIZE="${CTG_LOGIN_CURSOR_SIZE:-12}"
+CTG_LOGIN_CURSOR_SIZE="${CTG_LOGIN_CURSOR_SIZE:-36}"
 CTG_CURSOR_THEME="${CTG_CURSOR_THEME:-CTG-Neon-Lemon}"
-CTG_CURSOR_SIZE="${CTG_CURSOR_SIZE:-26}"
+CTG_CURSOR_SIZE="${CTG_CURSOR_SIZE:-42}"
 
 for arg in "$@"; do
     case "$arg" in
@@ -82,7 +82,7 @@ for arg in "$@"; do
             echo "  --seamless-text-reduce  Smaller text for active seamless (DPI ${CTG_TEXT_SEAMLESS_DPI}; ${CTG_TEXT_SEAMLESS_GTK}; ${CTG_TEXT_SEAMLESS_TERM})"
             echo "  --restore-medium  Restore post-login medium preset (DPI ${CTG_TEXT_MEDIUM_DPI}; ${CTG_TEXT_MEDIUM_GTK}; ${CTG_TEXT_MEDIUM_TERM})"
             echo "  --greeter-session GDM Init hook — xrandr min ${CTG_GREETER_MIN_W}×${CTG_GREETER_MIN_H} + dconf each greeter (logout included)"
-            echo "  --cursor-neon CTG-Neon-Lemon cursor (yellow + black ring), size ${CTG_CURSOR_SIZE} (~10% over 24; X11)"
+            echo "  --cursor-neon CTG-Neon-Lemon cursor (yellow + black ring), size ${CTG_CURSOR_SIZE} (X11)"
             echo "  --reset       Undo over-scale (DPI 96, default fonts, xrandr --auto)"
             echo "  --aggressive  Legacy HiDPI (DPI 120/144, panel scale) — not with host Scaled"
             echo "  --diagnose-only  Show resolution, DPI, fonts (no changes)"
@@ -322,6 +322,37 @@ INITEOF
     log "GDM Init: $init_script (xrandr min ${CTG_GREETER_MIN_W}x${CTG_GREETER_MIN_H} + --greeter-session each greeter)"
 }
 
+install_systemd_sleep_greeter_hook() {
+    local hook_dir=/usr/lib/systemd/system-sleep
+    local hook="${hook_dir}/ctg-greeter-display"
+    install -d -m 0755 "$hook_dir"
+    cat >"$hook" <<'SLEEPEOF'
+#!/bin/sh
+# CTG — greeter framebuffer + host hint after suspend/hibernate resume (same as logout greeter)
+case "$1" in
+    post)
+        for Share in /media/sf_ctg-backups /mnt/ctg; do
+            if [ -d "$Share" ]; then
+                date -Iseconds >"$Share/CTG_GREETER_REFRESH" 2>/dev/null || true
+                break
+            fi
+        done
+        if command -v VBoxControl >/dev/null 2>&1; then
+            VBoxControl guestproperty write /VirtualBox/HostInfo/GUI/LoggedOutUsers 1 2>/dev/null || true
+        fi
+        for ScaleSh in /opt/ctg/ctg-display-scale.sh /mnt/ctg/ctg-display-scale.sh /media/sf_ctg-backups/ctg-display-scale.sh; do
+            if [ -f "$ScaleSh" ]; then
+                bash "$ScaleSh" --greeter-session 2>/dev/null || true
+                break
+            fi
+        done
+        ;;
+esac
+SLEEPEOF
+    chmod 755 "$hook"
+    log "systemd-sleep: $hook (post-resume greeter refresh + CTG_GREETER_REFRESH)"
+}
+
 install_gdm_postsession_script() {
     local post_dir=/etc/gdm3/PostSession/Default
     local post_script="${post_dir}/01-ctg-greeter-host-refresh"
@@ -370,6 +401,7 @@ apply_gdm3_greeter_text_scale() {
     compile_gdm_greeter_dconf "$scale" "$cursor" "$font"
     install_gdm_greeter_init_script
     install_gdm_postsession_script
+    install_systemd_sleep_greeter_hook
 }
 
 apply_lightdm_gtk_greeter_fonts() {
@@ -443,7 +475,7 @@ fix_login_greeter_scale() {
             ;;
     esac
     log "Post-login desktop unchanged — still use --fit-window (medium DPI ${CTG_TEXT_MEDIUM_DPI}, ${CTG_TEXT_MEDIUM_GTK}) after Xfce login"
-    log "Greeter hooks installed — logout greeter uses same scale (GDM Init + PostSession)"
+    log "Greeter hooks installed — logout/hibernate greeter uses same scale (GDM Init + PostSession + systemd-sleep)"
     return 0
 }
 
@@ -512,7 +544,7 @@ apply_cursor_neon() {
         as_user gsettings set org.gnome.desktop.interface cursor-theme "$CTG_CURSOR_THEME" 2>/dev/null || true
         as_user gsettings set org.gnome.desktop.interface cursor-size "$CTG_CURSOR_SIZE" 2>/dev/null || true
     fi
-    log "Cursor: neon lemon-yellow circle + black ring (~10% over default 24px). Wayland not supported in VBox lab."
+    log "Cursor: neon lemon-yellow circle + black ring (size ${CTG_CURSOR_SIZE}px). Wayland not supported in VBox lab."
     return 0
 }
 

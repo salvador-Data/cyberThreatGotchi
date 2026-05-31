@@ -14,7 +14,7 @@ except ImportError:
 # Neon lemon yellow fill + black outline ring
 FILL = (255, 255, 0, 255)
 RING = (0, 0, 0, 255)
-SIZES = (24, 32, 48)
+SIZES = (24, 32, 48, 56, 64)
 NAMES = ("left_ptr", "default", "pointer", "hand1", "hand2", "ibeam", "xterm")
 
 

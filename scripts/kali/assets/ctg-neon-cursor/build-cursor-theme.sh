@@ -28,7 +28,7 @@ mkdir -p "${WORK}/cursors"
 
 cfg="${WORK}/left_ptr.cfg"
 : >"$cfg"
-for size in 24 32 48; do
+for size in 24 32 48 56 64; do
     png="${PNG_DIR}/left_ptr-${size}.png"
     [[ -f "$png" ]] || { log "Missing $png"; exit 1; }
     hotspot=$((size / 2))
