@@ -206,10 +206,18 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 ### `Deploy-KaliBootAutopatch.ps1` / `kali-boot-autopatch.sh`
 - **Path:** `scripts/windows/Deploy-KaliBootAutopatch.ps1` - `scripts/kali/kali-boot-autopatch.sh`
 - **Tagline:** *VBox GNOME gremlins, meet boot-time autopatch.*
-- **Does:** Deploy boot fix unit; fixes common VirtualBox/GNOME boot errors; optional apt upgrade, firmware, WiFi/IDS/SIEM flags.
+- **Does:** Deploy boot fix unit; fixes common VirtualBox/GNOME boot errors; optional apt upgrade, firmware, WiFi/IDS/SIEM flags; installs `ctg-nmap-ask` (`a$k`) to PATH on every boot with `--help` verify.
 - **When:** Blank screen, DKMS, or guest-additions churn after updates.
 - **Admin:** Windows deploy: **Yes** - Kali: **root**
-- **Docs:** [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+- **Docs:** [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) - [NMAP_ASK_ANALYSIS.md](NMAP_ASK_ANALYSIS.md)
+
+### `ctg-nmap-ask.sh` / `a$k`
+- **Path:** `scripts/kali/ctg-nmap-ask.sh` - `scripts/kali/nse/ctg-ask-recon.nse`
+- **Tagline:** *Adaptive nmap ladder for lab asset inventory — reconnect by IP/MAC state.*
+- **Does:** Defensive scan phases (discovery, ports, services, OS, safe NSE); lab-targets gate; JSON state under `/var/log/ctg/nmap-ask/`; shell alias `a$k`.
+- **When:** Blue-team recon against authorized lab VMs; IDS validation; after autopatch `--install`.
+- **Admin:** **sudo** recommended for SYN/OS scans
+- **Docs:** [NMAP_ASK_ANALYSIS.md](NMAP_ASK_ANALYSIS.md) - [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md)
 
 ### `RUN-KALI-LAB-NOW.sh`
 - **Path:** `scripts/kali/RUN-KALI-LAB-NOW.sh`
@@ -282,6 +290,14 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **When:** Home WiFi audit or travel AP survey (authorized).
 - **Admin:** **sudo**
 - **Docs:** [DEFENSE_DDOS_ROGUE_WIFI.md](DEFENSE_DDOS_ROGUE_WIFI.md)
+
+### `ctg-nmap-ask.sh` (`a$k`)
+- **Path:** `scripts/kali/ctg-nmap-ask.sh` - `scripts/kali/nse/ctg-ask-recon.nse`
+- **Tagline:** *Adaptive nmap ladder for lab asset inventory - reconnect by IP/MAC state.*
+- **Does:** Host discovery, top-port SYN/connect, `-sV`, OS detect, safe NSE; JSON state per target; `--reconnect` / `-` reloads last lab host; lab-targets gate with `-i` override warning.
+- **When:** Blue-team recon on lab VLAN, DVWA/Metasploitable VMs, IDS validation after Suricata tuning.
+- **Admin:** **sudo** recommended (SYN/OS/ARP); non-root degrades to connect scan.
+- **Docs:** [NMAP_ASK_ANALYSIS.md](NMAP_ASK_ANALYSIS.md) - [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md)
 
 ### `fix-kali-blank-screen.sh` / `Fix-KaliBlankScreen.ps1`
 - **Path:** `scripts/kali/fix-kali-blank-screen.sh` - `scripts/windows/Fix-KaliBlankScreen.ps1`

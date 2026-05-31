@@ -59,7 +59,7 @@ foreach ($f in $topFiles) {
     }
 }
 
-$subDirs = @('tor-http-scrambler', 'ansible')
+$subDirs = @('tor-http-scrambler', 'ansible', 'nse')
 foreach ($dirName in $subDirs) {
     $srcDir = Join-Path $KaliSrc $dirName
     if (-not (Test-Path $srcDir)) { continue }
@@ -101,7 +101,8 @@ $docs = @(
     @{ Src = 'docs\KALI_RETBLEED_SPECTRE.md'; Dest = 'KALI_RETBLEED_SPECTRE.md' },
     @{ Src = 'docs\PASSWORD_HARDENING.md'; Dest = 'PASSWORD_HARDENING.md' },
     @{ Src = 'docs\KALI_DISPLAY_SCALING.md'; Dest = 'KALI_DISPLAY_SCALING.md' },
-    @{ Src = 'docs\KALI_SEAMLESS_MODE.md'; Dest = 'KALI_SEAMLESS_MODE.md' }
+    @{ Src = 'docs\KALI_SEAMLESS_MODE.md'; Dest = 'KALI_SEAMLESS_MODE.md' },
+    @{ Src = 'docs\NMAP_ASK_ANALYSIS.md'; Dest = 'NMAP_ASK_ANALYSIS.md' }
 )
 foreach ($d in $docs) {
     $srcPath = Join-Path $RepoRoot $d.Src

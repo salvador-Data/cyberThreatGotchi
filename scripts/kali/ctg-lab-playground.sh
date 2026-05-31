@@ -250,6 +250,44 @@ play_tor_check() {
     fi
 }
 
+play_nmap_ask() {
+    local ask_bin=""
+    for candidate in /usr/local/bin/ctg-nmap-ask /opt/ctg/nmap-ask/ctg-nmap-ask.sh /mnt/ctg/ctg-nmap-ask.sh; do
+        if [[ -x "$candidate" || -f "$candidate" ]]; then
+            ask_bin="$candidate"
+            break
+        fi
+    done
+    professor "a\$k (ctg-nmap-ask) runs an adaptive nmap ladder: discovery → ports → services → OS → safe NSE. State JSON stores IP/MAC for reconnect after VM reboot. Lab-targets gate blocks non-lab IPs unless -i."
+    if [[ -z "$ask_bin" ]]; then
+        log "ctg-nmap-ask not installed — run: sudo bash /mnt/ctg/kali-boot-autopatch.sh --install"
+        return 1
+    fi
+    log "=== nmap-ask (a\$k) — verify / list / optional scan ==="
+    bash "$ask_bin" --help 2>&1 | head -20 || true
+    bash "$ask_bin" --list 2>/dev/null || true
+    read -r -p "  Dump identifiers for a lab target IP (blank to skip): " dump_tgt
+    if [[ -n "$dump_tgt" ]]; then
+        bash "$ask_bin" --dump "$dump_tgt" 2>/dev/null || log "No saved state for $dump_tgt"
+    fi
+    read -r -p "  Run adaptive scan? Enter lab IP/CIDR or blank to skip: " tgt
+    if [[ -z "$tgt" ]]; then
+        log "Scan skipped — invoke: a\$k <lab-ip> or a\$k - to reconnect"
+        return 0
+    fi
+    read -r -p "  Confirm scan of $tgt (authorized lab only)? [y/N] " confirm
+    case "${confirm,,}" in
+        y|yes)
+            log "Running: bash $ask_bin $tgt"
+            bash "$ask_bin" "$tgt" || log "Scan finished with warnings — see /var/log/ctg/nmap-ask.log"
+            ;;
+        *)
+            log "Scan skipped (safe default)"
+            ;;
+    esac
+    log "Docs: docs/NMAP_ASK_ANALYSIS.md"
+}
+
 play_lab_dry_status() {
     professor "Dry status checks what ctg-lab-autorun would use — without rebooting or re-running bootstrap. Green checks mean that phase is ready."
     log "=== CTG lab stack dry status ==="
@@ -275,6 +313,8 @@ play_lab_dry_status() {
     check_item "clamav timer" "/lib/systemd/system/ctg-clamav-scan.timer"
     check_item "siem export dir" "/var/log/ctg-siem"
     check_item "boot autopatch service" "service:ctg-kali-autopatch"
+    check_item "nmap-ask binary" "/usr/local/bin/ctg-nmap-ask"
+    check_item "nmap-ask state dir" "/var/log/ctg/nmap-ask"
     log "Summary: $ok ready, $miss missing/optional"
     log "Full autorun (may reboot): CTG_NO_REBOOT=1 sudo bash $(resolve_script ctg-lab-autorun.sh || echo /mnt/ctg/ctg-lab-autorun.sh)"
 }
@@ -294,6 +334,7 @@ show_menu() {
 ║  7  Rogue AP guard scan (prompt home SSID)              ║
 ║  8  Tor connectivity check (curl via tor)               ║
 ║  9  Full lab dry status (what's installed)              ║
+║ 10  nmap-ask (a$k) adaptive lab recon                  ║
 ║  0  Exit                                                  ║
 ╚══════════════════════════════════════════════════════════╝
 MENU
@@ -304,7 +345,7 @@ main_loop() {
     log "CTG Lab Playground — systems you own or have written scope to test."
     while true; do
         show_menu
-        read -r -p "  Choose [0-9]: " choice
+        read -r -p "  Choose [0-9]|10: " choice
         case "${choice:-}" in
             1) play_wifi_status ;;
             2) play_shield_status ;;
@@ -315,6 +356,7 @@ main_loop() {
             7) play_rogue_ap_guard ;;
             8) play_tor_check ;;
             9) play_lab_dry_status ;;
+            10) play_nmap_ask ;;
             0|q|Q) log "Good lab session — stay defensive."; exit 0 ;;
             *) log "Invalid choice: $choice" ;;
         esac

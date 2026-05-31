@@ -540,6 +540,89 @@ install_first_login_autostart() {
     done
 }
 
+install_nmap_ask() {
+    log "Phase: install ctg-nmap-ask (a\$k lab alias)"
+    local install_root="/opt/ctg/nmap-ask"
+    local script_src=""
+    for candidate in \
+        "$SCRIPT_DIR/ctg-nmap-ask.sh" \
+        "/mnt/ctg/ctg-nmap-ask.sh" \
+        "/media/sf_ctg-backups/ctg-nmap-ask.sh"; do
+        if [[ -f "$candidate" ]]; then
+            script_src="$candidate"
+            break
+        fi
+    done
+    if [[ -z "$script_src" ]]; then
+        log "WARNING: ctg-nmap-ask.sh not found — skip nmap-ask install"
+        return 0
+    fi
+    install -d -m 0755 "$install_root" "$install_root/nse" /usr/local/bin
+    install -m 0755 "$script_src" "$install_root/ctg-nmap-ask.sh"
+    local nse_src=""
+    for candidate in \
+        "$SCRIPT_DIR/nse/ctg-ask-recon.nse" \
+        "/mnt/ctg/nse/ctg-ask-recon.nse" \
+        "/media/sf_ctg-backups/nse/ctg-ask-recon.nse"; do
+        if [[ -f "$candidate" ]]; then
+            nse_src="$candidate"
+            break
+        fi
+    done
+    if [[ -n "$nse_src" ]]; then
+        install -m 0644 "$nse_src" "$install_root/nse/ctg-ask-recon.nse"
+        log "Installed $install_root/nse/ctg-ask-recon.nse"
+    fi
+    ln -sf "$install_root/ctg-nmap-ask.sh" /usr/local/bin/ctg-nmap-ask
+    ln -sf "$install_root/ctg-nmap-ask.sh" "/usr/local/bin/a\$k"
+    log "Symlinks: /usr/local/bin/ctg-nmap-ask and /usr/local/bin/a\$k"
+    mkdir -p /var/log/ctg/nmap-ask/scans
+    chmod 755 /var/log/ctg/nmap-ask 2>/dev/null || true
+    local profile_snippet="/etc/profile.d/ctg-nmap-ask.sh"
+    cat >"$profile_snippet" <<'PROFILE'
+# CTG nmap-ask — authorized lab recon alias (Hacker Planet LLC)
+if [[ -x /usr/local/bin/ctg-nmap-ask ]]; then
+    alias 'a$k'='/usr/local/bin/ctg-nmap-ask'
+fi
+PROFILE
+    chmod 644 "$profile_snippet"
+    log "Profile alias: a\$k → ctg-nmap-ask ($profile_snippet)"
+}
+
+ensure_nmap_package() {
+    if command -v nmap >/dev/null 2>&1; then
+        return 0
+    fi
+    if ! $DO_INSTALL; then
+        log "nmap not installed — apt install nmap (or autopatch --install)"
+        return 0
+    fi
+    log "Phase: apt install nmap (ctg-nmap-ask dependency)"
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -qq
+    apt-get install -y --no-install-recommends nmap 2>/dev/null || log "nmap install skipped or unavailable"
+}
+
+verify_nmap_ask() {
+    log "Phase: ctg-nmap-ask verify (--help dry run, no scan)"
+    install_nmap_ask
+    ensure_nmap_package
+    if [[ -x /usr/local/bin/ctg-nmap-ask ]]; then
+        if /usr/local/bin/ctg-nmap-ask --help >/dev/null 2>&1; then
+            log "nmap-ask verify: OK (/usr/local/bin/ctg-nmap-ask --help)"
+        else
+            log "WARNING: ctg-nmap-ask --help failed"
+        fi
+    else
+        log "WARNING: /usr/local/bin/ctg-nmap-ask missing after install"
+    fi
+    if command -v nmap >/dev/null 2>&1; then
+        log "nmap binary: $(nmap --version 2>/dev/null | head -1 || echo present)"
+    else
+        log "nmap binary: not installed"
+    fi
+}
+
 install_systemd_unit() {
     log "Phase: install ${SERVICE_NAME}"
     local script_src="$SCRIPT_DIR/kali-boot-autopatch.sh"
@@ -601,6 +684,7 @@ run_optional_upgrade
 scan_journal_boot_errors
 maybe_install_firmware
 safe_reset_failed_units
+verify_nmap_ask
 
 if $DO_INSTALL; then
     enable_openssh_server
@@ -616,4 +700,5 @@ if [[ "${CTG_SKIP_AUTO_REBOOT:-}" != "1" ]]; then
 fi
 log "GUI scrambler (manual): python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py"
 log "One-shot lab: sudo bash /mnt/ctg/ctg-lab-autorun.sh"
+log "Nmap ask (lab): a\$k <target> or ctg-nmap-ask --help — state /var/log/ctg/nmap-ask/"
 log "Seamless (host): .\\scripts\\windows\\Start-KaliSeamless.ps1 — toggle Host+L after GNOME login"
