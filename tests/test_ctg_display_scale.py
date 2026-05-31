@@ -29,15 +29,25 @@ def test_display_scale_script_exists():
     assert "--cursor-neon" in body
 
 
+def test_medium_preset_constants():
+    body = _body()
+    assert "CTG_TEXT_MEDIUM_DPI=108" in body
+    assert 'CTG_TEXT_MEDIUM_GTK="Sans 11"' in body
+    assert 'CTG_TEXT_MEDIUM_TERM="Monospace 12"' in body
+    assert "CTG_TEXT_MEDIUM_PANEL=30" in body
+    assert "23258d4" in body
+
+
 def test_login_greeter_scale_gdm_and_dm_detect():
     body = _body()
     assert "fix_login_greeter_scale" in body
     assert "detect_ctg_display_manager" in body
     assert "greeter.dconf-defaults" in body
-    assert 'CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.15}"' in body
-    assert 'CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-Sans 12}"' in body
+    assert 'CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.0}"' in body
+    assert 'CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-$CTG_TEXT_MEDIUM_GTK}"' in body
     assert "CTG_LOGIN_CURSOR_SIZE" in body
     assert "gdm_greeter_set_key" in body
+    assert "font-name" in body
     assert "50-ctg-login-scale.conf" in body
     assert "compile_gdm_greeter_dconf" in body
     assert "/etc/dconf/db/gdm.d" in body
@@ -103,7 +113,7 @@ def test_medium_text_defaults():
     body = _body()
     assert "apply_medium_text()" in body
     assert re.search(
-        r"apply_medium_text\(\) \{.*?TARGET_DPI=110.*?GTK_FONT=\"Sans 12\".*?Monospace 12",
+        r"apply_medium_text\(\) \{.*?TARGET_DPI=\"\$CTG_TEXT_MEDIUM_DPI\".*?GTK_FONT=\"\$CTG_TEXT_MEDIUM_GTK\".*?TERM_FONT=\"\$CTG_TEXT_MEDIUM_TERM\"",
         body,
         re.DOTALL,
     )
@@ -122,6 +132,7 @@ def test_fit_window_uses_medium_no_narrow_bump():
     assert "1400" not in block
     assert "TARGET_DPI=112" not in block
     assert "TARGET_DPI=120" not in block
+    assert "TARGET_DPI=110" not in block
 
 
 def test_text_medium_mode_values():

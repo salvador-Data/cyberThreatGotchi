@@ -176,7 +176,7 @@ X-GNOME-Autostart-enabled=true
 NoDisplay=true
 DESK
     chmod 644 "$scale_autostart"
-    log "Installed $scale_autostart (--fit-window medium DPI 110 + --cursor-neon; persists via xfconf)"
+    log "Installed $scale_autostart (--fit-window medium DPI 108 + --cursor-neon; persists via xfconf)"
     local autostart=/etc/xdg/autostart/vboxclient-seamless.desktop
     cat >"$autostart" <<'DESK'
 [Desktop Entry]
@@ -282,7 +282,7 @@ EOF
 }
 
 fix_login_greeter_scale() {
-    log "Phase: login greeter text scale (1.15 / Sans 12 — GDM/lightdm sign-in ~15%)"
+    log "Phase: login greeter medium fonts (108 / Sans 11 — GDM/lightdm sign-in; preset 23258d4)"
     local scale_sh=""
     for candidate in "${SCRIPT_DIR}/ctg-display-scale.sh" /opt/ctg/ctg-display-scale.sh /mnt/ctg/ctg-display-scale.sh /media/sf_ctg-backups/ctg-display-scale.sh; do
         if [[ -f "$candidate" ]]; then

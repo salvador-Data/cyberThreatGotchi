@@ -3,13 +3,13 @@
 # Hacker Planet LLC · Philadelphia, PA
 #
 # Default (--fit-window): guest resolution FITS the VM window (VBoxClient + xrandr --auto);
-# never force oversized modes; then medium text (DPI 110, Sans 12, Monospace 12) — ~15% over tiny baseline.
+# never force oversized modes; then Andy-approved medium text (DPI 108, Sans 11, Monospace 12, panel 30).
 #
 # Use --text-medium / --text-plus15 for medium fonts only (same as fit-window text layer; no geometry change).
 # Use --text-large for larger text (DPI 120, Sans 13, Monospace 15) — no geometry change.
 # Use --fonts-only for lighter text (minimal xrandr; after fit-window once).
 # Use --aggressive for legacy resolution-based DPI (120/144), panel scale — NOT with host Scaled.
-# Use --login-scale for GDM/lightdm sign-in greeter (text ~15%; root; before GUI login).
+# Use --login-scale for GDM/lightdm sign-in greeter (medium fonts; root; before GUI login).
 # Use --cursor-neon for neon lemon-yellow pointer + black outline, ~10% larger (X11/Xfce only).
 # Use --reset to undo over-scaling from prior runs or Scaled + high DPI.
 #
@@ -34,8 +34,14 @@ LOGIN_SCALE=false
 GREETER_SESSION=false
 CURSOR_NEON=false
 
-CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.15}"
-CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-Sans 12}"
+# Andy-approved medium preset (23258d4) — single source of truth for all screen modes
+CTG_TEXT_MEDIUM_DPI=108
+CTG_TEXT_MEDIUM_GTK="Sans 11"
+CTG_TEXT_MEDIUM_TERM="Monospace 12"
+CTG_TEXT_MEDIUM_PANEL=30
+
+CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.0}"
+CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-$CTG_TEXT_MEDIUM_GTK}"
 CTG_LOGIN_CURSOR_SIZE="${CTG_LOGIN_CURSOR_SIZE:-12}"
 CTG_CURSOR_THEME="${CTG_CURSOR_THEME:-CTG-Neon-Lemon}"
 CTG_CURSOR_SIZE="${CTG_CURSOR_SIZE:-26}"
@@ -54,11 +60,11 @@ for arg in "$@"; do
         --aggressive|--full-scale) AGGRESSIVE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false ;;
         -h|--help)
             echo "Usage: bash $(basename "$0") [--fit-window] [--text-medium] [--text-plus15] [--text-large] [--fonts-only] [--login-scale] [--cursor-neon] [--reset] [--aggressive] [--diagnose-only]"
-            echo "  Default apply: --fit-window (VBoxClient + xrandr fit; medium DPI 110; Sans 12; Monospace 12)"
-            echo "  --text-medium / --text-plus15  Text layer only — ~15% over tiny baseline (DPI 110; Sans 12)"
+            echo "  Default apply: --fit-window (VBoxClient + xrandr fit; medium DPI ${CTG_TEXT_MEDIUM_DPI}; ${CTG_TEXT_MEDIUM_GTK}; ${CTG_TEXT_MEDIUM_TERM})"
+            echo "  --text-medium / --text-plus15  Text layer only — medium preset (DPI ${CTG_TEXT_MEDIUM_DPI}; ${CTG_TEXT_MEDIUM_GTK})"
             echo "  --text-large  Text layer only — DPI 120, Sans 13, Monospace 15 (no oversized xrandr)"
             echo "  --fonts-only  Lighter DPI/fonts only — minimal xrandr (after fit-window once)"
-            echo "  --login-scale GDM/lightdm greeter text ~15% / Sans 12 (sudo; greeter only)"
+            echo "  --login-scale GDM/lightdm greeter medium fonts / ${CTG_TEXT_MEDIUM_GTK} (sudo; greeter only)"
             echo "  --greeter-session GDM Init hook — xrandr + dconf each greeter (logout included)"
             echo "  --cursor-neon CTG-Neon-Lemon cursor (yellow + black ring), size ${CTG_CURSOR_SIZE} (~10% over 24; X11)"
             echo "  --reset       Undo over-scale (DPI 96, default fonts, xrandr --auto)"
@@ -180,14 +186,16 @@ gdm_greeter_set_key() {
 compile_gdm_greeter_dconf() {
     local scale="$1"
     local cursor="${2:-12}"
+    local font="${3:-$CTG_TEXT_MEDIUM_GTK}"
     local db_dir=/etc/dconf/db/gdm.d
     local db_file="${db_dir}/00-ctg-login-scale"
     install -d -m 0755 "$db_dir"
     cat >"$db_file" <<EOF
-# CTG login greeter scale (Hacker Planet lab)
+# CTG login greeter medium fonts (Hacker Planet lab — preset 23258d4)
 [org/gnome/desktop/interface]
 text-scaling-factor=${scale}
 cursor-size=${cursor}
+font-name='${font}'
 EOF
     chmod 644 "$db_file"
     local lock_dir=/etc/dconf/db/gdm.d/locks
@@ -195,6 +203,7 @@ EOF
     cat >"${lock_dir}/00-ctg-login-scale" <<'LOCKEOF'
 /org/gnome/desktop/interface/text-scaling-factor
 /org/gnome/desktop/interface/cursor-size
+/org/gnome/desktop/interface/font-name
 LOCKEOF
     chmod 644 "${lock_dir}/00-ctg-login-scale"
     if command -v dconf >/dev/null 2>&1; then
@@ -303,14 +312,16 @@ LDMEOF
 
 apply_gdm3_greeter_text_scale() {
     local scale="$1"
-    local cursor="${2:-14}"
+    local cursor="${2:-12}"
+    local font="${3:-$CTG_TEXT_MEDIUM_GTK}"
     local f=/etc/gdm3/greeter.dconf-defaults
     install -d -m 0755 /etc/gdm3
     touch "$f"
     chmod 644 "$f"
     gdm_greeter_set_key "$f" text-scaling-factor "$scale"
     gdm_greeter_set_key "$f" cursor-size "$cursor"
-    compile_gdm_greeter_dconf "$scale" "$cursor"
+    gdm_greeter_set_key "$f" font-name "'${font}'"
+    compile_gdm_greeter_dconf "$scale" "$cursor" "$font"
     install_gdm_greeter_init_script
     install_gdm_postsession_script
 }
@@ -321,7 +332,7 @@ apply_lightdm_gtk_greeter_fonts() {
     local drop_file="${drop_dir}/50-ctg-login-scale.conf"
     install -d -m 0755 "$drop_dir"
     cat >"$drop_file" <<EOF
-# CTG login greeter scale (Hacker Planet lab) — ~15% over default (Sans 12)
+# CTG login greeter medium fonts (Hacker Planet lab — preset 23258d4)
 [greeter]
 theme-font-name=${font}
 clock-font-name=${font}
@@ -356,12 +367,12 @@ fix_login_greeter_scale() {
     font="$CTG_LIGHTDM_GREETER_FONT"
     cursor="$CTG_LOGIN_CURSOR_SIZE"
     sddm_pt="${font#Sans }"
-    [[ "$sddm_pt" == "$font" ]] && sddm_pt=12
-    log "=== CTG login greeter scale (${scale} text / ${font} / cursor ${cursor}) ==="
+    [[ "$sddm_pt" == "$font" ]] && sddm_pt="${CTG_TEXT_MEDIUM_GTK#Sans }"
+    log "=== CTG login greeter medium (${font} / scale ${scale} / cursor ${cursor}) ==="
     log "Display manager: $dm"
     case "$dm" in
         gdm3|gdm)
-            apply_gdm3_greeter_text_scale "$scale" "$cursor"
+            apply_gdm3_greeter_text_scale "$scale" "$cursor" "$font"
             ;;
         lightdm)
             if [[ -d /etc/lightdm ]] && { [[ -f /etc/lightdm/lightdm-gtk-greeter.conf ]] || [[ -d /usr/share/lightdm/lightdm-gtk-greeter.conf ]]; }; then
@@ -376,7 +387,7 @@ fix_login_greeter_scale() {
             ;;
         *)
             if [[ -d /etc/gdm3 ]]; then
-                apply_gdm3_greeter_text_scale "$scale" "$cursor"
+                apply_gdm3_greeter_text_scale "$scale" "$cursor" "$font"
             elif [[ -d /etc/lightdm ]]; then
                 apply_lightdm_gtk_greeter_fonts "$font"
             else
@@ -385,7 +396,7 @@ fix_login_greeter_scale() {
             fi
             ;;
     esac
-    log "Post-login desktop unchanged — still use --fit-window (medium DPI 110, Sans 12) after Xfce login"
+    log "Post-login desktop unchanged — still use --fit-window (medium DPI ${CTG_TEXT_MEDIUM_DPI}, ${CTG_TEXT_MEDIUM_GTK}) after Xfce login"
     log "Greeter hooks installed — logout greeter uses same scale (GDM Init + PostSession)"
     return 0
 }
@@ -393,7 +404,7 @@ fix_login_greeter_scale() {
 run_greeter_session_refresh() {
     log "=== CTG greeter session refresh (logout greeter / GDM Init) ==="
     refresh_greeter_framebuffer
-    compile_gdm_greeter_dconf "$CTG_LOGIN_TEXT_SCALE" "$CTG_LOGIN_CURSOR_SIZE"
+    compile_gdm_greeter_dconf "$CTG_LOGIN_TEXT_SCALE" "$CTG_LOGIN_CURSOR_SIZE" "$CTG_LIGHTDM_GREETER_FONT"
     signal_host_greeter_refresh
     return 0
 }
@@ -476,10 +487,10 @@ find_vboxclient() {
 }
 
 apply_medium_text() {
-    TARGET_DPI=110
-    TERM_FONT="Monospace 12"
-    GTK_FONT="Sans 12"
-    PANEL_SIZE=30
+    TARGET_DPI="$CTG_TEXT_MEDIUM_DPI"
+    GTK_FONT="$CTG_TEXT_MEDIUM_GTK"
+    TERM_FONT="$CTG_TEXT_MEDIUM_TERM"
+    PANEL_SIZE="$CTG_TEXT_MEDIUM_PANEL"
 }
 
 get_current_resolution() {
@@ -710,8 +721,7 @@ fix_gnome_scale() {
     elif [[ "$APPLY_MODE" == "fonts-only" || "$APPLY_MODE" == "fit-window" || "$APPLY_MODE" == "text-medium" || "$APPLY_MODE" == "text-large" ]]; then
         case "$TARGET_DPI" in
             120) factor="1.12" ;;
-            110) factor="1.06" ;;
-            108) factor="1.05" ;;
+            108) factor="1.0" ;;
             105) factor="1.03" ;;
         esac
     fi
@@ -781,8 +791,8 @@ print_diagnose() {
     res="$(get_current_resolution)"
     read -r RES_W RES_H <<< "$res"
     log "Resolution: ${RES_W}x${RES_H}"
-    local fo_dpi=110 fo_term="Monospace 12" fo_gtk="Sans 12"
-    log "Recommended default: --fit-window (VBoxClient + xrandr fit + medium DPI=$fo_dpi ~15%)"
+    local fo_dpi="$CTG_TEXT_MEDIUM_DPI" fo_term="$CTG_TEXT_MEDIUM_TERM" fo_gtk="$CTG_TEXT_MEDIUM_GTK"
+    log "Recommended default: --fit-window (VBoxClient + xrandr fit + medium DPI=$fo_dpi preset 23258d4)"
     log "Medium text only (no geometry): --text-medium / --text-plus15 -> DPI=$fo_dpi $fo_gtk $fo_term"
     log "Larger text: --text-large -> DPI=120 Sans 13 Monospace 15"
     log "Smaller text: --fonts-only -> DPI=105 Sans 10 Monospace 11"
@@ -829,7 +839,7 @@ print_diagnose() {
         log "Desktop toolkit: xfconf/gsettings not available"
     fi
     log "Host (cut-off / blown out): .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gui (not Scaled)"
-    log "Login greeter tiny text: sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale (~15%; greeter only)"
+    log "Login greeter tiny text: sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale (medium greeter fonts; greeter only)"
     log "Neon cursor: bash /mnt/ctg/ctg-display-scale.sh --cursor-neon (or with --fit-window)"
     log "Guest fix: bash /mnt/ctg/ctg-display-scale.sh --fit-window  |  medium: --text-medium  |  large: --text-large  |  undo: --reset"
     log "Docs: docs/KALI_DISPLAY_SCALING.md"
