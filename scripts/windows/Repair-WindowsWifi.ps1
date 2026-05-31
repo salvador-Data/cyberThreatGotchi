@@ -35,6 +35,9 @@ param(
     [switch] $ApplyFixes,
     [switch] $ResetStack,
     [string] $LabWpa3ProfileXml = '',
+    [switch] $ListProfiles,
+    [switch] $PreferWpa3,
+    [switch] $RemoveBrokenProfiles,
     [string] $LogDir = ''
 )
 
