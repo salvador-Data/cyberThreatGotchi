@@ -26,6 +26,9 @@ Thumbs.db
 .tmp-crackbot-stl/
 scripts/kali/ansible/group_vars/realtek.yml
 scripts/kali/.vault_pass
+.vault/
+**/.vault/
+Backups/.vault/
 scripts/kali/lab-targets.conf
 scripts/kali/lab-wifi.conf
 Backups/opnsense-*.xml

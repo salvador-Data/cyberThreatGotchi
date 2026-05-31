@@ -17,6 +17,7 @@ param(
     [switch]$NoLabAnonymity,
     [switch]$StartVmIfStopped,
     [switch]$InstallSshServerHint,
+    [switch]$UseSecretVault,
     [switch]$WhatIf
 )
 
@@ -181,12 +182,38 @@ function Write-CtgLabChecklistStatus {
     foreach ($item in $items) { Write-CtgLog "  [doc+script] $item" }
 }
 
+function Get-CtgKaliCredentialsFromVault {
+    $vaultScript = Join-Path $PSScriptRoot 'Protect-CtgSecrets.ps1'
+    if (-not (Test-Path $vaultScript)) { return $null }
+    . $vaultScript
+    $vaultFile = Get-CtgSecretVaultFilePath
+    if (-not (Test-Path $vaultFile)) { return $null }
+    $user = Get-CtgProtectedSecret -SecretName 'KALI_SSH_USER' -VaultFile $vaultFile
+    $password = Get-CtgProtectedSecret -SecretName 'KALI_SSH_PASSWORD' -VaultFile $vaultFile
+    if ([string]::IsNullOrWhiteSpace($user) -or [string]::IsNullOrWhiteSpace($password)) {
+        return $null
+    }
+    return @{
+        User = $user.Trim()
+        Password = $password
+        Source = 'DPAPI vault (Protect-CtgSecrets.ps1)'
+    }
+}
+
 function Get-CtgKaliCredentials {
-    param([string]$Path)
+    param(
+        [string]$Path,
+        [switch]$PreferVault
+    )
     $result = @{
         User = 'kali'
         Password = 'kali'
         Source = 'default kali/kali'
+    }
+    if ($PreferVault) {
+        $fromVault = Get-CtgKaliCredentialsFromVault
+        if ($fromVault) { return $fromVault }
+        Write-CtgLog 'UseSecretVault: vault missing KALI_SSH_USER/KALI_SSH_PASSWORD — falling back to credentials file or default'
     }
     if (Test-Path $Path) {
         $text = Get-Content -Path $Path -Raw
@@ -568,8 +595,11 @@ if ($vbox) {
     exit 2
 }
 
-$creds = Get-CtgKaliCredentials -Path $CredentialsFile
+$creds = Get-CtgKaliCredentials -Path $CredentialsFile -PreferVault:$UseSecretVault
 Write-CtgLog "Credentials source: $($creds.Source) (user: $($creds.User))"
+if ($UseSecretVault) {
+    Write-CtgLog 'Secret vault: ON (-UseSecretVault). Set secrets via Protect-CtgSecrets.ps1 — never commit passwords.'
+}
 
 $deployed = $false
 $sshReady = $false
@@ -616,7 +646,7 @@ if ($target.Hypervisor -eq 'VirtualBox') {
 
 if ($sshReady) {
     Write-CtgLog 'SSH port open - attempting bootstrap deploy'
-    foreach ($tryUser in @($creds.User, 'kali', 'sal')) {
+    foreach ($tryUser in @($creds.User, 'kali') | Select-Object -Unique) {
         $tryCreds = @{ User = $tryUser; Password = $creds.Password }
         Write-CtgLog "Trying SSH user: $tryUser"
         $deployed = Invoke-CtgPlinkBootstrap -User $tryUser -Password $creds.Password -Port $SshHostPort `
