@@ -144,6 +144,21 @@ See [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md). **Never** paste Windows password i
 
 ---
 
+## Kali guest — mount then scripts (if step 1 failed)
+
+**Most common failure:** running `bash /mnt/ctg/ctg-display-scale.sh` or `ctg-seamless-guest.sh` **before** the share is mounted, or before GUI login.
+
+| Order | What | Command |
+|-------|------|---------|
+| 0 | Pre-flight | `bash /media/sf_ctg-backups/ctg-mount-share.sh --check-only` |
+| 1 | Mount share | `sudo bash /media/sf_ctg-backups/ctg-mount-share.sh` |
+| 2 | GUI login | Open VM window, sign in to Xfce |
+| 3 | Display / seamless | `bash /mnt/ctg/ctg-display-scale.sh` or `bash /mnt/ctg/ctg-seamless-guest.sh` |
+
+If `/media/sf_ctg-backups` is missing: Guest Additions or VM not running — Windows: `Stage-KaliLabToBackups.ps1`, ensure VM **kali** is on.
+
+Troubleshooting tables: [KALI_DISPLAY_SCALING.md](KALI_DISPLAY_SCALING.md), [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md).
+
 ## Kali TTY one-liner (if SSH on 127.0.0.1:2222 fails)
 
 At the Kali console (Ctrl+Alt+F2 if blank screen):
@@ -152,10 +167,18 @@ At the Kali console (Ctrl+Alt+F2 if blank screen):
 sudo bash /mnt/ctg/RUN-KALI-LAB-NOW.sh
 ```
 
-Or manual chain:
+Or manual chain (mount is step 1):
 
 ```bash
-sudo mkdir -p /mnt/ctg && sudo mount -t vboxsf ctg-backups /mnt/ctg && sudo bash /mnt/ctg/kali-boot-autopatch.sh --install && sudo bash /mnt/ctg/ctg-lab-autorun.sh
+sudo bash /media/sf_ctg-backups/ctg-mount-share.sh
+```
+
+```bash
+sudo bash /mnt/ctg/kali-boot-autopatch.sh --install
+```
+
+```bash
+sudo bash /mnt/ctg/ctg-lab-autorun.sh
 ```
 
 RETBleed / microcode check (in-guest):
@@ -230,6 +253,9 @@ Then commit and push [ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-la
 | Asset | Purpose |
 |-------|---------|
 | `RUN-KALI-LAB-NOW.sh` | One-paste full lab when SSH fails |
+| `ctg-mount-share.sh` | Mount `ctg-backups` at `/mnt/ctg` (run before other guest scripts) |
+| `ctg-display-scale.sh` | HiDPI / terminal font scale (after GUI login + mount) |
+| `ctg-seamless-guest.sh` | Seamless panel + VBoxClient (after GUI login + mount) |
 | `ctg-lab-autorun.sh` | Master Kali lab autorun |
 | `kali-lab-bootstrap.sh` | Full Ansible/bootstrap |
 | `kali-boot-autopatch.sh` | Boot-time GNOME/VBox fixes |

@@ -100,7 +100,8 @@ $docs = @(
     @{ Src = 'docs\KALI_RETBLEED.md'; Dest = 'KALI_RETBLEED.md' },
     @{ Src = 'docs\KALI_RETBLEED_SPECTRE.md'; Dest = 'KALI_RETBLEED_SPECTRE.md' },
     @{ Src = 'docs\PASSWORD_HARDENING.md'; Dest = 'PASSWORD_HARDENING.md' },
-    @{ Src = 'docs\KALI_DISPLAY_SCALING.md'; Dest = 'KALI_DISPLAY_SCALING.md' }
+    @{ Src = 'docs\KALI_DISPLAY_SCALING.md'; Dest = 'KALI_DISPLAY_SCALING.md' },
+    @{ Src = 'docs\KALI_SEAMLESS_MODE.md'; Dest = 'KALI_SEAMLESS_MODE.md' }
 )
 foreach ($d in $docs) {
     $srcPath = Join-Path $RepoRoot $d.Src

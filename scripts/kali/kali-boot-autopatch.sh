@@ -287,7 +287,7 @@ ensure_ctg_backups_mount_hint() {
         log "vboxsf in fstab — attempting mount -a"
         mount -a 2>/dev/null || true
     else
-        log "ctg-backups not mounted — manual: sudo mkdir -p /mnt/ctg && sudo mount -t vboxsf ctg-backups /mnt/ctg"
+        log "ctg-backups not mounted — manual: sudo bash /mnt/ctg/ctg-mount-share.sh (or /media/sf_ctg-backups/ctg-mount-share.sh)"
     fi
 }
 

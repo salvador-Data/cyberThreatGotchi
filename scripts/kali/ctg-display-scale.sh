@@ -7,11 +7,14 @@
 #   - XFCE defaults to 96 DPI on a dense display
 #   - VBoxClient display/vmsvga autoresize is not running
 #
-# Run after GUI login:
+# Prereq: mount share first (step 1):
+#   sudo bash /media/sf_ctg-backups/ctg-mount-share.sh
+# Run after GUI login (step 2):
 #   bash /mnt/ctg/ctg-display-scale.sh
 #   sudo bash /mnt/ctg/ctg-display-scale.sh
 # Diagnose only:
 #   bash /mnt/ctg/ctg-display-scale.sh --diagnose-only
+# Troubleshooting: docs/KALI_DISPLAY_SCALING.md
 set -uo pipefail
 
 DIAGNOSE_ONLY=false

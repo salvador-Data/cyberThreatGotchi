@@ -72,11 +72,31 @@ On the **running** VM window you can switch instantly:
 VirtualBox 7 does **not** support `VBoxManage controlvm kali seamless on`. Host key defaults to
 **Right Ctrl** (change in VirtualBox → **File → Preferences → Input**).
 
+## If step 1 fails — troubleshooting tree
+
+| Step / command | Error / symptom | Try next |
+|----------------|-----------------|----------|
+| `bash /mnt/ctg/ctg-seamless-guest.sh` | `No such file` | Mount share first: `sudo bash /media/sf_ctg-backups/ctg-mount-share.sh` |
+| `sudo mount -t vboxsf ctg-backups /mnt/ctg` | `protocol error` | Install Guest Additions via `kali-boot-autopatch.sh --install`, reboot |
+| `ctg-seamless-guest.sh --diagnose-only` | `No graphical (:N) desktop user` | Open VM window, **log into Xfce**, then re-run |
+| Seamless reverts (Host+L) | Wayland session | Script sets `WaylandEnable=false` — log out, log in on **X11/Xfce**, re-run guest script |
+| `VBoxClient not found` | Missing guest utils | `sudo bash /mnt/ctg/kali-boot-autopatch.sh --install` |
+
+**Correct order:** GUI login → mount share → seamless guest script.
+
 ## Kali guest fix (panel visible + autoresize, no wrap)
 
 The guest helper forces the desktop panel visible (XFCE or GNOME), disables autohide, reserves
 screen space, starts `VBoxClient --vmsvga`/`--seamless` for dynamic resize, and installs a
 per-user autostart so it persists across logins.
+
+**Step 1 — mount:**
+
+```bash
+sudo bash /media/sf_ctg-backups/ctg-mount-share.sh
+```
+
+**Step 2 — after GUI login:**
 
 ```bash
 bash /mnt/ctg/ctg-seamless-guest.sh

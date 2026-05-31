@@ -18,15 +18,35 @@ Windows 11 laptop with **150% display scaling** and VirtualBox seamless/scaled m
 | XFCE default **96 DPI** | Fonts/panels stay small on dense resolutions |
 | `VBoxClient --display` / `--vmsvga` not running | No dynamic resize after login |
 
-## Immediate fix (Kali guest terminal)
+## If step 1 fails — troubleshooting tree
 
-Run after you are logged into the **Xfce desktop** (not SSH-only):
+| What you ran | Error / symptom | Try next |
+|--------------|-----------------|----------|
+| `bash /mnt/ctg/ctg-display-scale.sh` | `No such file or directory` | Share not mounted or not staged — **mount first** (below), then re-stage on Windows |
+| `sudo mount -t vboxsf ctg-backups /mnt/ctg` | `protocol error` / `unknown filesystem type vboxsf` | Guest Additions missing — `sudo bash /mnt/ctg/kali-boot-autopatch.sh --install` (from `/media/sf_ctg-backups/` if needed), reboot |
+| `sudo mount ...` | `mount point does not exist` | `sudo mkdir -p /mnt/ctg` then mount again |
+| `sudo mount ...` | `No such device` / share name wrong | Share must be **`ctg-backups`** (not `ctg` unless your VM uses that name) |
+| `ctg-display-scale.sh` | `No graphical (:N) desktop user` | **Log into Xfce GUI** first (not TTY-only), then re-run |
+| `ctg-display-scale.sh` | `$'\r': command not found` | CRLF script — Windows: `Stage-KaliLabToBackups.ps1`, remount, retry |
+| `./ctg-display-scale.sh` | `Permission denied` | Use `bash /mnt/ctg/ctg-display-scale.sh` (do not `./` unless executable) |
+
+**Correct order:** GUI login → mount share → display scale.
+
+## Pre-flight (Kali — before step 1)
 
 ```bash
-bash /mnt/ctg/ctg-display-scale.sh
+bash /media/sf_ctg-backups/ctg-mount-share.sh --check-only
 ```
 
-If `/mnt/ctg` is not mounted:
+If `/media/sf_ctg-backups` is missing, Guest Additions or the VM share is not active — fix on Windows (stage + running VM) first.
+
+## Step 1 — Mount share (required)
+
+```bash
+sudo bash /media/sf_ctg-backups/ctg-mount-share.sh
+```
+
+Or manual:
 
 ```bash
 sudo mkdir -p /mnt/ctg
@@ -35,6 +55,14 @@ sudo mkdir -p /mnt/ctg
 ```bash
 sudo mount -t vboxsf ctg-backups /mnt/ctg
 ```
+
+```bash
+test -f /mnt/ctg/ctg-display-scale.sh && echo OK || echo "Re-stage on Windows"
+```
+
+## Step 2 — Display scale (after GUI login)
+
+Log into the **Xfce desktop** (not SSH-only), then:
 
 ```bash
 bash /mnt/ctg/ctg-display-scale.sh
