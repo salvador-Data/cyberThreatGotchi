@@ -359,7 +359,7 @@ function Write-CtgHostToolbarHint {
     Write-CtgSeamlessLog 'Guest cut-off fix: bash /mnt/ctg/ctg-display-scale.sh --fit-window (default at login)'
     Write-CtgSeamlessLog 'Guest panel: bash /mnt/ctg/ctg-seamless-guest.sh - see docs/KALI_SEAMLESS_MODE.md'
     Write-CtgSeamlessLog 'Guest text: --fit-window (medium) | --text-medium | --text-large if needed'
-    Write-CtgSeamlessLog 'Login greeter tiny: sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale | host -LoginWindowScale 1.25'
+    Write-CtgSeamlessLog 'Login greeter tiny text: sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale (guest only; keep login box size)'
     Write-CtgSeamlessLog 'Undo over-scale: bash /mnt/ctg/ctg-display-scale.sh --reset'
     Write-CtgSeamlessLog 'Host blown-out fix: -DisplayMode Gui (AutoresizeGuest, Scale=false) — docs/KALI_DISPLAY_SCALING.md'
 }

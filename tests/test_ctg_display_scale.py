@@ -31,8 +31,10 @@ def test_login_greeter_scale_gdm_and_dm_detect():
     assert "fix_login_greeter_scale" in body
     assert "detect_ctg_display_manager" in body
     assert "greeter.dconf-defaults" in body
-    assert "text-scaling-factor=1.25" in body or 'text-scaling-factor=${scale}' in body
-    assert "CTG_LOGIN_TEXT_SCALE" in body
+    assert 'CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.35}"' in body
+    assert 'CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-Sans 14}"' in body
+    assert "CTG_LOGIN_CURSOR_SIZE" in body
+    assert "gdm_greeter_set_key" in body
     assert "50-ctg-login-scale.conf" in body
 
 

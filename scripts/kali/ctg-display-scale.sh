@@ -9,7 +9,7 @@
 # Use --text-large for larger text (DPI 120, Sans 13, Monospace 15) — no geometry change.
 # Use --fonts-only for lighter text (minimal xrandr; after fit-window once).
 # Use --aggressive for legacy resolution-based DPI (120/144), panel scale — NOT with host Scaled.
-# Use --login-scale for GDM/lightdm sign-in greeter (~25% text; root; before GUI login).
+# Use --login-scale for GDM/lightdm sign-in greeter (text ~35%; root; before GUI login).
 # Use --reset to undo over-scaling from prior runs or Scaled + high DPI.
 #
 # Prereq: mount share first:
@@ -30,8 +30,9 @@ TEXT_LARGE=false
 AGGRESSIVE=false
 LOGIN_SCALE=false
 
-CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.25}"
-CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-Sans 13}"
+CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.35}"
+CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-Sans 14}"
+CTG_LOGIN_CURSOR_SIZE="${CTG_LOGIN_CURSOR_SIZE:-14}"
 
 for arg in "$@"; do
     case "$arg" in
@@ -49,7 +50,7 @@ for arg in "$@"; do
             echo "  --text-medium Text layer only — medium fonts (DPI 108; Sans 11; Monospace 12)"
             echo "  --text-large  Text layer only — DPI 120, Sans 13, Monospace 15 (no oversized xrandr)"
             echo "  --fonts-only  Lighter DPI/fonts only — minimal xrandr (after fit-window once)"
-            echo "  --login-scale GDM/lightdm greeter text ~25% (sudo; does not change post-login medium fonts)"
+            echo "  --login-scale GDM/lightdm greeter text ~35% / Sans 14 (sudo; post-login medium unchanged)"
             echo "  --reset       Undo over-scale (DPI 96, default fonts, xrandr --auto)"
             echo "  --aggressive  Legacy HiDPI (DPI 120/144, panel scale) — not with host Scaled"
             echo "  --diagnose-only  Show resolution, DPI, fonts (no changes)"
@@ -145,31 +146,36 @@ detect_ctg_display_manager() {
     printf '%s' "${dm:-unknown}"
 }
 
-apply_gdm3_greeter_text_scale() {
-    local scale="$1"
-    local f=/etc/gdm3/greeter.dconf-defaults
-    local marker="# CTG login greeter scale (Hacker Planet lab)"
-    install -d -m 0755 /etc/gdm3
-    if [[ -f "$f" ]] && grep -qE '^text-scaling-factor=' "$f" 2>/dev/null; then
-        if grep -qE "^text-scaling-factor=${scale}\$" "$f" 2>/dev/null; then
-            log "GDM greeter: text-scaling-factor=${scale} already in $f"
+gdm_greeter_set_key() {
+    local f="$1" key="$2" val="$3"
+    if [[ -f "$f" ]] && grep -qE "^${key}=" "$f" 2>/dev/null; then
+        if grep -qE "^${key}=${val}\$" "$f" 2>/dev/null; then
             return 0
         fi
-        sed -i "s/^text-scaling-factor=.*/text-scaling-factor=${scale}/" "$f"
-        log "GDM greeter: updated text-scaling-factor=${scale} in $f"
+        sed -i "s/^${key}=.*/${key}=${val}/" "$f"
+        log "GDM greeter: updated ${key}=${val} in $f"
         return 0
     fi
-    if [[ -f "$f" ]] && grep -qF "$marker" "$f" 2>/dev/null; then
-        log "GDM greeter: CTG block present in $f (no text-scaling-factor line yet)"
-        return 0
+    if [[ ! -f "$f" ]] || ! grep -qF '[org/gnome/desktop/interface]' "$f" 2>/dev/null; then
+        {
+            echo "# CTG login greeter scale (Hacker Planet lab)"
+            echo "[org/gnome/desktop/interface]"
+        } >>"$f"
     fi
-    {
-        echo "$marker"
-        echo "[org/gnome/desktop/interface]"
-        echo "text-scaling-factor=${scale}"
-    } >>"$f"
+    echo "${key}=${val}" >>"$f"
     chmod 644 "$f"
-    log "GDM greeter: appended text-scaling-factor=${scale} to $f"
+    log "GDM greeter: appended ${key}=${val} to $f"
+}
+
+apply_gdm3_greeter_text_scale() {
+    local scale="$1"
+    local cursor="${2:-14}"
+    local f=/etc/gdm3/greeter.dconf-defaults
+    install -d -m 0755 /etc/gdm3
+    touch "$f"
+    chmod 644 "$f"
+    gdm_greeter_set_key "$f" text-scaling-factor "$scale"
+    gdm_greeter_set_key "$f" cursor-size "$cursor"
 }
 
 apply_lightdm_gtk_greeter_fonts() {
@@ -178,7 +184,7 @@ apply_lightdm_gtk_greeter_fonts() {
     local drop_file="${drop_dir}/50-ctg-login-scale.conf"
     install -d -m 0755 "$drop_dir"
     cat >"$drop_file" <<EOF
-# CTG login greeter scale (Hacker Planet lab) — ~25% larger than default Sans 10/11
+# CTG login greeter scale (Hacker Planet lab) — medium-equivalent (Sans 14)
 [greeter]
 theme-font-name=${font}
 clock-font-name=${font}
@@ -188,16 +194,17 @@ EOF
 }
 
 apply_sddm_greeter_font_scale() {
+    local pt="${1:-14}"
     local drop_dir=/etc/sddm.conf.d
     local drop_file="${drop_dir}/50-ctg-login-scale.conf"
     install -d -m 0755 "$drop_dir"
-    cat >"$drop_file" <<'EOF'
+    cat >"$drop_file" <<EOF
 # CTG login greeter scale (Hacker Planet lab)
 [Theme]
-Font=Sans,13,-1,5,50,0,0,0,0,0
+Font=Sans,${pt},-1,5,50,0,0,0,0,0
 EOF
     chmod 644 "$drop_file"
-    log "SDDM: Font=Sans,13 in $drop_file"
+    log "SDDM: Font=Sans,${pt} in $drop_file"
 }
 
 fix_login_greeter_scale() {
@@ -205,15 +212,18 @@ fix_login_greeter_scale() {
         err "--login-scale requires root: sudo bash $(basename "$0") --login-scale"
         return 1
     fi
-    local dm scale font
+    local dm scale font cursor sddm_pt
     dm="$(detect_ctg_display_manager)"
     scale="$CTG_LOGIN_TEXT_SCALE"
     font="$CTG_LIGHTDM_GREETER_FONT"
-    log "=== CTG login greeter scale (${scale} text / ${font}) ==="
+    cursor="$CTG_LOGIN_CURSOR_SIZE"
+    sddm_pt="${font#Sans }"
+    [[ "$sddm_pt" == "$font" ]] && sddm_pt=14
+    log "=== CTG login greeter scale (${scale} text / ${font} / cursor ${cursor}) ==="
     log "Display manager: $dm"
     case "$dm" in
         gdm3|gdm)
-            apply_gdm3_greeter_text_scale "$scale"
+            apply_gdm3_greeter_text_scale "$scale" "$cursor"
             ;;
         lightdm)
             if [[ -d /etc/lightdm ]] && { [[ -f /etc/lightdm/lightdm-gtk-greeter.conf ]] || [[ -d /usr/share/lightdm/lightdm-gtk-greeter.conf ]]; }; then
@@ -224,11 +234,11 @@ fix_login_greeter_scale() {
             fi
             ;;
         sddm)
-            apply_sddm_greeter_font_scale
+            apply_sddm_greeter_font_scale "$sddm_pt"
             ;;
         *)
             if [[ -d /etc/gdm3 ]]; then
-                apply_gdm3_greeter_text_scale "$scale"
+                apply_gdm3_greeter_text_scale "$scale" "$cursor"
             elif [[ -d /etc/lightdm ]]; then
                 apply_lightdm_gtk_greeter_fonts "$font"
             else
@@ -606,7 +616,7 @@ print_diagnose() {
         log "Desktop toolkit: xfconf/gsettings not available"
     fi
     log "Host (cut-off / blown out): .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gui (not Scaled)"
-    log "Login greeter tiny: sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale  |  host: -LoginWindowScale 1.25"
+    log "Login greeter tiny text: sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale (guest only; keep login box size)"
     log "Guest fix: bash /mnt/ctg/ctg-display-scale.sh --fit-window  |  medium: --text-medium  |  large: --text-large  |  undo: --reset"
     log "Docs: docs/KALI_DISPLAY_SCALING.md"
     if [[ $ISSUES -gt 0 ]]; then

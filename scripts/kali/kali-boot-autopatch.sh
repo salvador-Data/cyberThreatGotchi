@@ -282,7 +282,7 @@ EOF
 }
 
 fix_login_greeter_scale() {
-    log "Phase: login greeter text scale (~25% — GDM/lightdm sign-in)"
+    log "Phase: login greeter text scale (1.35 / Sans 14 — GDM/lightdm sign-in)"
     local scale_sh=""
     for candidate in "${SCRIPT_DIR}/ctg-display-scale.sh" /opt/ctg/ctg-display-scale.sh /mnt/ctg/ctg-display-scale.sh /media/sf_ctg-backups/ctg-display-scale.sh; do
         if [[ -f "$candidate" ]]; then
