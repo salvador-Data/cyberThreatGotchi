@@ -3,7 +3,8 @@
 # Hacker Planet LLC - authorized lab use only.
 #
 # Windows (no guest password):
-#   New-Item C:\Users\Owner\Backups\CTG_TRIGGER_AUTORUN -ItemType File -Force
+#   New-Item C:\Users\Owner\Backups\CTG_RUN_AUTORUN_NOW -ItemType File -Force
+#   (legacy: CTG_TRIGGER_AUTORUN still polled)
 #
 # Guest must be logged into Xfce (vboxsf readable at /media/sf_ctg-backups).
 set -uo pipefail
@@ -110,6 +111,12 @@ while true; do
                     remove_trigger "$trigger" || true
                 else
                     log "nmap-ask install trigger failed (sudo/password)"
+                fi
+            elif [[ "$(basename "$trigger")" == "CTG_RUN_AUTORUN_NOW" ]]; then
+                if run_minimal_share_trigger "$share"; then
+                    remove_trigger "$trigger" || true
+                else
+                    log "CTG_RUN_AUTORUN_NOW handler failed (trigger kept for retry)"
                 fi
             elif run_autorun_chain "$share"; then
                 remove_trigger "$trigger" || true

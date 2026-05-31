@@ -54,7 +54,8 @@ def test_run_kali_lab_now_enables_ssh():
 def test_invoke_guest_flash_trigger_and_logged_in():
     ps1 = (WIN / "Invoke-CtgKaliGuestFlash.ps1").read_text(encoding="utf-8")
     assert "LoggedInUsers" in ps1
-    assert "CTG_TRIGGER_AUTORUN" in ps1
+    assert "CTG_RUN_AUTORUN_NOW" in ps1
+    assert "UseSecretVault" in ps1
     assert "TriggerOnly" in ps1
     assert "ctg-enable-ssh" in ps1
     assert "--fit-window" in ps1
