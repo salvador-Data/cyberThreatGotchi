@@ -61,3 +61,17 @@ def test_kali_boot_autopatch_assets():
     assert "WaylandEnable=false" in body
     assert deploy.is_file()
     assert "OpenSSH" in deploy.read_text(encoding="utf-8")
+
+
+def test_run_kali_lab_now_and_stage_scripts():
+    run_sh = ROOT / "scripts" / "kali" / "RUN-KALI-LAB-NOW.sh"
+    stage_ps1 = ROOT / "scripts" / "windows" / "Stage-KaliLabToBackups.ps1"
+    assert run_sh.is_file()
+    run_body = run_sh.read_text(encoding="utf-8")
+    assert "ctg-backups" in run_body
+    assert "ctg-lab-autorun.sh" in run_body
+    assert "authorized" in run_body.lower()
+    assert stage_ps1.is_file()
+    stage_body = stage_ps1.read_text(encoding="utf-8")
+    assert "tor-http-scrambler" in stage_body
+    assert "RUN-KALI-LAB-NOW.sh" in stage_body

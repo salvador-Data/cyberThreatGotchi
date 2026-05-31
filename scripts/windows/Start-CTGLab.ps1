@@ -98,6 +98,16 @@ function Invoke-CtgDdgPreserve {
 
 function Copy-CtgKaliScriptsToBackups {
     $backupRoot = 'C:\Users\Owner\Backups'
+    $stageScript = Join-Path $PSScriptRoot 'Stage-KaliLabToBackups.ps1'
+    if (Test-Path $stageScript) {
+        if ($WhatIf) {
+            Write-CtgAutorunLog "[WhatIf] Stage-KaliLabToBackups.ps1 -> $backupRoot"
+        } else {
+            & $stageScript -BackupRoot $backupRoot -RepoRoot $RepoRoot
+            Write-CtgAutorunLog "Full Kali tree staged via Stage-KaliLabToBackups.ps1"
+        }
+        return
+    }
     if (-not (Test-Path $backupRoot)) { New-Item -ItemType Directory -Path $backupRoot -Force | Out-Null }
     $files = @(
         (Join-Path $RepoRoot 'scripts\kali\kali-lab-bootstrap.sh'),

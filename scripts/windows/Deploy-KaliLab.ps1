@@ -382,6 +382,14 @@ function Enable-CtgVBoxSharedBootstrap {
 function Copy-CtgBootstrapToSharedFolder {
     param([string]$LocalScript)
     $backupRoot = 'C:\Users\Owner\Backups'
+    $stageScript = Join-Path $PSScriptRoot 'Stage-KaliLabToBackups.ps1'
+    if (Test-Path $stageScript) {
+        Write-CtgLog 'Full Kali tree staging via Stage-KaliLabToBackups.ps1'
+        if (-not $WhatIf) {
+            & $stageScript -BackupRoot $backupRoot -RepoRoot $RepoRoot
+        }
+        return (Join-Path $backupRoot 'kali-lab-bootstrap.sh')
+    }
     if (-not (Test-Path $backupRoot)) { New-Item -ItemType Directory -Path $backupRoot -Force | Out-Null }
     $dest = Join-Path $backupRoot 'kali-lab-bootstrap.sh'
     Copy-Item -Path $LocalScript -Destination $dest -Force

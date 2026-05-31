@@ -1,0 +1,110 @@
+# Stage entire scripts/kali tree to C:\Users\Owner\Backups for VirtualBox ctg-backups share.
+# Authorized defensive lab use only — Hacker Planet LLC.
+param(
+    [string]$BackupRoot = 'C:\Users\Owner\Backups',
+    [string]$RepoRoot = '',
+    [switch]$WhatIf
+)
+
+if (-not $RepoRoot) {
+    $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+}
+$KaliSrc = Join-Path $RepoRoot 'scripts\kali'
+if (-not (Test-Path $KaliSrc)) {
+    throw "Kali scripts source not found: $KaliSrc"
+}
+if (-not (Test-Path $BackupRoot)) {
+    if ($WhatIf) {
+        Write-Host "[WhatIf] Would create $BackupRoot"
+    } else {
+        New-Item -ItemType Directory -Path $BackupRoot -Force | Out-Null
+    }
+}
+
+function Write-CtgStageLog([string]$Message) {
+    Write-Host $Message
+    $logDir = Join-Path $BackupRoot 'logs'
+    if (-not $WhatIf) {
+        if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
+        Add-Content -Path (Join-Path $logDir 'stage-kali-lab.log') -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message" -Encoding UTF8
+    }
+}
+
+Write-CtgStageLog "Staging scripts/kali -> $BackupRoot"
+
+$topFiles = Get-ChildItem -Path $KaliSrc -File -ErrorAction SilentlyContinue
+foreach ($f in $topFiles) {
+    $dest = Join-Path $BackupRoot $f.Name
+    if ($WhatIf) {
+        Write-CtgStageLog "[WhatIf] $($f.FullName) -> $dest"
+    } else {
+        Copy-Item -Path $f.FullName -Destination $dest -Force
+        Write-CtgStageLog "Staged: $dest"
+    }
+}
+
+$subDirs = @('tor-http-scrambler', 'ansible')
+foreach ($dirName in $subDirs) {
+    $srcDir = Join-Path $KaliSrc $dirName
+    if (-not (Test-Path $srcDir)) { continue }
+    $destDir = Join-Path $BackupRoot $dirName
+    if ($WhatIf) {
+        Write-CtgStageLog "[WhatIf] Copy tree $srcDir -> $destDir"
+    } else {
+        New-Item -ItemType Directory -Path $destDir -Force | Out-Null
+        Copy-Item -Path (Join-Path $srcDir '*') -Destination $destDir -Recurse -Force
+        Write-CtgStageLog "Staged tree: $destDir"
+    }
+}
+
+$runScript = Join-Path $KaliSrc 'RUN-KALI-LAB-NOW.sh'
+if (Test-Path $runScript) {
+    $runDest = Join-Path $BackupRoot 'RUN-KALI-LAB-NOW.sh'
+    if (-not $WhatIf) {
+        Copy-Item -Path $runScript -Destination $runDest -Force
+    }
+    Write-CtgStageLog "RUN script: $runDest"
+}
+
+$siemLogDir = Join-Path $BackupRoot 'logs\siem'
+if (-not $WhatIf) {
+    New-Item -ItemType Directory -Path $siemLogDir -Force | Out-Null
+}
+Write-CtgStageLog "SIEM log dir: $siemLogDir"
+
+$docs = @(
+    @{ Src = 'docs\KALI_SIEM_STACK.md'; Dest = 'KALI_SIEM_STACK.md' },
+    @{ Src = 'docs\KALI_IDS_IPS_CLAMAV.md'; Dest = 'KALI_IDS_IPS_CLAMAV.md' },
+    @{ Src = 'docs\CTG_SHIELD_SIEM_PLAYBOOK.md'; Dest = 'CTG_SHIELD_SIEM_PLAYBOOK.md' },
+    @{ Src = 'docs\CTG_LAB_PLAYGROUND.md'; Dest = 'CTG_LAB_PLAYGROUND.md' },
+    @{ Src = 'docs\CTG_LAB_AUTORUN.md'; Dest = 'CTG_LAB_AUTORUN.md' }
+)
+foreach ($d in $docs) {
+    $srcPath = Join-Path $RepoRoot $d.Src
+    if (-not (Test-Path $srcPath)) { continue }
+    $destPath = Join-Path $BackupRoot $d.Dest
+    if (-not $WhatIf) {
+        Copy-Item -Path $srcPath -Destination $destPath -Force
+    }
+    Write-CtgStageLog "Staged doc: $destPath"
+}
+
+$playgroundPs1 = Join-Path $PSScriptRoot 'CTG-Lab-Playground.ps1'
+if (Test-Path $playgroundPs1) {
+    $destPs1 = Join-Path $BackupRoot 'CTG-Lab-Playground.ps1'
+    if (-not $WhatIf) {
+        Copy-Item -Path $playgroundPs1 -Destination $destPs1 -Force
+    }
+    Write-CtgStageLog "Staged: $destPs1"
+}
+
+$shieldPs1 = Join-Path $PSScriptRoot 'CTG-Shield-Status.ps1'
+if (Test-Path $shieldPs1) {
+    $destShield = Join-Path $BackupRoot 'CTG-Shield-Status.ps1'
+    if (-not $WhatIf) {
+        Copy-Item -Path $shieldPs1 -Destination $destShield -Force
+    }
+    Write-CtgStageLog "Staged: $destShield"
+}
+
+Write-CtgStageLog 'Kali lab staging complete. In VM: sudo bash /mnt/ctg/RUN-KALI-LAB-NOW.sh'

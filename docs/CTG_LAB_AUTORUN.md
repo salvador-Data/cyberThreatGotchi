@@ -318,10 +318,19 @@ See [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) § Phase 7. Components 
 
 If SSH deploy fails (`Deploy-KaliLab.ps1` exit 1):
 
-1. Mount: `sudo mkdir -p /mnt/ctg && sudo mount -t vboxsf ctg /mnt/ctg`
+1. Ensure Windows staged the share: `.\scripts\windows\Stage-KaliLabToBackups.ps1`
+2. In Kali TTY (Ctrl+Alt+F2), one paste:
+
+```bash
+sudo bash /mnt/ctg/RUN-KALI-LAB-NOW.sh
+```
+
+Or step-by-step:
+
+1. Mount: `sudo mkdir -p /mnt/ctg && sudo mount -t vboxsf ctg-backups /mnt/ctg`
 2. Run: `sudo bash /mnt/ctg/ctg-lab-autorun.sh`
 
-Scripts are also copied to `C:\Users\Owner\Backups\` on every autorun.
+Scripts are copied to `C:\Users\Owner\Backups\` on every autorun (`Stage-KaliLabToBackups.ps1`).
 
 ---
 

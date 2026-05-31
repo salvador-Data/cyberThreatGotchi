@@ -72,7 +72,9 @@ function Stop-CtgVmIfRunning {
         }
     }
     Write-CtgDeployLog "ACPI shutdown timed out - poweroff"
+    $ErrorActionPreference = 'Continue'
     & $VBoxManage controlvm $Name poweroff 2>&1 | Out-Null
+    $ErrorActionPreference = 'Stop'
     Start-Sleep -Seconds 5
     return $true
 }
@@ -261,7 +263,15 @@ if ($vmsRaw -notmatch "`"$([regex]::Escape($VmName))`"") {
     exit 2
 }
 
-Stage-CtgAutopatchScripts -SourceScript $AutopatchScript
+$stageScript = Join-Path $PSScriptRoot 'Stage-KaliLabToBackups.ps1'
+if (Test-Path $stageScript) {
+    Write-CtgDeployLog "Full Kali tree staging via Stage-KaliLabToBackups.ps1"
+    if (-not $WhatIf) {
+        & $stageScript -BackupRoot $BackupRoot -RepoRoot $RepoRoot
+    }
+} else {
+    Stage-CtgAutopatchScripts -SourceScript $AutopatchScript
+}
 
 Stop-CtgVmIfRunning -Name $VmName | Out-Null
 if (-not $WhatIf) { Start-Sleep -Seconds 5 }
