@@ -425,6 +425,36 @@ function Copy-CtgBootstrapToSharedFolder {
         Write-CtgLog "WiFi lab autorun copied to $(Join-Path $backupRoot 'ctg-wifi-lab-autorun.sh')"
     }
 
+    $idsIpsAutorun = Join-Path $RepoRoot 'scripts\kali\ctg-ids-ips-autorun.sh'
+    if (Test-Path $idsIpsAutorun) {
+        Copy-Item -Path $idsIpsAutorun -Destination (Join-Path $backupRoot 'ctg-ids-ips-autorun.sh') -Force
+        Write-CtgLog "IDS/IPS autorun copied to $(Join-Path $backupRoot 'ctg-ids-ips-autorun.sh')"
+    }
+
+    $siemAutorun = Join-Path $RepoRoot 'scripts\kali\ctg-siem-autorun.sh'
+    if (Test-Path $siemAutorun) {
+        Copy-Item -Path $siemAutorun -Destination (Join-Path $backupRoot 'ctg-siem-autorun.sh') -Force
+        Write-CtgLog "SIEM autorun copied to $(Join-Path $backupRoot 'ctg-siem-autorun.sh')"
+    }
+
+    $siemLogDir = Join-Path $backupRoot 'logs\siem'
+    if (-not (Test-Path $siemLogDir)) {
+        New-Item -ItemType Directory -Path $siemLogDir -Force | Out-Null
+        Write-CtgLog "SIEM log dir staged: $siemLogDir"
+    }
+
+    $siemStackDoc = Join-Path $RepoRoot 'docs\KALI_SIEM_STACK.md'
+    if (Test-Path $siemStackDoc) {
+        Copy-Item -Path $siemStackDoc -Destination (Join-Path $backupRoot 'KALI_SIEM_STACK.md') -Force
+        Write-CtgLog "SIEM stack doc staged: $(Join-Path $backupRoot 'KALI_SIEM_STACK.md')"
+    }
+
+    $idsIpsDoc = Join-Path $RepoRoot 'docs\KALI_IDS_IPS_CLAMAV.md'
+    if (Test-Path $idsIpsDoc) {
+        Copy-Item -Path $idsIpsDoc -Destination (Join-Path $backupRoot 'KALI_IDS_IPS_CLAMAV.md') -Force
+        Write-CtgLog "IDS/IPS doc staged: $(Join-Path $backupRoot 'KALI_IDS_IPS_CLAMAV.md')"
+    }
+
     $labWifiExample = Join-Path $RepoRoot 'scripts\kali\lab-wifi.conf.example'
     if (Test-Path $labWifiExample) {
         Copy-Item -Path $labWifiExample -Destination (Join-Path $backupRoot 'lab-wifi.conf.example') -Force

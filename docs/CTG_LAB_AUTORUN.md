@@ -174,6 +174,45 @@ sudo CTG_WIFI_MONITOR=1 bash /mnt/ctg/ctg-wifi-lab-autorun.sh --monitor
 
 ---
 
+## Network IDS/IPS + ClamAV autorun
+
+**Suricata-primary** IDS (detect-only on boot), optional Snort coexist, **ClamAV** (daemon + daily `/home` scan). Optional inline IPS: `--EnableIPS` (lab VLAN only — see doc).
+
+**Professor answer:** **IDS** = log alerts on the lab interface; **IPS** = inline block via NFQUEUE (opt-in). Perimeter IPS remains **OPNsense Suricata**.
+
+Full reference: [KALI_IDS_IPS_CLAMAV.md](KALI_IDS_IPS_CLAMAV.md) · SIEM: [KALI_SIEM_STACK.md](KALI_SIEM_STACK.md)
+
+**One-liner in VM (8 GB — optimized):**
+
+```bash
+sudo bash /mnt/ctg/ctg-ids-ips-autorun.sh --install --optimize --skip-snort
+```
+
+**Boot autopatch chain:**
+
+```bash
+sudo bash /mnt/ctg/kali-boot-autopatch.sh --wifi-lab --ids-ips --siem --install
+```
+
+`ctg-lab-autorun.sh` runs `--ids-ips` via autopatch and calls `ctg-ids-ips-autorun.sh --optimize --skip-snort` plus `ctg-siem-autorun.sh`.  
+**Logs:** `/var/log/ctg-snort/` · **Services:** `ctg-ids-ips.service`, `ctg-suricata.service` · **ClamAV:** `ctg-clamav-scan.timer`
+
+---
+
+## SIEM export (Wazuh / JSON aggregator)
+
+Recommended for 8 GB Kali VM: **Wazuh agent** (when `CTG_WAZUH_MANAGER` set) + **local JSON export** — not Splunk on the VM.
+
+```bash
+sudo bash /mnt/ctg/ctg-siem-autorun.sh --install
+```
+
+Windows tail: `Backups\logs\siem\ctg-siem-latest.json`
+
+Full comparison: [KALI_SIEM_STACK.md](KALI_SIEM_STACK.md) · Shield hook: [CTG_SHIELD_SIEM_PLAYBOOK.md](CTG_SHIELD_SIEM_PLAYBOOK.md)
+
+---
+
 ## Kali — one command
 
 After shared folder mount (VirtualBox `ctg` or `ctg-backups` → `/mnt/ctg`) or SSH staging:

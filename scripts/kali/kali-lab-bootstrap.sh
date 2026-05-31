@@ -214,10 +214,40 @@ fi
 
 # --- clamav ---
 log "Phase: clamav"
-run DEBIAN_FRONTEND=noninteractive apt-get install -y -qq clamav clamav-daemon
+run DEBIAN_FRONTEND=noninteractive apt-get install -y -qq clamav clamav-daemon clamav-freshclam
 run systemctl stop clamav-freshclam 2>/dev/null || true
 run freshclam || log "freshclam may need retry after mirror sync"
 run systemctl enable --now clamav-freshclam clamav-daemon || true
+
+if ! $DRY_RUN; then
+    mkdir -p /var/log/ctg-clamav
+    cat >/etc/systemd/system/ctg-clamav-home-scan.service <<'CLAMEOF'
+[Unit]
+Description=CTG weekly ClamAV scan of /home (lightweight)
+After=clamav-freshclam.service
+
+[Service]
+Type=oneshot
+Nice=19
+IOSchedulingClass=idle
+ExecStart=/usr/bin/clamscan -r --infected --remove=no --log=/var/log/ctg-clamav/scan.log /home
+CLAMEOF
+    cat >/etc/systemd/system/ctg-clamav-home-scan.timer <<'CLAMEOF'
+[Unit]
+Description=CTG weekly ClamAV /home scan (Sunday 03:00)
+
+[Timer]
+OnCalendar=Sun *-*-* 03:00:00
+Persistent=true
+RandomizedDelaySec=30m
+
+[Install]
+WantedBy=timers.target
+CLAMEOF
+    systemctl daemon-reload
+    systemctl enable --now ctg-clamav-home-scan.timer 2>/dev/null || true
+    log "ClamAV weekly timer: ctg-clamav-home-scan.timer"
+fi
 
 for d in /home/*/samples /home/*/downloads; do
     if [[ -d "$d" ]]; then
@@ -380,3 +410,20 @@ log "Maltego CE: manual install from vendor .deb (EULA). Suricata primary IDS be
 log "DuckDuckGo: preserve host/iPhone/router DNS per $IPHONE_HARDENING_DOC — OPNsense lab forwarders: docs/OPNSENSE_LAB_DNS.md"
 log "Pentest (nmap, metasploit, burp, sqlmap): lab-owned VMs and written scope only — see docs/KALI_LAB_ARCHITECTURE.md"
 log "One-shot autorun: sudo bash /mnt/ctg/ctg-lab-autorun.sh — see docs/CTG_LAB_AUTORUN.md"
+IDS_SCRIPT=""
+for ids_candidate in "$(dirname "$0")/ctg-ids-ips-autorun.sh" /mnt/ctg/ctg-ids-ips-autorun.sh; do
+    if [[ -f "$ids_candidate" ]]; then
+        IDS_SCRIPT="$ids_candidate"
+        break
+    fi
+done
+if [[ -n "$IDS_SCRIPT" ]]; then
+    log "Phase: ctg-ids-ips (detect-only Snort/Suricata + ClamAV ensure)"
+    if ! $DRY_RUN; then
+        bash "$IDS_SCRIPT" || log "ctg-ids-ips-autorun returned non-zero (Snort/Suricata may need apt retry)"
+    else
+        run echo "[dry-run] bash $IDS_SCRIPT"
+    fi
+else
+    log "ctg-ids-ips-autorun.sh not found — stage on ctg share; see docs/KALI_IDS_IPS_CLAMAV.md"
+fi

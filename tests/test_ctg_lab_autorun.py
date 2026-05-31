@@ -45,6 +45,8 @@ def test_ctg_lab_autorun_doc():
     assert "ctg-kali-autopatch.service" in text
     assert "KALI_WIFI_ETH_PROMISC" in text
     assert "ctg-wifi-lab-autorun" in text
+    assert "KALI_IDS_IPS_CLAMAV" in text or "ctg-ids-ips" in text
+    assert "KALI_SIEM_STACK" in text or "ctg-siem" in text
 
 
 def test_kali_boot_autopatch_assets():

@@ -74,6 +74,7 @@ Same rules as [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md):
 |------|---------|
 | `kali-lab-bootstrap.sh` | Monolithic bootstrap: DDG preserve, lab anonymity (Tor/proxychains), harden, ClamAV, passive Snort, OSINT apt, Realtek detect, WiFi Option 2 |
 | `ctg-wifi-lab-autorun.sh` | USB Realtek detect, OOT driver, lab WPA2 connect, eth promisc + optional WiFi monitor |
+| `ctg-ids-ips-autorun.sh` | ClamAV + passive Snort/Suricata IDS; optional `--EnableIPS` (lab VLAN) |
 | `lab-wifi.conf.example` | Lab SSID/PSK template → `/etc/ctg/lab-wifi.conf` (mode 600, gitignored) |
 | `lab-targets.example` | Authorized targets template — copy to `lab-targets.conf` (gitignored) |
 | `ansible/` | Optional Ansible mirror (includes `ddg-dns` role) |

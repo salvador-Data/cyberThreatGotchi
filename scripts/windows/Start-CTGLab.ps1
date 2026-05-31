@@ -101,7 +101,11 @@ function Copy-CtgKaliScriptsToBackups {
     if (-not (Test-Path $backupRoot)) { New-Item -ItemType Directory -Path $backupRoot -Force | Out-Null }
     $files = @(
         (Join-Path $RepoRoot 'scripts\kali\kali-lab-bootstrap.sh'),
-        (Join-Path $RepoRoot 'scripts\kali\ctg-lab-autorun.sh')
+        (Join-Path $RepoRoot 'scripts\kali\ctg-lab-autorun.sh'),
+        (Join-Path $RepoRoot 'scripts\kali\ctg-ids-ips-autorun.sh'),
+        (Join-Path $RepoRoot 'scripts\kali\ctg-siem-autorun.sh'),
+        (Join-Path $RepoRoot 'scripts\kali\kali-boot-autopatch.sh'),
+        (Join-Path $RepoRoot 'scripts\kali\ctg-wifi-lab-autorun.sh')
     )
     $scramblerDir = Join-Path $RepoRoot 'scripts\kali\tor-http-scrambler'
     if (Test-Path $scramblerDir) {
@@ -124,6 +128,16 @@ function Copy-CtgKaliScriptsToBackups {
             Copy-Item -Path (Join-Path $scramblerDir '*') -Destination $destScram -Recurse -Force
             Write-CtgAutorunLog "Staged scrambler tree: $destScram"
         }
+    }
+    $siemLogDir = Join-Path $backupRoot 'logs\siem'
+    if (-not $WhatIf) {
+        New-Item -ItemType Directory -Path $siemLogDir -Force | Out-Null
+        Write-CtgAutorunLog "Staged SIEM log dir: $siemLogDir"
+    }
+    $siemDoc = Join-Path $RepoRoot 'docs\KALI_SIEM_STACK.md'
+    if ((Test-Path $siemDoc) -and -not $WhatIf) {
+        Copy-Item -Path $siemDoc -Destination (Join-Path $backupRoot 'KALI_SIEM_STACK.md') -Force
+        Write-CtgAutorunLog "Staged: $(Join-Path $backupRoot 'KALI_SIEM_STACK.md')"
     }
 }
 

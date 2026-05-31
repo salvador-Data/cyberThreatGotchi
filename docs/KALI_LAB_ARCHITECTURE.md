@@ -49,6 +49,7 @@ All items below are documented here and implemented or stubbed with clear phase 
 | 16 | **Lab anonymity + authorized pentest** | `kali-lab-bootstrap.sh --lab-anonymity`, `lab-targets.example` | P1 |
 | 17 | **CTG Lab Autorun** | `Start-CTGLab.ps1`, `ctg-lab-autorun.sh`, [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) | P1 |
 | 18 | **CTG Privacy Router (Tor/HTTP scrambler)** | `scripts/kali/tor-http-scrambler/`, `--install-scrambler` | P7 |
+| 19 | **Network IDS/IPS + ClamAV autorun** | `ctg-ids-ips-autorun.sh`, `kali-boot-autopatch.sh --ids-ips`, [KALI_IDS_IPS_CLAMAV.md](KALI_IDS_IPS_CLAMAV.md) | P3 |
 
 ---
 
@@ -670,6 +671,8 @@ Backups/opnsense-*.xml
 | [docs/CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) | Windows + Kali one-command autorun |
 | [scripts/windows/Start-CTGLab.ps1](../scripts/windows/Start-CTGLab.ps1) | Windows master autorun |
 | [scripts/kali/ctg-lab-autorun.sh](../scripts/kali/ctg-lab-autorun.sh) | Kali one-shot autorun |
+| [docs/KALI_IDS_IPS_CLAMAV.md](KALI_IDS_IPS_CLAMAV.md) | Snort/Suricata IDS + optional IPS + ClamAV on Kali |
+| [scripts/kali/ctg-ids-ips-autorun.sh](../scripts/kali/ctg-ids-ips-autorun.sh) | Network IDS/IPS + ClamAV boot autorun |
 | [scripts/windows/README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md) | OPNsense/Suricata notes |
 | [FIREWALL_BASELINE.md](FIREWALL_BASELINE.md) | CTG Linux iptables (appliance, not Kali VM) |
 

@@ -18,6 +18,10 @@ log() { printf '[ctg-siem] %s\n' "$*"; }
 sources() {
     local f
     for f in \
+        /var/log/ctg-snort/alert \
+        /var/log/ctg-snort/suricata-fast.log \
+        /var/log/ctg-snort/suricata-eve.json \
+        /var/log/ctg-clamav/scan.log \
         /var/log/snort/snort.log \
         /var/log/snort/alert \
         /var/log/suricata/fast.log \
@@ -47,7 +51,7 @@ show_alerts() {
         tail -n "$TAIL_LINES" "$src" 2>/dev/null || true
     done < <(sources)
     if ! $found; then
-        log "No Snort/Suricata/syslog files yet — install passive IDS via kali-lab-bootstrap.sh"
+        log "No Snort/Suricata/syslog files yet — run ctg-ids-ips-autorun.sh or kali-lab-bootstrap.sh"
     fi
 }
 
@@ -60,6 +64,7 @@ detect_high_severity() {
             || [[ "$line" =~ [Ss]everity:\ *(1|2|critical|high) ]] \
             || [[ "$line" =~ \[1: ]] \
             || [[ "$line" =~ (CRITICAL|HIGH|ALERT) ]] \
+            || [[ "$line" =~ (Infected|FOUND|ClamAV) ]] \
             || [[ "$line" =~ snort.*\[1: ]] \
             || [[ "$line" =~ suricata.*\"severity\":\ *(1|2) ]]; then
             printf '%s\n' "$line"

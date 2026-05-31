@@ -218,6 +218,7 @@ function Stage-CtgAutopatchScripts {
     $companion = @(
         (Join-Path $RepoRoot 'scripts\kali\ctg-lab-autorun.sh'),
         (Join-Path $RepoRoot 'scripts\kali\ctg-wifi-lab-autorun.sh'),
+        (Join-Path $RepoRoot 'scripts\kali\ctg-ids-ips-autorun.sh'),
         (Join-Path $RepoRoot 'scripts\kali\fix-kali-blank-screen.sh'),
         (Join-Path $RepoRoot 'scripts\kali\kali-lab-bootstrap.sh'),
         (Join-Path $RepoRoot 'scripts\kali\rogue-ap-guard.sh'),
