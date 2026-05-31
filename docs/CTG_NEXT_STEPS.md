@@ -2,7 +2,7 @@
 
 One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized defensive use only.
 
-**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) · [LAB_MATURITY.md](LAB_MATURITY.md) · [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) · [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md) · [LAB_VLAN.md](LAB_VLAN.md) · [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+**Related docs:** [CTG_ONE_WORKING.md](CTG_ONE_WORKING.md) · [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) · [LAB_MATURITY.md](LAB_MATURITY.md) · [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) · [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md) · [LAB_VLAN.md](LAB_VLAN.md) · [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
 
 ---
 
@@ -28,10 +28,20 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 
 **Email vault titles needed:** `Proton IMAP` (or `CTG_EMAIL_IMAP`); optional `Microsoft Account`.
 
-**Quick diagnose batch (no creds required):**
+**One orchestrator (recommended):**
 
 ```powershell
 cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
+```
+
+```powershell
+.\scripts\windows\Invoke-CtgOneWorking.ps1
+```
+
+**Quick diagnose batch (no creds required):**
+
+```powershell
+.\scripts\windows\Invoke-CtgInstallAudit.ps1 -Json
 ```
 
 ```powershell

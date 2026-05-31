@@ -44,6 +44,8 @@ NEW_PS1 = [
     WIN / "Register-CtgMemoryProtectionTask.ps1",
     WIN / "Sync-CtgVulnerabilityFeeds.ps1",
     WIN / "Start-CtgIphoneTetherIds.ps1",
+    WIN / "Invoke-CtgInstallAudit.ps1",
+    WIN / "Invoke-CtgOneWorking.ps1",
     WIN / "Invoke-CtgPreserveStackAudit.ps1",
     WIN / "Invoke-CtgPrintAllAudit.ps1",
     PUBLISH / "Set-CtgPrivateRepos.ps1",
@@ -276,9 +278,58 @@ def test_print_all_audit_script():
         "README_PRINT_ALL",
         "DUCKDUCKGO_PRESERVE_PRINT",
         "OpenPrintFolder",
+        "SkipStackAudit",
     ):
         assert needle in text, needle
     assert "preserve DuckDuckGo" in text.lower() or "DuckDuckGo VPN/DNS" in text
+
+
+def test_install_audit_script():
+    text = (WIN / "Invoke-CtgInstallAudit.ps1").read_text(encoding="utf-8")
+    for needle in (
+        "INSTALLED",
+        "PENDING",
+        "MANUAL",
+        "ctg-install-audit",
+        "Preserve-DuckDuckGoVpn",
+        "Stage-KaliLabToBackups",
+        "HackerPlanet-CTG",
+        "credentials.vault",
+    ):
+        assert needle in text, needle
+    assert "Cloudflare" not in text or "competing" in text.lower()
+
+
+def test_one_working_orchestrator():
+    text = (WIN / "Invoke-CtgOneWorking.ps1").read_text(encoding="utf-8")
+    for needle in (
+        "Invoke-CtgInstallAudit",
+        "Invoke-CtgPreserveStackAudit",
+        "Invoke-CtgPrintAllAudit",
+        "Enforce-CtgMemoryProtection",
+        "Stage-KaliLabToBackups",
+        "SkipStackAudit",
+        "ctg-one-working",
+        "guest-flash",
+    ):
+        assert needle in text, needle
+    assert "ApplyFixes" not in text or "never" in text.lower() or "BLOCKED" in text
+
+
+def test_ctg_one_working_doc():
+    doc = ROOT / "docs" / "CTG_ONE_WORKING.md"
+    body = doc.read_text(encoding="utf-8")
+    assert "Invoke-CtgOneWorking.ps1" in body
+    assert "PRINT_ALL.html" in body
+    assert "CYBERSECURITY_ETHICS.md" in body
+
+
+def test_cybersecurity_ethics_doc():
+    doc = ROOT / "docs" / "CYBERSECURITY_ETHICS.md"
+    body = doc.read_text(encoding="utf-8")
+    assert "isc2.org/ethics" in body
+    assert "acm.org/code-of-ethics" in body
+    assert not PHONE_PATTERN.search(body)
 
 
 def test_sync_device_hardening_includes_print_all():

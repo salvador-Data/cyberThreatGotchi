@@ -153,6 +153,21 @@ if (Test-Path $venvPy) {
         -AdminStep 'py -m venv .venv; .\.venv\Scripts\pip install -r requirements.txt'
 }
 
+# --- DuckDuckGo VPN preserve ---
+$preserveScript = Join-Path $Win 'Preserve-DuckDuckGoVpn.ps1'
+if (Test-Path $preserveScript) {
+    . $preserveScript
+    $ddgPaths = Get-CtgDuckDuckGoVpnPaths
+    $ddgUp = Test-CtgDuckDuckGoVpnConnected
+    if ($ddgPaths.Count -gt 0) {
+        Add-CtgComponent -Component 'DuckDuckGo VPN (Preserve-DuckDuckGoVpn)' -Status 'INSTALLED' -Detail ("tunnel up: {0}" -f $ddgUp)
+    } else {
+        Add-CtgComponent -Component 'DuckDuckGo VPN (Preserve-DuckDuckGoVpn)' -Status 'MANUAL' -Detail 'install DDG VPN; CTG never installs competing VPNs'
+    }
+} else {
+    Add-CtgComponent -Component 'DuckDuckGo VPN (Preserve-DuckDuckGoVpn)' -Status 'PENDING' -Detail 'Preserve-DuckDuckGoVpn.ps1 missing'
+}
+
 # --- Credential vault ---
 $credVault = Join-Path $env:USERPROFILE 'Backups\.vault\credentials.vault'
 $dpapiVault = Join-Path $env:USERPROFILE 'Backups\.vault\secrets.dpapi'

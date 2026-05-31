@@ -94,6 +94,14 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **Admin:** **Optional** (depends on VPN stack)
 - **Docs:** [IPHONE_HARDENING.md](IPHONE_HARDENING.md) - [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md)
 
+### `Invoke-CtgOneWorking.ps1`
+- **Path:** `scripts/windows/Invoke-CtgOneWorking.ps1`
+- **Tagline:** *One orchestrator — DDG preserve, install audit, stack, print paths, memory, Kali stage.*
+- **Does:** Runs full diagnose pipeline; summary log `ctg-one-working-*.txt`; `-ApplySafe` pip + staging only.
+- **When:** Before claiming install state; weekly lab hygiene; `-OpenPrintFolder` before print sessions.
+- **Admin:** **Optional** (`-ApplySafe` non-destructive only; never Wi-Fi ApplyFixes without DDG OK)
+- **Docs:** [CTG_ONE_WORKING.md](CTG_ONE_WORKING.md) - [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md) - `.cursor/rules/ctg-one-working.mdc`
+
 ### `Invoke-CtgPreserveStackAudit.ps1`
 - **Path:** `scripts/windows/Invoke-CtgPreserveStackAudit.ps1`
 - **Tagline:** *DDG-preserving Windows SOC diagnose batch — one log, before/after VPN.*
@@ -116,7 +124,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **Does:** Reports venv, vault, scheduled tasks, IDS tools, Docker/Wazuh, Kali staging, ecosystem clones; optional `-ApplySafe` (pip + Stage-KaliLabToBackups).
 - **When:** After migration, before claiming “installed”; Cursor rule source of truth.
 - **Admin:** **No** (diagnose-only; documents Admin steps for tasks/Defender)
-- **Docs:** [CTG_NEXT_STEPS.md](CTG_NEXT_STEPS.md) - [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md) - `.cursor/rules/ctg-install-status.mdc`
+- **Docs:** [CTG_ONE_WORKING.md](CTG_ONE_WORKING.md) - [CTG_NEXT_STEPS.md](CTG_NEXT_STEPS.md) - [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md) - `.cursor/rules/ctg-one-working.mdc`
 
 ### `Pause-DefenderRealtime.ps1`
 - **Path:** `scripts/windows/Pause-DefenderRealtime.ps1`

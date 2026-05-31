@@ -1,0 +1,94 @@
+---
+description: CTG one working — canonical path, install audit orchestrator, DDG/HVCI/memory/ethics/vault
+alwaysApply: true
+---
+
+# CTG one working (Hacker Planet LLC)
+
+Single consolidated rule for Andy's CyberThreatGotchi lab. Replaces scattered install/ethics/memory/vault fragments.
+
+## Canonical paths
+
+| Role | Path |
+|------|------|
+| **Repo (develop here)** | `$env:USERPROFILE\Programs\Hacker Planet LLC\cyberThreatGotchi` |
+| **Legacy stub** | `$env:USERPROFILE\Projects\cyberThreatGotchi` — sync only; reopen Cursor on Programs |
+| **Ecosystem clones** | `$env:USERPROFILE\Programs\Hacker Planet LLC\<repo-name>` |
+
+Path helpers: `scripts/windows/CTG-Paths.ps1` (`Get-CtgRepoRoot`, `Get-CtgProgramsRoot`).
+
+## One orchestrator
+
+Run **`.\scripts\windows\Invoke-CtgOneWorking.ps1`** before claiming install state or starting a lab session.
+
+| Flag | Behavior |
+|------|----------|
+| *(default)* | `-DiagnoseOnly` — full audit pipeline, no destructive changes |
+| `-ApplySafe` | pip `requirements.txt`, `Stage-KaliLabToBackups.ps1`, safe non-Admin applies only |
+| `-OpenPrintFolder` | Opens `docs\print` after run |
+
+Log: `%USERPROFILE%\Backups\logs\ctg-one-working-*.txt`
+
+Install detail source: **`Invoke-CtgInstallAudit.ps1`** → `ctg-install-audit-*.txt` (INSTALLED | PENDING | MANUAL | OPTIONAL).
+
+## Never break (pass statuses)
+
+- **DuckDuckGo VPN / DNS / Password Manager** — preserve always; no competing VPN/DNS installers; run `Preserve-DuckDuckGoVpn.ps1` before SOC changes.
+- **HVCI / VBS / kernel mitigations / Kali spec-ctrl** — never disable for performance; `<SpecCtrl enabled="true"/>` is intentional (RETBleed lab).
+- **Kali display / seamless** — do not reset VRAM, Wayland, or Guest Additions without Andy's ask; use CLICK-ME / share trigger, not guest-flash retry loops.
+- **Wi-Fi repair** — `Repair-WindowsWifi.ps1 -ApplyFixes` only when Wi-Fi is up, Admin elevated, and DDG preserve verified.
+
+## Memory protection
+
+CTG memory protection = host exploit mitigation + VBS/HVCI + VirtualBox guest spec-ctrl + vault session hygiene — **not** network IPS.
+
+- Diagnose: `Enforce-CtgMemoryProtection.ps1 -DiagnoseOnly`
+- Never: `--spec-ctrl off`, `mitigations=off`, disable Memory integrity for VirtualBox speed
+- Docs: `docs/MEMORY_PROTECTION.md`, `docs/RAM_MITIGATION_IPS.md`
+
+## Credential vault
+
+| Store | Use |
+|-------|-----|
+| **`Ctg-CredentialVault.ps1`** | Username/password (title **`Kali SSH`** for deploy) |
+| **`Protect-CtgSecrets.ps1`** | Legacy flat secrets, API tokens, PII phone (`CTG_PII_*`) |
+
+- Vault: `%USERPROFILE%\Backups\.vault\credentials.vault` (gitignored)
+- Init once: `-InitVault -WithDpapiWrap`; master password in DuckDuckGo Password Manager — never in git
+- See `docs/SECRET_VAULT.md`
+
+## Print bundle
+
+Full-stack printable audit: **`docs/print/PRINT_ALL.html`** (index: `docs/print/README_PRINT_ALL.md`).
+
+`Invoke-CtgPrintAllAudit.ps1 -OpenPrintFolder` lists all sheets; orchestrator skips duplicate stack work when called from One Working.
+
+## Cybersecurity ethics
+
+Andy's CTG portfolio is **defensive / authorized lab** work — not unauthorized intrusion.
+
+| Source | Core obligation |
+|--------|-----------------|
+| [ISC2 Code of Ethics](https://www.isc2.org/ethics) | Protect society; act honorably, legally; competent service |
+| [ACM Code of Ethics](https://www.acm.org/code-of-ethics) | Public good first; access systems only when **authorized** |
+| [NIST SP 800-115](https://csrc.nist.gov/publications/detail/sp/800-115/final) | Security testing — planning, authorization, ROE, reporting |
+
+**In scope:** Hacker Planet LLC lab, Andy-owned hosts, VMs under `lab-targets.conf`, written pentest scope.
+
+**Out of scope / refuse:** Third-party systems without authorization, credential theft, evasion, "hack this account" orders.
+
+**Agent behavior:** Blue team first (NIST CSF, CIS Controls); red awareness lab-only to improve defenses; no PII in repo (`no-pii-in-repo.mdc`); professor mode via `andy-professor-cybersec.mdc`.
+
+Deep reference: `docs/CYBERSECURITY_ETHICS.md` · `docs/CTG_ONE_WORKING.md`
+
+## Typical MANUAL items
+
+| Item | Why MANUAL |
+|------|------------|
+| Scheduled tasks (`HackerPlanet-CTG-*`) | Admin UAC — `Register-Ctg*.ps1` |
+| `Ctg-CredentialVault.ps1 -InitVault` | Interactive master password |
+| Kali CLICK-ME lab chain | Guest GUI login + sudo once |
+| Defender `-ApplySafe` | Admin + ASR audit review |
+| Proton Bridge / email vault | User installs Bridge; vault titles in PM |
+| Docker + Wazuh | Docker Desktop install |
+| Cardputer flash | COM13 detect only unless Andy requests flash |
