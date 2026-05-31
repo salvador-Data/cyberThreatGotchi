@@ -10,7 +10,8 @@ See also: [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) (seamless/scaled window
 |---------|--------------|------------------------|
 | Desktop **cut off** at edges; scroll/wrap | Guest resolution **larger** than VM window | `--fit-window` + host `GUI/AutoresizeGuest=true` + `-DisplayMode Gui` |
 | Whole UI **blown out / huge** | Host **Scaled** + guest Xft DPI 120–144 + bad `LastGuestSizeHint` | `--reset` then `--fit-window`; host `-DisplayMode Gui` (`Scale=false`) |
-| Terminal text **too small** only | Fit-window fixed geometry but **Xft DPI still 96** or tiny Gtk/terminal fonts | `--fit-window` (DPI 112/120 + Sans 12 + Monospace 14) or `--text-large` |
+| Terminal text **too small** only | Fit-window fixed geometry but **Xft DPI still 96** or tiny Gtk/terminal fonts | `--fit-window` (medium DPI 108) or `--text-medium` |
+| Text **too big** after prior bump | DPI 112–120 / large Gtk/terminal from last pass | `--fit-window` or `--text-medium` (medium defaults); `--reset` if huge |
 | Seamless reverts / no panel | Wayland session or `VBoxClient --seamless` dead | `ctg-seamless-guest.sh`; GDM `WaylandEnable=false` |
 
 **Detect:** `bash /mnt/ctg/ctg-display-scale.sh --diagnose-only`  
@@ -45,9 +46,9 @@ Defensive operators should know **which layer** they are tuning — mis-tuning t
 | 1 — Host viewport | VM window, `GUI/AutoresizeGuest`, `GUI/Scale`, `LastGuestSizeHint` | `Start-KaliSeamless.ps1 -DisplayMode **Gui**` (`Scale=false`) | **Scaled** + guest DPI 144 → entire UI huge |
 | 2 — GA autoresize | `VBoxClient --vmsvga` / `--display` | Started by `--fit-window` | Stale GA → guest stops tracking window |
 | 3 — X11 geometry | `xrandr --auto`, downscale if >2560×1600 | `--fit-window` only; **never** largest mode | Forcing oversized modes → cut-off |
-| 4 — Xft DPI | `xfconf-query` `/Xft/DPI` | **112** default; **120** if width &lt;1400px | Reset to **96** after geometry fix → text tiny again |
-| 5 — Toolkit fonts | Gtk `FontName`, xfce4-terminal profiles | Sans **12**, Monospace **14** (fit-window) | Changing layer 3 instead of 4–5 |
-| 6 — Panel (optional) | `xfce4-panel` size 34–36 | Modest bump with fit-window / `--text-large` | `--aggressive` panel 48 with host Scaled |
+| 4 — Xft DPI | `xfconf-query` `/Xft/DPI` | **108** (medium — between 96 and 120) | Reset to **96** → tiny; 120+ without need → huge |
+| 5 — Toolkit fonts | Gtk `FontName`, xfce4-terminal profiles | Sans **11**, Monospace **12** (`--fit-window` / `--text-medium`) | Changing layer 3 instead of 4–5 |
+| 6 — Panel (optional) | `xfce4-panel` size ~30 | Default with medium; **36** only for `--text-large` | `--aggressive` panel 48 with host Scaled |
 
 **Why text got small again after fit-window:** geometry fit (`xrandr --auto` + VBoxClient) succeeded, but a prior **`--reset`**, fresh profile, or an older script pass left **Xft/DPI at 96** and terminal fonts at 10–11pt. Fit-window must apply **both** geometry and the text layer every login (autostart).
 
@@ -65,25 +66,31 @@ sudo bash /media/sf_ctg-backups/ctg-mount-share.sh
 bash /mnt/ctg/ctg-display-scale.sh --reset
 ```
 
-**3. Fit window + readable fonts** (after Xfce login — **default**; geometry + text):
+**3. Fit window + medium fonts** (after Xfce login — **default**; geometry + text; **persists** in `~/.config/xfce4`):
 
 ```bash
 bash /mnt/ctg/ctg-display-scale.sh --fit-window
 ```
 
-**4. Extra text bump for Andy** (geometry unchanged — use when step 3 still feels small):
+**4. Medium text only** (geometry unchanged — re-apply saved medium tier):
+
+```bash
+bash /mnt/ctg/ctg-display-scale.sh --text-medium
+```
+
+**5. Larger text** (when medium still feels small):
 
 ```bash
 bash /mnt/ctg/ctg-display-scale.sh --text-large
 ```
 
-**5. Lighter text-only** (optional, after step 3):
+**6. Smaller text** (lighter than medium):
 
 ```bash
 bash /mnt/ctg/ctg-display-scale.sh --fonts-only
 ```
 
-**6. Windows host** — windowed autoresize, not Scaled:
+**7. Windows host** — windowed autoresize, not Scaled:
 
 ```powershell
 cd c:\Users\Owner\Projects\cyberThreatGotchi
@@ -103,9 +110,9 @@ bash /mnt/ctg/ctg-display-scale.sh --diagnose-only
 
 The **cut-off** symptom almost always means the **guest framebuffer exceeds the VM window**, not that fonts are too large. VirtualBox saves `GUI/LastGuestSizeHint` from prior sessions; values like **3428×1660** (logical pixels on a 150% Windows display) push `xrandr` beyond the visible window. An older CTG path also picked the **largest** xrandr mode in `ctg-seamless-guest.sh`, which worsened clipping. Layered on top, **Xft DPI 120–144** with host **Scaled** mode makes the entire chrome look blown out.
 
-**Text too small after fit-window** is a **different layer**: resolution now matches the window, but **DPI 96** and 10–11pt fonts remain. `--fit-window` now sets **DPI 112** (120 if guest width &lt;1400px), **Sans 12**, **Monospace 14**, and optional panel size — without forcing oversized xrandr modes. For a stronger bump without touching geometry: **`--text-large`** (DPI 120, Sans 13, Monospace 15).
+**Text too small after fit-window** is layer 4–5: **DPI 96** remains. **Medium** defaults (autorun every login): **DPI 108**, **Sans 11**, **Monospace 12** — between tiny 96 and large 120/14pt. **Persist:** `xfconf-query` writes `~/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml` (and terminal profiles); **`/etc/xdg/autostart/ctg-display-scale.desktop`** after `kali-boot-autopatch.sh --install` re-applies `--fit-window` at login.
 
-Fix order: **host Gui + clear hint → guest `--fit-window` → `--text-large` if needed** (not `--aggressive` with host Scaled).
+Fix order: **host Gui → `--fit-window`** (medium). If still small: **`--text-large`**. If too big: **`--text-medium`** or **`--fit-window`** again (not `--aggressive` with host Scaled).
 
 ## What the scripts do
 
@@ -113,14 +120,17 @@ Fix order: **host Gui + clear hint → guest `--fit-window` → `--text-large` i
 
 | Flag | Behavior |
 |------|----------|
-| *(default)* / `--fit-window` | `VBoxClient` autoresize; `xrandr --auto`; downscale if >2560×1600; Xft DPI **112** ( **120** if width &lt;1400); Gtk **Sans 12**; terminal **Monospace 14**; panel ~34; **never** oversized resolution |
-| `--text-large` | Text layer only: DPI **120**, Sans **13**, Monospace **15**, panel ~36 — no xrandr upscale |
-| `--fonts-only` | Lighter DPI/fonts only; minimal xrandr (`--auto`); use after `--fit-window` |
+| *(default)* / `--fit-window` | `VBoxClient` + `xrandr` fit; medium DPI **108**, Sans **11**, Monospace **12**, panel **30**; xfconf **saved**; **never** oversized resolution |
+| `--text-medium` | Medium text only (same values as fit-window fonts); no geometry change |
+| `--text-large` | Larger: DPI **120**, Sans **13**, Monospace **15**, panel ~36 |
+| `--fonts-only` | Smaller: DPI **105**, Sans **10**, Monospace **11** |
 | `--reset` | DPI **96**, default fonts, `xrandr --auto`, panel size 30 |
 | `--aggressive` | Legacy: DPI 120/144, panel scale — **not** with host Scaled |
 | `--diagnose-only` | Resolution, DPI, fonts, VBoxClient, cut-off warnings |
 
-Autostart at login: `ctg-display-scale.sh --fit-window` (sleep 2, **before** seamless autostart).
+Autostart at login: `ctg-display-scale.sh --fit-window` (medium fonts; sleep 2, **before** seamless).
+
+**Persist / save:** xfconf in `~/.config/xfce4/`; system autostart `/etc/xdg/autostart/ctg-display-scale.desktop` via `sudo bash /mnt/ctg/kali-boot-autopatch.sh --install`; per-user copy in `~/.config/autostart/` when script runs as desktop user or root.
 
 ### Autorun chain (next GUI login)
 
@@ -168,7 +178,8 @@ Do **not** use `-DisplayMode Scaled` when the problem is cut-off or blown-out de
 | `No graphical (:N) desktop user` | Log into **Xfce GUI** first |
 | Still cut off after fit-window | Host `-DisplayMode Gui`; resize VM window once; re-run `--fit-window` |
 | Still huge | `--reset` then `--fit-window`; avoid Scaled + DPI ≥144 |
-| Text still small after fit | `--text-large` or re-run `--fit-window` (confirms DPI/fonts, not just xrandr) |
+| Text too big | `--fit-window` or `--text-medium` (DPI 108); avoid re-running `--text-large` |
+| Text still small after fit | `--text-large`; or `--fonts-only` only if medium is too big |
 | Seamless breaks display | Run `--fit-window` **before** `ctg-seamless-guest.sh` |
 
 Open a **new** terminal window after font changes.

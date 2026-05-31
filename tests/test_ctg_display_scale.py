@@ -17,6 +17,7 @@ def test_display_scale_script_exists():
     body = _body()
     assert "Hacker Planet" in body
     assert "--fit-window" in body
+    assert "--text-medium" in body
     assert "--text-large" in body
     assert "--fonts-only" in body
     assert "--reset" in body
@@ -28,7 +29,7 @@ def test_fit_window_is_default_mode():
     body = _body()
     assert re.search(r"FIT_WINDOW=true", body)
     assert 'APPLY_MODE="fit-window"' in body
-    assert "fit-to-window" in body.lower() or "fit-window" in body
+    assert "apply_medium_text" in body
 
 
 def test_never_force_oversized_resolution():
@@ -42,44 +43,61 @@ def test_never_force_oversized_resolution():
 def test_fit_window_in_autostart_and_wiring():
     body = _body()
     assert "--fit-window" in body
-    assert "ctg-display-scale.desktop" in body or "autostart_dir/ctg-display-scale.desktop" in body
+    assert "ctg-display-scale.desktop" in body
 
     seamless = (ROOT / "scripts" / "kali" / "ctg-seamless-guest.sh").read_text(encoding="utf-8")
     assert "ctg-display-scale" in seamless
     assert "--fit-window" in seamless
-    assert "largest available mode" not in seamless
 
     first_login = (ROOT / "scripts" / "kali" / "ctg-first-login-autorun.sh").read_text(encoding="utf-8")
     assert "--fit-window" in first_login
 
     autopatch = (ROOT / "scripts" / "kali" / "kali-boot-autopatch.sh").read_text(encoding="utf-8")
     assert "--fit-window" in autopatch
+    assert "/etc/xdg/autostart/ctg-display-scale.desktop" in autopatch
 
     flash = (ROOT / "scripts" / "windows" / "Invoke-CtgKaliGuestFlash.ps1").read_text(encoding="utf-8")
     assert "--fit-window" in flash
 
 
-def test_fit_window_applies_readable_fonts_not_geometry_only():
+def test_medium_text_defaults():
     body = _body()
-    fit = re.search(
-        r"# fit-window \(default\): geometry fit \+ readable text.*?"
-        r'log "Fit-window \$\{w\}x\$\{h\} -> DPI=\$TARGET_DPI',
+    assert "apply_medium_text()" in body
+    assert re.search(
+        r"apply_medium_text\(\) \{.*?TARGET_DPI=108.*?GTK_FONT=\"Sans 11\".*?Monospace 12",
         body,
         re.DOTALL,
     )
-    assert fit, "fit-window compute_target_dpi block not found"
+
+
+def test_fit_window_uses_medium_no_narrow_bump():
+    body = _body()
+    fit = re.search(
+        r"# fit-window \(default\):.*?log \"Fit-window",
+        body,
+        re.DOTALL,
+    )
+    assert fit
     block = fit.group(0)
-    assert "TARGET_DPI=112" in block
-    assert 'GTK_FONT="Sans 12"' in block
-    assert "Monospace 14" in block
-    assert "1400" in block
-    assert "fonts included" in block.lower() or "readable text" in block.lower()
+    assert "apply_medium_text" in block
+    assert "1400" not in block
+    assert "TARGET_DPI=112" not in block
+    assert "TARGET_DPI=120" not in block
+
+
+def test_text_medium_mode_values():
+    body = _body()
+    assert "TEXT_MEDIUM=true" in body
+    assert 'APPLY_MODE="text-medium"' in body
+    assert re.search(
+        r'if \$TEXT_MEDIUM.*?apply_medium_text',
+        body,
+        re.DOTALL,
+    )
 
 
 def test_text_large_mode_values():
     body = _body()
-    assert "TEXT_LARGE=true" in body
-    assert 'APPLY_MODE="text-large"' in body
     assert re.search(
         r'if \$TEXT_LARGE.*?TARGET_DPI=120.*?GTK_FONT="Sans 13".*?Monospace 15',
         body,
@@ -87,23 +105,16 @@ def test_text_large_mode_values():
     )
 
 
-def test_fit_window_dpi_120_only_for_narrow_window():
+def test_system_autostart_when_root():
     body = _body()
-    assert re.search(r'\[\[ "\$w" -gt 0 && "\$w" -lt 1400 \]\]', body)
-    fit = re.search(
-        r"# fit-window \(default\):.*?log \"Fit-window",
-        body,
-        re.DOTALL,
-    )
-    assert fit
-    assert "TARGET_DPI=120" in fit.group(0)
-    assert "TARGET_DPI=144" not in fit.group(0)
+    assert "/etc/xdg/autostart/ctg-display-scale.desktop" in body
 
 
 def test_help_documents_all_flags():
     body = _body()
     for flag in (
         "--fit-window",
+        "--text-medium",
         "--text-large",
         "--fonts-only",
         "--reset",

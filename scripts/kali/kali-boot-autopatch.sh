@@ -164,6 +164,19 @@ XEOF
         log "Xorg vboxguest conf present: $xorg_conf"
     fi
     install -d -m 0755 /etc/xdg/autostart
+    local scale_autostart=/etc/xdg/autostart/ctg-display-scale.desktop
+    cat >"$scale_autostart" <<'DESK'
+[Desktop Entry]
+Type=Application
+Name=CTG Display Scale
+Comment=CTG lab — fit-window medium fonts + VBoxClient at login (before seamless)
+Exec=sh -c 'sleep 2; bash /mnt/ctg/ctg-display-scale.sh --fit-window 2>/dev/null || bash /opt/ctg/ctg-display-scale.sh --fit-window 2>/dev/null || true'
+X-GNOME-Autostart-Delay=2
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
+DESK
+    chmod 644 "$scale_autostart"
+    log "Installed $scale_autostart (--fit-window medium DPI 108; persists via xfconf)"
     local autostart=/etc/xdg/autostart/vboxclient-seamless.desktop
     cat >"$autostart" <<'DESK'
 [Desktop Entry]
