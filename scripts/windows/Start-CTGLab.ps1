@@ -1,5 +1,5 @@
-﻿# CyberThreatGotchi - master CTG Lab autorun (Windows host).
-# Authorized defensive lab use only - Hacker Planet LLC Â· Philadelphia, PA.
+# CyberThreatGotchi - master CTG Lab autorun (Windows host).
+# Authorized defensive lab use only - Hacker Planet LLC · Philadelphia, PA.
 # Orchestrates: Defender pause (optional), DDG preserve, Kali deploy, Wireshark, OPNsense stub.
 param(
     [switch]$SkipDefender,

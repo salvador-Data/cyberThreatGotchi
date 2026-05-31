@@ -19,11 +19,11 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 | Wi-Fi repair | **Manual (Admin)** | Wi-Fi disconnected; DDG VPN up â€” run `Repair-WindowsWifi.ps1 -ApplyFixes` elevated |
 | Kali SSH autopatch | **Manual (TTY)** | If 127.0.0.1:2222 fails: `sudo bash /mnt/ctg/RUN-KALI-LAB-NOW.sh` |
 | Vault secrets | **Manual** | `Protect-CtgSecrets.ps1 -SetSecret` for KALI_SSH_* (never in git) |
-| pytest + push | **Done when green** | Run `pytest tests\ -q` then commit/push main + split repos |
-| RETBleed host ``--spec-ctrl on`` | **Done (host)** | ``Harden-KaliVmSpectre.ps1`` applied — **reboot Kali**, then ``bash /mnt/ctg/ctg-retbleed-check.sh`` |
+| pytest + push | **Done** | 322 passed (2026-05-31); main `b2bc90f`+ pending savestate commit |
+| RETBleed `--spec-ctrl on` | **Done (live)** | VBox `<SpecCtrl enabled="true"/>` — **reboot Kali**, then `bash /mnt/ctg/ctg-retbleed-check.sh` |
 | Seamless menu glitch | **Manual (guest)** | ``bash /mnt/ctg/ctg-seamless-guest.sh`` if needed; host: ``Start-KaliSeamless.ps1 -DiagnoseOnly`` |
 
-**Seamless root cause (2026-05-31 diagnose):** VM `kali` running, Guest Additions 7.0.14 OK, VRAM 128 VMSVGA OK, `GUI/Seamless=on` â€” **no graphical login** (`DesktopReady: False`). Fix: log in at Kali console, optional `bash /mnt/ctg/ctg-seamless-guest.sh`, then Host+L.
+**Seamless (2026-05-31 live):** VM **running headless** — `DesktopReady: False` (log in at Kali GUI). After login: `Start-KaliSeamless.ps1` (GUI session) or **Host+L**; if menu reverts: `bash /mnt/ctg/ctg-seamless-guest.sh`. **spec-ctrl:** ON (`Harden-KaliVmSpectre.ps1 -DiagnoseOnly`).
 
 **CPU diagnose (Andy laptop):** Intel i9-8950HK, likely laptop, High performance plan active â€” **script OC: N**; manual BIOS/XTU only if desired.
 
