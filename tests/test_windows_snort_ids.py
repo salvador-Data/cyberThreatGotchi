@@ -78,7 +78,7 @@ def test_start_script_flags_and_sms_format():
         "ApplyRules",
         "TestAlert",
         "CTG Snort:",
-        "Send-CtgSmsAlert.ps1",
+        "Send-CtgIdsAlert.ps1",
         "snort-sid-",
         "UseWiresharkFallback",
         "logs\\snort",

@@ -25,6 +25,10 @@ Defensive coding and deployment practices for Hacker Planet LLC projects.
 | `TWILIO_AUTH_TOKEN` | Twilio auth token for SMS alerts |
 | `TWILIO_FROM_NUMBER` | Twilio sender number (E.164) |
 | `CTG_ALERT_SMS_TO` | Destination mobile for CTG SOC SMS (E.164). **Prefer** DPAPI `CTG_PII_PHONE` with `-UseSecretVault`; legacy: local `.env` or vault `-SetSecret -Name CTG_ALERT_SMS_TO` |
+| `CTG_ALERT_SIGNAL_TO` | Destination for Signal alerts (E.164 or uuid). **Prefer** DPAPI `CTG_PII_PHONE`; see [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md) |
+| `CTG_SIGNAL_CLI_PATH` | Path to signal-cli binary (Windows SOC) |
+| `CTG_SIGNAL_CONFIG_DIR` | Gitignored signal-cli account data directory |
+| `CTG_USE_TWILIO` | Set to `1` to prefer Twilio SMS over Signal |
 
 ### DPAPI PII vault (Windows SOC — not env vars)
 
@@ -44,7 +48,9 @@ Free stack orchestration: `scripts/windows/README_WINDOWS_SOC.md`. Scripts use e
 
 Wireshark IDS + Twilio SMS: [WIRESHARK_IDS_SMS.md](WIRESHARK_IDS_SMS.md) — capture and heuristics on Windows; full IPS remains OPNsense Suricata.
 
-Windows Snort IDS (detect-only, Snort 2.9.x + Npcap): [WINDOWS_SNORT_IDS_SMS.md](WINDOWS_SNORT_IDS_SMS.md) — passive Snort on Win11 Pro with SMS on high severity; Snort 3 is Linux-only; fallback to Wireshark IDS when binary unavailable.
+Windows Snort IDS (detect-only, Snort 2.9.x + Npcap): [WINDOWS_SNORT_IDS_SMS.md](WINDOWS_SNORT_IDS_SMS.md) — passive Snort on Win11 Pro with Signal/SMS on high severity; Snort 3 is Linux-only; fallback to Wireshark IDS when binary unavailable.
+
+Signal IDS alerts (signal-cli): [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md) — preferred free alert channel for Snort/Suricata; Twilio SMS fallback via `CTG_USE_TWILIO=1`.
 
 Free IPS (Suricata-primary): [FREE_IPS_SURICATA.md](FREE_IPS_SURICATA.md) — recommended free IPS path (Kali + OPNsense); Windows Suricata MSI detect-only + Kali EVE SMS bridge; Twilio via local `.env` only.
 

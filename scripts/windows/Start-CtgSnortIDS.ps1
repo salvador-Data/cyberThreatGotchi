@@ -4,17 +4,18 @@
 
 .DESCRIPTION
   Runs Snort 2.9.x in passive IDS mode on selected interface. Logs to Backups\logs\snort\.
-  High/critical alerts trigger Send-CtgSmsAlert.ps1 (15 min rate limit per rule SID).
+  High/critical alerts trigger Send-CtgIdsAlert.ps1 (Signal preferred; Twilio fallback).
+  Rate limit: one alert per rule SID per 15 minutes.
   Snort 3 is Linux-only; use -UseWiresharkFallback when Snort binary unavailable.
 
 .PARAMETER DiagnoseOnly
-  Verify Snort, Npcap, config, Twilio env, paths.
+  Verify Snort, Npcap, config, Signal/Twilio env, paths.
 
 .PARAMETER ApplyRules
   Redeploy CTG snort.conf and sync rules from C:\Snort\rules.
 
 .PARAMETER TestAlert
-  Send test SMS via Send-CtgSmsAlert.ps1 (no live Snort required).
+  Send test alert via Send-CtgIdsAlert.ps1 (Signal preferred; no live Snort required).
 
 .PARAMETER Interface
   Npcap interface index (snort -W). Default: auto Wi-Fi/Ethernet.
@@ -45,12 +46,15 @@ param(
     [string] $Interface = '',
     [int] $RunMinutes = 60,
     [switch] $NoSms,
+    [switch] $UseSignal,
+    [switch] $UseTwilio,
     [switch] $UseWiresharkFallback
 )
 
 $ErrorActionPreference = 'Continue'
 . (Join-Path $PSScriptRoot 'CTG-AdminCommon.ps1')
 . (Join-Path $PSScriptRoot 'CTG-SnortCommon.ps1')
+. (Join-Path $PSScriptRoot 'CTG-SignalCommon.ps1')
 
 $repo = Get-CtgRepoRoot
 Import-CtgDotEnv -EnvPath (Join-Path $repo '.env')
@@ -94,11 +98,13 @@ function Invoke-CtgSnortDiagnose {
     Write-IdsLog "Config: $($paths.ConfFile) exists=$(Test-Path $paths.ConfFile)"
     Write-IdsLog "Alert log: $($paths.AlertLog)"
     Write-IdsLog "IDS log: $($paths.IdsLog)"
+    Write-IdsLog "Signal configured: $(Test-CtgSignalConfigured)"
     $twilioOk = @(
         $env:TWILIO_ACCOUNT_SID, $env:TWILIO_AUTH_TOKEN,
         $env:TWILIO_FROM_NUMBER, $env:CTG_ALERT_SMS_TO
     ) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
     Write-IdsLog "Twilio configured: $($twilioOk.Count -eq 4)"
+    Write-IdsLog "Alert channel: $(if (Test-CtgUseTwilioPreferred) { 'Twilio (CTG_USE_TWILIO=1)' } elseif (Test-CtgSignalConfigured) { 'Signal (default)' } else { 'Twilio fallback if set' })"
     Write-IdsLog "DiagnoseOnly: $(if ($ok) { 'PASS' } else { 'FAIL' })"
     return $ok
 }
@@ -120,16 +126,23 @@ function Invoke-CtgApplyRules {
     }
 }
 
-function Invoke-CtgTestSms {
-    $smsScript = Join-Path $PSScriptRoot 'Send-CtgSmsAlert.ps1'
-    $label = Get-CtgIfaceLabel -Idx $iface
-    $msg = "CTG Snort: [info] test sid 9000001 on $label - review log"
-    Write-IdsLog "Sending test SMS: $msg" 'Cyan'
-    & $smsScript -AlertType 'snort-test' -Severity 'info' -Message $msg -TestMessage
+function Invoke-CtgTestAlert {
+    $alertScript = Join-Path $PSScriptRoot 'Send-CtgIdsAlert.ps1'
+    $msg = 'CTG Snort: [info] sid 9000001 — review log'
+    Write-IdsLog "Sending test alert: $msg" 'Cyan'
+    $args = @{
+        AlertType   = 'snort-test'
+        Severity    = 'info'
+        Message     = $msg
+        TestMessage = $true
+    }
+    if ($UseSignal) { $args['UseSignal'] = $true }
+    if ($UseTwilio) { $args['UseTwilio'] = $true }
+    & $alertScript @args
     exit $LASTEXITCODE
 }
 
-function Invoke-CtgSnortSms {
+function Invoke-CtgSnortAlert {
     param(
         [object] $Alert,
         [string] $IfaceLabel
@@ -137,11 +150,17 @@ function Invoke-CtgSnortSms {
     if ($NoSms) { return }
     if ($Alert.Severity -notin @('high', 'critical')) { return }
     $sid = if ($Alert.Sid) { $Alert.Sid } else { 'unknown' }
-    $smsScript = Join-Path $PSScriptRoot 'Send-CtgSmsAlert.ps1'
-    $msg = "CTG Snort: [$($Alert.Severity)] rule $sid on $IfaceLabel - review log"
+    $alertScript = Join-Path $PSScriptRoot 'Send-CtgIdsAlert.ps1'
+    $msg = "CTG Snort: [$($Alert.Severity)] sid $sid — review log"
     $alertType = "snort-sid-$sid"
-    & $smsScript -AlertType $alertType -Severity $Alert.Severity -Message $msg 2>&1 |
-        ForEach-Object { Write-IdsLog $_ }
+    $args = @{
+        AlertType = $alertType
+        Severity  = $Alert.Severity
+        Message   = $msg
+    }
+    if ($UseSignal) { $args['UseSignal'] = $true }
+    if ($UseTwilio) { $args['UseTwilio'] = $true }
+    & $alertScript @args 2>&1 | ForEach-Object { Write-IdsLog $_ }
 }
 
 function Invoke-CtgProcessNewAlerts {
@@ -152,7 +171,7 @@ function Invoke-CtgProcessNewAlerts {
     foreach ($alert in $newAlerts) {
         Write-IdsLog "ALERT [$($alert.Severity)] sid=$($alert.Sid) $($alert.Message)" `
             $(if ($alert.Severity -in @('high','critical')) { 'Red' } else { 'Yellow' })
-        Invoke-CtgSnortSms -Alert $alert -IfaceLabel $IfaceLabel
+        Invoke-CtgSnortAlert -Alert $alert -IfaceLabel $IfaceLabel
         $allAlerts += [ordered]@{
             alert_type = 'snort_alert'
             severity   = $alert.Severity
@@ -221,7 +240,7 @@ Write-Host ' CTG Snort IDS (detect-only lab)' -ForegroundColor Cyan
 Write-Host '========================================' -ForegroundColor Cyan
 
 if ($TestAlert) {
-    Invoke-CtgTestSms
+    Invoke-CtgTestAlert
 }
 
 if ($DiagnoseOnly) {

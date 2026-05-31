@@ -8,7 +8,7 @@
 |------------|---------------------|------------------------|
 | Network IDS | Snort **2.9.x** detect-only on Npcap interface | **Suricata on OPNsense** (perimeter) |
 | Snort 3 | **Not available** on Windows (roadmap item) | Kali / Linux / OPNsense |
-| SMS alerts | Twilio via local `.env` / DPAPI vault | Same |
+| SMS alerts | **Signal preferred** ([SIGNAL_ALERTS.md](SIGNAL_ALERTS.md)); Twilio fallback via local `.env` / DPAPI vault | Same |
 | IPS inline block | **Not in this stack** — detect + alert only | OPNsense Suricata blocking mode |
 | Fallback | `-UseWiresharkFallback` → tshark heuristics | Wireshark IDS doc |
 
@@ -27,6 +27,15 @@ Cisco Snort 3 targets Linux with CMake/DDAQ builds. The official Windows path re
 
 ## Environment variables (local `.env` only — never commit)
 
+**Preferred:** Signal via [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md) — free, E2E, no Twilio billing.
+
+```env
+CTG_SIGNAL_CLI_PATH=C:\Users\Owner\AppData\Local\Programs\signal-cli\signal-cli.exe
+CTG_ALERT_SIGNAL_TO=+1XXXXXXXXXX
+```
+
+Twilio SMS fallback (optional — set `CTG_USE_TWILIO=1` to prefer SMS):
+
 Add to `C:\Users\Owner\Projects\cyberThreatGotchi\.env` (gitignored):
 
 ```env
@@ -42,7 +51,7 @@ Replace `+1XXXXXXXXXX` with your mobile in E.164 format. **Prefer** DPAPI vault 
 .\scripts\windows\Protect-CtgSecrets.ps1 -SetPii -Name CTG_PII_PHONE
 ```
 
-Then use `Send-CtgSmsAlert.ps1 -UseSecretVault` (Start-CtgSnortIDS uses `.env` by default; vault is available on the SMS script).
+Then use `Send-CtgSmsAlert.ps1 -UseSecretVault` or `Send-CtgIdsAlert.ps1 -UseSecretVault` (IDS scripts use the dispatcher; Signal preferred when configured).
 
 ## Install (Administrator PowerShell — one command per block)
 
@@ -82,7 +91,7 @@ This deploys `Backups\ctg-snort\etc\snort.conf` and syncs rules from `C:\Snort\r
 
 ## Start monitoring
 
-Diagnose Snort + Twilio env:
+Diagnose Snort + Signal/Twilio env:
 
 ```powershell
 .\scripts\windows\Start-CtgSnortIDS.ps1 -DiagnoseOnly
@@ -106,13 +115,27 @@ Wireshark fallback when Snort binary missing:
 .\scripts\windows\Start-CtgSnortIDS.ps1 -UseWiresharkFallback -RunMinutes 15
 ```
 
-## SMS test (no attack traffic)
+## Alert test (no attack traffic)
+
+Signal or SMS via dispatcher (Signal preferred when linked):
 
 ```powershell
 .\scripts\windows\Start-CtgSnortIDS.ps1 -TestAlert
 ```
 
+Force Signal:
+
+```powershell
+.\scripts\windows\Start-CtgSnortIDS.ps1 -TestAlert -UseSignal
+```
+
 Or directly:
+
+```powershell
+.\scripts\windows\Send-CtgIdsAlert.ps1 -TestMessage -UseSecretVault
+```
+
+Twilio-only test:
 
 ```powershell
 .\scripts\windows\Send-CtgSmsAlert.ps1 -TestMessage
@@ -138,15 +161,15 @@ Unregister:
 .\scripts\windows\Register-CtgSnortIdsTask.ps1 -Unregister
 ```
 
-## SMS alert format
+## Alert format
 
 High/critical Snort alerts send a short message (no payloads, no PII):
 
 ```text
-[CTG-high] CTG Snort: [high] rule 1000001 on Wi-Fi — review log
+CTG Snort: [high] sid 1000001 — review log
 ```
 
-Rate limit: **one SMS per rule SID per 15 minutes** (`Send-CtgSmsAlert.ps1`).
+Rate limit: **one alert per rule SID per 15 minutes** (`Send-CtgIdsAlert.ps1` / shared rate file).
 
 ## What gets saved
 
@@ -157,7 +180,7 @@ Rate limit: **one SMS per rule SID per 15 minutes** (`Send-CtgSmsAlert.ps1`).
 | `%USERPROFILE%\Backups\logs\snort\alert` | Snort alert_fast log |
 | `%USERPROFILE%\Backups\logs\snort\snort-ids.log` | CTG orchestration log |
 | `%USERPROFILE%\Backups\logs\snort\snort-alerts.json` | Structured alert history |
-| `%USERPROFILE%\Backups\logs\sms-rate-limit.json` | SMS rate-limit state |
+| `%USERPROFILE%\Backups\logs\sms-rate-limit.json` | Alert rate-limit state (Signal + SMS) |
 
 When SSD **D:** is online, paths use `D:\Backups\` instead.
 
@@ -168,23 +191,26 @@ When SSD **D:** is online, paths use `D:\Backups\` instead.
 | DE.CM-1 | Network monitoring via Snort detect-only on authorized interface |
 | DE.AE-2 | Alert analysis — review `snort\alert` and JSON, correlate with Wireshark/Kali Suricata |
 | PR.PT-1 | Npcap + Snort on hardened Win11 Pro host; secrets in `.env`/vault only |
-| RS.AN-1 | SMS notifies analyst; full forensics from local logs (no payload in SMS) |
+| RS.AN-1 | Signal/SMS notifies analyst; full forensics from local logs (no payload in alert) |
 
 ## Related scripts
 
 | Script | Role |
 |--------|------|
 | `Install-CtgSnortWindows.ps1` | Npcap/Snort diagnose, CTG config layout |
-| `Start-CtgSnortIDS.ps1` | Run Snort IDS, tail alerts, SMS |
+| `Start-CtgSnortIDS.ps1` | Run Snort IDS, tail alerts, Signal/SMS |
 | `ctg_snort_ids_loop.ps1` | Continuous monitoring loop |
 | `Register-CtgSnortIdsTask.ps1` | Logon scheduled task |
+| `Send-CtgIdsAlert.ps1` | Signal preferred; Twilio fallback |
+| `Send-CtgSignalAlert.ps1` | signal-cli alerts with rate limit |
+| `Install-CtgSignalCli.ps1` | signal-cli diagnose + link guide |
 | `Send-CtgSmsAlert.ps1` | Twilio SMS with rate limit |
 | `CTG-SnortCommon.ps1` | Shared paths/helpers |
 | `Start-CTGWiresharkIDS.ps1` | Fallback / parallel heuristics |
 
 ## Security notes
 
-- Never commit `.env`, Twilio tokens, or phone numbers
+- Never commit `.env`, Twilio tokens, phone numbers, or signal-cli account data
 - Snort on Windows is **detect-only** in this stack — no inline drop
 - Promiscuous WiFi capture depends on driver/Npcap — prefer Ethernet or Kali USB monitor for 802.11 lab
 - Full perimeter IPS: OPNsense + Suricata — see [README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)
