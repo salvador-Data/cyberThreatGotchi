@@ -27,6 +27,7 @@ param(
     [switch]$FullCpuMitigations,
     [int]$AcpiWaitSeconds = 180,
     [switch]$DiagnoseOnly,
+    [switch]$UseSaveStateOnTimeout,
     [switch]$WhatIf
 )
 
@@ -105,6 +106,16 @@ function Stop-CtgVmGraceful {
         }
     }
     Write-CtgCpuLog "ACPI shutdown timed out after ${WaitSec}s - VM still running; not forcing poweroff"
+    if ($UseSaveStateOnTimeout -and -not $WhatIf) {
+        Write-CtgCpuLog "ACPI timed out - saving VM state (savestate) so modifyvm can run"
+        & $VBoxManage controlvm $Name savestate 2>&1 | Out-Null
+        Start-Sleep -Seconds 5
+        if ((Get-CtgVmState -Name $Name -VBoxManage $VBoxManage) -ne 'running') {
+            Write-CtgCpuLog "VM stopped via savestate"
+            return $true
+        }
+        Write-CtgCpuLog "savestate did not stop VM - trying discardstate path may be needed"
+    }
     return $false
 }
 
@@ -198,6 +209,7 @@ if ($state -eq 'running') {
         Write-CtgCpuLog 'Re-run with -StopVmIfRunning (graceful ACPI shutdown) -StartAfter to apply and restart.'
         exit 1
     }
+    if ($StopVmIfRunning) { $UseSaveStateOnTimeout = $true }
     if (-not (Stop-CtgVmGraceful -Name $VmName -VBoxManage $VBoxManage -WaitSec $AcpiWaitSeconds)) {
         Write-CtgCpuLog 'VM did not stop gracefully - aborting (will not force poweroff). Save your work and shut down Kali, then re-run.'
         exit 1

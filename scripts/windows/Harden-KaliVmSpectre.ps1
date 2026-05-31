@@ -11,6 +11,7 @@ param(
     [switch]$FullCpuMitigations,
     [int]$AcpiWaitSeconds = 180,
     [switch]$DiagnoseOnly,
+    [switch]$UseSaveStateOnTimeout,
     [switch]$WhatIf
 )
 $helper = Join-Path $PSScriptRoot 'Harden-KaliVmCpu.ps1'

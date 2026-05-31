@@ -1,11 +1,12 @@
-# CyberThreatGotchi - master CTG Lab autorun (Windows host).
-# Authorized defensive lab use only - Hacker Planet LLC · Philadelphia, PA.
+﻿# CyberThreatGotchi - master CTG Lab autorun (Windows host).
+# Authorized defensive lab use only - Hacker Planet LLC Â· Philadelphia, PA.
 # Orchestrates: Defender pause (optional), DDG preserve, Kali deploy, Wireshark, OPNsense stub.
 param(
     [switch]$SkipDefender,
     [switch]$SkipOpnsense,
     [switch]$FullBootstrap,
     [switch]$WhatIf
+    [switch]$ApplySpectreHardening,
 )
 
 $ErrorActionPreference = 'Continue'
@@ -227,6 +228,24 @@ Write-CtgAutorunLog "Repo: $RepoRoot | Log: $LogFile | FullBootstrap: $FullBoots
 try {
     Invoke-CtgDefenderPauseIfNeeded
     Invoke-CtgDdgPreserve
+
+    if ($ApplySpectreHardening) {
+        $spectrePs1 = Join-Path $PSScriptRoot 'Harden-KaliVmSpectre.ps1'
+        if (Test-Path $spectrePs1) {
+            Write-CtgAutorunLog '=== Harden-KaliVmSpectre.ps1 (-ApplySpectreHardening) ==='
+            if ($WhatIf) {
+                Write-CtgAutorunLog '[WhatIf] Harden-KaliVmSpectre.ps1 -StopVmIfRunning -StartAfter -StartType Headless'
+            } else {
+                try {
+                    & $spectrePs1 -StopVmIfRunning -StartAfter -StartType Headless 2>&1 | ForEach-Object { Write-CtgAutorunLog "SpectreHarden: $_" }
+                } catch {
+                    Write-CtgAutorunLog "Spectre hardening warning (non-blocking): $($_.Exception.Message)"
+                }
+            }
+        } else {
+            Write-CtgAutorunLog 'Harden-KaliVmSpectre.ps1 not found - skip ApplySpectreHardening'
+        }
+    }
     Copy-CtgKaliScriptsToBackups
 
     $deployScript = Join-Path $PSScriptRoot 'Deploy-KaliLab.ps1'
