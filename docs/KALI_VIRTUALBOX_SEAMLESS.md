@@ -13,6 +13,12 @@ cd c:\Users\Owner\Projects\cyberThreatGotchi
 .\scripts\windows\Start-KaliSeamless.ps1
 ```
 
+Diagnose without changing the VM:
+
+```powershell
+.\scripts\windows\Start-KaliSeamless.ps1 -DiagnoseOnly
+```
+
 Log: `C:\Users\Owner\Backups\logs\kali-seamless.log`
 
 CTG Lab Playground option **7**, `Start-CTGLab.ps1`, and `Deploy-KaliLab.ps1 -StartVmIfStopped` all call this script for the **kali** VM.
@@ -34,8 +40,9 @@ Seamless is best when you want Kali terminals and browsers beside Windows Wiresh
 1. **Oracle VirtualBox** 6.1+ (7.x supported; script sets optional `GUI/SeamlessMode` extradata).
 2. **Guest Additions** in Kali — packages `virtualbox-guest-x11`, `virtualbox-guest-utils`, `dkms`.
 3. Guest logged in to a graphical session (GDM/X11; autopatch sets `WaylandEnable=false` for VirtualBox stability).
+4. **`GUI/Seamless=on` extradata** on the VM (set automatically by `Start-KaliSeamless.ps1`).
 
-Without Guest Additions, seamless start fails. The host script falls back to a normal GUI window and logs fix steps.
+Without Guest Additions or without a graphical login, seamless start fails. The host script falls back to a normal GUI window and logs fix steps. On VirtualBox 7.x there is no `controlvm seamless on` — use **Host+L** after login.
 
 ## Fix missing Guest Additions
 

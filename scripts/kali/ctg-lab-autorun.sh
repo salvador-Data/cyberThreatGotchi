@@ -134,6 +134,7 @@ log "DDG preserve: --preserve-ddg-dns ON by default — see docs/IPHONE_HARDENIN
 log "WiFi/Eth capture: docs/KALI_WIFI_ETH_PROMISC.md · config: /etc/ctg/lab-wifi.conf"
 log "IDS/IPS/ClamAV: docs/KALI_IDS_IPS_CLAMAV.md · logs: /var/log/ctg-snort/"
 log "SIEM stack: docs/KALI_SIEM_STACK.md · export: Backups/logs/siem/"
+log "VirtualBox seamless: host runs Start-KaliSeamless.ps1 after login — toggle Host+L (Right Ctrl+L)"
 if [[ "${CTG_NO_REBOOT:-}" != "1" ]]; then
     ctg_reboot_helper --auto-reboot
 else

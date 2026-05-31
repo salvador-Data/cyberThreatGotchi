@@ -131,6 +131,56 @@ disable_broken_ctg_profiled() {
     chmod 644 /etc/ctg/scrambler-manual-only
 }
 
+fix_virtualbox_seamless_guest() {
+    # Guest-side prerequisites for VirtualBox seamless (Host+L on Windows host).
+    # Host script Start-KaliSeamless.ps1 sets GUI/Seamless=on after desktop login.
+    # See docs/KALI_VIRTUALBOX_SEAMLESS.md
+    log "Phase: VirtualBox seamless guest (vboxservice, VBoxClient, X11 autostart)"
+    local svc
+    for svc in vboxadd-service vboxadd; do
+        if systemctl list-unit-files "${svc}.service" >/dev/null 2>&1; then
+            systemctl enable "${svc}.service" 2>/dev/null || true
+            systemctl start "${svc}.service" 2>/dev/null || true
+            log "systemctl: ${svc}.service enabled/started"
+        fi
+    done
+    if command -v VBoxClient >/dev/null 2>&1; then
+        log "VBoxClient present ($(VBoxClient --version 2>/dev/null || echo unknown))"
+    else
+        log "VBoxClient missing — virtualbox-guest-x11 not fully installed"
+    fi
+    install -d -m 0755 /etc/X11/xorg.conf.d
+    local xorg_conf=/etc/X11/xorg.conf.d/60-vboxguest.conf
+    if [[ ! -f "$xorg_conf" ]]; then
+        cat >"$xorg_conf" <<'XEOF'
+Section "Device"
+    Identifier "VBoxVideo"
+    Driver "vboxvideo"
+    Option "IgnoreDisplayDevices" "true"
+EndSection
+XEOF
+        log "Created $xorg_conf (VMSVGA seamless helper)"
+    else
+        log "Xorg vboxguest conf present: $xorg_conf"
+    fi
+    install -d -m 0755 /etc/xdg/autostart
+    local autostart=/etc/xdg/autostart/vboxclient-seamless.desktop
+    if [[ ! -f "$autostart" ]]; then
+        cat >"$autostart" <<'DESK'
+[Desktop Entry]
+Type=Application
+Name=VirtualBox Seamless Client
+Comment=CTG lab — enables Host+L seamless on Windows host
+Exec=/usr/bin/VBoxClient --seamless
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
+DESK
+        chmod 644 "$autostart"
+        log "Installed $autostart (VBoxClient --seamless at login)"
+    fi
+    log "Seamless toggle on Windows host: Host+L (Host key = Right Ctrl by default)"
+}
+
 fix_virtualbox_guest_packages() {
     # virtualbox-guest-x11 is required for VirtualBox seamless mode (Host+L on Windows).
     # See docs/KALI_VIRTUALBOX_SEAMLESS.md
@@ -419,6 +469,7 @@ UNITEOF
 preserve_ddg_dns
 disable_broken_ctg_profiled
 fix_virtualbox_guest_packages
+fix_virtualbox_seamless_guest
 if $DO_WIFI_LAB; then
     run_wifi_lab_autorun
 fi
@@ -447,3 +498,4 @@ if [[ "${CTG_SKIP_AUTO_REBOOT:-}" != "1" ]]; then
 fi
 log "GUI scrambler (manual): python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py"
 log "One-shot lab: sudo bash /mnt/ctg/ctg-lab-autorun.sh"
+log "Seamless (host): .\\scripts\\windows\\Start-KaliSeamless.ps1 — toggle Host+L after GNOME login"

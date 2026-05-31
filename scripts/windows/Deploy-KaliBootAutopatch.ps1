@@ -9,6 +9,8 @@ param(
     [int]$SshWaitSeconds = 180,
     [switch]$RunBlankScreenFix,
     [switch]$StartVmIfStopped,
+    [switch]$EnableSeamless,
+    [switch]$NoSeamless,
     [switch]$WhatIf
 )
 
@@ -341,6 +343,24 @@ Write-CtgDeployLog '=== Summary ==='
 Write-CtgDeployLog "VM: $VmName | state: $((Get-CtgVmState -Name $VmName).State)"
 Write-CtgDeployLog "Shared folder: $ShareName -> $BackupRoot"
 Write-CtgDeployLog "SSH ready: $sshReady | autopatch installed via SSH: $sshInstalled"
+
+$wantSeamless = $EnableSeamless -or (-not $NoSeamless)
+if ($wantSeamless -and (Get-CtgVmState -Name $VmName).State -eq 'running') {
+    $seamlessScript = Join-Path $PSScriptRoot 'Start-KaliSeamless.ps1'
+    if (Test-Path $seamlessScript) {
+        Write-CtgDeployLog '=== Start-KaliSeamless.ps1 (after autopatch — GUI/Seamless + Host+L) ==='
+        if ($WhatIf) {
+            Write-CtgDeployLog '[WhatIf] Start-KaliSeamless.ps1 -DiagnoseOnly'
+        } else {
+            try {
+                & $seamlessScript -DiagnoseOnly 2>&1 | ForEach-Object { Write-CtgDeployLog "SeamlessDiag: $_" }
+                & $seamlessScript 2>&1 | ForEach-Object { Write-CtgDeployLog "Seamless: $_" }
+            } catch {
+                Write-CtgDeployLog "Start-KaliSeamless warning (non-blocking): $($_.Exception.Message)"
+            }
+        }
+    }
+}
 
 if (-not $sshInstalled -and -not $sshReady) { exit 1 }
 exit 0
