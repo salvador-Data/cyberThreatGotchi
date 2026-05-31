@@ -20,8 +20,12 @@ def test_start_kali_seamless_script_exists():
     assert "Host+L" in text
     assert "Host+Home" in text
     assert "ShowMiniToolBar" in text
+    assert "MiniToolBarAutoHide" in text
+    assert "MiniToolBarAlignment" in text
+    assert "AutoresizeGuest" in text
     assert "DisplayMode" in text
     assert "Get-CtgGuiExtradataSnapshot" in text
+    assert "Set-CtgMiniToolbarExtradata" in text
     assert "kali-seamless.log" in text
     assert "kali-boot-autopatch.sh" in text
     assert "NoShowHostToolbar" in text
@@ -53,10 +57,16 @@ def test_seamless_doc_and_autopatch_note():
     mode_body = mode_doc.read_text(encoding="utf-8")
     assert "ShowMiniToolBar" in mode_body
     assert "Host+Home" in mode_body or "Host + Home" in mode_body
+    assert "Scaled" in mode_body
+    assert "AutoresizeGuest" in mode_body
 
     guest = KALI / "ctg-seamless-guest.sh"
     assert guest.is_file()
-    assert "VBoxClient" in guest.read_text(encoding="utf-8")
+    guest_body = guest.read_text(encoding="utf-8")
+    assert "VBoxClient" in guest_body
+    assert "--vmsvga" in guest_body
+    assert "autohide" in guest_body
+    assert "gsettings" in guest_body or "gnome" in guest_body.lower()
 
     autopatch = (KALI / "kali-boot-autopatch.sh").read_text(encoding="utf-8")
     assert "virtualbox-guest-x11" in autopatch

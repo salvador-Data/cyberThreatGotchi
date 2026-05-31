@@ -143,7 +143,7 @@ function Test-CtgExtradataTruthy {
 
 function Get-CtgGuiExtradataSnapshot {
     param([string]$Name, [string]$VBoxManage)
-    $keys = @('GUI/Seamless', 'GUI/SeamlessMode', 'GUI/ShowMiniToolBar', 'GUI/SuppressMessages', 'GUI/GlobalMenuBar')
+    $keys = @('GUI/Seamless', 'GUI/SeamlessMode', 'GUI/ShowMiniToolBar', 'GUI/MiniToolBarAutoHide', 'GUI/MiniToolBarAlignment', 'GUI/AutoresizeGuest', 'GUI/Scale', 'GUI/LastGuestSizeHint', 'GUI/SuppressMessages', 'GUI/GlobalMenuBar')
     $snap = [ordered]@{}
     foreach ($key in $keys) {
         $snap[$key] = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key $key
@@ -173,30 +173,52 @@ function Set-CtgHostToolbarExtradata {
     return $true
 }
 
+function Set-CtgExtradataPair {
+    param([string]$Name, [string]$VBoxManage, [string]$Key, [string]$Value)
+    if ($WhatIf) {
+        Write-CtgSeamlessLog ('[WhatIf] setextradata ' + $Name + ' ' + $Key + ' ' + $Value)
+        return
+    }
+    $result = Invoke-CtgVBoxManage -VBoxManage $VBoxManage -Arguments @('setextradata', $Name, $Key, $Value)
+    if ($result.Output.Trim()) { Write-CtgSeamlessLog $result.Output.Trim() }
+    Write-CtgSeamlessLog ("  extradata {0} = {1}" -f $Key, $Value)
+}
+
+function Set-CtgCommonGuiExtradata {
+    # Applied in every mode - autoresize prevents wrap/clip; mini-toolbar keys help full-screen.
+    param([string]$Name, [string]$VBoxManage)
+    if ($SkipExtradata) { return }
+    Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/AutoresizeGuest' -Value 'true'
+}
+
+function Set-CtgMiniToolbarExtradata {
+    param([string]$Name, [string]$VBoxManage)
+    if ($SkipExtradata -or $NoShowHostToolbar) { return }
+    Write-CtgSeamlessLog "Configuring mini toolbar (top, always visible) on $Name"
+    Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/ShowMiniToolBar' -Value 'true'
+    Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/MiniToolBarAutoHide' -Value 'false'
+    Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/MiniToolBarAlignment' -Value 'top'
+}
+
 function Set-CtgSeamlessExtradata {
     param([string]$Name, [string]$VBoxManage, [string]$Mode = 'Seamless')
     if ($SkipExtradata) { return $true }
+    Set-CtgCommonGuiExtradata -Name $Name -VBoxManage $VBoxManage
     if ($Mode -eq 'Scaled' -or $Mode -eq 'Gui') {
-        Write-CtgSeamlessLog "DisplayMode=$Mode - clearing GUI/Seamless (Host+L to re-enter seamless)"
-        if ($WhatIf) {
-            Write-CtgSeamlessLog ('[WhatIf] setextradata ' + $Name + ' GUI/Seamless off')
-            return $true
+        Write-CtgSeamlessLog "DisplayMode=$Mode - normal/scaled window with full menu bar + scrollbars (clearing GUI/Seamless)"
+        Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Seamless' -Value 'off'
+        if ($Mode -eq 'Scaled') {
+            Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Scale' -Value 'true'
+        } else {
+            # Normal windowed: real scrollbars when guest > window
+            Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Scale' -Value 'false'
         }
-        Invoke-CtgVBoxManage -VBoxManage $VBoxManage -Arguments @('setextradata', $Name, 'GUI/Seamless', 'off') | Out-Null
         return $true
     }
     Write-CtgSeamlessLog "Setting extradata GUI/Seamless=on on $Name (auto-enter when Guest Additions + desktop ready)"
-    if ($WhatIf) {
-        Write-CtgSeamlessLog ('[WhatIf] setextradata ' + $Name + ' GUI/Seamless on')
-        Write-CtgSeamlessLog ('[WhatIf] setextradata ' + $Name + ' GUI/SeamlessMode 1')
-        return $true
-    }
-    foreach ($pair in @(@('GUI/Seamless', 'on'), @('GUI/SeamlessMode', '1'))) {
-        $result = Invoke-CtgVBoxManage -VBoxManage $VBoxManage -Arguments @('setextradata', $Name, $pair[0], $pair[1])
-        if ($result.Output.Trim()) {
-            Write-CtgSeamlessLog $result.Output.Trim()
-        }
-    }
+    Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Seamless' -Value 'on'
+    Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/SeamlessMode' -Value '1'
+    if ($WhatIf) { return $true }
     $seamless = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Seamless'
     if (-not (Test-CtgExtradataTruthy -Value $seamless)) {
         Write-CtgSeamlessLog "WARNING: GUI/Seamless extradata is '$seamless' (expected on/true) - close other VBoxManage sessions and re-run"
@@ -279,6 +301,12 @@ function Get-CtgSeamlessDiagnostics {
     if (-not $NoShowHostToolbar -and -not (Test-CtgExtradataTruthy -Value $extradataMiniTb)) {
         $issues += "GUI/ShowMiniToolBar is '$extradataMiniTb' - host mini toolbar hidden; re-run without -NoShowHostToolbar"
     }
+    if ($DisplayMode -eq 'Seamless') {
+        $issues += 'Seamless mode hides ALL chrome (menu/toolbar/scrollbar); mini toolbar is unreliable in VB7 seamless. For a visible toolbar + scroll use -DisplayMode Scaled'
+    }
+    if (-not (Test-CtgExtradataTruthy -Value $guiExtra['GUI/AutoresizeGuest'])) {
+        $issues += "GUI/AutoresizeGuest is '$($guiExtra['GUI/AutoresizeGuest'])' - guest may wrap/clip; script sets this true"
+    }
     if ($vram -ne '128MB') { $issues += "VRAM is $vram (recommend 128MB - Fix-KaliBlankScreen.ps1)" }
     if ($gfx -notmatch 'VMSVGA|VBoxSVGA') { $issues += "Graphics controller is $gfx (recommend VMSVGA)" }
     if ($gaVer -and $ver.Raw -notmatch [regex]::Escape($gaVer.Split('.')[0])) {
@@ -302,6 +330,11 @@ function Get-CtgSeamlessDiagnostics {
         ExtradataSeamless = $extradataSeamless
         ExtradataMode  = $extradataMode
         ExtradataShowMiniToolBar = $extradataMiniTb
+        ExtradataMiniToolBarAutoHide = $guiExtra['GUI/MiniToolBarAutoHide']
+        ExtradataMiniToolBarAlignment = $guiExtra['GUI/MiniToolBarAlignment']
+        ExtradataAutoresizeGuest = $guiExtra['GUI/AutoresizeGuest']
+        ExtradataScale = $guiExtra['GUI/Scale']
+        ExtradataLastGuestSizeHint = $guiExtra['GUI/LastGuestSizeHint']
         ExtradataSuppressMessages = $guiExtra['GUI/SuppressMessages']
         ExtradataGlobalMenuBar = $guiExtra['GUI/GlobalMenuBar']
         DisplayModeParam = $DisplayMode
@@ -406,7 +439,11 @@ function Start-CtgKaliSeamless {
 
     Set-CtgSeamlessExtradata -Name $Name -VBoxManage $VBoxManage -Mode $Mode | Out-Null
     if (-not $NoShowHostToolbarParam) {
-        Set-CtgHostToolbarExtradata -Name $Name -VBoxManage $VBoxManage -Enable | Out-Null
+        Set-CtgMiniToolbarExtradata -Name $Name -VBoxManage $VBoxManage
+    }
+    if ($Mode -eq 'Seamless') {
+        Write-CtgSeamlessLog 'NOTE: Seamless mode shows NO menu/toolbar/scrollbar. The mini toolbar is unreliable in VB7 seamless.'
+        Write-CtgSeamlessLog 'For a visible toolbar + scrollbars use: Start-KaliSeamless.ps1 -DisplayMode Scaled (or -DisplayMode Gui)'
     }
 
     $state = Get-CtgVmState -Name $Name -VBoxManage $VBoxManage
