@@ -180,13 +180,19 @@ The **GDM3** (or **lightdm-gtk**) greeter runs **before** any user Xfce session,
 
 | Display manager | File | Change |
 |-----------------|------|--------|
-| **gdm3** / **gdm** | `/etc/gdm3/greeter.dconf-defaults` | `text-scaling-factor=1.15`, `cursor-size=12` |
+| **gdm3** / **gdm** | `/etc/gdm3/greeter.dconf-defaults` + `/etc/dconf/db/gdm.d/` | `text-scaling-factor=1.15`, `cursor-size=12`; `dconf update` + locks |
+| **gdm3** Init/PostSession | `/etc/gdm3/Init/Default/01-ctg-greeter-display` | `xrandr --auto` + `--greeter-session` every greeter (logout included) |
+| **gdm3** PostSession | `/etc/gdm3/PostSession/Default/01-ctg-greeter-host-refresh` | Writes `CTG_GREETER_REFRESH` on Backups share after logout |
 | **lightdm** (gtk greeter) | `/etc/lightdm/lightdm-gtk-greeter.conf.d/50-ctg-login-scale.conf` | `theme-font-name` / `clock-font-name` = Sans 12 |
 | **sddm** | `/etc/sddm.conf.d/50-ctg-login-scale.conf` | Theme font Sans 12 |
 
 Detection: `detect_ctg_display_manager()` in `ctg-display-scale.sh` (default-display-manager symlink + `systemctl is-enabled`). **Reboot or log out** to see greeter changes.
 
+**Logout greeter small again (root cause):** First boot applies host `setvideomodehint` + guest `--login-scale` once; after desktop login `GUI/LastGuestSizeHint` reflects the session (often oversized or drops to 800×600 on logout). CTG fixes: GDM **Init** re-runs `--greeter-session` on every greeter display; **PostSession** signals the host; `Watch-CtgGreeterLogout.ps1` (started by `Start-KaliSeamless.ps1 -DisplayMode Gui`) restores `CTG/GreeterSizeHint` and re-applies `setvideomodehint` when `LoggedInUsers` → 0.
+
 **Host (optional):** `-LoginWindowScale 1.25` bumps `setvideomodehint` while `LoggedInUsers=0` — enlarges the **whole** sign-in window. Skip when the box size is already good; use guest `--login-scale` for text only. Does not replace medium post-login fonts.
+
+**Host (recommended):** `-DisplayMode Gui` starts the greeter logout watcher and saves/restores greeter size hints across logouts.
 
 **Persist / save:** xfconf in `~/.config/xfce4/`; system autostart `/etc/xdg/autostart/ctg-display-scale.desktop` via `sudo bash /mnt/ctg/kali-boot-autopatch.sh --install`; per-user copy in `~/.config/autostart/` when script runs as desktop user or root.
 
@@ -203,6 +209,7 @@ Detection: `detect_ctg_display_manager()` in `ctg-display-scale.sh` (default-dis
 - **Gui** (recommended for cut-off / blown-out): `GUI/Scale=false`, seamless off
 - **Scaled**: `GUI/Scale=true` — pair with guest `--fit-window`, not `--aggressive`
 - Running VM + Gui: optional `setvideomodehint` from current hint (VB7 GA refresh)
+- **Gui/Scaled:** background `Watch-CtgGreeterLogout.ps1` — on logout (`LoggedInUsers=0`) or `CTG_GREETER_REFRESH`, clears stale `LastGuestSizeHint` and re-applies greeter `setvideomodehint`
 
 ## Permanent fix
 

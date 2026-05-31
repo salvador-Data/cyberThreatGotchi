@@ -39,6 +39,14 @@ def test_login_greeter_scale_gdm_and_dm_detect():
     assert "CTG_LOGIN_CURSOR_SIZE" in body
     assert "gdm_greeter_set_key" in body
     assert "50-ctg-login-scale.conf" in body
+    assert "compile_gdm_greeter_dconf" in body
+    assert "/etc/dconf/db/gdm.d" in body
+    assert "dconf update" in body
+    assert "gdm3/Init/Default" in body
+    assert "gdm3/PostSession/Default" in body
+    assert "--greeter-session" in body
+    assert "CTG_GREETER_REFRESH" in body
+    assert "run_greeter_session_refresh" in body
 
 
 def test_neon_cursor_assets_and_wiring():

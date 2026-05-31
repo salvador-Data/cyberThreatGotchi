@@ -132,6 +132,10 @@ def test_display_scale_script_and_wiring():
     assert "setvideomodehint" in ps1
     assert "LoginWindowScale" in ps1
     assert "DisplayMode Gui" in ps1 or "-DisplayMode Gui" in ps1
+    assert "Watch-CtgGreeterLogout" in ps1
+    assert "Invoke-CtgLoginGreeterRefresh" in ps1
+    assert "CTG/GreeterSizeHint" in ps1
+    assert "CTG_GREETER_REFRESH" in ps1
 
     doc = ROOT / "docs" / "KALI_DISPLAY_SCALING.md"
     assert doc.is_file()

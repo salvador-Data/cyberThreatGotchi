@@ -31,6 +31,7 @@ TEXT_LARGE=false
 TEXT_PLUS15=false
 AGGRESSIVE=false
 LOGIN_SCALE=false
+GREETER_SESSION=false
 CURSOR_NEON=false
 
 CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.15}"
@@ -42,7 +43,8 @@ CTG_CURSOR_SIZE="${CTG_CURSOR_SIZE:-26}"
 for arg in "$@"; do
     case "$arg" in
         --diagnose-only|--diagnose) DIAGNOSE_ONLY=true ;;
-        --login-scale) LOGIN_SCALE=true; DIAGNOSE_ONLY=false; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false; RESET_MODE=false ;;
+        --login-scale) LOGIN_SCALE=true; DIAGNOSE_ONLY=false; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false; RESET_MODE=false; GREETER_SESSION=false ;;
+        --greeter-session) GREETER_SESSION=true; LOGIN_SCALE=true; DIAGNOSE_ONLY=false; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false; RESET_MODE=false ;;
         --cursor-neon) CURSOR_NEON=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false; RESET_MODE=false ;;
         --reset) RESET_MODE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false; LOGIN_SCALE=false ;;
         --fit-window) FIT_WINDOW=true; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false ;;
@@ -57,6 +59,7 @@ for arg in "$@"; do
             echo "  --text-large  Text layer only — DPI 120, Sans 13, Monospace 15 (no oversized xrandr)"
             echo "  --fonts-only  Lighter DPI/fonts only — minimal xrandr (after fit-window once)"
             echo "  --login-scale GDM/lightdm greeter text ~15% / Sans 12 (sudo; greeter only)"
+            echo "  --greeter-session GDM Init hook — xrandr + dconf each greeter (logout included)"
             echo "  --cursor-neon CTG-Neon-Lemon cursor (yellow + black ring), size ${CTG_CURSOR_SIZE} (~10% over 24; X11)"
             echo "  --reset       Undo over-scale (DPI 96, default fonts, xrandr --auto)"
             echo "  --aggressive  Legacy HiDPI (DPI 120/144, panel scale) — not with host Scaled"
@@ -174,6 +177,130 @@ gdm_greeter_set_key() {
     log "GDM greeter: appended ${key}=${val} to $f"
 }
 
+compile_gdm_greeter_dconf() {
+    local scale="$1"
+    local cursor="${2:-12}"
+    local db_dir=/etc/dconf/db/gdm.d
+    local db_file="${db_dir}/00-ctg-login-scale"
+    install -d -m 0755 "$db_dir"
+    cat >"$db_file" <<EOF
+# CTG login greeter scale (Hacker Planet lab)
+[org/gnome/desktop/interface]
+text-scaling-factor=${scale}
+cursor-size=${cursor}
+EOF
+    chmod 644 "$db_file"
+    local lock_dir=/etc/dconf/db/gdm.d/locks
+    install -d -m 0755 "$lock_dir"
+    cat >"${lock_dir}/00-ctg-login-scale" <<'LOCKEOF'
+/org/gnome/desktop/interface/text-scaling-factor
+/org/gnome/desktop/interface/cursor-size
+LOCKEOF
+    chmod 644 "${lock_dir}/00-ctg-login-scale"
+    if command -v dconf >/dev/null 2>&1; then
+        dconf update
+        log "GDM dconf db compiled: $db_file (+ locks; logout greeter uses same scale)"
+    else
+        warn "dconf not found — install dconf-cli for greeter dconf db"
+        note_issue
+    fi
+}
+
+refresh_greeter_framebuffer() {
+    if ! command -v xrandr >/dev/null 2>&1; then
+        return 0
+    fi
+    local out
+    out="$(xrandr 2>/dev/null | awk '/ connected/{print $1; exit}')"
+    if [[ -n "$out" ]]; then
+        xrandr --output "$out" --auto 2>/dev/null || xrandr --auto 2>/dev/null || true
+        log "Greeter framebuffer: xrandr --output ${out} --auto"
+    else
+        xrandr --auto 2>/dev/null || true
+        log "Greeter framebuffer: xrandr --auto"
+    fi
+    return 0
+}
+
+signal_host_greeter_refresh() {
+    local share path
+    for share in /media/sf_ctg-backups /mnt/ctg; do
+        if [[ -d "$share" && -w "$share" ]]; then
+            path="${share}/CTG_GREETER_REFRESH"
+            if date -Iseconds >"$path" 2>/dev/null; then
+                log "Host greeter refresh signal: $path"
+                return 0
+            fi
+        fi
+    done
+    if command -v VBoxControl >/dev/null 2>&1; then
+        VBoxControl guestproperty write /VirtualBox/HostInfo/GUI/LoggedOutUsers 1 >/dev/null 2>&1 \
+            && log "Host greeter refresh signal: VBoxControl guestproperty LoggedOutUsers=1" \
+            || true
+    fi
+    return 0
+}
+
+install_gdm_greeter_init_script() {
+    local init_dir=/etc/gdm3/Init/Default
+    local init_script="${init_dir}/01-ctg-greeter-display"
+    install -d -m 0755 "$init_dir"
+    cat >"$init_script" <<'INITEOF'
+#!/bin/sh
+# CTG — greeter framebuffer + login scale on every greeter display (boot + logout)
+if command -v xrandr >/dev/null 2>&1; then
+    OUT="$(xrandr 2>/dev/null | awk '/ connected/{print $1; exit}')"
+    if [ -n "$OUT" ]; then
+        xrandr --output "$OUT" --auto 2>/dev/null || xrandr --auto 2>/dev/null || true
+    else
+        xrandr --auto 2>/dev/null || true
+    fi
+fi
+for ScaleSh in /opt/ctg/ctg-display-scale.sh /mnt/ctg/ctg-display-scale.sh /media/sf_ctg-backups/ctg-display-scale.sh; do
+    if [ -f "$ScaleSh" ]; then
+        bash "$ScaleSh" --greeter-session 2>/dev/null || true
+        break
+    fi
+done
+INITEOF
+    chmod 755 "$init_script"
+    log "GDM Init: $init_script (xrandr + --greeter-session each greeter)"
+}
+
+install_gdm_postsession_script() {
+    local post_dir=/etc/gdm3/PostSession/Default
+    local post_script="${post_dir}/01-ctg-greeter-host-refresh"
+    install -d -m 0755 "$post_dir"
+    cat >"$post_script" <<'POSTEOF'
+#!/bin/sh
+# CTG — tell Windows host to refresh greeter video hint after logout
+for Share in /media/sf_ctg-backups /mnt/ctg; do
+    if [ -d "$Share" ]; then
+        date -Iseconds >"$Share/CTG_GREETER_REFRESH" 2>/dev/null || true
+        break
+    fi
+done
+if command -v VBoxControl >/dev/null 2>&1; then
+    VBoxControl guestproperty write /VirtualBox/HostInfo/GUI/LoggedOutUsers 1 2>/dev/null || true
+fi
+POSTEOF
+    chmod 755 "$post_script"
+    log "GDM PostSession: $post_script (CTG_GREETER_REFRESH on logout)"
+}
+
+install_lightdm_greeter_init_script() {
+    local drop_dir=/etc/lightdm/lightdm.conf.d
+    local drop_file="${drop_dir}/50-ctg-greeter-display.conf"
+    install -d -m 0755 "$drop_dir"
+    cat >"$drop_file" <<'LDMEOF'
+# CTG — run greeter scale before lightdm gtk greeter (boot + logout)
+[Seat:*]
+display-setup-script=bash /opt/ctg/ctg-display-scale.sh --greeter-session 2>/dev/null || bash /mnt/ctg/ctg-display-scale.sh --greeter-session 2>/dev/null || true
+LDMEOF
+    chmod 644 "$drop_file"
+    log "lightdm: display-setup-script -> --greeter-session in $drop_file"
+}
+
 apply_gdm3_greeter_text_scale() {
     local scale="$1"
     local cursor="${2:-14}"
@@ -183,6 +310,9 @@ apply_gdm3_greeter_text_scale() {
     chmod 644 "$f"
     gdm_greeter_set_key "$f" text-scaling-factor "$scale"
     gdm_greeter_set_key "$f" cursor-size "$cursor"
+    compile_gdm_greeter_dconf "$scale" "$cursor"
+    install_gdm_greeter_init_script
+    install_gdm_postsession_script
 }
 
 apply_lightdm_gtk_greeter_fonts() {
@@ -198,6 +328,7 @@ clock-font-name=${font}
 EOF
     chmod 644 "$drop_file"
     log "lightdm-gtk-greeter: theme/clock font ${font} in $drop_file"
+    install_lightdm_greeter_init_script
 }
 
 apply_sddm_greeter_font_scale() {
@@ -255,7 +386,15 @@ fix_login_greeter_scale() {
             ;;
     esac
     log "Post-login desktop unchanged — still use --fit-window (medium DPI 110, Sans 12) after Xfce login"
-    log "Reboot or log out to see greeter changes"
+    log "Greeter hooks installed — logout greeter uses same scale (GDM Init + PostSession)"
+    return 0
+}
+
+run_greeter_session_refresh() {
+    log "=== CTG greeter session refresh (logout greeter / GDM Init) ==="
+    refresh_greeter_framebuffer
+    compile_gdm_greeter_dconf "$CTG_LOGIN_TEXT_SCALE" "$CTG_LOGIN_CURSOR_SIZE"
+    signal_host_greeter_refresh
     return 0
 }
 
@@ -709,6 +848,14 @@ elif $TEXT_LARGE; then mode_label="text-large"
 elif $TEXT_MEDIUM; then mode_label="text-medium"
 elif $FONTS_ONLY; then mode_label="fonts-only"
 elif $CURSOR_NEON && ! $FIT_WINDOW; then mode_label="cursor-neon"
+fi
+if $GREETER_SESSION; then
+    if [[ $EUID -ne 0 ]]; then
+        err "--greeter-session requires root (runs from GDM Init as root)"
+        exit 1
+    fi
+    run_greeter_session_refresh
+    exit $?
 fi
 if $LOGIN_SCALE; then
     fix_login_greeter_scale
