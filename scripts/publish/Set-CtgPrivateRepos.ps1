@@ -143,7 +143,7 @@ foreach ($name in $Script:CtgPrivateRepoAllowlist) {
         continue
     }
     Write-Host "Setting $name to private ..." -ForegroundColor Cyan
-    gh repo edit "salvador-Data/$name" --visibility private 2>&1 | ForEach-Object { Write-Host $_ }
+    gh repo edit "salvador-Data/$name" --visibility private --accept-visibility-change-consequences 2>&1 | ForEach-Object { Write-Host $_ }
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "Failed to privatize $name"
     } else {
