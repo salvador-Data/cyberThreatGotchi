@@ -46,6 +46,8 @@ $files = @(
     @{ S = 'docs\IPHONE_LAPTOP_CONNECTION.md'; D = 'docs\IPHONE_LAPTOP_CONNECTION.md' }
     @{ S = 'docs\IPHONE_TETHER_MONITORING.md'; D = 'docs\IPHONE_TETHER_MONITORING.md' }
     @{ S = 'docs\IPHONE_HARDENING.md'; D = 'docs\IPHONE_HARDENING.md' }
+    @{ S = 'docs\IPHONE_AUDIT_PRINT.md'; D = 'docs\IPHONE_AUDIT_PRINT.md' }
+    @{ S = 'docs\IPHONE_RUN_NOW.md'; D = 'docs\IPHONE_RUN_NOW.md' }
     @{ S = 'docs\IPHONE_USB_HARDENING.md'; D = 'docs\IPHONE_USB_HARDENING.md' }
     @{ S = 'docs\SIGNAL_ALERTS.md'; D = 'docs\SIGNAL_ALERTS.md' }
     @{ S = 'docs\WINDOWS_SNORT_IDS_SMS.md'; D = 'docs\WINDOWS_SNORT_IDS_SMS.md' }

@@ -21,6 +21,11 @@ $items = @(
     'Passcode: 6+ digits; Stolen Device Protection ON (iOS 17+)',
     'Updates: Automatic iOS updates ON; beta OFF unless test device',
     'DNS/VPN: preserve existing DuckDuckGo VPN/DNS — do not stack second DNS VPN',
+    'Safety Check: Settings -> Privacy and Security -> Safety Check (personal device)',
+    'Private Wi-Fi Address: per-network ON; Limit IP Address Tracking ON',
+    'Malwarebytes: SMS + Safari only — Malwarebytes VPN OFF when DDG VPN in use',
+    'Advanced Data Protection: optional iCloud E2E — store recovery key in password manager',
+    'Printable runbook: docs/IPHONE_AUDIT_PRINT.md (Phase 1/2 + VERIFY steps)',
     'Passwords: DuckDuckGo Password Manager + separate CTG lab vault on Windows',
     'Find My: ON; Activation Lock documented for recovery',
     'Backup: encrypted local backup before supervision changes'

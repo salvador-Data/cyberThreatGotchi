@@ -44,6 +44,7 @@ NEW_PS1 = [
     WIN / "Register-CtgMemoryProtectionTask.ps1",
     WIN / "Sync-CtgVulnerabilityFeeds.ps1",
     WIN / "Start-CtgIphoneTetherIds.ps1",
+    WIN / "Invoke-CtgPreserveStackAudit.ps1",
     PUBLISH / "Set-CtgPrivateRepos.ps1",
 ]
 
@@ -223,8 +224,23 @@ def test_kali_tether_bridge_shell():
 def test_sync_device_hardening_includes_tether():
     text = (PUBLISH / "Sync-CtgDeviceHardeningRepo.ps1").read_text(encoding="utf-8")
     assert "IPHONE_TETHER_MONITORING.md" in text
+    assert "IPHONE_AUDIT_PRINT.md" in text
     assert "Start-CtgIphoneTetherIds.ps1" in text
     assert "ctg-tether-bridge-ids.sh" in text
+
+
+def test_preserve_stack_audit_ddg_policy():
+    text = (WIN / "Invoke-CtgPreserveStackAudit.ps1").read_text(encoding="utf-8")
+    for needle in (
+        "Preserve-DuckDuckGoVpn",
+        "DdgBefore",
+        "DdgAfter",
+        "Repair-WindowsWifi",
+        "DiagnoseOnly",
+        "ctg-stack-audit",
+    ):
+        assert needle in text, needle
+    assert "Cloudflare" not in text or "NOT install" in text or "no competing" in text.lower()
 
 
 def test_security_hardening_ids_ram_section():

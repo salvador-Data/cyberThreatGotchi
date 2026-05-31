@@ -9,8 +9,14 @@
 function Get-CtgDuckDuckGoVpnPaths {
     $paths = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     foreach ($name in @('DuckDuckGo.VPN', 'DuckDuckGo.VPN.WireGuard', 'DuckDuckGo.VPN.Tray')) {
-        $p = Get-Process -Name $name -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path -Unique
-        foreach ($exe in $p) {
+        $p = Get-Process -Name $name -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path -Unique -ErrorAction SilentlyContinue
+        if (-not $p) {
+            $p = Get-Process -Name $name -ErrorAction SilentlyContinue |
+                ForEach-Object { try { $_.Path } catch { $_.MainModule.FileName } } |
+                Where-Object { $_ } |
+                Select-Object -Unique
+        }
+        foreach ($exe in @($p)) {
             if ($exe) {
                 [void]$paths.Add((Split-Path -Parent $exe))
                 [void]$paths.Add($exe)

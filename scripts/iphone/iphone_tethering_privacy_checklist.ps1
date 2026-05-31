@@ -61,6 +61,8 @@ $items = @(
     @{ Id = '8'; Item = 'DuckDuckGo Password Manager'; Path = 'Settings -> AutoFill & Passwords -> DuckDuckGo Autofill ON' }
     @{ Id = '9'; Item = 'Hotspot password'; Path = 'Settings -> Personal Hotspot - strong password if sharing cellular' }
     @{ Id = '10'; Item = 'Find My + Stolen Device Protection'; Path = 'Settings -> Find My ON; Stolen Device Protection ON (iOS 17.3+)' }
+    @{ Id = '11'; Item = 'Safety Check'; Path = 'Settings -> Privacy & Security -> Safety Check -> review sharing (DDG-safe)' }
+    @{ Id = '12'; Item = 'Malwarebytes SMS/Safari only'; Path = 'App Store Malwarebytes; MB paid VPN OFF; keep DDG VPN/DNS' }
 )
 
 foreach ($row in $items) {
@@ -69,6 +71,7 @@ foreach ($row in $items) {
 }
 
 Write-CtgChecklistLine ''
+Write-CtgChecklistLine 'Printable audit: docs/IPHONE_AUDIT_PRINT.md (Phase 1/2 + Tier 1-3 DDG-safe)' 'Cyan'
 Write-CtgChecklistLine 'Docs: docs/IPHONE_LAPTOP_CONNECTION.md | docs/IPHONE_HARDENING.md | docs/IPHONE_USB_HARDENING.md' 'Cyan'
 
 $usbDetected = $false

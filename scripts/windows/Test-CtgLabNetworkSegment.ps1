@@ -90,19 +90,19 @@ $examplePath = Join-Path (Get-CtgRepoRoot -FromPath $PSScriptRoot) 'scripts\kali
 if ($ConfigPath -and (Test-Path $ConfigPath)) {
     Write-CtgNetLog "Local config: $ConfigPath (review VLAN_* placeholders)" 'Cyan'
 } elseif (Test-Path $examplePath) {
-    Write-CtgNetLog "Template: $examplePath — copy to Backups/lab-vlan.conf (gitignored)" 'Gray'
+    Write-CtgNetLog "Template: $examplePath -- copy to Backups/lab-vlan.conf (gitignored)" 'Gray'
 }
 
 # VirtualBox host-only / NAT hints
 $vbox = Get-Command VBoxManage -ErrorAction SilentlyContinue
 if ($vbox) {
-    Write-CtgNetLog 'VirtualBox: prefer Host-Only + NAT for Kali — isolate lab traffic from LAN.' 'Gray'
+    Write-CtgNetLog 'VirtualBox: prefer Host-Only + NAT for Kali -- isolate lab traffic from LAN.' 'Gray'
     try {
         & VBoxManage list hostonlyifs 2>$null | ForEach-Object { Write-CtgNetLog "  $_" }
     } catch { }
 } else {
-    Write-CtgNetLog 'VBoxManage not in PATH — skip VM network inspect.' 'Gray'
+    Write-CtgNetLog 'VBoxManage not in PATH -- skip VM network inspect.' 'Gray'
 }
 
-Write-CtgNetLog 'DiagnoseOnly complete — no network changes applied.' 'Cyan'
+Write-CtgNetLog 'DiagnoseOnly complete -- no network changes applied.' 'Cyan'
 exit 0

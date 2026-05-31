@@ -22,6 +22,8 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 | GitHub CI mail | [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md) | Proton filter + fix CI first |
 | UTMS Wi-Fi AI | [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) | Event bus + jam/deauth detect (no RF counter-jam) |
 | iOS MDM checklist | `Export-CtgIosProfileChecklist.ps1` | Supervision optional (fleet only) |
+| **Print = run (iPhone)** | [IPHONE_AUDIT_PRINT.md](IPHONE_AUDIT_PRINT.md) | Manual Settings on device; preserve DDG VPN/DNS/PM |
+| **Print = run (Windows SOC)** | [WINDOWS_SOC_AUDIT_PRINT.md](WINDOWS_SOC_AUDIT_PRINT.md) | `Invoke-CtgPreserveStackAudit.ps1` |
 
 **Email vault titles needed:** `Proton IMAP` (or `CTG_EMAIL_IMAP`); optional `Microsoft Account`.
 
@@ -29,6 +31,10 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 
 ```powershell
 cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
+```
+
+```powershell
+.\scripts\windows\Invoke-CtgPreserveStackAudit.ps1
 ```
 
 ```powershell
@@ -126,6 +132,35 @@ New-Item C:\Users\Owner\Backups\CTG_RUN_AUTORUN_NOW -ItemType File -Force
 | Seamless menu glitch | **Manual (guest)** | ``bash /mnt/ctg/ctg-seamless-guest.sh`` if needed; host: ``Start-KaliSeamless.ps1 -DiagnoseOnly`` |
 
 **Seamless (2026-05-31 live):** VM **running headless** — `DesktopReady: False` (log in at Kali GUI). After login: `Start-KaliSeamless.ps1` (GUI session) or **Host+L**; if menu reverts: `bash /mnt/ctg/ctg-seamless-guest.sh`. **spec-ctrl:** ON (`Harden-KaliVmSpectre.ps1 -DiagnoseOnly`).
+
+---
+
+## Print = run session (2026-05-31)
+
+**Goal:** Printable iPhone + Windows SOC audits; DDG VPN/DNS/Password Manager preserved.
+
+| Deliverable | Path |
+|-------------|------|
+| iPhone printable | [IPHONE_AUDIT_PRINT.md](IPHONE_AUDIT_PRINT.md) |
+| Windows printable | [WINDOWS_SOC_AUDIT_PRINT.md](WINDOWS_SOC_AUDIT_PRINT.md) |
+| Stack audit script | `scripts/windows/Invoke-CtgPreserveStackAudit.ps1` |
+
+**Windows run:** `Invoke-CtgPreserveStackAudit.ps1` (diagnose-only batch + DDG BEFORE/AFTER). Optional `-ApplySafeDefender` when Admin after ASR review. **Do not** run `Repair-WindowsWifi.ps1 -ApplyFixes` unless diagnose shows issues and DDG preserve passes.
+
+**iPhone run:** Print or AirDrop `IPHONE_AUDIT_PRINT.md` → complete Phase 0 → Phase 1 → **1.V verify** → Phase 2 → **2.V verify** on device. Windows: `iphone_tethering_privacy_checklist.ps1 -DetectUsb` (read-only).
+
+**Admin skipped this session:** Defender exclusions (DDG paths), `Repair-WindowsWifi -ApplyFixes`, `Harden-CtgWindowsDefender -ApplySafe` — run elevated when ready. Log: `%USERPROFILE%\Backups\logs\ctg-stack-audit-20260531-105531.txt`.
+
+**Stack audit results (2026-05-31):**
+
+| Check | Before | After | Notes |
+|-------|--------|-------|-------|
+| DDG VPN installed | Yes | Yes | Process `DuckDuckGo.VPN` running |
+| DDG tunnel Up | No | No | Wi-Fi disconnected; DNS via VPN when connected |
+| Adapter DDG DNS | N/A | N/A | Not on adapter IPv4 (VPN DNS path) |
+| HVCI / VBS | — | Running | Memory integrity on |
+| Email vault | — | Not initialized | `Ctg-CredentialVault.ps1 -InitVault` once |
+| Wi-Fi | Disconnected | Disconnected | WlanSvc OK; `-ApplyFixes` needs Admin |
 
 **CPU/GPU diagnose (Andy laptop, 2026-05-31):** Dell Precision 5530 · Intel i9-8950HK · Intel UHD 630 + NVIDIA Quadro P2000 · High performance plan active · GPU visual effects Best performance · script OC: **N**; Dell Power Manager + Graphics Settings per-app: manual.
 
