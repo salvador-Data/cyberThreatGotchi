@@ -1,8 +1,33 @@
-﻿# CTG â€” start here (Andy)
+# CTG â€” start here (Andy)
 
 One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized defensive use only.
 
 **Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) Â· [SECURITY_HARDENING.md](SECURITY_HARDENING.md) Â· [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) Â· [SECRET_VAULT.md](SECRET_VAULT.md) Â· [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) Â· [KALI_RETBLEED.md](KALI_RETBLEED.md) Â· [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) Â· [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) Â· [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+
+---
+
+## Good build snapshot (2026-05-31)
+
+**Canonical repo path:** `C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi` — reopen Cursor here (not `Projects\cyberThreatGotchi` unless you sync clones).
+
+### Done on main
+- Kali share path: `ctg-run-on-share-trigger.sh`, `CTG_RUN_AUTORUN_NOW` trigger, `ctg-watch-trigger.sh` polling
+- One-click in guest: `CLICK-ME-RUN-IN-KALI.sh` + `CLICK-ME-RUN-IN-KALI.desktop` (staged to `C:\Users\Owner\Backups` / vboxsf)
+- Host: `Invoke-CtgKaliGuestFlash.ps1 -UseSecretVault` (DPAPI vault; no passwords in git)
+- Host: `Start-KaliSeamless.ps1` diagnostic string fixes; `Invoke-CtgKaliNmapAskInstall.ps1` for nmap-ask install trigger
+- Lab tree re-staged: `Stage-KaliLabToBackups.ps1`
+- Tests: **429 passed, 4 skipped** (`.\.venv\Scripts\python.exe -m pytest -q`)
+
+### Manual (Kali / Windows)
+| Step | Action |
+|------|--------|
+| Kali lab chain | Log into Xfce → double-click **CTG Run Lab (click me)** or `bash /media/sf_ctg-backups/CLICK-ME-RUN-IN-KALI.sh` (sudo password once) |
+| Share trigger (no SSH) | Windows: `New-Item C:\Users\Owner\Backups\CTG_RUN_AUTORUN_NOW -ItemType File -Force` while guest logged in |
+| Secrets | `Protect-CtgSecrets.ps1 -SetSecret` for `KALI_SSH_USER` / `KALI_SSH_PASSWORD`; rotate Kali login when ready |
+| Seamless | After GUI login: **Host+L** or `Start-KaliSeamless.ps1` |
+
+### Paused (do not chase)
+- Automated guest flash / guestcontrol retry loops — use CLICK-ME or share trigger instead.
 
 ---
 
@@ -19,10 +44,10 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 | Wi-Fi repair | **Manual (Admin)** | Wi-Fi disconnected; DDG VPN up â€” run `Repair-WindowsWifi.ps1 -ApplyFixes` elevated |
 | Kali SSH autopatch | **Manual (TTY)** | If 127.0.0.1:2222 fails: `sudo bash /mnt/ctg/RUN-KALI-LAB-NOW.sh` |
 | Vault secrets | **Manual** | `Protect-CtgSecrets.ps1 -SetSecret` for KALI_SSH_* (never in git) |
-| pytest + push | **Done** | 322 passed (2026-05-31); main `b2bc90f`+ pending savestate commit |
+| pytest + push | **Done** | 429 passed (2026-05-31); main `0e9b8ce` pushed |
 | RETBleed `--spec-ctrl on` | **Done (live)** | VBox `<SpecCtrl enabled="true"/>` — **reboot Kali**, then `bash /mnt/ctg/ctg-retbleed-check.sh` |
-| Kali scripts staged to Backups | **Done** | `Stage-KaliLabToBackups.ps1` — 18 `.sh` + docs on `ctg-backups` share |
-| Guest script flash (`/mnt/ctg`) | **Manual (TTY)** | SSH:2222 not ready — paste block below at Kali console after GUI login |
+| Kali scripts staged to Backups | **Done** | `Stage-KaliLabToBackups.ps1` — CLICK-ME + triggers on `ctg-backups` share |
+| Guest script flash | **Manual (CLICK-ME)** | Prefer desktop one-click or `CTG_RUN_AUTORUN_NOW`; optional `-UseSecretVault` flash when SSH works | SSH:2222 not ready — paste block below at Kali console after GUI login |
 | Seamless View menu | **Manual (GUI login)** | `GUI/Seamless=on` set; menu stays gray until **LoggedInUsers>0** — log in Xfce, then Host+L |
 | Seamless menu glitch | **Manual (guest)** | ``bash /mnt/ctg/ctg-seamless-guest.sh`` if needed; host: ``Start-KaliSeamless.ps1 -DiagnoseOnly`` |
 
