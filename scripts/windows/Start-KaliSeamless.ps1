@@ -1,4 +1,4 @@
-# Start VirtualBox Kali VM in seamless mode (Guest Additions + graphical login required).
+ Start VirtualBox Kali VM in seamless mode (Guest Additions + graphical login required).
 # Authorized defensive lab use only - Hacker Planet LLC - Philadelphia, PA
 param(
     [string]$VmName = 'kali',
@@ -616,7 +616,7 @@ function Get-CtgSeamlessDiagnostics {
     $isHeadlessSession = ($state -eq 'running' -and ($session -match 'headless|^none$|^$'))
     $issues = @()
     if ($isHeadlessSession) { $issues += 'No GUI session (headless/none) - VirtualBox View menu disabled until startvm --type gui (-EnsureGuiSession)' }
-    if ($state -eq 'running' -and $loggedInCount -eq '0') { $issues += 'View→Seamless grayed out: LoggedInUsers=0 - log in to Xfce/X11 desktop in the VM window, then Host+L' }
+    if ($state -eq 'running' -and $loggedInCount -eq '0') { $issues += 'View -> Seamless grayed out: LoggedInUsers=0 - log in to Xfce/X11 desktop in the VM window, then Host+L' }
     if ($state -eq 'running' -and -not $gaReady) { $issues += 'Guest Additions not reporting (install virtualbox-guest-x11)' }
     if ($state -eq 'running' -and -not $desktop) { $issues += 'No graphical login (guest property) - log in at Kali console if desktop is blank' }
     if ($DisplayMode -eq 'Seamless' -and -not $seamlessActive -and -not (Test-CtgExtradataTruthy -Value $extradataSeamless)) {
