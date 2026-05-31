@@ -1,10 +1,10 @@
 ﻿# CyberThreatGotchi Ã¢â‚¬â€ Scripts Catalog
 
-**Hacker Planet LLC Ã‚Â· Philadelphia, PA Ã‚Â· Andy Kowal Ã‚Â· [salvador-Data](https://github.com/salvador-Data)**
+**Hacker Planet LLC - Philadelphia, PA - Andy Kowal - [salvador-Data](https://github.com/salvador-Data)**
 
 Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried for authorized defensive use on systems you **own** or are **explicitly permitted** to administer. Cipherhorn-approved; no secrets in git.
 
-**Split repos:** [ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-lab) Ã‚Â· [ctg-windows-soc](https://github.com/salvador-Data/ctg-windows-soc) Ã‚Â· Plan Ã¢â€ â€™ [GITHUB_REPOS_PLAN.md](GITHUB_REPOS_PLAN.md)
+**Split repos:** [ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-lab) - [ctg-windows-soc](https://github.com/salvador-Data/ctg-windows-soc) - Plan Ã¢â€ â€™ [GITHUB_REPOS_PLAN.md](GITHUB_REPOS_PLAN.md)
 
 ---
 
@@ -28,7 +28,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Orchestrates Sysmon, Harden-Windows-Security, Wazuh agent, Defender ASR Ã¢â‚¬â€ flags for audit-only vs install.
 - **When:** Fresh SOC laptop setup or quarterly hardening pass.
 - **Admin:** **Yes** (`#Requires -RunAsAdministrator`)
-- **Docs:** [README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md) Ã‚Â· [SECURITY_HARDENING.md](SECURITY_HARDENING.md) Ã‚Â· [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md)
+- **Docs:** [README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md) - [SECURITY_HARDENING.md](SECURITY_HARDENING.md) - [PORTFOLIO_SYSTEM_HARDENING.md](PORTFOLIO_SYSTEM_HARDENING.md)
 
 ### `ctg_soc_run_once.ps1`
 - **Path:** `scripts/windows/ctg_soc_run_once.ps1`
@@ -52,7 +52,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Installs or verifies Wazuh agent; manager via `CTG_WAZUH_MANAGER` / `WAZUH_MANAGER`.
 - **When:** After Sysmon, before enforcing ASR.
 - **Admin:** **Yes**
-- **Docs:** [README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md) Ã‚Â· [KALI_SIEM_STACK.md](KALI_SIEM_STACK.md)
+- **Docs:** [README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md) - [KALI_SIEM_STACK.md](KALI_SIEM_STACK.md)
 
 ### `Harden-DDoSRogueWifi.ps1`
 - **Path:** `scripts/windows/Harden-DDoSRogueWifi.ps1`
@@ -68,7 +68,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Preserves DuckDuckGo VPN (WireGuard) through CTG SOC / hardening runs.
 - **When:** Before/after any hardening that might touch VPN profiles.
 - **Admin:** **Optional** (depends on VPN stack)
-- **Docs:** [IPHONE_HARDENING.md](IPHONE_HARDENING.md) Ã‚Â· [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md)
+- **Docs:** [IPHONE_HARDENING.md](IPHONE_HARDENING.md) - [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md)
 
 ### `Pause-DefenderRealtime.ps1`
 - **Path:** `scripts/windows/Pause-DefenderRealtime.ps1`
@@ -136,12 +136,12 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Docs:** [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md)
 
 ### `Protect-CtgSecrets.ps1` / `Register-CtgSecretRotationReminder.ps1` / `Invoke-CtgSecretRotationSms.ps1`
-- **Path:** `scripts/windows/Protect-CtgSecrets.ps1` Ã‚Â· rotation helpers
+- **Path:** `scripts/windows/Protect-CtgSecrets.ps1` - rotation helpers
 - **Tagline:** *DPAPI vault on disk Ã¢â‚¬â€ names in git, values never.*
 - **Does:** Stores Kali SSH and lab secrets under `%USERPROFILE%\Backups\.vault\`; rotation SMS reminds only (no password in SMS body).
 - **When:** Before `Deploy-KaliLab.ps1 -UseSecretVault`; quarterly rotation reminder.
 - **Admin:** No (CurrentUser DPAPI scope)
-- **Docs:** [SECRET_VAULT.md](SECRET_VAULT.md) Ã‚Â· [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md)
+- **Docs:** [SECRET_VAULT.md](SECRET_VAULT.md) - [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md)
 
 ### `Harden-PasswordPolicy.ps1`
 - **Path:** `scripts/windows/Harden-PasswordPolicy.ps1`
@@ -165,7 +165,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Copies autorun/bootstrap scripts to `C:\Users\Owner\Backups` for guest mount at `/mnt/ctg`.
 - **When:** Before in-guest TTY one-liner or when share content is stale.
 - **Admin:** No
-- **Docs:** [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) Ã‚Â· [CTG_NEXT_STEPS.md](CTG_NEXT_STEPS.md)
+- **Docs:** [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) - [CTG_NEXT_STEPS.md](CTG_NEXT_STEPS.md)
 
 ---
 
@@ -177,7 +177,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Monolithic in-guest bootstrap Ã¢â‚¬â€ harden, AV, DNS preserve, lab anonymity, Realtek WiFi tune.
 - **When:** First boot after Kali install or full lab refresh.
 - **Admin:** **root** (`sudo`)
-- **Docs:** [README_KALI_LAB.md](../scripts/kali/README_KALI_LAB.md) Ã‚Â· [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) Ã‚Â· [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+- **Docs:** [README_KALI_LAB.md](../scripts/kali/README_KALI_LAB.md) - [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) - [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
 
 ### `Deploy-KaliLab.ps1`
 - **Path:** `scripts/windows/Deploy-KaliLab.ps1`
@@ -185,7 +185,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Master deploy: hypervisor detect, Wireshark/Npcap, OPNsense stub, Kali bootstrap over shared folder/SSH.
 - **When:** New Kali VM or lab refresh from Windows SOC laptop.
 - **Admin:** **Yes** (VM + optional Defender pause)
-- **Docs:** [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) Ã‚Â· [README_KALI_LAB.md](../scripts/kali/README_KALI_LAB.md)
+- **Docs:** [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) - [README_KALI_LAB.md](../scripts/kali/README_KALI_LAB.md)
 
 ### `Start-CTGLab.ps1`
 - **Path:** `scripts/windows/Start-CTGLab.ps1`
@@ -196,19 +196,19 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Docs:** [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
 
 ### `CTG-Lab-Playground.ps1` / `ctg-lab-playground.sh`
-- **Path:** `scripts/windows/CTG-Lab-Playground.ps1` Ã‚Â· `scripts/kali/ctg-lab-playground.sh`
+- **Path:** `scripts/windows/CTG-Lab-Playground.ps1` - `scripts/kali/ctg-lab-playground.sh`
 - **Tagline:** *Professor menu Ã¢â‚¬â€ poke tools without memorizing every autorun flag.*
 - **Does:** Interactive menus to experiment with lab tools (authorized lab only).
 - **When:** Learning lab layout or demoing to a student.
-- **Admin:** Windows: varies Ã‚Â· Kali: **sudo**
+- **Admin:** Windows: varies - Kali: **sudo**
 - **Docs:** [CTG_LAB_PLAYGROUND.md](CTG_LAB_PLAYGROUND.md)
 
 ### `Deploy-KaliBootAutopatch.ps1` / `kali-boot-autopatch.sh`
-- **Path:** `scripts/windows/Deploy-KaliBootAutopatch.ps1` Ã‚Â· `scripts/kali/kali-boot-autopatch.sh`
+- **Path:** `scripts/windows/Deploy-KaliBootAutopatch.ps1` - `scripts/kali/kali-boot-autopatch.sh`
 - **Tagline:** *VBox GNOME gremlins, meet boot-time autopatch.*
 - **Does:** Deploy boot fix unit; fixes common VirtualBox/GNOME boot errors; optional apt upgrade, firmware, WiFi/IDS/SIEM flags.
 - **When:** Blank screen, DKMS, or guest-additions churn after updates.
-- **Admin:** Windows deploy: **Yes** Ã‚Â· Kali: **root**
+- **Admin:** Windows deploy: **Yes** - Kali: **root**
 - **Docs:** [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
 
 ### `RUN-KALI-LAB-NOW.sh`
@@ -217,15 +217,15 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Mounts vboxsf share, runs boot autopatch, scrambler install, and `ctg-lab-autorun.sh` with verify block.
 - **When:** Kali TTY (Ctrl+Alt+F2) after blank screen or SSH banner failure.
 - **Admin:** **sudo**
-- **Docs:** [CTG_NEXT_STEPS.md](CTG_NEXT_STEPS.md) Ã‚Â· [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+- **Docs:** [CTG_NEXT_STEPS.md](CTG_NEXT_STEPS.md) - [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
 
 ### `harden-password-policy.sh` / `fix-retbleed-mitigation.sh`
-- **Path:** `scripts/kali/harden-password-policy.sh` Ã‚Â· `scripts/kali/fix-retbleed-mitigation.sh`
-- **Tagline:** *Guest faillock + chage Ã‚Â· RETBleed/IBRS microcode diagnose for lab VM.*
+- **Path:** `scripts/kali/harden-password-policy.sh` - `scripts/kali/fix-retbleed-mitigation.sh`
+- **Tagline:** *Guest faillock + chage - RETBleed/IBRS microcode diagnose for lab VM.*
 - **Does:** Linux password policy (faillock, max age); checks kernel mitigations and suggests host/VM tuning.
 - **When:** During `kali-lab-bootstrap.sh` or manual hardening pass.
 - **Admin:** **sudo**
-- **Docs:** [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) Ã‚Â· [KALI_RETBLEED.md](KALI_RETBLEED.md)
+- **Docs:** [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) - [KALI_RETBLEED.md](KALI_RETBLEED.md)
 
 ### `ctg-lab-autorun.sh`
 - **Path:** `scripts/kali/ctg-lab-autorun.sh`
@@ -276,11 +276,11 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Docs:** [DEFENSE_DDOS_ROGUE_WIFI.md](DEFENSE_DDOS_ROGUE_WIFI.md)
 
 ### `fix-kali-blank-screen.sh` / `Fix-KaliBlankScreen.ps1`
-- **Path:** `scripts/kali/fix-kali-blank-screen.sh` Ã‚Â· `scripts/windows/Fix-KaliBlankScreen.ps1`
+- **Path:** `scripts/kali/fix-kali-blank-screen.sh` - `scripts/windows/Fix-KaliBlankScreen.ps1`
 - **Tagline:** *Black screen after login? VRAM + graphics + in-guest recovery.*
 - **Does:** Fixes VirtualBox Kali blank GNOME session.
 - **When:** Immediately after failed graphical login.
-- **Admin:** Kali: **sudo** Ã‚Â· Windows: **Yes**
+- **Admin:** Kali: **sudo** - Windows: **Yes**
 - **Docs:** [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) Ã‚Â§ Blank screen
 
 ### `Install-KaliVirtualBox.ps1` / `Install-OpnsenseLab.ps1` / `Install-WiresharkNpcap.ps1`
@@ -289,7 +289,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Creates Kali or OPNsense lab VMs; installs Wireshark + Npcap on Windows host.
 - **When:** First-time lab hardware setup on Andy workstation.
 - **Admin:** **Yes**
-- **Docs:** [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) Ã‚Â· [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md)
+- **Docs:** [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) - [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md)
 
 ### Tor HTTP scrambler suite
 - **Paths:** `scripts/kali/tor-http-scrambler/install-scrambler.sh`, `scrambler-daemon.sh`, `ctg-shield-rotate.sh`, `siem-hook.sh`, `ctg-scrambler-gui.py`
@@ -297,7 +297,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Installs scrambler to `/opt/ctg/`; daemon modes tor/http/auto; GUI; SIEM-driven rotate prompts (manual y/n).
 - **When:** After bootstrap `--lab-anonymity`; research on owned lab VLAN only.
 - **Admin:** **sudo**
-- **Docs:** [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) Ã‚Â· [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md)
+- **Docs:** [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) - [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md)
 
 ---
 
@@ -309,7 +309,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Full interactive orchestrator; opens runbooks; optional LAN guide server.
 - **When:** New iPhone or quarterly mobile hardening.
 - **Admin:** No (phone is manual; script guides)
-- **Docs:** [IPHONE_HARDENING.md](IPHONE_HARDENING.md) Ã‚Â· [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md)
+- **Docs:** [IPHONE_HARDENING.md](IPHONE_HARDENING.md) - [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md)
 
 ### `iphone_hardening_assist.ps1`
 - **Path:** `scripts/windows/iphone_hardening_assist.ps1`
@@ -337,7 +337,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Append-only audit under `Backups\audit\YYYY-MM-DD\`; compartments for Windows security, network IDS, SOC, Kali bridge.
 - **When:** Weekly compliance snapshot or pre-travel checklist.
 - **Admin:** **Yes** for hardening pass
-- **Docs:** [SECURITY_HARDENING.md](SECURITY_HARDENING.md) Ã‚Â· [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md)
+- **Docs:** [SECURITY_HARDENING.md](SECURITY_HARDENING.md) - [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md)
 
 ### `ctg_audit_paths.py`
 - **Path:** `scripts/windows/ctg_audit_paths.py`
@@ -356,7 +356,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Docs:** [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md)
 
 ### `Register-CtgNightlyTask.ps1` / `ctg_nightly_install.ps1`
-- **Path:** `scripts/windows/Register-CtgNightlyTask.ps1` Ã‚Â· `ctg_nightly_install.ps1`
+- **Path:** `scripts/windows/Register-CtgNightlyTask.ps1` - `ctg_nightly_install.ps1`
 - **Tagline:** *Register `HackerPlanet-CTG-Nightly-4AM` Ã¢â‚¬â€ set it and sleep.*
 - **Does:** Creates Windows Scheduled Task for nightly script.
 - **When:** Once per machine imaging.
@@ -369,7 +369,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Website backup, `sync_website_to_docs.py`, portfolio export, live site check.
 - **When:** Called from `ctg_nightly_4am.ps1` every night.
 - **Admin:** No (git push may need credentials)
-- **Docs:** [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) Ã‚Â· [WEBSITE_LINKS.md](WEBSITE_LINKS.md)
+- **Docs:** [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) - [WEBSITE_LINKS.md](WEBSITE_LINKS.md)
 
 ### `ctg_nightly_paths.py`
 - **Path:** `scripts/windows/ctg_nightly_paths.py`
@@ -416,11 +416,11 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Docs:** [README_WINDOWS_SOC.md](../scripts/windows/README_WINDOWS_SOC.md)
 
 ### `Send-CtgSmsAlert.ps1` / `CTG-Shield-Status.ps1`
-- **Path:** `scripts/windows/Send-CtgSmsAlert.ps1` Ã‚Â· `CTG-Shield-Status.ps1`
-- **Tagline:** *Twilio pager for high alerts Ã‚Â· read-only Shield status from Windows or SSH.*
+- **Path:** `scripts/windows/Send-CtgSmsAlert.ps1` - `CTG-Shield-Status.ps1`
+- **Tagline:** *Twilio pager for high alerts - read-only Shield status from Windows or SSH.*
 - **Does:** SMS via env-only Twilio vars; Shield IP/MAC/Tor status (optional Kali SSH).
 - **When:** IDS loop alerts or lab shield check.
-- **Admin:** No Ã‚Â· SSH to Kali needs keys
+- **Admin:** No - SSH to Kali needs keys
 - **Docs:** [SECURITY_HARDENING.md](SECURITY_HARDENING.md)
 
 ---
@@ -433,26 +433,26 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Handles checkout/subscription events; provisions Pro keys.
 - **When:** Production webhook endpoint beside CTG web server.
 - **Admin:** N/A (server process; needs `CTG_STRIPE_WEBHOOK_SECRET`)
-- **Docs:** [SECURITY_HARDENING.md](SECURITY_HARDENING.md) Ã‚Â· [ORDER_FULFILLMENT.md](ORDER_FULFILLMENT.md)
+- **Docs:** [SECURITY_HARDENING.md](SECURITY_HARDENING.md) - [ORDER_FULFILLMENT.md](ORDER_FULFILLMENT.md)
 
 ### `stripe_portal_session.py` / `check_payments.py`
-- **Path:** `scripts/stripe_portal_session.py` Ã‚Â· `check_payments.py`
-- **Tagline:** *Billing portal sessions Ã‚Â· pre-flight payment config validation.*
+- **Path:** `scripts/stripe_portal_session.py` - `check_payments.py`
+- **Tagline:** *Billing portal sessions - pre-flight payment config validation.*
 - **Does:** Creates Stripe Billing Portal URL; validates `payments.config.js` before go-live.
 - **When:** Customer support or shop launch checklist.
-- **Admin:** N/A Ã‚Â· secrets in env only
-- **Docs:** [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md) Ã‚Â· [ORDER_FULFILLMENT.md](ORDER_FULFILLMENT.md)
+- **Admin:** N/A - secrets in env only
+- **Docs:** [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md) - [ORDER_FULFILLMENT.md](ORDER_FULFILLMENT.md)
 
 ### `stripe_bootstrap_payment_links.py` / `stripe_link_checklist.py`
-- **Path:** `scripts/stripe_bootstrap_payment_links.py` Ã‚Â· `stripe_link_checklist.py`
-- **Tagline:** *Mint Payment Links for every SKU Ã‚Â· print what's still empty.*
+- **Path:** `scripts/stripe_bootstrap_payment_links.py` - `stripe_link_checklist.py`
+- **Tagline:** *Mint Payment Links for every SKU - print what's still empty.*
 - **Does:** Creates Stripe products/links; checklist of missing link keys.
 - **When:** Shop SKU rollout or Kickstarter prep.
-- **Admin:** N/A Ã‚Â· `CTG_STRIPE_SECRET_KEY` in env
-- **Docs:** [KICKSTARTER_LAUNCH_PLAN.md](KICKSTARTER_LAUNCH_PLAN.md) Ã‚Â· [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md)
+- **Admin:** N/A - `CTG_STRIPE_SECRET_KEY` in env
+- **Docs:** [KICKSTARTER_LAUNCH_PLAN.md](KICKSTARTER_LAUNCH_PLAN.md) - [SHOP_GO_LIVE.md](SHOP_GO_LIVE.md)
 
 ### `fulfillment_queue.py` / `stripe_fulfillment_sync.py` / `stripe_fulfillment_import.py`
-- **Path:** `scripts/fulfillment_queue.py` Ã‚Â· `stripe_fulfillment_*.py`
+- **Path:** `scripts/fulfillment_queue.py` - `stripe_fulfillment_*.py`
 - **Tagline:** *Partner fulfillment queue Ã¢â‚¬â€ PCI-safe, human-in-the-loop.*
 - **Does:** Local JSON queue CLI; sync/import Stripe checkout into queue.
 - **When:** After Stripe sale for drop-ship partner workflow.
@@ -460,16 +460,16 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Docs:** [ORDER_FULFILLMENT.md](ORDER_FULFILLMENT.md)
 
 ### `partner_fulfillment_operator.ps1` / `partner_fulfillment_export.py` / `ebay_fulfillment_export.py`
-- **Path:** `scripts/partner_fulfillment_*` Ã‚Â· `ebay_fulfillment_export.py`
-- **Tagline:** *Operator dashboard launcher Ã‚Â· export order packets per channel.*
+- **Path:** `scripts/partner_fulfillment_*` - `ebay_fulfillment_export.py`
+- **Tagline:** *Operator dashboard launcher - export order packets per channel.*
 - **Does:** Starts web + dashboard; exports catalog-based fulfillment packets (eBay wrapper included).
 - **When:** Daily fulfillment ops.
 - **Admin:** No
 - **Docs:** [ORDER_FULFILLMENT.md](ORDER_FULFILLMENT.md)
 
 ### `dropship_order_export.py` / `audit_dropship.py` / `check_shop.py`
-- **Path:** `scripts/dropship_order_export.py` Ã‚Â· `audit_dropship.py` Ã‚Â· `check_shop.py`
-- **Tagline:** *Etsy/AliExpress packets Ã‚Â· catalog audit Ã‚Â· shop config alignment.*
+- **Path:** `scripts/dropship_order_export.py` - `audit_dropship.py` - `check_shop.py`
+- **Tagline:** *Etsy/AliExpress packets - catalog audit - shop config alignment.*
 - **Does:** Manual marketplace order exports; validates dropship catalog and shop configs.
 - **When:** Shop maintenance or new SKU.
 - **Admin:** N/A
@@ -480,12 +480,12 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 ## SEO, website & go-live
 
 ### `sync_website_to_docs.py` / `sync_seo.py` / `verify_live_site.py`
-- **Path:** `scripts/sync_website_to_docs.py` Ã‚Â· `sync_seo.py` Ã‚Â· `verify_live_site.py`
-- **Tagline:** *Mirror site to docs tree Ã‚Â· inject SEO Ã‚Â· HTTP-check every public URL.*
+- **Path:** `scripts/sync_website_to_docs.py` - `sync_seo.py` - `verify_live_site.py`
+- **Tagline:** *Mirror site to docs tree - inject SEO - HTTP-check every public URL.*
 - **Does:** Copies `website/` Ã¢â€ â€™ `docs/web/`; meta/JSON-LD/sitemap/IndexNow; live URL checks.
 - **When:** After any `website/` edit (required before push per DevSecOps rules).
 - **Admin:** No
-- **Docs:** [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) Ã‚Â· [WEBSITE_LINKS.md](WEBSITE_LINKS.md)
+- **Docs:** [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) - [WEBSITE_LINKS.md](WEBSITE_LINKS.md)
 
 ### `seo_all_engines_go_live.ps1` / `seo_go_live_checklist.ps1` / `seo_gsc_go_live.ps1`
 - **Path:** `scripts/seo_*.ps1`
@@ -496,19 +496,19 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Docs:** [GITHUB_DOMAIN_VERIFY.md](GITHUB_DOMAIN_VERIFY.md)
 
 ### `seo_verification_dns.py` / `cloudflare_apply_dns.py` / `apply_dns_interactive.ps1`
-- **Path:** `scripts/seo_verification_dns.py` Ã‚Â· `cloudflare_apply_dns.py` Ã‚Â· `apply_dns_interactive.ps1`
+- **Path:** `scripts/seo_verification_dns.py` - `cloudflare_apply_dns.py` - `apply_dns_interactive.ps1`
 - **Tagline:** *Cloudflare DNS Ã¢â‚¬â€ verification records without pasting tokens in shell history.*
 - **Does:** GSC/Bing verification via API; GitHub Pages / email routing records; interactive token entry.
 - **When:** Domain verification or Pages cutover.
-- **Admin:** No Ã‚Â· API token in env/prompt only
+- **Admin:** No - API token in env/prompt only
 - **Docs:** [GITHUB_DOMAIN_VERIFY.md](GITHUB_DOMAIN_VERIFY.md)
 
 ### `go_live_all.ps1` / `setup_go_live.ps1` / `enable_github_pages.py` / `enable_pages.ps1` / `github_pages_https.py`
-- **Path:** `scripts/go_live_*.ps1` Ã‚Â· `enable_*.py` Ã‚Â· `github_pages_https.py`
+- **Path:** `scripts/go_live_*.ps1` - `enable_*.py` - `github_pages_https.py`
 - **Tagline:** *Launch day automation Ã¢â‚¬â€ Pages, HTTPS, checklist orchestra.*
 - **Does:** Full go-live checks; Pages enable via `gh`; HTTPS once DNS verified.
 - **When:** Hacker Planet site launch or migration.
-- **Admin:** No Ã‚Â· needs `gh auth`
+- **Admin:** No - needs `gh auth`
 - **Docs:** [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md)
 
 ### `ping_indexnow.py`
@@ -520,7 +520,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Docs:** [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md)
 
 ### `patch_website_branding.py` / `patch_website_nav_logo.py` / `normalize_website_ascii.py`
-- **Path:** `scripts/patch_website_*.py` Ã‚Â· `normalize_website_ascii.py`
+- **Path:** `scripts/patch_website_*.py` - `normalize_website_ascii.py`
 - **Tagline:** *Branding surgery on static HTML Ã¢â‚¬â€ logo, heroes, ASCII-safe copy.*
 - **Does:** One-shot site patches for logo/nav/hero; ASCII normalization.
 - **When:** Rebrand or GitHub Pages encoding fixes.
@@ -528,12 +528,12 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Docs:** [WEBSITE_LINKS.md](WEBSITE_LINKS.md)
 
 ### `build_hacker_planet_logo.py` / `recolor_m5_logo.py` / `render_crackbot_product.py` / `export_portfolio_html.py`
-- **Path:** `scripts/build_hacker_planet_logo.py` Ã‚Â· etc.
+- **Path:** `scripts/build_hacker_planet_logo.py` - etc.
 - **Tagline:** *Wordmarks, M5 palette, CrackBot STLs, portfolio HTML export.*
 - **Does:** Generates nav wordmark; recolors M5 logo; product renders; portfolio markdown Ã¢â€ â€™ HTML.
 - **When:** Asset refresh or nightly portfolio export.
 - **Admin:** No
-- **Docs:** [WEBSITE_LINKS.md](WEBSITE_LINKS.md) Ã‚Â· [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md)
+- **Docs:** [WEBSITE_LINKS.md](WEBSITE_LINKS.md) - [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md)
 
 ---
 
@@ -545,10 +545,10 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Installs CyberThreatGotchi on BPI-R3 Mini (Debian/OpenWrt-style target).
 - **When:** Fresh edge device imaging.
 - **Admin:** **root**
-- **Docs:** [README.md](../README.md) Ã‚Â· [hardware/README.md](../hardware/README.md)
+- **Docs:** [README.md](../README.md) - [hardware/README.md](../hardware/README.md)
 
 ### `firewall-baseline.sh` / `firewall-baseline-save.sh`
-- **Path:** `scripts/firewall-baseline.sh` Ã‚Â· `firewall-baseline-save.sh`
+- **Path:** `scripts/firewall-baseline.sh` - `firewall-baseline-save.sh`
 - **Tagline:** *Default-deny iptables with CTG_BASELINE Ã¢â‚¬â€ IPS drops stay on top.*
 - **Does:** Applies allow-list chain; saves rules for persistence including dynamic IPS blocks.
 - **When:** Edge deploy or after changing allowed ports.
@@ -560,7 +560,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 ## Cardputer, Bjorn & integrations
 
 ### `cardputer/ctg_status.py` / `cardputer_status.py`
-- **Path:** `scripts/cardputer/ctg_status.py` Ã‚Â· `scripts/cardputer_status.py`
+- **Path:** `scripts/cardputer/ctg_status.py` - `scripts/cardputer_status.py`
 - **Tagline:** *Pocket status poll Ã¢â‚¬â€ Cipherhorn mood on the Cardputer screen.*
 - **Does:** MicroPython or desktop poll of CTG `/api/status`.
 - **When:** Manual dev on M5 Cardputer (COM13 Ã¢â‚¬â€ not nightly).
@@ -573,7 +573,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Ingests CTG webhooks for Bjorn status display.
 - **When:** Bjorn + CTG integration testing.
 - **Admin:** N/A
-- **Docs:** [INTEGRATIONS.md](INTEGRATIONS.md) Ã‚Â· [ECOSYSTEM.md](ECOSYSTEM.md)
+- **Docs:** [INTEGRATIONS.md](INTEGRATIONS.md) - [ECOSYSTEM.md](ECOSYSTEM.md)
 
 ### `webhook_receiver.py`
 - **Path:** `scripts/webhook_receiver.py`
@@ -581,7 +581,7 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` Ã¢â‚¬â€ inventoried f
 - **Does:** Test receiver with optional `X-CTG-Secret` verify.
 - **When:** `main.py --simulation` webhook dev loop.
 - **Admin:** N/A
-- **Docs:** [SECURITY_HARDENING.md](SECURITY_HARDENING.md) Ã‚Â· [WEB.md](WEB.md)
+- **Docs:** [SECURITY_HARDENING.md](SECURITY_HARDENING.md) - [WEB.md](WEB.md)
 
 ### `package_release.py`
 - **Path:** `scripts/package_release.py`
