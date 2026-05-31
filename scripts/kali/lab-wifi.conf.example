@@ -8,6 +8,13 @@
 CTG_LAB_WIFI_SSID="YourLabSSID"
 CTG_LAB_WIFI_PSK="your-wpa2-psk-here"
 
+# Key management — WPA3-SAE (personal) preferred for lab AP security.
+# Options: wpa3 | wpa2 | wpa2wpa3
+#   wpa3       — try WPA3-SAE first (PMF required); fallback WPA2-PSK if AP or Realtek driver lacks SAE
+#   wpa2       — WPA2-PSK only (legacy AP or driver)
+#   wpa2wpa3   — same as wpa3 (transition AP: SAE first, then WPA2-PSK)
+CTG_LAB_WIFI_KEY_MGMT="wpa3"
+
 # Optional: fixed BSSID for owned AP (empty = any)
 # CTG_LAB_WIFI_BSSID="aa:bb:cc:dd:ee:ff"
 

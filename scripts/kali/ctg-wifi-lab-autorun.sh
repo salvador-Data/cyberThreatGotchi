@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# CTG WiFi + Ethernet lab autorun — Realtek USB dongle, lab WPA2, promisc/monitor.
+# CTG WiFi + Ethernet lab autorun — Realtek USB dongle, lab WPA3-SAE (WPA2 fallback), promisc/monitor.
 # Authorized lab / own network only — Hacker Planet LLC · Philadelphia, PA
 #
 # Usage:
@@ -12,6 +12,7 @@ set -euo pipefail
 LOG_FILE="/var/log/ctg-wifi-lab.log"
 CONF="/etc/ctg/lab-wifi.conf"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REBOOT_HELPER="${SCRIPT_DIR}/ctg-reboot-if-needed.sh"
 SERVICE_NAME="ctg-wifi-lab.service"
 UNIT_DEST="/etc/systemd/system/${SERVICE_NAME}"
 DDG_PRIMARY="94.140.14.14"
@@ -32,6 +33,18 @@ log() {
     printf '%s\n' "$msg"
     mkdir -p "$(dirname "$LOG_FILE")"
     printf '%s\n' "$msg" >>"$LOG_FILE"
+}
+
+ctg_reboot_helper() {
+    local helper="$REBOOT_HELPER"
+    for candidate in /mnt/ctg/ctg-reboot-if-needed.sh /opt/ctg/ctg-reboot-if-needed.sh; do
+        if [[ -f "$candidate" ]]; then
+            helper="$candidate"
+            break
+        fi
+    done
+    [[ -f "$helper" ]] || return 0
+    bash "$helper" "$@" || true
 }
 
 usage() {
@@ -105,6 +118,7 @@ EOF
 load_lab_wifi_config() {
     CTG_LAB_WIFI_SSID="${CTG_LAB_WIFI_SSID:-}"
     CTG_LAB_WIFI_PSK="${CTG_LAB_WIFI_PSK:-}"
+    CTG_LAB_WIFI_KEY_MGMT="${CTG_LAB_WIFI_KEY_MGMT:-wpa3}"
     if [[ -f "$CONF" ]]; then
         # shellcheck source=/dev/null
         source "$CONF"
@@ -155,8 +169,11 @@ install_realtek_oot_driver() {
             log "rtl8812au clone failed — check network and headers"
     fi
     if [[ -d /usr/src/rtl88xxau ]]; then
-        make -C /usr/src/rtl88xxau dkms_install 2>/dev/null || \
+        if make -C /usr/src/rtl88xxau dkms_install 2>/dev/null; then
+            ctg_reboot_helper --mark
+        else
             log "DKMS install failed — verify linux-headers-$(uname -r)"
+        fi
         modprobe 88xxau 2>/dev/null || modprobe rtl8812au 2>/dev/null || true
     fi
 }
@@ -206,10 +223,92 @@ iface_link_up() {
     [[ -n "$dev" ]] && ip link show "$dev" 2>/dev/null | grep -q 'state UP'
 }
 
+normalize_key_mgmt_mode() {
+    local raw="${1:-wpa3}"
+    raw="$(echo "$raw" | tr '[:upper:]' '[:lower:]' | tr -d ' _-')"
+    case "$raw" in
+        wpa3|wpa3sae|sae) echo "wpa3" ;;
+        wpa2|wpa2psk|psk) echo "wpa2" ;;
+        wpa2wpa3|transition) echo "wpa2wpa3" ;;
+        *)
+            log "Unknown CTG_LAB_WIFI_KEY_MGMT=$1 — defaulting to wpa3"
+            echo "wpa3"
+            ;;
+    esac
+}
+
+phy_supports_sae() {
+    local wlan="$1"
+    local wiphy phy_name
+    wiphy="$(iw dev "$wlan" info 2>/dev/null | awk '/wiphy/ {print $2}' || true)"
+    if [[ -n "$wiphy" ]]; then
+        phy_name="phy${wiphy}"
+        if iw phy "$phy_name" info 2>/dev/null | grep -qiE 'SAE|Device supports SAE'; then
+            return 0
+        fi
+    fi
+    if iw phy 2>/dev/null | grep -qiE 'SAE|Device supports SAE'; then
+        return 0
+    fi
+    return 1
+}
+
+write_wpa_supplicant_conf() {
+    local wpa_conf="$1" ssid="$2" psk="$3" mode="$4"
+    if [[ "$mode" == "sae" ]]; then
+        cat >"$wpa_conf" <<EOF
+network={
+    ssid="${ssid}"
+    psk="${psk}"
+    key_mgmt=SAE
+    ieee80211w=2
+}
+EOF
+    else
+        cat >"$wpa_conf" <<EOF
+network={
+    ssid="${ssid}"
+    psk="${psk}"
+    key_mgmt=WPA-PSK
+}
+EOF
+    fi
+    chmod 600 "$wpa_conf"
+}
+
+connect_wifi_nmcli() {
+    local wlan="$1" ssid="$2" psk="$3" mode="$4"
+    if ! command -v nmcli >/dev/null 2>&1; then
+        return 1
+    fi
+    if ! systemctl is-active NetworkManager >/dev/null 2>&1; then
+        return 1
+    fi
+    if [[ "$mode" == "sae" ]]; then
+        nmcli dev wifi connect "$ssid" password "$psk" ifname "$wlan" \
+            802-11-wireless-security.key-mgmt sae 2>/dev/null
+    else
+        nmcli dev wifi connect "$ssid" password "$psk" ifname "$wlan" 2>/dev/null
+    fi
+}
+
+start_wpa_supplicant_dhcp() {
+    local wlan="$1" wpa_conf="$2"
+    pkill -f "wpa_supplicant.*${wlan}" 2>/dev/null || true
+    wpa_supplicant -B -i "$wlan" -c "$wpa_conf" -D nl80211,wext 2>/dev/null || \
+        wpa_supplicant -B -i "$wlan" -c "$wpa_conf" 2>/dev/null || return 1
+    dhclient "$wlan" 2>/dev/null || dhcpcd "$wlan" 2>/dev/null || true
+    return 0
+}
+
 connect_lab_wifi() {
     local wlan="$1"
     local ssid="${CTG_LAB_WIFI_SSID:-}"
     local psk="${CTG_LAB_WIFI_PSK:-}"
+    local key_mgmt_mode
+    local wpa_conf="/etc/ctg/lab-wifi-wpa.conf"
+    local try_wpa3=false
+
     if [[ -z "$ssid" || -z "$psk" ]]; then
         log "Lab WiFi SSID/PSK not set — skip connect"
         return 0
@@ -218,31 +317,45 @@ connect_lab_wifi() {
         log "Lab WiFi still has placeholder values — edit $CONF"
         return 0
     fi
-    log "Connecting $wlan to lab SSID (authorized AP only)"
-    ip link set "$wlan" up 2>/dev/null || true
-    if command -v nmcli >/dev/null 2>&1 && systemctl is-active NetworkManager >/dev/null 2>&1; then
-        nmcli dev wifi connect "$ssid" password "$psk" ifname "$wlan" 2>/dev/null && {
-            log "Connected via NetworkManager"
-            return 0
-        }
+
+    key_mgmt_mode="$(normalize_key_mgmt_mode "${CTG_LAB_WIFI_KEY_MGMT:-wpa3}")"
+    if [[ "$key_mgmt_mode" == "wpa3" || "$key_mgmt_mode" == "wpa2wpa3" ]]; then
+        try_wpa3=true
     fi
-    local wpa_conf="/etc/ctg/lab-wifi-wpa.conf"
-    cat >"$wpa_conf" <<EOF
-network={
-    ssid="${ssid}"
-    psk="${psk}"
-    key_mgmt=WPA-PSK
-}
-EOF
-    chmod 600 "$wpa_conf"
-    pkill -f "wpa_supplicant.*${wlan}" 2>/dev/null || true
-    wpa_supplicant -B -i "$wlan" -c "$wpa_conf" -D nl80211,wext 2>/dev/null || \
-        wpa_supplicant -B -i "$wlan" -c "$wpa_conf" 2>/dev/null || {
-        log "wpa_supplicant failed for $wlan"
-        return 1
-    }
-    dhclient "$wlan" 2>/dev/null || dhcpcd "$wlan" 2>/dev/null || true
-    log "wpa_supplicant started on $wlan"
+
+    log "Connecting $wlan to lab SSID (authorized AP only, key_mgmt=$key_mgmt_mode)"
+    ip link set "$wlan" up 2>/dev/null || true
+
+    if $try_wpa3; then
+        if phy_supports_sae "$wlan"; then
+            log "iw phy: SAE supported — attempting WPA3-SAE (PMF required)"
+            if connect_wifi_nmcli "$wlan" "$ssid" "$psk" sae; then
+                log "Connected via NetworkManager (WPA3-SAE)"
+                return 0
+            fi
+            write_wpa_supplicant_conf "$wpa_conf" "$ssid" "$psk" sae
+            if start_wpa_supplicant_dhcp "$wlan" "$wpa_conf"; then
+                log "Connected via wpa_supplicant (WPA3-SAE, ieee80211w=2)"
+                return 0
+            fi
+            log "WPA3-SAE connect failed — falling back to WPA2-PSK (AP or Realtek driver may lack SAE)"
+        else
+            log "iw phy: SAE not advertised on $wlan — skipping WPA3, using WPA2-PSK"
+        fi
+    fi
+
+    log "Attempting WPA2-PSK (transition-mode friendly)"
+    if connect_wifi_nmcli "$wlan" "$ssid" "$psk" wpa2; then
+        log "Connected via NetworkManager (WPA2-PSK)"
+        return 0
+    fi
+    write_wpa_supplicant_conf "$wpa_conf" "$ssid" "$psk" wpa2
+    if start_wpa_supplicant_dhcp "$wlan" "$wpa_conf"; then
+        log "Connected via wpa_supplicant (WPA2-PSK)"
+        return 0
+    fi
+    log "All WiFi connect attempts failed for $wlan"
+    return 1
 }
 
 set_wlan_promisc() {

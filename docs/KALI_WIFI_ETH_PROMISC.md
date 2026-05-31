@@ -86,7 +86,7 @@ sudo chmod 600 /etc/ctg/lab-wifi.conf
 sudo nano /etc/ctg/lab-wifi.conf
 ```
 
-Set your **authorized lab SSID** and WPA2 PSK. Then:
+Set your **authorized lab SSID** and PSK. Prefer **WPA3 personal** (or WPA2/WPA3 transition) on the lab AP — see [WPA3 best practices](#wpa3-best-practices) below. Then:
 
 ```bash
 sudo bash /mnt/ctg/ctg-wifi-lab-autorun.sh
@@ -96,6 +96,42 @@ sudo bash /mnt/ctg/ctg-wifi-lab-autorun.sh
 **Boot service (optional):** `sudo bash /mnt/ctg/ctg-wifi-lab-autorun.sh --install` → `ctg-wifi-lab.service`
 
 **Boot autopatch with WiFi:** `sudo bash /mnt/ctg/kali-boot-autopatch.sh --wifi-lab` (runs after Guest Additions fix).
+
+---
+
+## WPA3 best practices
+
+**Preferred lab AP security:** WPA3 personal (SAE) or WPA2/WPA3 transition on your owned router/AP.
+
+| Setting | Recommendation |
+|---------|----------------|
+| AP mode | WPA3 personal, or WPA2/WPA3 transition if older clients share the SSID |
+| PMF (802.11w) | **Required** for WPA3-SAE — CTG autorun sets `ieee80211w=2` in wpa_supplicant |
+| Config key | `CTG_LAB_WIFI_KEY_MGMT=wpa3` in `/etc/ctg/lab-wifi.conf` (default) |
+| Driver limits | Realtek USB (`rtl8812au`) may not advertise SAE in `iw phy` — script logs and falls back to WPA2-PSK |
+
+**Verify SAE on dongle (Kali):**
+
+```bash
+iw phy | grep -i SAE
+```
+
+**nmcli (manual WPA3-SAE test):**
+
+```bash
+sudo nmcli dev wifi connect "YourLabSSID" password "your-psk" ifname wlan1 \
+  802-11-wireless-security.key-mgmt sae
+```
+
+If WPA3 fails, the autorun retries WPA2-PSK automatically (transition APs accept both). Set `CTG_LAB_WIFI_KEY_MGMT=wpa2` to skip WPA3 entirely on legacy hardware.
+
+---
+
+## Auto-reboot (Realtek DKMS / WPA3 driver)
+
+Installing the **rtl8812au** DKMS module (`ctg-wifi-lab-autorun.sh` or bootstrap) may require a reboot before WPA3-SAE or monitor mode works reliably. The shared helper `ctg-reboot-if-needed.sh --mark` is set after a successful `dkms_install`.
+
+Full lab one-shot (`ctg-lab-autorun.sh`) schedules **`shutdown -r +1`** when any reboot signal is present. Disable with **`CTG_NO_REBOOT=1`** (remote SSH). Log: `/var/log/ctg-reboot.log` · details: [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md#auto-reboot-after-autorun).
 
 ---
 
