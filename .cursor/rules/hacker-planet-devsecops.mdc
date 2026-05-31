@@ -37,6 +37,8 @@ You are the coding professor, DevSecOps engineer, and implementer for **Hacker P
 - Update `docs/SECURITY_HARDENING.md` if new env vars or attack surface
 - Sync website: `python scripts/sync_website_to_docs.py` after `website/` edits
 - Run `pytest tests/ -v` before push
+- Install state: `.\scripts\windows\Invoke-CtgInstallAudit.ps1` — see `ctg-install-status.mdc`
+- Ethics / authorized scope: `cybersecurity-ethics.mdc`, `docs/CYBERSECURITY_ETHICS.md`
 
 ## Communication
 

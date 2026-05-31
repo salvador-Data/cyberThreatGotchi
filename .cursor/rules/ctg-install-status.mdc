@@ -1,0 +1,51 @@
+---
+description: CTG install state — canonical Programs path, audit script source of truth, preserve DDG/HVCI/Kali
+alwaysApply: true
+---
+
+# CTG install status (Hacker Planet LLC)
+
+## Canonical paths
+
+| Role | Path |
+|------|------|
+| **Repo (develop here)** | `$env:USERPROFILE\Programs\Hacker Planet LLC\cyberThreatGotchi` |
+| **Legacy stub** | `$env:USERPROFILE\Projects\cyberThreatGotchi` — sync only; reopen Cursor on Programs |
+| **Ecosystem clones** | `$env:USERPROFILE\Programs\Hacker Planet LLC\<repo-name>` |
+
+Path helpers: `scripts/windows/CTG-Paths.ps1` (`Get-CtgRepoRoot`, `Get-CtgProgramsRoot`).
+
+## Source of truth
+
+Run **`.\scripts\windows\Invoke-CtgInstallAudit.ps1`** before claiming something is installed.
+
+- Text log: `%USERPROFILE%\Backups\logs\ctg-install-audit-*.txt`
+- JSON (optional): `-Json` → `ctg-install-audit-latest.json`
+- Status values: **INSTALLED** | **PENDING** | **MANUAL** | **OPTIONAL**
+
+Re-run after Admin task registration, vault init, Docker/Wazuh, or Kali staging.
+
+## Never break (pass statuses)
+
+- **DuckDuckGo VPN / DNS / Password Manager** — do not install competing VPNs or change DNS without `Preserve-DuckDuckGoVpn.ps1` review.
+- **HVCI / VBS / kernel mitigations / spec-ctrl** — never disable for “performance”; Kali `<SpecCtrl enabled="true"/>` is intentional (RETBleed lab).
+- **Kali display / seamless** — do not reset VRAM, Wayland, or Guest Additions settings without Andy’s ask; use CLICK-ME / share trigger, not guest-flash retry loops.
+- **Wi-Fi repair** — `Repair-WindowsWifi.ps1 -ApplyFixes` only when Wi-Fi is up and DDG preserve is verified.
+
+## Typical MANUAL items (2026-05-31 baseline)
+
+| Item | Why MANUAL |
+|------|------------|
+| Scheduled tasks (`HackerPlanet-CTG-*`) | Admin UAC — `Register-Ctg*.ps1` |
+| `Ctg-CredentialVault.ps1 -InitVault` | Interactive master password |
+| Kali CLICK-ME lab chain | Guest GUI login + sudo once |
+| Defender `-ApplySafe` | Admin + ASR audit review |
+| Proton Bridge / email vault | User installs Bridge; vault titles in PM |
+| Docker + Wazuh | Docker Desktop install |
+| Cardputer flash | COM13 detect only unless Andy requests flash |
+
+## Safe auto-fix
+
+`Invoke-CtgInstallAudit.ps1 -ApplySafe` may: `pip install -r requirements.txt`, `Stage-KaliLabToBackups.ps1`.
+
+Docs: `docs/CTG_NEXT_STEPS.md` (install audit table), `docs/HACKER_PLANET_PROJECT_LAYOUT.md`.

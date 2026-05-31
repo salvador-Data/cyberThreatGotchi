@@ -38,6 +38,8 @@ Scripts resolve paths via `scripts/windows/CTG-Paths.ps1` (`Get-CtgRepoRoot`, `G
 | Remote-Possibility | `Remote-Possibility` |
 | M5-Cardputer-refs | `M5-Cardputer-refs` |
 
+**Clone status (2026-05-31):** All portfolio repos above exist under `Programs\Hacker Planet LLC\`. Verify anytime with `.\scripts\windows\Invoke-CtgInstallAudit.ps1`. Optional legacy copies under `Projects\` are stubs — do not develop there.
+
 ## Automation scripts
 
 | Script | Purpose |
@@ -47,6 +49,7 @@ Scripts resolve paths via `scripts/windows/CTG-Paths.ps1` (`Get-CtgRepoRoot`, `G
 | `scripts/publish/Sync-CtgSplitRepos.ps1` | Monorepo → ctg-kali-lab + ctg-windows-soc |
 | `scripts/publish/Sync-CtgDeviceHardeningRepo.ps1` | Monorepo → ctg-device-hardening |
 | `scripts/windows/Find-CtgDuplicateFiles.ps1` | SHA256 duplicate report; `-ApplyDedupe` |
+| `scripts/windows/Invoke-CtgInstallAudit.ps1` | INSTALLED/PENDING/MANUAL report; `-ApplySafe` for pip + Kali stage |
 
 Logs: `C:\Users\Owner\Backups\logs\hacker-planet-move.log`, `hacker-planet-move-plan.json`, `ctg-duplicate-report.json`
 

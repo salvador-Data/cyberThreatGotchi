@@ -110,6 +110,14 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **Admin:** **Optional** (pass-through `-ApplySafeDefender`)
 - **Docs:** [print/README_PRINT_ALL.md](print/README_PRINT_ALL.md) - [LAB_MATURITY.md](LAB_MATURITY.md)
 
+### `Invoke-CtgInstallAudit.ps1`
+- **Path:** `scripts/windows/Invoke-CtgInstallAudit.ps1`
+- **Tagline:** *Install audit — INSTALLED vs PENDING vs MANUAL for every CTG component.*
+- **Does:** Reports venv, vault, scheduled tasks, IDS tools, Docker/Wazuh, Kali staging, ecosystem clones; optional `-ApplySafe` (pip + Stage-KaliLabToBackups).
+- **When:** After migration, before claiming “installed”; Cursor rule source of truth.
+- **Admin:** **No** (diagnose-only; documents Admin steps for tasks/Defender)
+- **Docs:** [CTG_NEXT_STEPS.md](CTG_NEXT_STEPS.md) - [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md) - `.cursor/rules/ctg-install-status.mdc`
+
 ### `Pause-DefenderRealtime.ps1`
 - **Path:** `scripts/windows/Pause-DefenderRealtime.ps1`
 - **Tagline:** *Five-minute truce for lab builds - then turn the sentinel back on.*

@@ -60,6 +60,60 @@ cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
 
 ---
 
+## Install audit (2026-05-31)
+
+**Source of truth:** `.\scripts\windows\Invoke-CtgInstallAudit.ps1` — writes `%USERPROFILE%\Backups\logs\ctg-install-audit-*.txt`.
+
+```powershell
+cd "$env:USERPROFILE\Programs\Hacker Planet LLC\cyberThreatGotchi"
+```
+
+```powershell
+.\scripts\windows\Invoke-CtgInstallAudit.ps1 -Json
+```
+
+```powershell
+.\scripts\windows\Invoke-CtgInstallAudit.ps1 -ApplySafe
+```
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Python `.venv` + cryptography/argon2 | **INSTALLED** | Safe pip via `-ApplySafe` |
+| Legacy DPAPI `secrets.dpapi` | **INSTALLED** | Migrate to `Ctg-CredentialVault` when ready |
+| `Ctg-CredentialVault` | **MANUAL** | `-InitVault -WithDpapiWrap` (interactive) |
+| All `HackerPlanet-CTG-*` tasks | **MANUAL** | Admin: `Register-Ctg*.ps1` |
+| signal-cli / Snort / Suricata | **OPTIONAL** | Install scripts exist; not on PATH |
+| Proton Mail Bridge | **MANUAL** | User install; email vault titles in PM |
+| Docker + Wazuh lab | **MANUAL** | Docker Desktop not installed |
+| Defender ASR `-ApplySafe` | **MANUAL** | Admin after `-DiagnoseOnly` review |
+| Kali staged to Backups | **INSTALLED** | `Stage-KaliLabToBackups.ps1` / `-ApplySafe` |
+| Kali guest lab chain | **MANUAL** | CLICK-ME or share trigger |
+| Kali spec-ctrl | **MANUAL** | `Harden-KaliVmSpectre.ps1 -DiagnoseOnly` |
+| PlatformIO / Cardputer COM13 | **OPTIONAL / MANUAL** | Detect only; flash on request |
+| Ecosystem clones (Programs) | **INSTALLED** | All required repos present 2026-05-31 |
+
+Cursor rules: `.cursor/rules/ctg-install-status.mdc`, `cybersecurity-ethics.mdc`. Ethics doc: [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md).
+
+**Admin one-liners (elevated, from repo root):**
+
+```powershell
+.\scripts\windows\Register-CtgNightlyTask.ps1
+```
+
+```powershell
+.\scripts\windows\Register-CtgCpuOptimizeTask.ps1
+```
+
+```powershell
+.\scripts\windows\Register-CtgMemoryProtectionTask.ps1
+```
+
+```powershell
+.\scripts\windows\Harden-CtgWindowsDefender.ps1 -ApplySafe
+```
+
+---
+
 ## Good build snapshot (2026-05-31)
 
 **Canonical repo path:** `C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi` — reopen Cursor here (not `Projects\cyberThreatGotchi` unless you sync clones).
