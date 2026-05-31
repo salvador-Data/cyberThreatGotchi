@@ -13,17 +13,28 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 ### Done on main
 - Kali share path: `ctg-run-on-share-trigger.sh`, `CTG_RUN_AUTORUN_NOW` trigger, `ctg-watch-trigger.sh` polling
 - One-click in guest: `CLICK-ME-RUN-IN-KALI.sh` + `CLICK-ME-RUN-IN-KALI.desktop` (staged to `C:\Users\Owner\Backups` / vboxsf)
-- Host: `Invoke-CtgKaliGuestFlash.ps1 -UseSecretVault` (DPAPI vault; no passwords in git)
+- Host: `Invoke-CtgKaliGuestFlash.ps1 -UseSecretVault` (credential vault → DPAPI → credentials file; no passwords in git)
+- Encrypted credential vault: `Ctg-CredentialVault.ps1`, `core/ctg_vault.py`, `scripts/ctg_vault_cli.py`
 - Host: `Start-KaliSeamless.ps1` diagnostic string fixes; `Invoke-CtgKaliNmapAskInstall.ps1` for nmap-ask install trigger
-- Lab tree re-staged: `Stage-KaliLabToBackups.ps1`
-- Tests: **429 passed, 4 skipped** (`pytest tests/ -q`, 2026-05-31 good-build pass)
+- Lab tree re-staged: `Stage-KaliLabToBackups.ps1` (2026-05-31 — full tree on `ctg-backups` share)
+- Path helpers: `CTG-Paths.ps1` resolves Programs root + canonical repo
+- Tests: **445 passed, 4 skipped** (`pytest tests/ -q`, 2026-05-31 good-build pass)
+
+### Good build run log (2026-05-31, Windows SOC)
+| Command | Outcome |
+|---------|---------|
+| `pytest tests/ -q` (canonical `.venv`) | **445 passed**, 4 skipped (~3 min) |
+| `Stage-KaliLabToBackups.ps1` | OK — 35+ `.sh`, CLICK-ME, docs → `C:\Users\Owner\Backups` |
+| `CTG-Paths.ps1` dot-source | ProgramsRoot=`Programs\Hacker Planet LLC`; RepoRoot=canonical path |
+| `Get-ScheduledTask HackerPlanet-CTG-*` | None registered (CPU/nightly still manual Admin) |
+| `Invoke-CtgKaliGuestFlash.ps1` | **Not run** (live creds/guest login — use CLICK-ME or share trigger) |
 
 ### Manual (Kali / Windows)
 | Step | Action |
 |------|--------|
 | Kali lab chain | Log into Xfce → double-click **CTG Run Lab (click me)** or `bash /media/sf_ctg-backups/CLICK-ME-RUN-IN-KALI.sh` (sudo password once) |
 | Share trigger (no SSH) | Windows: `New-Item C:\Users\Owner\Backups\CTG_RUN_AUTORUN_NOW -ItemType File -Force` while guest logged in |
-| Secrets | `Protect-CtgSecrets.ps1 -SetSecret` for `KALI_SSH_USER` / `KALI_SSH_PASSWORD`; rotate Kali login when ready |
+| Secrets | `Ctg-CredentialVault.ps1 -InitVault` + title **`Kali SSH`**, or `Protect-CtgSecrets.ps1 -SetSecret`; rotate Kali login when ready |
 | Seamless | After GUI login: **Host+L** or `Start-KaliSeamless.ps1` |
 
 ### Paused (do not chase)
@@ -364,7 +375,7 @@ cd C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi
 pytest tests\ -v
 ```
 
-Expected: **277 collected**, all pass (3 firewall bash tests skip on Windows).
+Expected: **449 collected**, **445 passed**, **4 skipped** (firewall/bash + platform skips on Windows).
 
 ---
 
