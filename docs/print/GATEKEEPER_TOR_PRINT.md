@@ -37,6 +37,12 @@ cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
 
 ## Windows commands
 
+Regenerate lit PNG icons (dev/build):
+
+```powershell
+py -3 scripts\gatekeeper-tor\generate_gatekeeper_icons.py
+```
+
 Stage Kali share:
 
 ```powershell

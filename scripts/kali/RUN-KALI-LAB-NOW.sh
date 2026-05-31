@@ -129,11 +129,6 @@ if [[ -f "$CTG_MOUNT/gatekeeper-tor/kali/install-gatekeeper-kali.sh" ]]; then
     bash "$CTG_MOUNT/gatekeeper-tor/kali/install-gatekeeper-kali.sh" || log "install-gatekeeper returned non-zero (continuing)"
 fi
 
-if [[ -f "$CTG_MOUNT/gatekeeper-tor/kali/install-gatekeeper-kali.sh" ]]; then
-    log "Phase 2b: Gatekeeper.TOR install"
-    bash "$CTG_MOUNT/gatekeeper-tor/kali/install-gatekeeper-kali.sh" || log "install-gatekeeper returned non-zero (continuing)"
-fi
-
 log "Phase 3: full lab autorun (bootstrap, WiFi/IDS/SIEM, tor, scrambler)"
 export CTG_SKIP_AUTO_REBOOT=1
 bash "$CTG_MOUNT/ctg-lab-autorun.sh" || die "ctg-lab-autorun.sh failed"

@@ -35,20 +35,27 @@ function Get-GatekeeperPythonStatus {
     if (-not (Test-Path $CorePy)) {
         return @{ ok = $false; error = "Missing $CorePy" }
     }
-    $py = Get-Command python -ErrorAction SilentlyContinue
-    if (-not $py) {
-        $py = Get-Command py -ErrorAction SilentlyContinue
+    $pyLauncher = Get-Command py -ErrorAction SilentlyContinue
+    if ($pyLauncher) {
+        try {
+            $out = & py -3 $CorePy status 2>&1 | Out-String
+            if ($LASTEXITCODE -eq 0 -or $out -match '"mode"') {
+                return @{ ok = $true; output = $out.Trim() }
+            }
+        } catch {
+            # fall through to python.exe
+        }
     }
+    $py = Get-Command python -ErrorAction SilentlyContinue
     if (-not $py) {
         return @{ ok = $false; error = 'python not in PATH' }
     }
-    $exe = if ($py.Name -eq 'py') { 'py -3' } else { $py.Source }
-    if ($exe -eq 'py -3') {
-        $out = & py -3 $CorePy status 2>&1 | Out-String
-    } else {
+    try {
         $out = & $py.Source $CorePy status 2>&1 | Out-String
+        return @{ ok = $true; output = $out.Trim() }
+    } catch {
+        return @{ ok = $false; error = $_.Exception.Message }
     }
-    return @{ ok = $true; output = $out.Trim() }
 }
 
 function Get-GatekeeperMode {
@@ -75,7 +82,7 @@ function Get-GkLitIconPath {
 function Get-GkLitTooltip {
     $mode = Get-GatekeeperMode
     $label = if ($mode -eq 'https') { 'HTTPS' } else { 'TOR' }
-    return "Gatekeeper.TOR — $label (lit)"
+    return "Gatekeeper.TOR - $label (lit)"
 }
 
 function Test-CtgDdgVpnActive {
@@ -95,14 +102,14 @@ function Test-CtgLocalTorSocks {
 
 function Invoke-GatekeeperSetMode {
     param([string] $Mode)
-    $py = Get-Command python -ErrorAction SilentlyContinue
-    if (-not $py) { $py = Get-Command py -ErrorAction SilentlyContinue }
-    if (-not $py) { return }
-    if ($py.Name -eq 'py') {
+    $pyLauncher = Get-Command py -ErrorAction SilentlyContinue
+    if ($pyLauncher) {
         & py -3 $CorePy set-mode $Mode | Out-Null
-    } else {
-        & $py.Source $CorePy set-mode $Mode | Out-Null
+        return
     }
+    $py = Get-Command python -ErrorAction SilentlyContinue
+    if (-not $py) { return }
+    & $py.Source $CorePy set-mode $Mode | Out-Null
 }
 
 function Update-GatekeeperTrayUi {
@@ -126,8 +133,8 @@ function Update-GatekeeperTrayUi {
     if ($socks) { $tooltip += ' | SOCKS :9050' }
     $NotifyIcon.Text = $tooltip.Substring(0, [Math]::Min(63, $tooltip.Length))
     if ($Menu.Items.Count -ge 2) {
-        $Menu.Items[0].Text = if ($mode -eq 'tor') { '✓ TOR (lit)' } else { '  TOR' }
-        $Menu.Items[1].Text = if ($mode -eq 'https') { '✓ HTTPS (lit)' } else { '  HTTPS' }
+        $Menu.Items[0].Text = if ($mode -eq 'tor') { '* TOR (lit)' } else { '  TOR' }
+        $Menu.Items[1].Text = if ($mode -eq 'https') { '* HTTPS (lit)' } else { '  HTTPS' }
     }
 }
 
@@ -140,12 +147,12 @@ function Start-GatekeeperTrayUi {
 
     $mode = Get-GatekeeperMode
     [void]$script:ContextMenu.Items.Add(
-        $(if ($mode -eq 'tor') { '✓ TOR (lit)' } else { '  TOR' }),
+        $(if ($mode -eq 'tor') { '* TOR (lit)' } else { '  TOR' }),
         $null,
         { Invoke-GatekeeperSetMode 'tor'; Update-GatekeeperTrayUi $script:NotifyIcon $script:ContextMenu }
     )
     [void]$script:ContextMenu.Items.Add(
-        $(if ($mode -eq 'https') { '✓ HTTPS (lit)' } else { '  HTTPS' }),
+        $(if ($mode -eq 'https') { '* HTTPS (lit)' } else { '  HTTPS' }),
         $null,
         { Invoke-GatekeeperSetMode 'https'; Update-GatekeeperTrayUi $script:NotifyIcon $script:ContextMenu }
     )

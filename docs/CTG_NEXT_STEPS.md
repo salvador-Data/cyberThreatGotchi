@@ -21,7 +21,7 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 | Email → Kali | [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) | `Initialize-CtgEmailVault.ps1`; Proton Bridge |
 | GitHub CI mail | [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md) | Proton filter + fix CI first |
 | UTMS Wi-Fi AI | [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) | Event bus + jam/deauth detect (no RF counter-jam) |
-| Gatekeeper.TOR | [GATEKEEPER_TOR.md](GATEKEEPER_TOR.md) | Kali tray + torrc; Windows tray (DDG preserved); split `ctg-gatekeeper-tor` |
+| Gatekeeper.TOR | [GATEKEEPER_TOR.md](GATEKEEPER_TOR.md) | **Run Kali install + pin tray:** `Stage-KaliLabToBackups.ps1` → `sudo bash /mnt/ctg/gatekeeper-tor/kali/install-gatekeeper-kali.sh` → pin Xfce systray; Windows: `-InstallTray` |
 | iOS MDM checklist | `Export-CtgIosProfileChecklist.ps1` | Supervision optional (fleet only) |
 | **Print = run (iPhone)** | [IPHONE_AUDIT_PRINT.md](IPHONE_AUDIT_PRINT.md) | Manual Settings on device; preserve DDG VPN/DNS/PM |
 | **Print = run (Windows SOC)** | [WINDOWS_SOC_AUDIT_PRINT.md](WINDOWS_SOC_AUDIT_PRINT.md) | `Invoke-CtgPreserveStackAudit.ps1` |
