@@ -178,7 +178,20 @@ DESK
         chmod 644 "$autostart"
         log "Installed $autostart (VBoxClient --seamless at login)"
     fi
-    log "Seamless toggle on Windows host: Host+L (Host key = Right Ctrl by default)"
+    local guest_fix="${SCRIPT_DIR}/ctg-seamless-guest.sh"
+    for candidate in /mnt/ctg/ctg-seamless-guest.sh /opt/ctg/ctg-seamless-guest.sh; do
+        if [[ -f "$candidate" ]]; then
+            guest_fix="$candidate"
+            break
+        fi
+    done
+    if [[ -f "$guest_fix" ]] && who 2>/dev/null | grep -q ':0'; then
+        log "Running guest panel/VBoxClient fix: $guest_fix"
+        bash "$guest_fix" || log "ctg-seamless-guest returned non-zero (login may still be in progress)"
+    else
+        log "Guest seamless helper: bash /mnt/ctg/ctg-seamless-guest.sh after GUI login"
+    fi
+    log "Seamless toggle on Windows host: Host+L; menu: Host+Home; toolbar: docs/KALI_SEAMLESS_MODE.md"
 }
 
 fix_virtualbox_guest_packages() {

@@ -2,7 +2,28 @@
 
 One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized defensive use only.
 
-**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+**Related docs:** [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+
+---
+
+## Session status (automated vs manual)
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Kali seamless host script | **Done** | `Start-KaliSeamless.ps1` — VB7 extradata, diagnose, lock retry |
+| Kali guest seamless prerequisites | **Done** | `kali-boot-autopatch.sh`, `ctg-seamless-guest.sh`, staged to Backups |
+| Seamless toggle on running VM | **Manual** | Log in to Kali GUI, then **Host+L** (VB7 has no `controlvm seamless`) |
+| CPU safe optimize scripts | **Done** | `Optimize-CpuPerformance.ps1`, `Register-CtgCpuOptimizeTask.ps1`, docs |
+| CPU `-ApplySafe` / scheduled task | **Manual (Admin)** | UAC required — see step 7 below |
+| PII privacy Cursor rule | **Done** | `.cursor/rules/no-pii-in-repo.mdc` |
+| Wi-Fi repair | **Manual (Admin)** | Wi-Fi disconnected; DDG VPN up — run `Repair-WindowsWifi.ps1 -ApplyFixes` elevated |
+| Kali SSH autopatch | **Manual (TTY)** | If 127.0.0.1:2222 fails: `sudo bash /mnt/ctg/RUN-KALI-LAB-NOW.sh` |
+| Vault secrets | **Manual** | `Protect-CtgSecrets.ps1 -SetSecret` for KALI_SSH_* (never in git) |
+| pytest + push | **Done when green** | Run `pytest tests\ -q` then commit/push main + split repos |
+
+**Seamless root cause (2026-05-31 diagnose):** VM `kali` running, Guest Additions 7.0.14 OK, VRAM 128 VMSVGA OK, `GUI/Seamless=on` — **no graphical login** (`DesktopReady: False`). Fix: log in at Kali console, optional `bash /mnt/ctg/ctg-seamless-guest.sh`, then Host+L.
+
+**CPU diagnose (Andy laptop):** Intel i9-8950HK, likely laptop, High performance plan active — **script OC: N**; manual BIOS/XTU only if desired.
 
 ---
 
@@ -68,7 +89,7 @@ Seamless mode (Guest Additions required):
 .\scripts\windows\Start-KaliSeamless.ps1
 ```
 
-See [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md).
+See [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) and [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) (toolbar / Host+Home).
 
 **4. Compartmentalized audit (weekly or pre-travel)**
 

@@ -1,11 +1,14 @@
 ﻿# Start VirtualBox Kali VM in seamless mode (Guest Additions + graphical login required).
-# Authorized defensive lab use only - Hacker Planet LLC ┬╖ Philadelphia, PA
+# Authorized defensive lab use only - Hacker Planet LLC - Philadelphia, PA
 param(
     [string]$VmName = 'kali',
     [string[]]$VmNameCandidates = @('kali', 'Kali-Lab', 'Kali', 'kali-linux'),
     [int]$GuestAdditionsWaitSec = 60,
     [int]$DesktopWaitSec = 120,
+    [ValidateSet('Seamless', 'Scaled', 'Gui')]
+    [string]$DisplayMode = 'Seamless',
     [switch]$SkipExtradata,
+    [switch]$NoShowHostToolbar,
     [switch]$DiagnoseOnly,
     [switch]$WhatIf
 )
@@ -138,9 +141,50 @@ function Test-CtgExtradataTruthy {
     return $v -in @('on', 'true', '1', 'yes')
 }
 
-function Set-CtgSeamlessExtradata {
+function Get-CtgGuiExtradataSnapshot {
     param([string]$Name, [string]$VBoxManage)
+    $keys = @('GUI/Seamless', 'GUI/SeamlessMode', 'GUI/ShowMiniToolBar', 'GUI/SuppressMessages', 'GUI/GlobalMenuBar')
+    $snap = [ordered]@{}
+    foreach ($key in $keys) {
+        $snap[$key] = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key $key
+    }
+    return $snap
+}
+
+function Set-CtgHostToolbarExtradata {
+    param([string]$Name, [string]$VBoxManage, [switch]$Enable)
     if ($SkipExtradata) { return $true }
+    if (-not $Enable) {
+        Write-CtgSeamlessLog 'Host mini toolbar extradata skipped (-NoShowHostToolbar)'
+        return $true
+    }
+    Write-CtgSeamlessLog "Setting extradata GUI/ShowMiniToolBar=true on $Name"
+    if ($WhatIf) {
+        Write-CtgSeamlessLog ('[WhatIf] setextradata ' + $Name + ' GUI/ShowMiniToolBar true')
+        return $true
+    }
+    $result = Invoke-CtgVBoxManage -VBoxManage $VBoxManage -Arguments @('setextradata', $Name, 'GUI/ShowMiniToolBar', 'true')
+    if ($result.Output.Trim()) { Write-CtgSeamlessLog $result.Output.Trim() }
+    $val = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key 'GUI/ShowMiniToolBar'
+    if (-not (Test-CtgExtradataTruthy -Value $val)) {
+        Write-CtgSeamlessLog "WARNING: GUI/ShowMiniToolBar is '$val' - use Host+Home (Right Ctrl+Home) for VM menu"
+        return $false
+    }
+    return $true
+}
+
+function Set-CtgSeamlessExtradata {
+    param([string]$Name, [string]$VBoxManage, [string]$Mode = 'Seamless')
+    if ($SkipExtradata) { return $true }
+    if ($Mode -eq 'Scaled' -or $Mode -eq 'Gui') {
+        Write-CtgSeamlessLog "DisplayMode=$Mode - clearing GUI/Seamless (Host+L to re-enter seamless)"
+        if ($WhatIf) {
+            Write-CtgSeamlessLog ('[WhatIf] setextradata ' + $Name + ' GUI/Seamless off')
+            return $true
+        }
+        Invoke-CtgVBoxManage -VBoxManage $VBoxManage -Arguments @('setextradata', $Name, 'GUI/Seamless', 'off') | Out-Null
+        return $true
+    }
     Write-CtgSeamlessLog "Setting extradata GUI/Seamless=on on $Name (auto-enter when Guest Additions + desktop ready)"
     if ($WhatIf) {
         Write-CtgSeamlessLog ('[WhatIf] setextradata ' + $Name + ' GUI/Seamless on')
@@ -172,12 +216,17 @@ function Write-CtgHostLHint {
     Write-CtgSeamlessLog "VirtualBox 7: press Host+L (default Host=Right Ctrl) on the $Name window to toggle seamless now"
 }
 
+function Write-CtgHostToolbarHint {
+    Write-CtgSeamlessLog 'Host toolbar: top screen edge for mini toolbar (pin thumbtack), or Host+Home (Right Ctrl+Home) for full VM menu'
+    Write-CtgSeamlessLog 'Guest panel: bash /mnt/ctg/ctg-seamless-guest.sh - see docs/KALI_SEAMLESS_MODE.md'
+}
+
 function Write-CtgGuestAdditionsHint {
     Write-CtgSeamlessLog 'WARNING: Guest Additions not ready - seamless mode unavailable.'
     Write-CtgSeamlessLog 'Fix in Kali: sudo bash /mnt/ctg/kali-boot-autopatch.sh --install'
     Write-CtgSeamlessLog 'Or: sudo bash /mnt/ctg/fix-kali-blank-screen.sh'
     Write-CtgSeamlessLog 'Host deploy: .\scripts\windows\Deploy-KaliBootAutopatch.ps1'
-    Write-CtgSeamlessLog 'Docs: docs/KALI_VIRTUALBOX_SEAMLESS.md'
+    Write-CtgSeamlessLog 'Docs: docs/KALI_SEAMLESS_MODE.md'
 }
 
 function Write-CtgDesktopLoginHint {
@@ -215,14 +264,20 @@ function Get-CtgSeamlessDiagnostics {
     $gaReady = Test-CtgGuestAdditionsReady -Name $Name -VBoxManage $VBoxManage
     $desktop = Test-CtgGuestDesktopReady -Name $Name -VBoxManage $VBoxManage
     $seamlessActive = Test-CtgSeamlessFacilityActive -Name $Name -VBoxManage $VBoxManage
-    $extradataSeamless = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Seamless'
-    $extradataMode = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key 'GUI/SeamlessMode'
+    $guiExtra = Get-CtgGuiExtradataSnapshot -Name $Name -VBoxManage $VBoxManage
+    $extradataSeamless = $guiExtra['GUI/Seamless']
+    $extradataMode = $guiExtra['GUI/SeamlessMode']
+    $extradataMiniTb = $guiExtra['GUI/ShowMiniToolBar']
     $session = if ($info -match 'Session name:\s*(.+)') { $Matches[1].Trim() } else { 'none' }
+    $sessionType = if ($info -match 'Session type:\s*(.+)') { $Matches[1].Trim() } else { 'unknown' }
     $issues = @()
-    if (-not $gaReady) { $issues += 'Guest Additions not reporting (install virtualbox-guest-x11)' }
-    if ($state -eq 'running' -and -not $desktop) { $issues += 'No graphical login - log in at Kali console' }
-    if (-not (Test-CtgExtradataTruthy -Value $extradataSeamless)) {
+    if ($state -eq 'running' -and -not $gaReady) { $issues += 'Guest Additions not reporting (install virtualbox-guest-x11)' }
+    if ($state -eq 'running' -and -not $desktop) { $issues += 'No graphical login (guest property) - log in at Kali console if desktop is blank' }
+    if ($DisplayMode -eq 'Seamless' -and -not $seamlessActive -and -not (Test-CtgExtradataTruthy -Value $extradataSeamless)) {
         $issues += "GUI/Seamless extradata not enabled (got '$extradataSeamless')"
+    }
+    if (-not $NoShowHostToolbar -and -not (Test-CtgExtradataTruthy -Value $extradataMiniTb)) {
+        $issues += "GUI/ShowMiniToolBar is '$extradataMiniTb' - host mini toolbar hidden; re-run without -NoShowHostToolbar"
     }
     if ($vram -ne '128MB') { $issues += "VRAM is $vram (recommend 128MB - Fix-KaliBlankScreen.ps1)" }
     if ($gfx -notmatch 'VMSVGA|VBoxSVGA') { $issues += "Graphics controller is $gfx (recommend VMSVGA)" }
@@ -237,6 +292,7 @@ function Get-CtgSeamlessDiagnostics {
         VmName         = $Name
         VmState        = $state
         Session        = $session
+        SessionType    = $sessionType
         Vram           = $vram
         Graphics       = $gfx
         GuestAdditions = if ($gaVer) { $gaVer } else { 'not detected' }
@@ -245,6 +301,10 @@ function Get-CtgSeamlessDiagnostics {
         SeamlessActive = $seamlessActive
         ExtradataSeamless = $extradataSeamless
         ExtradataMode  = $extradataMode
+        ExtradataShowMiniToolBar = $extradataMiniTb
+        ExtradataSuppressMessages = $guiExtra['GUI/SuppressMessages']
+        ExtradataGlobalMenuBar = $guiExtra['GUI/GlobalMenuBar']
+        DisplayModeParam = $DisplayMode
         ControlvmSeamless = (Test-CtgVBoxControlvmSeamlessSupported -VBoxManage $VBoxManage)
         Issues         = $issues
     }
@@ -263,7 +323,8 @@ function Invoke-CtgSeamlessDiagnose {
         foreach ($issue in $diag.Issues) { Write-CtgSeamlessLog "  - $issue" }
         return 1
     }
-    Write-CtgSeamlessLog 'Diagnose: all checks passed (toggle Host+L if seamless not visible)'
+    Write-CtgSeamlessLog 'Diagnose: all checks passed (Host+L seamless, Host+Home menu, top-edge mini toolbar)'
+    Write-CtgHostToolbarHint
     return 0
 }
 
@@ -280,11 +341,13 @@ function Enable-CtgSeamlessOnRunningVm {
     }
     if (Test-CtgSeamlessFacilityActive -Name $Name -VBoxManage $VBoxManage) {
         Write-CtgSeamlessLog "Seamless mode already active on $Name"
+        Write-CtgHostToolbarHint
         return $true
     }
     if (-not (Wait-CtgGuestDesktop -Name $Name -VBoxManage $VBoxManage -WaitSec $WaitSec)) {
         Write-CtgDesktopLoginHint
         Write-CtgHostLHint -Name $Name
+        Write-CtgHostToolbarHint
         return $false
     }
     if (Test-CtgVBoxControlvmSeamlessSupported -VBoxManage $VBoxManage) {
@@ -296,12 +359,14 @@ function Enable-CtgSeamlessOnRunningVm {
         $result = Invoke-CtgVBoxManage -VBoxManage $VBoxManage -Arguments @('controlvm', $Name, 'seamless', 'on')
         if ($result.ExitCode -eq 0 -and $result.Output -notmatch 'error|VBOX_E|Invalid parameter') {
             Write-CtgSeamlessLog "Seamless mode enabled on $Name (Host+L toggles)"
+            Write-CtgHostToolbarHint
             return $true
         }
         Write-CtgSeamlessLog "controlvm seamless on unavailable: $($result.Output.Trim())"
     }
     Write-CtgSeamlessLog "VM $Name running with Guest Additions + desktop - extradata GUI/Seamless=on set"
     Write-CtgHostLHint -Name $Name
+    Write-CtgHostToolbarHint
     return $true
 }
 
@@ -311,8 +376,10 @@ function Start-CtgKaliSeamless {
         [string]$VBoxManage = '',
         [int]$WaitSec = $GuestAdditionsWaitSec,
         [int]$DesktopSec = $DesktopWaitSec,
+        [string]$Mode = $DisplayMode,
         [switch]$WhatIfParam,
-        [switch]$DiagnoseOnlyParam
+        [switch]$DiagnoseOnlyParam,
+        [switch]$NoShowHostToolbarParam
     )
     if ($WhatIfParam) { $script:WhatIf = $true }
     if ($DiagnoseOnlyParam) { $script:DiagnoseOnly = $true }
@@ -337,13 +404,23 @@ function Start-CtgKaliSeamless {
         return (Invoke-CtgSeamlessDiagnose -Name $Name -VBoxManage $VBoxManage)
     }
 
-    Set-CtgSeamlessExtradata -Name $Name -VBoxManage $VBoxManage | Out-Null
+    Set-CtgSeamlessExtradata -Name $Name -VBoxManage $VBoxManage -Mode $Mode | Out-Null
+    if (-not $NoShowHostToolbarParam) {
+        Set-CtgHostToolbarExtradata -Name $Name -VBoxManage $VBoxManage -Enable | Out-Null
+    }
 
     $state = Get-CtgVmState -Name $Name -VBoxManage $VBoxManage
     Write-CtgSeamlessLog "VM $Name state: $state"
 
     if ($state -eq 'running') {
-        if (Enable-CtgSeamlessOnRunningVm -Name $Name -VBoxManage $VBoxManage -WaitSec $DesktopSec) { return 0 }
+        if ($Mode -ne 'Seamless') {
+            Write-CtgSeamlessLog "VM running in $Mode mode - use Host+L or View menu to adjust display"
+            Write-CtgHostToolbarHint
+            return 0
+        }
+        if (Enable-CtgSeamlessOnRunningVm -Name $Name -VBoxManage $VBoxManage -WaitSec $DesktopSec) {
+            return 0
+        }
         return 1
     }
 
@@ -352,7 +429,11 @@ function Start-CtgKaliSeamless {
         return 2
     }
 
-    Write-CtgSeamlessLog "Starting $Name (seamless via GUI/Seamless extradata + --type gui)"
+    if ($Mode -eq 'Scaled') {
+        Write-CtgSeamlessLog "Starting $Name (scaled window - GUI/Seamless off; Host+L for seamless later)"
+    } else {
+        Write-CtgSeamlessLog "Starting $Name (seamless via GUI/Seamless extradata + --type gui)"
+    }
     if ($WhatIf) {
         Write-CtgSeamlessLog ('[WhatIf] startvm ' + $Name + ' --type gui')
         return 0
@@ -361,6 +442,7 @@ function Start-CtgKaliSeamless {
     $startOut = (Invoke-CtgVBoxManage -VBoxManage $VBoxManage -Arguments @('startvm', $Name, '--type', 'seamless')).Output
     if ($startOut -notmatch 'error|VBOX_E|Invalid|failed|already locked') {
         Write-CtgSeamlessLog "Started $Name with --type seamless (legacy VirtualBox)"
+        Write-CtgHostToolbarHint
         return 0
     }
 
@@ -403,7 +485,11 @@ function Start-CtgKaliSeamless {
         return 1
     }
 
-    if (Enable-CtgSeamlessOnRunningVm -Name $Name -VBoxManage $VBoxManage -WaitSec $DesktopSec) {
+    if ($Mode -eq 'Seamless' -and (Enable-CtgSeamlessOnRunningVm -Name $Name -VBoxManage $VBoxManage -WaitSec $DesktopSec)) {
+        return 0
+    }
+    if ($Mode -ne 'Seamless') {
+        Write-CtgHostToolbarHint
         return 0
     }
     return 1
@@ -411,6 +497,6 @@ function Start-CtgKaliSeamless {
 
 $script:IsDotSourced = ($MyInvocation.InvocationName -eq '.')
 if (-not $script:IsDotSourced) {
-    $exitCode = Start-CtgKaliSeamless -Name $VmName -WaitSec $GuestAdditionsWaitSec -DesktopSec $DesktopWaitSec -DiagnoseOnlyParam:$DiagnoseOnly
+    $exitCode = Start-CtgKaliSeamless -Name $VmName -WaitSec $GuestAdditionsWaitSec -DesktopSec $DesktopWaitSec -Mode $DisplayMode -DiagnoseOnlyParam:$DiagnoseOnly -NoShowHostToolbarParam:$NoShowHostToolbar
     if ($null -ne $exitCode) { exit $exitCode }
 }

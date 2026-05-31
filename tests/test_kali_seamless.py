@@ -18,8 +18,13 @@ def test_start_kali_seamless_script_exists():
     assert "Get-CtgSeamlessDiagnostics" in text
     assert "LoggedInUsers" in text
     assert "Host+L" in text
+    assert "Host+Home" in text
+    assert "ShowMiniToolBar" in text
+    assert "DisplayMode" in text
+    assert "Get-CtgGuiExtradataSnapshot" in text
     assert "kali-seamless.log" in text
     assert "kali-boot-autopatch.sh" in text
+    assert "NoShowHostToolbar" in text
 
 
 def test_seamless_wired_in_lab_scripts():
@@ -41,12 +46,23 @@ def test_seamless_doc_and_autopatch_note():
     assert "Host + L" in body or "Host+L" in body
     assert "virtualbox-guest-x11" in body
     assert "DiagnoseOnly" in body
+    assert "KALI_SEAMLESS_MODE" in body
+
+    mode_doc = ROOT / "docs" / "KALI_SEAMLESS_MODE.md"
+    assert mode_doc.is_file()
+    mode_body = mode_doc.read_text(encoding="utf-8")
+    assert "ShowMiniToolBar" in mode_body
+    assert "Host+Home" in mode_body or "Host + Home" in mode_body
+
+    guest = KALI / "ctg-seamless-guest.sh"
+    assert guest.is_file()
+    assert "VBoxClient" in guest.read_text(encoding="utf-8")
 
     autopatch = (KALI / "kali-boot-autopatch.sh").read_text(encoding="utf-8")
     assert "virtualbox-guest-x11" in autopatch
     assert "fix_virtualbox_seamless_guest" in autopatch
     assert "VBoxClient" in autopatch
-    assert "KALI_VIRTUALBOX_SEAMLESS" in autopatch
+    assert "ctg-seamless-guest" in autopatch
 
     autorun = (KALI / "ctg-lab-autorun.sh").read_text(encoding="utf-8")
     assert "Start-KaliSeamless.ps1" in autorun or "Host+L" in autorun

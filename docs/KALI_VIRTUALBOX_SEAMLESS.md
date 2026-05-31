@@ -4,6 +4,8 @@
 
 Seamless mode integrates the Kali guest desktop with your Windows host: Kali windows appear on the host without the VirtualBox frame. This is the preferred way to run the CTG lab VM named **kali** day to day.
 
+**Toolbar / host menu hidden?** See [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) (mini toolbar, Host+Home, guest panel).
+
 ## Quick start (Windows host)
 
 From the repo root:

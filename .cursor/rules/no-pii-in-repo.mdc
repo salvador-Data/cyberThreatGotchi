@@ -1,0 +1,51 @@
+---
+description: Never commit or store PII in git — vault/env only; chat PII is local-use only
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# No PII in repo (Hacker Planet LLC)
+
+Andy Kowal · CyberThreatGotchi · authorized defensive lab use only.
+
+## Rule
+
+**Never commit, stage, log, or store personally identifiable information (PII) in git, scripts, docs, tests, or scheduled tasks.**
+
+PII includes but is not limited to:
+
+- Real names tied to credentials (beyond public business identity already on the site)
+- Phone numbers, home addresses, personal email addresses
+- Government IDs, SSNs, payment card or bank data
+- Real home/lab Wi-Fi SSIDs or PSKs when they identify a residence
+- Kali/Windows passwords, SSH keys, API tokens, webhook secrets, Twilio creds
+- **SHA-256 or other hashes of secrets** in committed `.ps1`, docs, or tests (store in `.vault/` via `-SetSecretHash` only)
+- Vault PII keys (`CTG_PII_PHONE`, `CTG_PII_EMAIL`, etc.) — DPAPI vault or gitignored sidecars only
+- Customer order details with shipping addresses (use local exports only)
+
+## Where secrets and PII belong
+
+| Data | Allowed location | Never in |
+|------|------------------|----------|
+| Kali SSH user/password | DPAPI vault via `Protect-CtgSecrets.ps1` or gitignored `Backups\kali-vm-credentials.txt` | Scripts, git, logs |
+| Stripe/PayPal/Twilio | Local `.env`, env vars, DPAPI vault | Git, website JS (except publishable keys) |
+| Lab Wi-Fi SSID/PSK | `/etc/ctg/lab-wifi.conf` on Kali (600), local `lab-wifi.conf` (gitignored) | Committed docs or examples with real values |
+| Chat with Cursor | Local session only — Andy may paste context for troubleshooting | Committed files, push to remote |
+
+## Script patterns
+
+- Use `Protect-CtgSecrets.ps1` / `-UseSecretVault` on deploy scripts — no default passwords in repo.
+- Scheduled tasks: **Interactive logon + Highest** (`Register-CtgCpuOptimizeTask.ps1`, `Register-CtgNightlyTask.ps1`) — no password embedded in task XML from scripts.
+- Logs under `C:\Users\Owner\Backups\logs\` — redact before sharing; never log vault contents.
+- Examples in docs: placeholders only (`YourLabSSID`, `your-psk`, `User: sal` without real password).
+
+## Before commit
+
+1. `git diff` — scan for phone patterns, `Password:`, real SSIDs, `.env` paths with values.
+2. Confirm `.gitignore` covers `.env`, `kali-vm-credentials.txt`, `lab-wifi.conf`, vault files.
+3. Run `pytest tests/test_ctg_secret_vault.py tests/test_cpu_performance.py` on security-sensitive changes.
+
+## Chat / agent sessions
+
+PII Andy shares in Cursor chat is for **local troubleshooting only**. Agents must not write that PII into the repository, commit messages, or docs.
