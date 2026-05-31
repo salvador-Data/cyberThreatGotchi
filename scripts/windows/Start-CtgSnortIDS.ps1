@@ -128,7 +128,7 @@ function Invoke-CtgApplyRules {
 
 function Invoke-CtgTestAlert {
     $alertScript = Join-Path $PSScriptRoot 'Send-CtgIdsAlert.ps1'
-    $msg = 'CTG Snort: [info] sid 9000001 — review log'
+    $msg = 'CTG Snort: [info] sid 9000001 - review log'
     Write-IdsLog "Sending test alert: $msg" 'Cyan'
     $args = @{
         AlertType   = 'snort-test'
@@ -151,7 +151,7 @@ function Invoke-CtgSnortAlert {
     if ($Alert.Severity -notin @('high', 'critical')) { return }
     $sid = if ($Alert.Sid) { $Alert.Sid } else { 'unknown' }
     $alertScript = Join-Path $PSScriptRoot 'Send-CtgIdsAlert.ps1'
-    $msg = "CTG Snort: [$($Alert.Severity)] sid $sid — review log"
+    $msg = "CTG Snort: [$($Alert.Severity)] sid $sid - review log"
     $alertType = "snort-sid-$sid"
     $args = @{
         AlertType = $alertType

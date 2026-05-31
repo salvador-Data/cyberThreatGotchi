@@ -11,10 +11,21 @@ Hacker Planet LLC splits defensive automation into focused public repos so labs 
 |------|--------|-------|
 | [ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-lab) | Kali VM bootstrap, IDS/IPS, WiFi lab, Tor scrambler | `git clone https://github.com/salvador-Data/ctg-kali-lab.git` |
 | [ctg-windows-soc](https://github.com/salvador-Data/ctg-windows-soc) | Windows hardening, Sysmon, Wazuh, nightly, Wireshark IDS | `git clone https://github.com/salvador-Data/ctg-windows-soc.git` |
+| [ctg-device-hardening](https://github.com/salvador-Data/ctg-device-hardening) | iPhone laptop connection, exploit mitigations, CVE feeds, IDS/RAM honesty docs | `git clone https://github.com/salvador-Data/ctg-device-hardening.git` |
 
-## iPhone hardening — stays in monorepo
+Sync device-hardening subtree:
 
-Only three Windows assist scripts (`iphone_hardening_automate.ps1`, `iphone_usb_check.ps1`, deprecated `iphone_hardening_assist.ps1`) plus [IPHONE_HARDENING.md](IPHONE_HARDENING.md). Too thin for a standalone repo; they ship inside **ctg-windows-soc** and the main catalog.
+```powershell
+.\scripts\publish\Sync-CtgDeviceHardeningRepo.ps1
+```
+
+## iPhone hardening — monorepo + ctg-device-hardening
+
+Primary docs stay in the monorepo ([IPHONE_HARDENING.md](IPHONE_HARDENING.md), [IPHONE_LAPTOP_CONNECTION.md](IPHONE_LAPTOP_CONNECTION.md)). Read-only checklist: `scripts/iphone/iphone_tethering_privacy_checklist.ps1`. Split copy ships in **ctg-device-hardening** and **ctg-windows-soc** catalog references.
+
+## Privatize lab repos (allowlist)
+
+`scripts/publish/Set-CtgPrivateRepos.ps1 -DiagnoseOnly` lists **ctg-kali-lab** and **ctg-windows-soc** as sensitive candidates. `-Apply` only privatizes names in the committed `$Script:CtgPrivateRepoAllowlist` — review before Apply. **cyberThreatGotchi** (public site) and firmware repos (M5_OS-Cardputer, etc.) are excluded.
 
 ## Manual recreate (if `gh` fails)
 

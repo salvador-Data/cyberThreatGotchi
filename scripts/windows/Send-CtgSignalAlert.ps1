@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-  Send CTG SOC alerts via signal-cli (env/vault only — never commit secrets).
+  Send CTG SOC alerts via signal-cli (env/vault only - never commit secrets).
 
 .DESCRIPTION
   Rate-limited: max one message per alert_type per 15 minutes (shared with SMS rate file).
-  Set CTG_ALERT_SIGNAL_TO in local .env (E.164 or Signal uuid) — do not commit .env.
+  Set CTG_ALERT_SIGNAL_TO in local .env (E.164 or Signal uuid) - do not commit .env.
   Prefer DPAPI vault CTG_PII_PHONE with -UseSecretVault.
   Account data: gitignored %USERPROFILE%\.local\share\signal-cli\ or Backups\.vault\signal-cli\
 
@@ -12,7 +12,7 @@
   Logical alert key used for rate limiting (e.g. suricata-sid-12345).
 
 .PARAMETER Message
-  Alert body — short, no payloads or PII.
+  Alert body - short, no payloads or PII.
 
 .PARAMETER Severity
   Optional severity label (included in Message by caller; not duplicated here).
@@ -67,12 +67,12 @@ if (-not $cli) {
 }
 
 if ([string]::IsNullOrWhiteSpace($to)) {
-    Write-SignalLog 'Signal skipped: CTG_ALERT_SIGNAL_TO not set (configure in local .env or vault — never commit)'
+    Write-SignalLog 'Signal skipped: CTG_ALERT_SIGNAL_TO not set (configure in local .env or vault - never commit)'
     exit 2
 }
 
 if (-not (Test-Path $configDir)) {
-    Write-SignalLog "Signal skipped: config dir missing ($configDir) — run signal-cli link"
+    Write-SignalLog "Signal skipped: config dir missing ($configDir) - run signal-cli link"
     exit 2
 }
 

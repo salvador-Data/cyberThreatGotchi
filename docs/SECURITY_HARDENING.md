@@ -54,9 +54,29 @@ Signal IDS alerts (signal-cli): [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md) — preferr
 
 Free IPS (Suricata-primary): [FREE_IPS_SURICATA.md](FREE_IPS_SURICATA.md) — recommended free IPS path (Kali + OPNsense); Windows Suricata MSI detect-only + Kali EVE SMS bridge; Twilio via local `.env` only.
 
+## IDS vs CPU side-channel exploits (honest scope)
+
+Network IDS/IPS (**Snort 2.9**, **Suricata**, OPNsense) inspect **packets on the wire**. They do **not** mitigate **RAM-class** CPU bugs that leak data from speculative execution on the same host or VM.
+
+| Threat class | Examples | Blocked by Snort/Suricata? | Correct mitigations |
+|--------------|----------|----------------------------|---------------------|
+| **Network exploit / C2** | EternalBlue-style SMB, shellcode over HTTP, scan floods | **Detect/alert** (rules + community feeds) | IDS alerts → Signal ([SIGNAL_ALERTS.md](SIGNAL_ALERTS.md)); patch OS; firewall |
+| **RAM / CPU side-channel** | Spectre v2, **RETBleed**, Meltdown, MDS/L1TF | **No** — not a packet signature problem | Host **microcode** + **Windows Update**; Kali **kernel** + `intel-microcode`/`amd64-microcode`; VirtualBox **`--spec-ctrl on`** for Kali guest ([KALI_RETBLEED_SPECTRE.md](KALI_RETBLEED_SPECTRE.md)) |
+| **iPhone when tethered** | Malicious traffic through hotspot/USB | **Partial** — laptop IDS sees tunneled IP traffic | iOS **Settings** checklist ([IPHONE_LAPTOP_CONNECTION.md](IPHONE_LAPTOP_CONNECTION.md)); no fake “MAC changer” from Windows |
+
+**Scripts (do not alter Signal/IDS wiring):**
+
+| Script | Role |
+|--------|------|
+| `scripts/windows/Update-CtgExploitMitigations.ps1` | `-DiagnoseOnly`: speculation registry, Defender, Kali VM spec-ctrl, pending reboot; `-ApplySafe`: USOClient WU scan only |
+| `scripts/kali/ctg-exploit-mitigations-check.sh` | Guest `/sys/.../vulnerabilities` + security `apt list --upgradable`; `--apply-safe` = `apt update` only |
+| `scripts/windows/Sync-CtgVulnerabilityFeeds.ps1` | Download CISA KEV (and optional MSRC index) to `Backups\ctg-cve-cache\` — cache only, no auto-install |
+
+Env (optional): `CTG_NVD_API_KEY` in local `.env` for future NVD API queries — not required for KEV sync.
+
 ## iPhone (personal device hardening)
 
-iOS has **no traditional filesystem AV** — App Store “antivirus” apps cannot scan other apps like Windows Defender. Prefer Settings hardening plus reputable DNS/Safari/SMS tools. Step-by-step for iPhone 15 Pro Max (iOS 17/18): [IPHONE_HARDENING.md](IPHONE_HARDENING.md).
+iOS has **no traditional filesystem AV** — App Store “antivirus” apps cannot scan other apps like Windows Defender. Prefer Settings hardening plus reputable DNS/Safari/SMS tools. Step-by-step for iPhone 15 Pro Max (iOS 17/18): [IPHONE_HARDENING.md](IPHONE_HARDENING.md). Laptop USB/hotspot honest scope: [IPHONE_LAPTOP_CONNECTION.md](IPHONE_LAPTOP_CONNECTION.md).
 
 ## Firewall baseline (BPI-R3 / Linux)
 

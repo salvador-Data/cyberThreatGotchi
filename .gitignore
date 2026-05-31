@@ -38,5 +38,6 @@ scripts/kali/lab-wifi.conf
 Backups/opnsense-*.xml
 Backups/kali-vm-credentials.txt
 Backups/kali-vm-vbox-password.txt
+Backups/ctg-cve-cache/
 scripts/windows/ctg-soc-run-log*.txt
 M5_OS-Cardputer/

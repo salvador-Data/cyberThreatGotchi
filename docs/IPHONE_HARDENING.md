@@ -27,7 +27,8 @@ What actually protects iPhone users:
 **What you cannot do from a Windows PC:** Install App Store apps on your iPhone remotely without Apple Business Manager / MDM enrollment. Andy must install apps **on the phone** (see [Manual install steps](#what-andy-must-do-manually-on-the-iphone) below).
 
 **Action runbook:** [IPHONE_RUN_NOW.md](IPHONE_RUN_NOW.md) — consolidated **Phase 1 + Phase 2** checklist (manual steps only).  
-**USB focus:** [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md) — Trust This Computer, encrypted backup to SSD/OneDrive paths, Windows laptop reminders.
+**USB focus:** [IPHONE_USB_HARDENING.md](IPHONE_USB_HARDENING.md) — Trust This Computer, encrypted backup to SSD/OneDrive paths, Windows laptop reminders.  
+**Laptop connection (honest scope):** [IPHONE_LAPTOP_CONNECTION.md](IPHONE_LAPTOP_CONNECTION.md) — what Windows **can and cannot** change (no MAC/hardware ID spoofing); Private Wi‑Fi Address, Limit IP Tracking, USB Restricted Mode, hotspot vs USB tethering; read-only `scripts/iphone/iphone_tethering_privacy_checklist.ps1`.
 
 ---
 

@@ -105,7 +105,7 @@ def test_signal_common_helpers():
         "Get-CtgSignalConfigDir",
         "Test-CtgSignalConfigured",
         "Test-CtgUseTwilioPreferred",
-        "sms-rate-limit.json",
+        "Get-CtgAlertRatePath",
     ):
         assert needle in text, needle
 
