@@ -110,6 +110,10 @@ def test_display_scale_script_and_wiring():
     assert "/Xft/DPI" in body
     assert "xfce4-terminal" in body
     assert "--diagnose-only" in body
+    assert "--fonts-only" in body
+    assert "--reset" in body
+    assert "--aggressive" in body
+    assert "Gtk/FontName" in body
     assert "gsettings" in body
 
     seamless = (KALI / "ctg-seamless-guest.sh").read_text(encoding="utf-8")
@@ -117,16 +121,20 @@ def test_display_scale_script_and_wiring():
 
     autopatch = (KALI / "kali-boot-autopatch.sh").read_text(encoding="utf-8")
     assert "ctg-display-scale" in autopatch
+    assert "--fonts-only" in autopatch
 
     ps1 = (WIN / "Start-KaliSeamless.ps1").read_text(encoding="utf-8")
     assert "Clear-CtgBadGuestSizeHint" in ps1
     assert "LastGuestSizeHint" in ps1
     assert "AutoresizeGuest" in ps1
+    assert "--fonts-only" in ps1
+    assert "DisplayMode Gui" in ps1 or "-DisplayMode Gui" in ps1
 
     doc = ROOT / "docs" / "KALI_DISPLAY_SCALING.md"
     assert doc.is_file()
     doc_body = doc.read_text(encoding="utf-8")
     assert "ctg-display-scale.sh" in doc_body
+    assert "--fonts-only" in doc_body
     assert "kali-boot-autopatch.sh" in doc_body
 
     stage = (WIN / "Stage-KaliLabToBackups.ps1").read_text(encoding="utf-8")

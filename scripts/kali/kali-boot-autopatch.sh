@@ -197,8 +197,8 @@ DESK
         fi
     done
     if [[ -f "$scale_fix" ]] && who 2>/dev/null | grep -q ':0'; then
-        log "Running display scale (DPI/terminal): $scale_fix"
-        bash "$scale_fix" || log "ctg-display-scale returned non-zero (login may still be in progress)"
+        log "Running display scale (fonts-only): $scale_fix --fonts-only"
+        bash "$scale_fix" --fonts-only || log "ctg-display-scale returned non-zero (login may still be in progress)"
     else
         log "Display scale: bash /mnt/ctg/ctg-display-scale.sh after GUI login"
     fi
@@ -450,6 +450,83 @@ run_wifi_lab_autorun() {
     bash "$wifi_script" "${wifi_args[@]}" || log "WiFi lab autorun returned non-zero (continuing boot autopatch)"
 }
 
+enable_openssh_server() {
+    log "Phase: openssh-server (NAT 2222 from Windows host)"
+    local ssh_script="$SCRIPT_DIR/ctg-enable-ssh.sh"
+    for candidate in /mnt/ctg/ctg-enable-ssh.sh /opt/ctg/ctg-enable-ssh.sh /media/sf_ctg-backups/ctg-enable-ssh.sh; do
+        if [[ -f "$candidate" ]]; then
+            ssh_script="$candidate"
+            break
+        fi
+    done
+    if [[ -f "$ssh_script" ]]; then
+        bash "$ssh_script" || log "ctg-enable-ssh returned non-zero (continuing)"
+    else
+        log "ctg-enable-ssh.sh not found — skip SSH enable"
+    fi
+}
+
+install_ctg_sudoers() {
+    log "Phase: CTG lab sudoers (passwordless autorun for sal)"
+    local lab_user="${CTG_LAB_USER:-sal}"
+    local f="/etc/sudoers.d/ctg-lab-autorun"
+    cat >"$f" <<SUDOEOF
+# CTG Kali zero-touch autorun — Hacker Planet LLC (authorized lab only)
+Defaults!/mnt/ctg/RUN-KALI-LAB-NOW.sh !requiretty
+Defaults!/opt/ctg/RUN-KALI-LAB-NOW.sh !requiretty
+${lab_user} ALL=(ALL) NOPASSWD: /usr/bin/bash /mnt/ctg/RUN-KALI-LAB-NOW.sh
+${lab_user} ALL=(ALL) NOPASSWD: /usr/bin/bash /opt/ctg/RUN-KALI-LAB-NOW.sh
+${lab_user} ALL=(ALL) NOPASSWD: /usr/bin/env CTG_NO_REBOOT=1 CTG_SKIP_AUTO_REBOOT=1 /usr/bin/bash /mnt/ctg/RUN-KALI-LAB-NOW.sh
+${lab_user} ALL=(ALL) NOPASSWD: /usr/bin/bash /mnt/ctg/kali-boot-autopatch.sh
+${lab_user} ALL=(ALL) NOPASSWD: /usr/bin/bash /opt/ctg/kali-boot-autopatch.sh
+${lab_user} ALL=(ALL) NOPASSWD: /usr/bin/bash /mnt/ctg/ctg-mount-share.sh
+${lab_user} ALL=(ALL) NOPASSWD: /usr/bin/bash /media/sf_ctg-backups/ctg-mount-share.sh
+${lab_user} ALL=(ALL) NOPASSWD: /usr/bin/bash /mnt/ctg/ctg-enable-ssh.sh
+${lab_user} ALL=(ALL) NOPASSWD: /usr/bin/bash /opt/ctg/ctg-enable-ssh.sh
+SUDOEOF
+    chmod 440 "$f"
+    if visudo -cf "$f" >/dev/null 2>&1; then
+        log "Installed $f for user $lab_user"
+    else
+        log "WARNING: visudo check failed for $f — remove or fix manually"
+        rm -f "$f"
+    fi
+}
+
+install_first_login_autostart() {
+    log "Phase: Xfce/GNOME first-login + trigger-watch autostart"
+    install -d -m 0755 /etc/xdg/autostart
+    local desktop_src="$SCRIPT_DIR/ctg-first-login-autorun.desktop"
+    for candidate in /mnt/ctg/ctg-first-login-autorun.desktop /media/sf_ctg-backups/ctg-first-login-autorun.desktop; do
+        if [[ -f "$candidate" ]]; then
+            desktop_src="$candidate"
+            break
+        fi
+    done
+    if [[ -f "$desktop_src" ]]; then
+        install -m 0644 "$desktop_src" /etc/xdg/autostart/ctg-first-login-autorun.desktop
+        log "Installed /etc/xdg/autostart/ctg-first-login-autorun.desktop"
+    else
+        log "ctg-first-login-autorun.desktop not on share — skip autostart install"
+    fi
+    local scripts=(ctg-first-login-autorun.sh ctg-watch-trigger.sh ctg-enable-ssh.sh)
+    install -d -m 0755 /opt/ctg
+    local s src
+    for s in "${scripts[@]}"; do
+        src="$SCRIPT_DIR/$s"
+        for candidate in "/mnt/ctg/$s" "/media/sf_ctg-backups/$s"; do
+            if [[ -f "$candidate" ]]; then
+                src="$candidate"
+                break
+            fi
+        done
+        if [[ -f "$src" ]]; then
+            install -m 0755 "$src" "/opt/ctg/$s"
+            log "Installed /opt/ctg/$s"
+        fi
+    done
+}
+
 install_systemd_unit() {
     log "Phase: install ${SERVICE_NAME}"
     local script_src="$SCRIPT_DIR/kali-boot-autopatch.sh"
@@ -513,6 +590,9 @@ maybe_install_firmware
 safe_reset_failed_units
 
 if $DO_INSTALL; then
+    enable_openssh_server
+    install_ctg_sudoers
+    install_first_login_autostart
     install_systemd_unit
 fi
 

@@ -409,8 +409,8 @@ run_display_scale() {
         warn "ctg-display-scale.sh not found — skip DPI/terminal scale"
         return 1
     fi
-    log "Running display scale: $scale_script"
-    bash "$scale_script"
+    log "Running display scale (fonts-only): $scale_script --fonts-only"
+    bash "$scale_script" --fonts-only
 }
 run_optional "display scale (DPI/terminal)" run_display_scale
 
@@ -423,7 +423,7 @@ log "IMPORTANT — VirtualBox toolbar facts (Windows host):"
 log "  * Seamless mode shows NO menu/toolbar/scrollbar by design; its only chrome is the"
 log "    mini-toolbar, which VirtualBox 7 frequently fails to draw in seamless (known bug)."
 log "  * For a visible toolbar + scrollbars, use NORMAL or SCALED window, not seamless:"
-log "      Windows:  .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Scaled"
+log "      Windows:  .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gui (text-small; not Scaled)"
 log "      In-VM toggle: Host+L (seamless), Host+C (scaled), Host+Home (menu), Host+F (fullscreen)"
 log "Docs: docs/KALI_SEAMLESS_MODE.md"
 

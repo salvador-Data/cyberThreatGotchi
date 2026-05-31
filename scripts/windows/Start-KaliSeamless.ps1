@@ -5,6 +5,8 @@ param(
     [string[]]$VmNameCandidates = @('kali', 'Kali-Lab', 'Kali', 'kali-linux'),
     [int]$GuestAdditionsWaitSec = 60,
     [int]$DesktopWaitSec = 120,
+    # Text too small (not whole desktop): use -DisplayMode Gui + guest ctg-display-scale.sh --fonts-only
+    # Avoid -DisplayMode Scaled with high guest DPI (144) — makes entire VM huge; see docs/KALI_DISPLAY_SCALING.md
     [ValidateSet('Seamless', 'Scaled', 'Gui')]
     [string]$DisplayMode = 'Seamless',
     [switch]$SkipExtradata,
@@ -273,8 +275,9 @@ function Set-CtgSeamlessExtradata {
         Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Seamless' -Value 'off'
         if ($Mode -eq 'Scaled') {
             Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Scale' -Value 'true'
+            Write-CtgSeamlessLog 'Scaled host mode: use guest --fonts-only (DPI 108-112), not --aggressive — Scaled + high DPI oversizes UI'
         } else {
-            # Normal windowed: real scrollbars when guest > window
+            # Gui: windowed + AutoresizeGuest — recommended when only text/terminal is too small
             Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/Scale' -Value 'false'
         }
         return $true
@@ -306,7 +309,9 @@ function Write-CtgHostLHint {
 function Write-CtgHostToolbarHint {
     Write-CtgSeamlessLog 'Host toolbar: top screen edge for mini toolbar (pin thumbtack), or Host+Home (Right Ctrl+Home) for full VM menu'
     Write-CtgSeamlessLog 'Guest panel: bash /mnt/ctg/ctg-seamless-guest.sh - see docs/KALI_SEAMLESS_MODE.md'
-    Write-CtgSeamlessLog 'Guest scale: bash /mnt/ctg/ctg-display-scale.sh - see docs/KALI_DISPLAY_SCALING.md'
+    Write-CtgSeamlessLog 'Guest text size: bash /mnt/ctg/ctg-display-scale.sh --fonts-only (not bare script + not Scaled for text-only)'
+    Write-CtgSeamlessLog 'Undo over-scale: bash /mnt/ctg/ctg-display-scale.sh --reset'
+    Write-CtgSeamlessLog 'Host text-small fix: -DisplayMode Gui (AutoresizeGuest) — docs/KALI_DISPLAY_SCALING.md'
 }
 
 function Write-CtgGuestAdditionsHint {
@@ -585,7 +590,8 @@ function Start-CtgKaliSeamless {
     if ($Mode -eq 'Seamless') {
         Write-CtgSeamlessLog 'Seamless preflight: needs graphical X11 login + VBoxClient --seamless in guest.'
         Write-CtgSeamlessLog 'Before Host+L in Kali run: bash /mnt/ctg/ctg-seamless-guest.sh (fixes Wayland glitch-revert)'
-        Write-CtgSeamlessLog 'For visible menu/scrollbars use -DisplayMode Scaled (does not disable seamless)'
+        Write-CtgSeamlessLog 'Text too small only: -DisplayMode Gui + guest ctg-display-scale.sh --fonts-only (avoid Scaled + high DPI)'
+        Write-CtgSeamlessLog 'For visible menu/scrollbars: -DisplayMode Scaled or Gui (Scaled enlarges whole desktop — not for font-only fix)'
     }
 
     $state = Get-CtgVmState -Name $Name -VBoxManage $VBoxManage
