@@ -12,6 +12,7 @@ param(
     [switch]$EnableSeamless,
     [switch]$NoSeamless,
     [switch]$NoSpecCtrlHardening,
+    [switch]$StartWithGui,
     [switch]$WhatIf
 )
 
@@ -338,7 +339,9 @@ if ($vmState -ne 'running') {
     if ($StartVmIfStopped -or -not $WhatIf) {
         Write-CtgDeployLog "Starting VM: $VmName"
         if (-not $WhatIf) {
-            & $VBoxManage startvm $VmName --type headless
+            $startType = if ($StartWithGui -or $EnableSeamless) { 'gui' } else { 'headless' }
+            Write-CtgDeployLog "Starting VM with --type $startType (use -StartWithGui for seamless View menu)"
+            & $VBoxManage startvm $VmName --type $startType
             Start-Sleep -Seconds 15
         }
     } else {

@@ -21,6 +21,9 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 | Vault secrets | **Manual** | `Protect-CtgSecrets.ps1 -SetSecret` for KALI_SSH_* (never in git) |
 | pytest + push | **Done** | 322 passed (2026-05-31); main `b2bc90f`+ pending savestate commit |
 | RETBleed `--spec-ctrl on` | **Done (live)** | VBox `<SpecCtrl enabled="true"/>` — **reboot Kali**, then `bash /mnt/ctg/ctg-retbleed-check.sh` |
+| Kali scripts staged to Backups | **Done** | `Stage-KaliLabToBackups.ps1` — 18 `.sh` + docs on `ctg-backups` share |
+| Guest script flash (`/mnt/ctg`) | **Manual (TTY)** | SSH:2222 not ready — paste block below at Kali console after GUI login |
+| Seamless View menu | **Manual (GUI login)** | `GUI/Seamless=on` set; menu stays gray until **LoggedInUsers>0** — log in Xfce, then Host+L |
 | Seamless menu glitch | **Manual (guest)** | ``bash /mnt/ctg/ctg-seamless-guest.sh`` if needed; host: ``Start-KaliSeamless.ps1 -DiagnoseOnly`` |
 
 **Seamless (2026-05-31 live):** VM **running headless** — `DesktopReady: False` (log in at Kali GUI). After login: `Start-KaliSeamless.ps1` (GUI session) or **Host+L**; if menu reverts: `bash /mnt/ctg/ctg-seamless-guest.sh`. **spec-ctrl:** ON (`Harden-KaliVmSpectre.ps1 -DiagnoseOnly`).

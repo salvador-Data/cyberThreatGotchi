@@ -10,7 +10,10 @@ param(
     [switch]$SkipExtradata,
     [switch]$NoShowHostToolbar,
     [switch]$DiagnoseOnly,
-    [switch]$WhatIf
+    [switch]$WhatIf,
+    [switch]$EnsureGuiSession,
+    [switch]$NoEnsureGuiSession,
+    [switch]$ApplyExtradata
 )
 
 $ErrorActionPreference = 'Continue'
@@ -79,6 +82,34 @@ function Get-CtgVmState {
     $state = 'unknown'
     if ($infoRaw -match 'VMState="(.+?)"') { $state = $Matches[1] }
     return $state
+}
+
+
+function Enable-CtgGuiSession {
+    param([string]$Name, [string]$VBoxManage)
+    if ((Get-CtgVmState -Name $Name -VBoxManage $VBoxManage) -ne 'running') { return $true }
+    $info = (Invoke-CtgVBoxManage -VBoxManage $VBoxManage -Arguments @('showvminfo', $Name)).Output
+    $session = if ($info -match 'Session name:\s*(.+)') { $Matches[1].Trim() } else { 'none' }
+    if ($session -notmatch 'headless|none|^$') {
+        Write-CtgSeamlessLog "GUI session already present: $session"
+        return $true
+    }
+    Write-CtgSeamlessLog "No GUI session ($session) - attaching VirtualBox window via startvm --type gui"
+    if ($WhatIf) {
+        Write-CtgSeamlessLog ('[WhatIf] startvm ' + $Name + ' --type gui')
+        return $true
+    }
+    $guiOut = (Invoke-CtgVBoxManage -VBoxManage $VBoxManage -Arguments @('startvm', $Name, '--type', 'gui')).Output
+    if ($guiOut -match 'already locked') {
+        Write-CtgSeamlessLog 'GUI attach: VM already has a GUI lock (open VirtualBox Manager window for kali)'
+        return $true
+    }
+    if ($guiOut -match 'error|VBOX_E|failed') {
+        Write-CtgSeamlessLog ("GUI attach failed: " + $guiOut.Trim())
+        return $false
+    }
+    Start-Sleep -Seconds 2
+    return $true
 }
 
 function Get-CtgGuestPropertyValue {
@@ -347,7 +378,11 @@ function Get-CtgSeamlessDiagnostics {
     $extradataMiniTb = $guiExtra['GUI/ShowMiniToolBar']
     $session = if ($info -match 'Session name:\s*(.+)') { $Matches[1].Trim() } else { 'none' }
     $sessionType = if ($info -match 'Session type:\s*(.+)') { $Matches[1].Trim() } else { 'unknown' }
+    $loggedInCount = Get-CtgGuestPropertyValue -Name $Name -VBoxManage $VBoxManage -Property '/VirtualBox/GuestInfo/OS/LoggedInUsers'
+    $isHeadlessSession = ($state -eq 'running' -and ($session -match 'headless|^none$|^$'))
     $issues = @()
+    if ($isHeadlessSession) { $issues += 'No GUI session (headless/none) - VirtualBox View menu disabled until startvm --type gui (-EnsureGuiSession)' }
+    if ($state -eq 'running' -and $loggedInCount -eq '0') { $issues += 'View→Seamless grayed out: LoggedInUsers=0 - log in to Xfce/X11 desktop in the VM window, then Host+L' }
     if ($state -eq 'running' -and -not $gaReady) { $issues += 'Guest Additions not reporting (install virtualbox-guest-x11)' }
     if ($state -eq 'running' -and -not $desktop) { $issues += 'No graphical login (guest property) - log in at Kali console if desktop is blank' }
     if ($DisplayMode -eq 'Seamless' -and -not $seamlessActive -and -not (Test-CtgExtradataTruthy -Value $extradataSeamless)) {
@@ -495,7 +530,15 @@ function Start-CtgKaliSeamless {
     }
 
     if ($DiagnoseOnly) {
+        if ($ApplyExtradata -and $DisplayMode -eq 'Seamless') {
+            Set-CtgSeamlessExtradata -Name $Name -VBoxManage $VBoxManage -Mode $DisplayMode | Out-Null
+        }
         return (Invoke-CtgSeamlessDiagnose -Name $Name -VBoxManage $VBoxManage)
+    }
+
+    $wantGuiSession = $EnsureGuiSession -and -not $NoEnsureGuiSession
+    if ($wantGuiSession -and (Get-CtgVmState -Name $Name -VBoxManage $VBoxManage) -eq 'running') {
+        Enable-CtgGuiSession -Name $Name -VBoxManage $VBoxManage | Out-Null
     }
 
     Set-CtgSeamlessExtradata -Name $Name -VBoxManage $VBoxManage -Mode $Mode | Out-Null
