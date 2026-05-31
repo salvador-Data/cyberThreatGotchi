@@ -27,6 +27,7 @@ Thumbs.db
 scripts/kali/ansible/group_vars/realtek.yml
 scripts/kali/.vault_pass
 scripts/kali/lab-targets.conf
+scripts/kali/lab-wifi.conf
 Backups/opnsense-*.xml
 Backups/kali-vm-credentials.txt
 Backups/kali-vm-vbox-password.txt

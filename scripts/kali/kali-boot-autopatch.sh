@@ -6,6 +6,8 @@
 #   sudo bash kali-boot-autopatch.sh              # fix-only (default)
 #   sudo bash kali-boot-autopatch.sh --upgrade      # apt full-upgrade
 #   sudo bash kali-boot-autopatch.sh --firmware     # firmware-linux-nonfree if driver errors
+#   sudo bash kali-boot-autopatch.sh --wifi-lab     # Realtek dongle + lab WiFi + promisc/monitor
+#   sudo bash kali-boot-autopatch.sh --ids-ips      # ClamAV + passive Snort/Suricata (detect-only)
 #   sudo bash kali-boot-autopatch.sh --install      # install systemd unit for boot
 set -euo pipefail
 
@@ -20,6 +22,8 @@ UNIT_DEST="/etc/systemd/system/${SERVICE_NAME}"
 DO_UPGRADE=false
 DO_FIRMWARE=false
 DO_INSTALL=false
+DO_WIFI_LAB=false
+DO_IDS_IPS=false
 
 log() {
     local msg="[$(date -Iseconds)] [ctg-boot-autopatch] $*"
@@ -34,6 +38,8 @@ CTG Kali boot autopatch — authorized defensive lab use only.
   sudo bash $0                 Fix common boot errors (default)
   sudo bash $0 --upgrade       Also run apt update && apt full-upgrade -y
   sudo bash $0 --firmware      Install firmware-linux-nonfree if driver errors seen
+  sudo bash $0 --wifi-lab      Run ctg-wifi-lab-autorun after guest additions fix
+  sudo bash $0 --ids-ips       Run ctg-ids-ips-autorun (ClamAV + Snort/Suricata detect-only)
   sudo bash $0 --install       Install ${SERVICE_NAME} for boot-time runs
   sudo bash $0 --help
 
@@ -47,6 +53,8 @@ while [[ $# -gt 0 ]]; do
         --upgrade) DO_UPGRADE=true ;;
         --firmware) DO_FIRMWARE=true ;;
         --install) DO_INSTALL=true ;;
+        --wifi-lab) DO_WIFI_LAB=true ;;
+        --ids-ips) DO_IDS_IPS=true ;;
         --help|-h) usage; exit 0 ;;
         *) log "Unknown option: $1"; usage; exit 1 ;;
     esac
@@ -62,7 +70,7 @@ mkdir -p /var/lib/ctg "$(dirname "$LOG_FILE")"
 touch "$LOG_FILE"
 chmod 644 "$LOG_FILE"
 
-log "=== CTG Kali boot autopatch start (upgrade=$DO_UPGRADE firmware=$DO_FIRMWARE) ==="
+log "=== CTG Kali boot autopatch start (upgrade=$DO_UPGRADE firmware=$DO_FIRMWARE wifi_lab=$DO_WIFI_LAB ids_ips=$DO_IDS_IPS) ==="
 
 resolv_has_ddg() {
     [[ -f /etc/resolv.conf ]] && grep -qE '94\.140\.(14\.14|15\.15)' /etc/resolv.conf
@@ -242,6 +250,49 @@ run_optional_upgrade() {
     preserve_ddg_dns
 }
 
+run_ids_ips_autorun() {
+    log "Phase: ctg-ids-ips-autorun (--ids-ips)"
+    local ids_script="$SCRIPT_DIR/ctg-ids-ips-autorun.sh"
+    for candidate in /mnt/ctg/ctg-ids-ips-autorun.sh /opt/ctg/ctg-ids-ips-autorun.sh /media/sf_ctg-backups/ctg-ids-ips-autorun.sh; do
+        if [[ -f "$candidate" ]]; then
+            ids_script="$candidate"
+            break
+        fi
+    done
+    if [[ ! -f "$ids_script" ]]; then
+        log "ctg-ids-ips-autorun.sh not found — skip IDS/IPS phase"
+        return 0
+    fi
+    local ids_args=()
+    if $DO_INSTALL; then
+        ids_args+=(--install)
+    fi
+    bash "$ids_script" "${ids_args[@]}" || log "IDS/IPS autorun returned non-zero (continuing boot autopatch)"
+}
+
+run_wifi_lab_autorun() {
+    log "Phase: ctg-wifi-lab-autorun (--wifi-lab)"
+    local wifi_script="$SCRIPT_DIR/ctg-wifi-lab-autorun.sh"
+    for candidate in /mnt/ctg/ctg-wifi-lab-autorun.sh /opt/ctg/ctg-wifi-lab-autorun.sh /media/sf_ctg-backups/ctg-wifi-lab-autorun.sh; do
+        if [[ -f "$candidate" ]]; then
+            wifi_script="$candidate"
+            break
+        fi
+    done
+    if [[ ! -f "$wifi_script" ]]; then
+        log "ctg-wifi-lab-autorun.sh not found — skip WiFi lab phase"
+        return 0
+    fi
+    local wifi_args=()
+    if [[ "${CTG_WIFI_MONITOR:-0}" == "1" ]]; then
+        wifi_args+=(--monitor)
+    fi
+    if $DO_INSTALL; then
+        wifi_args+=(--install)
+    fi
+    bash "$wifi_script" "${wifi_args[@]}" || log "WiFi lab autorun returned non-zero (continuing boot autopatch)"
+}
+
 install_systemd_unit() {
     log "Phase: install ${SERVICE_NAME}"
     local script_src="$SCRIPT_DIR/kali-boot-autopatch.sh"
@@ -286,6 +337,12 @@ UNITEOF
 preserve_ddg_dns
 disable_broken_ctg_profiled
 fix_virtualbox_guest_packages
+if $DO_WIFI_LAB; then
+    run_wifi_lab_autorun
+fi
+if $DO_IDS_IPS; then
+    run_ids_ips_autorun
+fi
 fix_gdm_wayland_blank_screen
 ensure_ctg_backups_mount_hint
 run_optional_upgrade

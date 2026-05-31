@@ -43,6 +43,8 @@ def test_ctg_lab_autorun_doc():
     assert "CTG_SHIELD_SIEM_PLAYBOOK" in text
     assert "kali-boot-autopatch.sh" in text
     assert "ctg-kali-autopatch.service" in text
+    assert "KALI_WIFI_ETH_PROMISC" in text
+    assert "ctg-wifi-lab-autorun" in text
 
 
 def test_kali_boot_autopatch_assets():

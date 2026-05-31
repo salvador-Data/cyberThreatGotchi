@@ -413,6 +413,37 @@ function Copy-CtgBootstrapToSharedFolder {
         Write-CtgLog "Scrambler staged: $scramblerDest"
     }
 
+    $rogueAp = Join-Path $RepoRoot 'scripts\kali\rogue-ap-guard.sh'
+    if (Test-Path $rogueAp) {
+        Copy-Item -Path $rogueAp -Destination (Join-Path $backupRoot 'rogue-ap-guard.sh') -Force
+        Write-CtgLog "Rogue AP guard copied to $(Join-Path $backupRoot 'rogue-ap-guard.sh')"
+    }
+
+    $wifiAutorun = Join-Path $RepoRoot 'scripts\kali\ctg-wifi-lab-autorun.sh'
+    if (Test-Path $wifiAutorun) {
+        Copy-Item -Path $wifiAutorun -Destination (Join-Path $backupRoot 'ctg-wifi-lab-autorun.sh') -Force
+        Write-CtgLog "WiFi lab autorun copied to $(Join-Path $backupRoot 'ctg-wifi-lab-autorun.sh')"
+    }
+
+    $labWifiExample = Join-Path $RepoRoot 'scripts\kali\lab-wifi.conf.example'
+    if (Test-Path $labWifiExample) {
+        Copy-Item -Path $labWifiExample -Destination (Join-Path $backupRoot 'lab-wifi.conf.example') -Force
+        Write-CtgLog "Lab WiFi example copied to $(Join-Path $backupRoot 'lab-wifi.conf.example')"
+        Write-CtgLog 'In Kali: sudo cp /mnt/ctg/lab-wifi.conf.example /etc/ctg/lab-wifi.conf && sudo chmod 600 /etc/ctg/lab-wifi.conf'
+    }
+
+    $shieldPs1 = Join-Path $PSScriptRoot 'CTG-Shield-Status.ps1'
+    if (Test-Path $shieldPs1) {
+        Copy-Item -Path $shieldPs1 -Destination (Join-Path $backupRoot 'CTG-Shield-Status.ps1') -Force
+        Write-CtgLog "CTG Shield status script staged on host: $(Join-Path $backupRoot 'CTG-Shield-Status.ps1')"
+    }
+
+    $shieldPlaybook = Join-Path $RepoRoot 'docs\CTG_SHIELD_SIEM_PLAYBOOK.md'
+    if (Test-Path $shieldPlaybook) {
+        Copy-Item -Path $shieldPlaybook -Destination (Join-Path $backupRoot 'CTG_SHIELD_SIEM_PLAYBOOK.md') -Force
+        Write-CtgLog "CTG Shield playbook staged: $(Join-Path $backupRoot 'CTG_SHIELD_SIEM_PLAYBOOK.md')"
+    }
+
     Write-CtgLog 'In Kali after mount: sudo bash /mnt/ctg/ctg-lab-autorun.sh'
     Write-CtgLog "  or: sudo bash /mnt/ctg/kali-lab-bootstrap.sh --wifi-profile=$WifiProfile"
     return $dest

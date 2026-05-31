@@ -217,9 +217,21 @@ function Stage-CtgAutopatchScripts {
 
     $companion = @(
         (Join-Path $RepoRoot 'scripts\kali\ctg-lab-autorun.sh'),
+        (Join-Path $RepoRoot 'scripts\kali\ctg-wifi-lab-autorun.sh'),
         (Join-Path $RepoRoot 'scripts\kali\fix-kali-blank-screen.sh'),
-        (Join-Path $RepoRoot 'scripts\kali\kali-lab-bootstrap.sh')
+        (Join-Path $RepoRoot 'scripts\kali\kali-lab-bootstrap.sh'),
+        (Join-Path $RepoRoot 'scripts\kali\rogue-ap-guard.sh'),
+        (Join-Path $RepoRoot 'scripts\kali\lab-wifi.conf.example')
     )
+    $scramblerSrc = Join-Path $RepoRoot 'scripts\kali\tor-http-scrambler'
+    if (Test-Path $scramblerSrc) {
+        $scramblerDest = Join-Path $BackupRoot 'tor-http-scrambler'
+        New-Item -ItemType Directory -Path $scramblerDest -Force | Out-Null
+        if (-not $WhatIf) {
+            Copy-Item -Path (Join-Path $scramblerSrc '*') -Destination $scramblerDest -Recurse -Force
+        }
+        Write-CtgDeployLog "Staged CTG Shield / scrambler: $scramblerDest"
+    }
     foreach ($src in $companion) {
         if (Test-Path $src) {
             $name = Split-Path $src -Leaf

@@ -73,6 +73,8 @@ Same rules as [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md):
 | File | Purpose |
 |------|---------|
 | `kali-lab-bootstrap.sh` | Monolithic bootstrap: DDG preserve, lab anonymity (Tor/proxychains), harden, ClamAV, passive Snort, OSINT apt, Realtek detect, WiFi Option 2 |
+| `ctg-wifi-lab-autorun.sh` | USB Realtek detect, OOT driver, lab WPA2 connect, eth promisc + optional WiFi monitor |
+| `lab-wifi.conf.example` | Lab SSID/PSK template → `/etc/ctg/lab-wifi.conf` (mode 600, gitignored) |
 | `lab-targets.example` | Authorized targets template — copy to `lab-targets.conf` (gitignored) |
 | `ansible/` | Optional Ansible mirror (includes `ddg-dns` role) |
 
@@ -85,10 +87,40 @@ Same rules as [docs/IPHONE_HARDENING.md](../../docs/IPHONE_HARDENING.md):
 
 No illegal regdomain bypass or TX power overrides in this repo.
 
+## WiFi + Ethernet capture (promisc vs monitor)
+
+**Ethernet (CAT5):** classic `ip link set promisc on` when cable is plugged — sees LAN-segment frames.  
+**WiFi:** `promisc` on wlan is usually **not** enough; use **`airmon-ng`** monitor mode for 802.11 Wireshark capture.
+
+Both interfaces can be configured at once (different paths). See [docs/KALI_WIFI_ETH_PROMISC.md](../../docs/KALI_WIFI_ETH_PROMISC.md).
+
+```bash
+sudo cp /mnt/ctg/lab-wifi.conf.example /etc/ctg/lab-wifi.conf
+sudo chmod 600 /etc/ctg/lab-wifi.conf
+sudo nano /etc/ctg/lab-wifi.conf
+```
+
+```bash
+sudo bash /mnt/ctg/ctg-wifi-lab-autorun.sh
+```
+
+Monitor mode when lab 802.11 capture is enabled:
+
+```bash
+sudo CTG_WIFI_MONITOR=1 bash /mnt/ctg/ctg-wifi-lab-autorun.sh --monitor
+```
+
+Boot autopatch with WiFi lab phase:
+
+```bash
+sudo bash /mnt/ctg/kali-boot-autopatch.sh --wifi-lab
+```
+
 ## Secrets
 
 Copy and edit locally (gitignored):
 
+- `/etc/ctg/lab-wifi.conf` — from `lab-wifi.conf.example`
 - `/etc/environment.d/ctg-osint.env` — Shodan, Censys, VT placeholders
 - `ansible/group_vars/realtek.yml` — from `realtek.yml.example`
 

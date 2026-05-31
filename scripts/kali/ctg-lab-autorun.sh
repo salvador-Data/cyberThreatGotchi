@@ -12,6 +12,10 @@ AUTOPATCH="/mnt/ctg/kali-boot-autopatch.sh"
 REPO_AUTOPATCH="$(dirname "$0")/kali-boot-autopatch.sh"
 SCRAMBLER_INSTALL="/mnt/ctg/tor-http-scrambler/install-scrambler.sh"
 AUTORUN_WIFI="${CTG_WIFI_PROFILE:-company-lab}"
+WIFI_AUTORUN="/mnt/ctg/ctg-wifi-lab-autorun.sh"
+REPO_WIFI="$(dirname "$0")/ctg-wifi-lab-autorun.sh"
+IDS_AUTORUN="/mnt/ctg/ctg-ids-ips-autorun.sh"
+REPO_IDS="$(dirname "$0")/ctg-ids-ips-autorun.sh"
 
 log() { printf '[ctg-lab-autorun] %s\n' "$*"; }
 
@@ -27,9 +31,31 @@ if [[ ! -f "$AUTOPATCH" && -f "$REPO_AUTOPATCH" ]]; then
 fi
 if [[ -f "$AUTOPATCH" ]]; then
     log "Running boot autopatch: $AUTOPATCH"
-    bash "$AUTOPATCH" || log "Autopatch returned non-zero (continuing lab autorun)"
+    bash "$AUTOPATCH" --wifi-lab --ids-ips || log "Autopatch returned non-zero (continuing lab autorun)"
 else
     log "Autopatch script not found (optional) — mount ctg-backups share for kali-boot-autopatch.sh"
+fi
+
+if [[ ! -f "$WIFI_AUTORUN" && -f "$REPO_WIFI" ]]; then
+    WIFI_AUTORUN="$REPO_WIFI"
+fi
+if [[ -f "$WIFI_AUTORUN" ]]; then
+    log "Running WiFi lab autorun: $WIFI_AUTORUN"
+    wifi_extra=()
+    [[ "${CTG_WIFI_MONITOR:-0}" == "1" ]] && wifi_extra+=(--monitor)
+    bash "$WIFI_AUTORUN" "${wifi_extra[@]}" || log "WiFi lab autorun returned non-zero (continuing)"
+else
+    log "WiFi lab script not found (optional) — stage ctg-wifi-lab-autorun.sh on ctg share"
+fi
+
+if [[ ! -f "$IDS_AUTORUN" && -f "$REPO_IDS" ]]; then
+    IDS_AUTORUN="$REPO_IDS"
+fi
+if [[ -f "$IDS_AUTORUN" ]]; then
+    log "Running IDS/IPS + ClamAV autorun: $IDS_AUTORUN"
+    bash "$IDS_AUTORUN" || log "IDS/IPS autorun returned non-zero (continuing)"
+else
+    log "IDS/IPS script not found (optional) — stage ctg-ids-ips-autorun.sh on ctg share"
 fi
 
 if [[ ! -f "$BOOTSTRAP" && -f "$REPO_BOOT" ]]; then
@@ -80,3 +106,5 @@ log "Shield: sudo /opt/ctg/tor-http-scrambler/ctg-shield-rotate.sh status"
 log "Tor Browser: launch manually (torbrowser-launcher) — browser-only Tor default"
 log "Targets: /etc/ctg/lab-targets.conf (from lab-targets.example)"
 log "DDG preserve: --preserve-ddg-dns ON by default — see docs/IPHONE_HARDENING.md"
+log "WiFi/Eth capture: docs/KALI_WIFI_ETH_PROMISC.md · config: /etc/ctg/lab-wifi.conf"
+log "IDS/IPS/ClamAV: docs/KALI_IDS_IPS_CLAMAV.md · logs: /var/log/ctg-snort/"

@@ -1,0 +1,15 @@
+# CTG lab WiFi — copy to /etc/ctg/lab-wifi.conf on Kali (chmod 600).
+# Authorized lab / owned AP only — Hacker Planet LLC · Philadelphia, PA
+#
+# cp lab-wifi.conf.example /etc/ctg/lab-wifi.conf
+# chmod 600 /etc/ctg/lab-wifi.conf
+# Edit SSID and PSK below (or set CTG_LAB_WIFI_SSID / CTG_LAB_WIFI_PSK in environment).
+
+CTG_LAB_WIFI_SSID="YourLabSSID"
+CTG_LAB_WIFI_PSK="your-wpa2-psk-here"
+
+# Optional: fixed BSSID for owned AP (empty = any)
+# CTG_LAB_WIFI_BSSID="aa:bb:cc:dd:ee:ff"
+
+# Monitor mode for 802.11 capture (Wireshark) — set 1 when lab capture enabled
+# CTG_WIFI_MONITOR=0

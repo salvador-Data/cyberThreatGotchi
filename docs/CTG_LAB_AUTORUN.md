@@ -133,6 +133,45 @@ tail -50 /var/log/ctg-boot-autopatch.log
 
 **Log:** `/var/log/ctg-boot-autopatch.log` · **Service:** `ctg-kali-autopatch.service`
 
+**WiFi lab phase (optional):**
+
+```bash
+sudo bash /mnt/ctg/kali-boot-autopatch.sh --wifi-lab
+```
+
+Runs `ctg-wifi-lab-autorun.sh` after Guest Additions fix. Also invoked from `ctg-lab-autorun.sh` by default.
+
+---
+
+## WiFi + Ethernet lab autorun
+
+USB **Realtek** dongle detect, OOT driver (`rtl8812au`), WPA2 connect from `/etc/ctg/lab-wifi.conf`, **eth promisc** when CAT5 link is up, optional **WiFi monitor** (`airmon-ng`).
+
+**Professor answer:** Wired Ethernet uses **classic promisc**; WiFi 802.11 capture needs **monitor mode** — see [KALI_WIFI_ETH_PROMISC.md](KALI_WIFI_ETH_PROMISC.md).
+
+**Windows staging:** `Deploy-KaliLab.ps1` copies `ctg-wifi-lab-autorun.sh` and `lab-wifi.conf.example` to `C:\Users\Owner\Backups\`.
+
+**Kali config (once):**
+
+```bash
+sudo cp /mnt/ctg/lab-wifi.conf.example /etc/ctg/lab-wifi.conf
+sudo chmod 600 /etc/ctg/lab-wifi.conf
+sudo nano /etc/ctg/lab-wifi.conf
+```
+
+```bash
+sudo bash /mnt/ctg/ctg-wifi-lab-autorun.sh
+```
+
+802.11 lab capture:
+
+```bash
+sudo CTG_WIFI_MONITOR=1 bash /mnt/ctg/ctg-wifi-lab-autorun.sh --monitor
+```
+
+**Boot service (optional):** `sudo bash /mnt/ctg/ctg-wifi-lab-autorun.sh --install` → `ctg-wifi-lab.service`  
+**Log:** `/var/log/ctg-wifi-lab.log`
+
 ---
 
 ## Kali — one command
@@ -145,10 +184,11 @@ sudo bash /mnt/ctg/ctg-lab-autorun.sh
 
 **What it does:**
 
-1. Runs `kali-lab-bootstrap.sh` once (marker: `/var/lib/ctg/kali-bootstrap.done`)
-2. `systemctl start tor`
-3. Starts `scrambler-daemon.sh` (default mode **tor**)
-4. Prints GUI and SIEM commands
+1. Runs `kali-boot-autopatch.sh --wifi-lab` then `ctg-wifi-lab-autorun.sh` (when staged on share)
+2. Runs `kali-lab-bootstrap.sh` once (marker: `/var/lib/ctg/kali-bootstrap.done`)
+3. `systemctl start tor`
+4. Starts `scrambler-daemon.sh` (default mode **tor**)
+5. Prints GUI and SIEM commands
 
 **Scrambler GUI:**
 
