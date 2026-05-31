@@ -189,7 +189,21 @@ DESK
     else
         log "Guest seamless helper: bash /mnt/ctg/ctg-seamless-guest.sh after GUI login"
     fi
+    local scale_fix="${SCRIPT_DIR}/ctg-display-scale.sh"
+    for candidate in /mnt/ctg/ctg-display-scale.sh /opt/ctg/ctg-display-scale.sh; do
+        if [[ -f "$candidate" ]]; then
+            scale_fix="$candidate"
+            break
+        fi
+    done
+    if [[ -f "$scale_fix" ]] && who 2>/dev/null | grep -q ':0'; then
+        log "Running display scale (DPI/terminal): $scale_fix"
+        bash "$scale_fix" || log "ctg-display-scale returned non-zero (login may still be in progress)"
+    else
+        log "Display scale: bash /mnt/ctg/ctg-display-scale.sh after GUI login"
+    fi
     log "Seamless toggle on Windows host: Host+L; menu: Host+Home; toolbar: docs/KALI_SEAMLESS_MODE.md"
+    log "Display scale: docs/KALI_DISPLAY_SCALING.md"
 }
 
 fix_virtualbox_guest_packages() {

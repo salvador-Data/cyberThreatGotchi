@@ -215,11 +215,44 @@ function Set-CtgExtradataPair {
     Write-CtgSeamlessLog ("  extradata {0} = {1}" -f $Key, $Value)
 }
 
+function Test-CtgGuestSizeHintOversized {
+    param([string]$Hint)
+    if (-not $Hint) { return $false }
+    if ($Hint -match '^(\d+),(\d+)') {
+        $w = [int]$Matches[1]
+        $h = [int]$Matches[2]
+        return ($w -gt 2560 -or $h -gt 1600)
+    }
+    return $false
+}
+
+function Clear-CtgBadGuestSizeHint {
+    # Huge LastGuestSizeHint (e.g. 3428,1660) makes guest UI tiny on 150% Windows hosts.
+    param([string]$Name, [string]$VBoxManage)
+    if ($SkipExtradata) { return }
+    $hint = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key 'GUI/LastGuestSizeHint'
+    if (-not (Test-CtgGuestSizeHintOversized -Hint $hint)) {
+        if ($hint) {
+            Write-CtgSeamlessLog "GUI/LastGuestSizeHint OK: $hint"
+        }
+        return
+    }
+    Write-CtgSeamlessLog "Clearing oversized GUI/LastGuestSizeHint ($hint) — causes tiny terminal/UI in guest"
+    if ($WhatIf) {
+        Write-CtgSeamlessLog ('[WhatIf] setextradata ' + $Name + ' GUI/LastGuestSizeHint (delete)')
+        return
+    }
+    $result = Invoke-CtgVBoxManage -VBoxManage $VBoxManage -Arguments @('setextradata', $Name, 'GUI/LastGuestSizeHint')
+    if ($result.Output.Trim()) { Write-CtgSeamlessLog $result.Output.Trim() }
+    Write-CtgSeamlessLog '  extradata GUI/LastGuestSizeHint cleared (AutoresizeGuest will set fresh hint)'
+}
+
 function Set-CtgCommonGuiExtradata {
     # Applied in every mode - autoresize prevents wrap/clip; mini-toolbar keys help full-screen.
     param([string]$Name, [string]$VBoxManage)
     if ($SkipExtradata) { return }
     Set-CtgExtradataPair -Name $Name -VBoxManage $VBoxManage -Key 'GUI/AutoresizeGuest' -Value 'true'
+    Clear-CtgBadGuestSizeHint -Name $Name -VBoxManage $VBoxManage
 }
 
 function Set-CtgMiniToolbarExtradata {
@@ -273,6 +306,7 @@ function Write-CtgHostLHint {
 function Write-CtgHostToolbarHint {
     Write-CtgSeamlessLog 'Host toolbar: top screen edge for mini toolbar (pin thumbtack), or Host+Home (Right Ctrl+Home) for full VM menu'
     Write-CtgSeamlessLog 'Guest panel: bash /mnt/ctg/ctg-seamless-guest.sh - see docs/KALI_SEAMLESS_MODE.md'
+    Write-CtgSeamlessLog 'Guest scale: bash /mnt/ctg/ctg-display-scale.sh - see docs/KALI_DISPLAY_SCALING.md'
 }
 
 function Write-CtgGuestAdditionsHint {
@@ -396,6 +430,9 @@ function Get-CtgSeamlessDiagnostics {
     }
     if (-not (Test-CtgExtradataTruthy -Value $guiExtra['GUI/AutoresizeGuest'])) {
         $issues += "GUI/AutoresizeGuest is '$($guiExtra['GUI/AutoresizeGuest'])' - guest may wrap/clip; script sets this true"
+    }
+    if (Test-CtgGuestSizeHintOversized -Hint $guiExtra['GUI/LastGuestSizeHint']) {
+        $issues += "GUI/LastGuestSizeHint is '$($guiExtra['GUI/LastGuestSizeHint'])' — tiny UI; script clears hints >2560×1600"
     }
     if ($vram -ne '128MB') { $issues += "VRAM is $vram (recommend 128MB - Fix-KaliBlankScreen.ps1)" }
     if ($gfx -notmatch 'VMSVGA|VBoxSVGA') { $issues += "Graphics controller is $gfx (recommend VMSVGA)" }

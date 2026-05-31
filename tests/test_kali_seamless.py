@@ -98,3 +98,36 @@ def test_stage_script_normalizes_sh_to_lf():
 
     autorun = (KALI / "ctg-lab-autorun.sh").read_text(encoding="utf-8")
     assert "Start-KaliSeamless.ps1" in autorun or "Host+L" in autorun
+
+
+def test_display_scale_script_and_wiring():
+    scale = KALI / "ctg-display-scale.sh"
+    assert scale.is_file()
+    body = scale.read_text(encoding="utf-8")
+    assert "VBoxClient" in body
+    assert "--vmsvga" in body or "--display" in body
+    assert "xfconf-query" in body
+    assert "/Xft/DPI" in body
+    assert "xfce4-terminal" in body
+    assert "--diagnose-only" in body
+    assert "gsettings" in body
+
+    seamless = (KALI / "ctg-seamless-guest.sh").read_text(encoding="utf-8")
+    assert "ctg-display-scale" in seamless
+
+    autopatch = (KALI / "kali-boot-autopatch.sh").read_text(encoding="utf-8")
+    assert "ctg-display-scale" in autopatch
+
+    ps1 = (WIN / "Start-KaliSeamless.ps1").read_text(encoding="utf-8")
+    assert "Clear-CtgBadGuestSizeHint" in ps1
+    assert "LastGuestSizeHint" in ps1
+    assert "AutoresizeGuest" in ps1
+
+    doc = ROOT / "docs" / "KALI_DISPLAY_SCALING.md"
+    assert doc.is_file()
+    doc_body = doc.read_text(encoding="utf-8")
+    assert "ctg-display-scale.sh" in doc_body
+    assert "kali-boot-autopatch.sh" in doc_body
+
+    stage = (WIN / "Stage-KaliLabToBackups.ps1").read_text(encoding="utf-8")
+    assert "KALI_DISPLAY_SCALING.md" in stage
