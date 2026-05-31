@@ -130,6 +130,7 @@ def test_display_scale_script_and_wiring():
     assert "AutoresizeGuest" in ps1
     assert "--fit-window" in ps1
     assert "setvideomodehint" in ps1
+    assert "LoginWindowScale" in ps1
     assert "DisplayMode Gui" in ps1 or "-DisplayMode Gui" in ps1
 
     doc = ROOT / "docs" / "KALI_DISPLAY_SCALING.md"
@@ -139,6 +140,8 @@ def test_display_scale_script_and_wiring():
     assert "--fit-window" in doc_body
     assert "--fonts-only" in doc_body
     assert "kali-boot-autopatch.sh" in doc_body
+    assert "--login-scale" in doc_body
+    assert "Login / sign-in" in doc_body
     assert "Symptom" in doc_body
     assert "pipeline" in doc_body.lower()
 

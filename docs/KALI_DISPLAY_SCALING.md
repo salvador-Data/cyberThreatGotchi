@@ -12,6 +12,7 @@ See also: [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) (seamless/scaled window
 | Whole UI **blown out / huge** | Host **Scaled** + guest Xft DPI 120–144 + bad `LastGuestSizeHint` | `--reset` then `--fit-window`; host `-DisplayMode Gui` (`Scale=false`) |
 | Terminal text **too small** only | Fit-window fixed geometry but **Xft DPI still 96** or tiny Gtk/terminal fonts | `--fit-window` (medium DPI 108) or `--text-medium` |
 | Text **too big** after prior bump | DPI 112–120 / large Gtk/terminal from last pass | `--fit-window` or `--text-medium` (medium defaults); `--reset` if huge |
+| **Sign-in / login** screen tiny | GDM greeter uses default DPI; runs **before** `--fit-window` autostart | `sudo bash …/ctg-display-scale.sh --login-scale`; host `-LoginWindowScale 1.25` |
 | Seamless reverts / no panel | Wayland session or `VBoxClient --seamless` dead | `ctg-seamless-guest.sh`; GDM `WaylandEnable=false` |
 
 **Detect:** `bash /mnt/ctg/ctg-display-scale.sh --diagnose-only`  
@@ -100,6 +101,18 @@ cd c:\Users\Owner\Projects\cyberThreatGotchi
 .\scripts\windows\Start-KaliSeamless.ps1 -DisplayMode Gui
 ```
 
+**Login / sign-in screen** (before Xfce session — greeter only, not post-login fonts):
+
+```bash
+sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale
+```
+
+```powershell
+.\scripts\windows\Start-KaliSeamless.ps1 -DisplayMode Gui -LoginWindowScale 1.25
+```
+
+Applied automatically on every boot via `kali-boot-autopatch.sh` (calls `--login-scale`). **Does not** change medium desktop fonts (DPI 108) after login.
+
 Diagnose (no changes):
 
 ```bash
@@ -127,8 +140,23 @@ Fix order: **host Gui → `--fit-window`** (medium). If still small: **`--text-l
 | `--reset` | DPI **96**, default fonts, `xrandr --auto`, panel size 30 |
 | `--aggressive` | Legacy: DPI 120/144, panel scale — **not** with host Scaled |
 | `--diagnose-only` | Resolution, DPI, fonts, VBoxClient, cut-off warnings |
+| `--login-scale` | GDM `greeter.dconf-defaults` `text-scaling-factor=1.25`; lightdm-gtk `Sans 13` (root; greeter only) |
 
 Autostart at login: `ctg-display-scale.sh --fit-window` (medium fonts; sleep 2, **before** seamless).
+
+### Login / sign-in screen
+
+The **GDM3** (or **lightdm-gtk**) greeter runs **before** any user Xfce session, so `--fit-window` autostart does not apply there. CTG sets:
+
+| Display manager | File | Change |
+|-----------------|------|--------|
+| **gdm3** / **gdm** | `/etc/gdm3/greeter.dconf-defaults` | `[org/gnome/desktop/interface]` `text-scaling-factor=1.25` |
+| **lightdm** (gtk greeter) | `/etc/lightdm/lightdm-gtk-greeter.conf.d/50-ctg-login-scale.conf` | `theme-font-name` / `clock-font-name` = Sans 13 |
+| **sddm** | `/etc/sddm.conf.d/50-ctg-login-scale.conf` | Theme font Sans 13 |
+
+Detection: `detect_ctg_display_manager()` in `ctg-display-scale.sh` (default-display-manager symlink + `systemctl is-enabled`). **Reboot or log out** to see greeter changes.
+
+**Host (optional):** `-LoginWindowScale 1.25` on `Start-KaliSeamless.ps1` bumps `setvideomodehint` while `LoggedInUsers=0` — slightly larger VM framebuffer at the sign-in screen. Use with guest `--login-scale`; does not replace medium post-login fonts.
 
 **Persist / save:** xfconf in `~/.config/xfce4/`; system autostart `/etc/xdg/autostart/ctg-display-scale.desktop` via `sudo bash /mnt/ctg/kali-boot-autopatch.sh --install`; per-user copy in `~/.config/autostart/` when script runs as desktop user or root.
 

@@ -15,7 +15,10 @@ param(
     [switch]$WhatIf,
     [switch]$EnsureGuiSession,
     [switch]$NoEnsureGuiSession,
-    [switch]$ApplyExtradata
+    [switch]$ApplyExtradata,
+    # Optional: nudge guest framebuffer ~25% at login greeter (before LoggedInUsers). Pair with guest --login-scale.
+    [ValidateRange(1.0, 1.5)]
+    [double]$LoginWindowScale = 0
 )
 
 $ErrorActionPreference = 'Continue'
@@ -308,9 +311,17 @@ function Write-CtgHostLHint {
 
 function Invoke-CtgGuestVideoModeRefresh {
     # Nudge guest display after extradata/autoresize changes (VirtualBox 7 GA).
-    param([string]$Name, [string]$VBoxManage)
+    param(
+        [string]$Name,
+        [string]$VBoxManage,
+        [double]$LoginScale = 0
+    )
     if ((Get-CtgVmState -Name $Name -VBoxManage $VBoxManage) -ne 'running') { return $true }
-    if (-not (Test-CtgGuestDesktopReady -Name $Name -VBoxManage $VBoxManage)) { return $true }
+    $atLoginGreeter = -not (Test-CtgGuestDesktopReady -Name $Name -VBoxManage $VBoxManage)
+    if ($atLoginGreeter -and $LoginScale -le 1.0) {
+        Write-CtgSeamlessLog 'setvideomodehint skip — guest not logged in (optional -LoginWindowScale 1.25 for sign-in screen)'
+        return $true
+    }
     $hint = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key 'GUI/LastGuestSizeHint'
     $w = 0; $h = 0
     if ($hint -match '^(\d+),(\d+)') {
@@ -324,7 +335,13 @@ function Invoke-CtgGuestVideoModeRefresh {
         Write-CtgSeamlessLog "setvideomodehint skip — hint $hint oversized (cleared; guest ctg-display-scale.sh --fit-window)"
         return $true
     }
-    Write-CtgSeamlessLog "Nudging guest video mode via setvideomodehint ${w}x${h} (VB7 GA autoresize refresh)"
+    if ($atLoginGreeter -and $LoginScale -gt 1.0) {
+        $w = [int][Math]::Min(2560, [Math]::Round($w * $LoginScale))
+        $h = [int][Math]::Min(1600, [Math]::Round($h * $LoginScale))
+        Write-CtgSeamlessLog "Login greeter: setvideomodehint ${w}x${h} (LoginWindowScale=$LoginScale)"
+    } else {
+        Write-CtgSeamlessLog "Nudging guest video mode via setvideomodehint ${w}x${h} (VB7 GA autoresize refresh)"
+    }
     if ($WhatIf) {
         Write-CtgSeamlessLog ("[WhatIf] controlvm {0} setvideomodehint {1} {2} 32" -f $Name, $w, $h)
         return $true
@@ -342,6 +359,7 @@ function Write-CtgHostToolbarHint {
     Write-CtgSeamlessLog 'Guest cut-off fix: bash /mnt/ctg/ctg-display-scale.sh --fit-window (default at login)'
     Write-CtgSeamlessLog 'Guest panel: bash /mnt/ctg/ctg-seamless-guest.sh - see docs/KALI_SEAMLESS_MODE.md'
     Write-CtgSeamlessLog 'Guest text: --fit-window (medium) | --text-medium | --text-large if needed'
+    Write-CtgSeamlessLog 'Login greeter tiny: sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale | host -LoginWindowScale 1.25'
     Write-CtgSeamlessLog 'Undo over-scale: bash /mnt/ctg/ctg-display-scale.sh --reset'
     Write-CtgSeamlessLog 'Host blown-out fix: -DisplayMode Gui (AutoresizeGuest, Scale=false) — docs/KALI_DISPLAY_SCALING.md'
 }
@@ -620,7 +638,7 @@ function Start-CtgKaliSeamless {
         Set-CtgMiniToolbarExtradata -Name $Name -VBoxManage $VBoxManage
     }
     if ($ApplyExtradata -or $Mode -eq 'Gui') {
-        Invoke-CtgGuestVideoModeRefresh -Name $Name -VBoxManage $VBoxManage | Out-Null
+        Invoke-CtgGuestVideoModeRefresh -Name $Name -VBoxManage $VBoxManage -LoginScale $LoginWindowScale | Out-Null
     }
     if ($Mode -eq 'Seamless') {
         Write-CtgSeamlessLog 'Seamless preflight: needs graphical X11 login + VBoxClient --seamless in guest.'

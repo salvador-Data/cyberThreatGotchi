@@ -23,6 +23,17 @@ def test_display_scale_script_exists():
     assert "--reset" in body
     assert "--aggressive" in body
     assert "--diagnose-only" in body
+    assert "--login-scale" in body
+
+
+def test_login_greeter_scale_gdm_and_dm_detect():
+    body = _body()
+    assert "fix_login_greeter_scale" in body
+    assert "detect_ctg_display_manager" in body
+    assert "greeter.dconf-defaults" in body
+    assert "text-scaling-factor=1.25" in body or 'text-scaling-factor=${scale}' in body
+    assert "CTG_LOGIN_TEXT_SCALE" in body
+    assert "50-ctg-login-scale.conf" in body
 
 
 def test_fit_window_is_default_mode():
@@ -54,6 +65,8 @@ def test_fit_window_in_autostart_and_wiring():
 
     autopatch = (ROOT / "scripts" / "kali" / "kali-boot-autopatch.sh").read_text(encoding="utf-8")
     assert "--fit-window" in autopatch
+    assert "fix_login_greeter_scale" in autopatch
+    assert "--login-scale" in autopatch
     assert "/etc/xdg/autostart/ctg-display-scale.desktop" in autopatch
 
     flash = (ROOT / "scripts" / "windows" / "Invoke-CtgKaliGuestFlash.ps1").read_text(encoding="utf-8")
@@ -120,5 +133,6 @@ def test_help_documents_all_flags():
         "--reset",
         "--aggressive",
         "--diagnose-only",
+        "--login-scale",
     ):
         assert flag in body

@@ -281,6 +281,22 @@ EOF
     fi
 }
 
+fix_login_greeter_scale() {
+    log "Phase: login greeter text scale (~25% — GDM/lightdm sign-in)"
+    local scale_sh=""
+    for candidate in "${SCRIPT_DIR}/ctg-display-scale.sh" /opt/ctg/ctg-display-scale.sh /mnt/ctg/ctg-display-scale.sh /media/sf_ctg-backups/ctg-display-scale.sh; do
+        if [[ -f "$candidate" ]]; then
+            scale_sh="$candidate"
+            break
+        fi
+    done
+    if [[ -z "$scale_sh" ]]; then
+        log "ctg-display-scale.sh not found — skip login greeter scale"
+        return 0
+    fi
+    bash "$scale_sh" --login-scale || true
+}
+
 ensure_ctg_backups_mount_hint() {
     log "Phase: ctg-backups shared folder mount hint"
     if mountpoint -q /mnt/ctg 2>/dev/null; then
@@ -678,6 +694,7 @@ if $DO_SIEM; then
     run_siem_autorun
 fi
 fix_gdm_wayland_blank_screen
+fix_login_greeter_scale
 ensure_ctg_backups_mount_hint
 run_retbleed_mitigation
 run_optional_upgrade
