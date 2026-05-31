@@ -306,12 +306,44 @@ function Write-CtgHostLHint {
     Write-CtgSeamlessLog "VirtualBox 7: press Host+L (default Host=Right Ctrl) on the $Name window to toggle seamless now"
 }
 
+function Invoke-CtgGuestVideoModeRefresh {
+    # Nudge guest display after extradata/autoresize changes (VirtualBox 7 GA).
+    param([string]$Name, [string]$VBoxManage)
+    if ((Get-CtgVmState -Name $Name -VBoxManage $VBoxManage) -ne 'running') { return $true }
+    if (-not (Test-CtgGuestDesktopReady -Name $Name -VBoxManage $VBoxManage)) { return $true }
+    $hint = Get-CtgExtradataValue -Name $Name -VBoxManage $VBoxManage -Key 'GUI/LastGuestSizeHint'
+    $w = 0; $h = 0
+    if ($hint -match '^(\d+),(\d+)') {
+        $w = [int]$Matches[1]; $h = [int]$Matches[2]
+    }
+    if ($w -lt 640 -or $h -lt 480) {
+        Write-CtgSeamlessLog 'setvideomodehint skip — no usable LastGuestSizeHint (AutoresizeGuest will set on resize)'
+        return $true
+    }
+    if (Test-CtgGuestSizeHintOversized -Hint $hint) {
+        Write-CtgSeamlessLog "setvideomodehint skip — hint $hint oversized (cleared; guest ctg-display-scale.sh --fit-window)"
+        return $true
+    }
+    Write-CtgSeamlessLog "Nudging guest video mode via setvideomodehint ${w}x${h} (VB7 GA autoresize refresh)"
+    if ($WhatIf) {
+        Write-CtgSeamlessLog ("[WhatIf] controlvm {0} setvideomodehint {1} {2} 32" -f $Name, $w, $h)
+        return $true
+    }
+    $result = Invoke-CtgVBoxManage -VBoxManage $VBoxManage -Arguments @('controlvm', $Name, 'setvideomodehint', "$w", "$h", '32')
+    if ($result.ExitCode -ne 0 -and $result.Output -match 'error|VBOX_E|Invalid') {
+        Write-CtgSeamlessLog ("setvideomodehint unavailable (non-fatal): " + $result.Output.Trim())
+        return $true
+    }
+    return $true
+}
+
 function Write-CtgHostToolbarHint {
     Write-CtgSeamlessLog 'Host toolbar: top screen edge for mini toolbar (pin thumbtack), or Host+Home (Right Ctrl+Home) for full VM menu'
+    Write-CtgSeamlessLog 'Guest cut-off fix: bash /mnt/ctg/ctg-display-scale.sh --fit-window (default at login)'
     Write-CtgSeamlessLog 'Guest panel: bash /mnt/ctg/ctg-seamless-guest.sh - see docs/KALI_SEAMLESS_MODE.md'
-    Write-CtgSeamlessLog 'Guest text size: bash /mnt/ctg/ctg-display-scale.sh --fonts-only (not bare script + not Scaled for text-only)'
+    Write-CtgSeamlessLog 'Guest text-only bump: bash /mnt/ctg/ctg-display-scale.sh --fonts-only (after --fit-window)'
     Write-CtgSeamlessLog 'Undo over-scale: bash /mnt/ctg/ctg-display-scale.sh --reset'
-    Write-CtgSeamlessLog 'Host text-small fix: -DisplayMode Gui (AutoresizeGuest) — docs/KALI_DISPLAY_SCALING.md'
+    Write-CtgSeamlessLog 'Host blown-out fix: -DisplayMode Gui (AutoresizeGuest, Scale=false) — docs/KALI_DISPLAY_SCALING.md'
 }
 
 function Write-CtgGuestAdditionsHint {
@@ -431,7 +463,7 @@ function Get-CtgSeamlessDiagnostics {
         $issues += "GUI/ShowMiniToolBar is '$extradataMiniTb' - host mini toolbar hidden; re-run without -NoShowHostToolbar"
     }
     if ($DisplayMode -eq 'Seamless' -and $seamlessActive) {
-        $issues += 'Seamless facility ACTIVE — if menu toggle still reverts, run bash /mnt/ctg/ctg-seamless-guest.sh in Kali (X11 + VBoxClient)'
+        $issues += 'Seamless facility ACTIVE — if desktop cut off, run bash /mnt/ctg/ctg-display-scale.sh --fit-window before Host+L'
     }
     if (-not (Test-CtgExtradataTruthy -Value $guiExtra['GUI/AutoresizeGuest'])) {
         $issues += "GUI/AutoresizeGuest is '$($guiExtra['GUI/AutoresizeGuest'])' - guest may wrap/clip; script sets this true"
@@ -587,10 +619,13 @@ function Start-CtgKaliSeamless {
     if (-not $NoShowHostToolbarParam) {
         Set-CtgMiniToolbarExtradata -Name $Name -VBoxManage $VBoxManage
     }
+    if ($ApplyExtradata -or $Mode -eq 'Gui') {
+        Invoke-CtgGuestVideoModeRefresh -Name $Name -VBoxManage $VBoxManage | Out-Null
+    }
     if ($Mode -eq 'Seamless') {
         Write-CtgSeamlessLog 'Seamless preflight: needs graphical X11 login + VBoxClient --seamless in guest.'
         Write-CtgSeamlessLog 'Before Host+L in Kali run: bash /mnt/ctg/ctg-seamless-guest.sh (fixes Wayland glitch-revert)'
-        Write-CtgSeamlessLog 'Text too small only: -DisplayMode Gui + guest ctg-display-scale.sh --fonts-only (avoid Scaled + high DPI)'
+        Write-CtgSeamlessLog 'Text too small only: -DisplayMode Gui + guest ctg-display-scale.sh --fit-window (avoid Scaled + high DPI)'
         Write-CtgSeamlessLog 'For visible menu/scrollbars: -DisplayMode Scaled or Gui (Scaled enlarges whole desktop — not for font-only fix)'
     }
 

@@ -279,7 +279,7 @@ fix_autoresize() {
     if ! as_user bash -lc 'command -v xrandr >/dev/null 2>&1'; then
         return 0
     fi
-    log "xrandr: selecting largest available mode (prevents wrap/scroll when guest > window)"
+    log "xrandr: fit-to-window (--auto only — never largest mode; avoids cut-off)"
     as_user bash -lc '
         out="$(xrandr 2>/dev/null | awk "/ connected/{print \$1; exit}")"
         [ -n "$out" ] && xrandr --output "$out" --auto >/dev/null 2>&1 || true
@@ -300,7 +300,7 @@ install_autostart() {
 Type=Application
 Name=CTG VBoxClient Seamless+Resize
 Comment=Hacker Planet CTG lab — seamless + autoresize at login
-Exec=sh -c 'sleep 2; VBoxClient --vmsvga 2>/dev/null || VBoxClient --display 2>/dev/null; VBoxClient --seamless; VBoxClient --clipboard'
+Exec=sh -c 'sleep 5; VBoxClient --vmsvga 2>/dev/null || VBoxClient --display 2>/dev/null; VBoxClient --seamless; VBoxClient --clipboard'
 X-GNOME-Autostart-enabled=true
 NoDisplay=true
 DESK
@@ -409,8 +409,8 @@ run_display_scale() {
         warn "ctg-display-scale.sh not found — skip DPI/terminal scale"
         return 1
     fi
-    log "Running display scale (fonts-only): $scale_script --fonts-only"
-    bash "$scale_script" --fonts-only
+    log "Running display scale (fit-window, after VBoxClient): $scale_script --fit-window"
+    bash "$scale_script" --fit-window
 }
 run_optional "display scale (DPI/terminal)" run_display_scale
 

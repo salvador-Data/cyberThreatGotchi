@@ -66,8 +66,8 @@ run_chain() {
     mount_share || log "Mount skipped — using /media/sf_ctg-backups if present"
 
     if [[ -x "$CTG_MOUNT/ctg-display-scale.sh" ]] || [[ -f "$CTG_MOUNT/ctg-display-scale.sh" ]]; then
-        log "Phase: ctg-display-scale.sh --fonts-only"
-        bash "$CTG_MOUNT/ctg-display-scale.sh" --fonts-only || log "display-scale non-fatal"
+        log "Phase: ctg-display-scale.sh --fit-window (before seamless)"
+        bash "$CTG_MOUNT/ctg-display-scale.sh" --fit-window || log "display-scale non-fatal"
     else
         log "Skip display-scale — script not on share"
     fi

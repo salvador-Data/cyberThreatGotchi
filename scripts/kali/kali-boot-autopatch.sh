@@ -197,10 +197,10 @@ DESK
         fi
     done
     if [[ -f "$scale_fix" ]] && who 2>/dev/null | grep -q ':0'; then
-        log "Running display scale (fonts-only): $scale_fix --fonts-only"
-        bash "$scale_fix" --fonts-only || log "ctg-display-scale returned non-zero (login may still be in progress)"
+        log "Running display scale (fit-window): $scale_fix --fit-window"
+        bash "$scale_fix" --fit-window || log "ctg-display-scale returned non-zero (login may still be in progress)"
     else
-        log "Display scale: bash /mnt/ctg/ctg-display-scale.sh after GUI login"
+        log "Display scale: bash /mnt/ctg/ctg-display-scale.sh --fit-window after GUI login"
     fi
     log "Seamless toggle on Windows host: Host+L; menu: Host+Home; toolbar: docs/KALI_SEAMLESS_MODE.md"
     log "Display scale: docs/KALI_DISPLAY_SCALING.md"

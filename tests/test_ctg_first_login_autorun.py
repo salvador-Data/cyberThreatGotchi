@@ -26,7 +26,7 @@ def test_first_login_idempotent_flag_and_log():
     assert "first-run-done" in sh
     assert "/var/log/ctg-first-login.log" in sh
     assert "CTG_FORCE_AUTORUN" in sh
-    assert "--fonts-only" in sh
+    assert "--fit-window" in sh
     assert "RUN-KALI-LAB-NOW" in sh
     assert "ctg-retbleed-check" in sh
 
@@ -57,7 +57,7 @@ def test_invoke_guest_flash_trigger_and_logged_in():
     assert "CTG_TRIGGER_AUTORUN" in ps1
     assert "TriggerOnly" in ps1
     assert "ctg-enable-ssh" in ps1
-    assert "--fonts-only" in ps1
+    assert "--fit-window" in ps1
     assert "guestcontrol probe" in ps1.lower() or "guestcontrol probe user" in ps1.lower()
     assert "'sal', 'kali'" in ps1 or "@('sal', 'kali'" in ps1
 

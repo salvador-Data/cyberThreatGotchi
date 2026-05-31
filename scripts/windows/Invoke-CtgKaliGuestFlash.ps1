@@ -67,7 +67,7 @@ function Get-CtgGuestLabChainBash {
         '  sudo mkdir -p /mnt/ctg'
         '  if ! mountpoint -q /mnt/ctg; then sudo mount -t vboxsf ctg-backups /mnt/ctg; fi'
         'fi'
-        'bash /mnt/ctg/ctg-display-scale.sh --fonts-only'
+        'bash /mnt/ctg/ctg-display-scale.sh --fit-window'
         'bash /mnt/ctg/ctg-seamless-guest.sh'
         'sudo bash /mnt/ctg/ctg-enable-ssh.sh'
         'sudo CTG_NO_REBOOT=1 bash /mnt/ctg/RUN-KALI-LAB-NOW.sh'
