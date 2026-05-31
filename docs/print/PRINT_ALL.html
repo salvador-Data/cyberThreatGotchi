@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CTG Print-All Audit — Hacker Planet LLC</title>
+  <style>
+    body { font-family: Segoe UI, sans-serif; font-size: 11pt; line-height: 1.4; max-width: 7.5in; margin: 0.5in auto; color: #111; }
+    h1 { font-size: 16pt; border-bottom: 2px solid #333; padding-bottom: 0.2em; }
+    h2 { font-size: 13pt; margin-top: 1.2em; }
+    .preserve { background: #fff3cd; border: 1px solid #ffc107; padding: 0.6em; margin: 1em 0; }
+    ul.checklist { list-style: none; padding-left: 0; }
+    ul.checklist li::before { content: "☐ "; }
+    code, pre { font-size: 9pt; background: #f4f4f4; padding: 0.2em 0.4em; }
+    pre { padding: 0.6em; overflow-x: auto; }
+    .footer { margin-top: 2em; font-size: 9pt; color: #555; border-top: 1px solid #ccc; padding-top: 0.5em; }
+    .page-break { page-break-after: always; }
+    @media print {
+      body { margin: 0.4in; }
+      .no-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<p class="no-print"><strong>Print:</strong> Ctrl+P → Save as PDF. Page breaks between sections.</p>
+
+<div class="preserve">
+  <strong>PRESERVE — DuckDuckGo VPN / DNS / Password Manager</strong><br>
+  Do not change during this audit. No competing VPN installs. See DUCKDUCKGO_PRESERVE_PRINT.md.
+</div>
+
+<h1>Section 0 — DuckDuckGo preserve</h1>
+<ul class="checklist">
+  <li>DuckDuckGo VPN — do not remove or replace</li>
+  <li>Wi‑Fi DNS — unchanged from baseline</li>
+  <li>DuckDuckGo Password Manager autofill — stay On</li>
+  <li>No Cloudflare WARP / NextDNS / Malwarebytes paid VPN stacked</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h1>Section 1 — Windows SOC</h1>
+<pre>.\scripts\windows\Invoke-CtgPrintAllAudit.ps1</pre>
+<ul class="checklist">
+  <li>Preserve-DuckDuckGoVpn BEFORE/AFTER in log</li>
+  <li>Memory protection, Defender, Wi‑Fi jam, email vault diagnose</li>
+  <li>Nightly 4 AM task registered</li>
+  <li>DDG unchanged at end</li>
+</ul>
+<p>Full: WINDOWS_SOC_AUDIT_PRINT.md</p>
+
+<div class="page-break"></div>
+
+<h1>Section 2 — iPhone</h1>
+<ul class="checklist">
+  <li>Phase 0 baseline: VPN + DNS + DDG Autofill</li>
+  <li>Phase 1 Settings complete + VERIFY</li>
+  <li>Phase 2 Malwarebytes SMS/Safari — MB VPN OFF</li>
+  <li>End VERIFY unchanged</li>
+</ul>
+<p>Full: IPHONE_AUDIT_PRINT.md</p>
+
+<div class="page-break"></div>
+
+<h1>Section 3 — Memory protection</h1>
+<ul class="checklist">
+  <li>HVCI / Memory integrity On</li>
+  <li>Never disable VBS for VirtualBox speed</li>
+  <li>Host spec-ctrl on; guest RETBleed check</li>
+  <li>Vault -LockVault after session</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h1>Section 4 — Vault &amp; secrets</h1>
+<ul class="checklist">
+  <li>Ctg-CredentialVault.ps1 -InitVault (once)</li>
+  <li>Titles: Kali SSH, Proton IMAP — hand-entered only</li>
+  <li>No secrets on paper</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h1>Section 5 — GitHub &amp; email</h1>
+<ul class="checklist">
+  <li>GitHub → Proton (failures only)</li>
+  <li>Proton folder GitHub-CTG</li>
+  <li>Email bridge -GithubOnly</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h1>Section 6 — UTMS Wi‑Fi AI</h1>
+<ul class="checklist">
+  <li>Event bus + dedupe</li>
+  <li>Jam/deauth detect — NOT counter-jam</li>
+  <li>Threat pack OTA + Cardputer bridge</li>
+  <li>Lab AP lab-only gate</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h1>Section 7 — Kali lab</h1>
+<ul class="checklist">
+  <li>CLICK-ME-RUN-IN-KALI.sh</li>
+  <li>Display scale + seamless</li>
+  <li>RETBleed + ram enforcer diagnose</li>
+  <li>a$k gate + lab-targets.conf</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h1>Section 8 — Lab maturity (NIST CSF)</h1>
+<p>Score each domain 1–10. Target 8–9/10.</p>
+<ul class="checklist">
+  <li>Identify: ___ / 10</li>
+  <li>Protect: ___ / 10</li>
+  <li>Detect: ___ / 10</li>
+  <li>Respond: ___ / 10</li>
+  <li>Recover: ___ / 10</li>
+</ul>
+
+<div class="footer">
+  Hacker Planet LLC · CyberThreatGotchi · PRINT_ALL.html · no passwords · authorized defensive lab use
+</div>
+
+</body>
+</html>

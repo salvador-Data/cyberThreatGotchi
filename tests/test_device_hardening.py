@@ -45,6 +45,7 @@ NEW_PS1 = [
     WIN / "Sync-CtgVulnerabilityFeeds.ps1",
     WIN / "Start-CtgIphoneTetherIds.ps1",
     WIN / "Invoke-CtgPreserveStackAudit.ps1",
+    WIN / "Invoke-CtgPrintAllAudit.ps1",
     PUBLISH / "Set-CtgPrivateRepos.ps1",
 ]
 
@@ -241,6 +242,48 @@ def test_preserve_stack_audit_ddg_policy():
     ):
         assert needle in text, needle
     assert "Cloudflare" not in text or "NOT install" in text or "no competing" in text.lower()
+
+
+PRINT_ALL_DOCS = [
+    "docs/print/README_PRINT_ALL.md",
+    "docs/print/DUCKDUCKGO_PRESERVE_PRINT.md",
+    "docs/print/KALI_LAB_AUDIT_PRINT.md",
+    "docs/print/MEMORY_PROTECTION_AUDIT_PRINT.md",
+    "docs/print/UTMS_WIFI_AUDIT_PRINT.md",
+    "docs/print/LAB_MATURITY_AUDIT_PRINT.md",
+    "docs/print/VAULT_SECRETS_AUDIT_PRINT.md",
+    "docs/print/GITHUB_EMAIL_AUDIT_PRINT.md",
+    "docs/print/PRINT_ALL_COMBINED.md",
+    "docs/print/PRINT_ALL.html",
+]
+
+
+@pytest.mark.parametrize("rel_path", PRINT_ALL_DOCS)
+def test_print_all_docs_exist_and_no_pii(rel_path: str):
+    path = ROOT / rel_path.replace("/", "\\")
+    assert path.is_file(), rel_path
+    body = path.read_text(encoding="utf-8")
+    assert not PHONE_PATTERN.search(body), f"PII phone in {rel_path}"
+    assert not REAL_PHONE.search(body), f"E.164 phone in {rel_path}"
+    assert "DuckDuckGo" in body or "DDG" in body or rel_path.endswith(".html")
+
+
+def test_print_all_audit_script():
+    text = (WIN / "Invoke-CtgPrintAllAudit.ps1").read_text(encoding="utf-8")
+    for needle in (
+        "Invoke-CtgPreserveStackAudit",
+        "ctg-print-all-audit",
+        "README_PRINT_ALL",
+        "DUCKDUCKGO_PRESERVE_PRINT",
+        "OpenPrintFolder",
+    ):
+        assert needle in text, needle
+    assert "preserve DuckDuckGo" in text.lower() or "DuckDuckGo VPN/DNS" in text
+
+
+def test_sync_device_hardening_includes_print_all():
+    text = (PUBLISH / "Sync-CtgDeviceHardeningRepo.ps1").read_text(encoding="utf-8")
+    assert "docs\\print\\README_PRINT_ALL.md" in text or "docs/print/README_PRINT_ALL.md" in text
 
 
 def test_security_hardening_ids_ram_section():

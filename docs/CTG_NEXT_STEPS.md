@@ -24,6 +24,7 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 | iOS MDM checklist | `Export-CtgIosProfileChecklist.ps1` | Supervision optional (fleet only) |
 | **Print = run (iPhone)** | [IPHONE_AUDIT_PRINT.md](IPHONE_AUDIT_PRINT.md) | Manual Settings on device; preserve DDG VPN/DNS/PM |
 | **Print = run (Windows SOC)** | [WINDOWS_SOC_AUDIT_PRINT.md](WINDOWS_SOC_AUDIT_PRINT.md) | `Invoke-CtgPreserveStackAudit.ps1` |
+| **Print = run (all domains)** | [print/README_PRINT_ALL.md](print/README_PRINT_ALL.md) | `Invoke-CtgPrintAllAudit.ps1 -OpenPrintFolder` |
 
 **Email vault titles needed:** `Proton IMAP` (or `CTG_EMAIL_IMAP`); optional `Microsoft Account`.
 
@@ -31,6 +32,10 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 
 ```powershell
 cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
+```
+
+```powershell
+.\scripts\windows\Invoke-CtgPrintAllAudit.ps1
 ```
 
 ```powershell
@@ -137,15 +142,19 @@ New-Item C:\Users\Owner\Backups\CTG_RUN_AUTORUN_NOW -ItemType File -Force
 
 ## Print = run session (2026-05-31)
 
-**Goal:** Printable iPhone + Windows SOC audits; DDG VPN/DNS/Password Manager preserved.
+**Goal:** Printable **full-stack** audit bundle (iPhone, Windows, Kali, memory, UTMS, vault, GitHub, NIST maturity); DDG VPN/DNS/Password Manager preserved.
 
 | Deliverable | Path |
 |-------------|------|
+| **Print-all index** | [print/README_PRINT_ALL.md](print/README_PRINT_ALL.md) |
 | iPhone printable | [IPHONE_AUDIT_PRINT.md](IPHONE_AUDIT_PRINT.md) |
 | Windows printable | [WINDOWS_SOC_AUDIT_PRINT.md](WINDOWS_SOC_AUDIT_PRINT.md) |
+| Kali / memory / UTMS / vault / GitHub sheets | `docs/print/*.md` |
+| Combined one-job print | [print/PRINT_ALL.html](print/PRINT_ALL.html) |
+| Print-all script | `scripts/windows/Invoke-CtgPrintAllAudit.ps1` |
 | Stack audit script | `scripts/windows/Invoke-CtgPreserveStackAudit.ps1` |
 
-**Windows run:** `Invoke-CtgPreserveStackAudit.ps1` (diagnose-only batch + DDG BEFORE/AFTER). Optional `-ApplySafeDefender` when Admin after ASR review. **Do not** run `Repair-WindowsWifi.ps1 -ApplyFixes` unless diagnose shows issues and DDG preserve passes.
+**Windows run:** `Invoke-CtgPrintAllAudit.ps1 -OpenPrintFolder` (lists all sheets + stack audit + `ctg-print-all-audit-*.txt`). Or `Invoke-CtgPreserveStackAudit.ps1` alone. Optional `-ApplySafeDefender` when Admin after ASR review. **Do not** run `Repair-WindowsWifi.ps1 -ApplyFixes` unless diagnose shows issues and DDG preserve passes.
 
 **iPhone run:** Print or AirDrop `IPHONE_AUDIT_PRINT.md` → complete Phase 0 → Phase 1 → **1.V verify** → Phase 2 → **2.V verify** on device. Windows: `iphone_tethering_privacy_checklist.ps1 -DetectUsb` (read-only).
 

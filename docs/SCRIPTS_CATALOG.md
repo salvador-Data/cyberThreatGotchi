@@ -94,6 +94,22 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **Admin:** **Optional** (depends on VPN stack)
 - **Docs:** [IPHONE_HARDENING.md](IPHONE_HARDENING.md) - [OPNSENSE_LAB_DNS.md](OPNSENSE_LAB_DNS.md)
 
+### `Invoke-CtgPreserveStackAudit.ps1`
+- **Path:** `scripts/windows/Invoke-CtgPreserveStackAudit.ps1`
+- **Tagline:** *DDG-preserving Windows SOC diagnose batch — one log, before/after VPN.*
+- **Does:** Runs Preserve-DuckDuckGoVpn + DiagnoseOnly stack (Defender, memory, Wi-Fi jam, email vault, lab segment).
+- **When:** Quarterly Windows SOC audit or after hardening changes.
+- **Admin:** **Optional** (`-ApplySafeDefender` needs Admin)
+- **Docs:** [WINDOWS_SOC_AUDIT_PRINT.md](WINDOWS_SOC_AUDIT_PRINT.md) - [print/DUCKDUCKGO_PRESERVE_PRINT.md](print/DUCKDUCKGO_PRESERVE_PRINT.md)
+
+### `Invoke-CtgPrintAllAudit.ps1`
+- **Path:** `scripts/windows/Invoke-CtgPrintAllAudit.ps1`
+- **Tagline:** *Print-all bundle — list every audit sheet + run stack audit.*
+- **Does:** Enumerates `docs/print/` + legacy iPhone/Windows sheets; invokes PreserveStackAudit; writes `ctg-print-all-audit-*.txt`.
+- **When:** Full-stack maturity pass or before printing the complete checklist bundle.
+- **Admin:** **Optional** (pass-through `-ApplySafeDefender`)
+- **Docs:** [print/README_PRINT_ALL.md](print/README_PRINT_ALL.md) - [LAB_MATURITY.md](LAB_MATURITY.md)
+
 ### `Pause-DefenderRealtime.ps1`
 - **Path:** `scripts/windows/Pause-DefenderRealtime.ps1`
 - **Tagline:** *Five-minute truce for lab builds - then turn the sentinel back on.*

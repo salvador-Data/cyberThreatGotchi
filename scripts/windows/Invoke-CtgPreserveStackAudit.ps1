@@ -148,7 +148,8 @@ Write-CtgDdgSnapshot -Label 'AFTER' -Snap $after
 $unchanged = ($before.VpnInstalled -eq $after.VpnInstalled) -and ($before.TunnelUp -eq $after.TunnelUp)
 Add-StackLine '=== SUMMARY ==='
 Add-StackLine ('  DDG tunnel state unchanged: {0}' -f $unchanged)
-Add-StackLine '  Printable docs: docs\IPHONE_AUDIT_PRINT.md | docs\WINDOWS_SOC_AUDIT_PRINT.md'
+Add-StackLine '  Printable docs: docs\print\README_PRINT_ALL.md (full bundle)'
+Add-StackLine '  Run: .\scripts\windows\Invoke-CtgPrintAllAudit.ps1 -OpenPrintFolder'
 Add-StackLine ('  Log: {0}' -f $outFile)
 Add-StackLine '=== END ==='
 
