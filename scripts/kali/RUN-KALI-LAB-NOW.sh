@@ -5,7 +5,15 @@
 #
 # Prereqs: VirtualBox VM "kali", user sal, shared folder ctg-backups -> Backups, VRAM 128 VMSVGA.
 # Disable surprise reboot (SSH): export CTG_NO_REBOOT=1 before running this script.
+# Gatekeeper only (light): sudo bash RUN-KALI-LAB-NOW.sh --gatekeeper-only
 set -euo pipefail
+
+GATEKEEPER_ONLY=0
+for arg in "$@"; do
+    case "$arg" in
+        --gatekeeper-only|-GatekeeperOnly) GATEKEEPER_ONLY=1 ;;
+    esac
+done
 
 CTG_MOUNT="/mnt/ctg"
 LOG="/var/log/ctg-run-kali-lab-now.log"
@@ -55,6 +63,14 @@ mount_ctg_share || die "Could not mount ctg-backups. Power off VM; ensure Virtua
 need() {
     [[ -f "$CTG_MOUNT/$1" ]] || die "Missing $CTG_MOUNT/$1 — re-run Stage-KaliLabToBackups.ps1 on Windows"
 }
+
+if [[ "$GATEKEEPER_ONLY" -eq 1 ]]; then
+    need gatekeeper-tor/kali/install-gatekeeper-kali.sh
+    log "Phase 2b only: Gatekeeper.TOR install (--gatekeeper-only)"
+    bash "$CTG_MOUNT/gatekeeper-tor/kali/install-gatekeeper-kali.sh" || die "install-gatekeeper-kali.sh failed"
+    log "=== Done (gatekeeper-only) ==="
+    exit 0
+fi
 
 need kali-boot-autopatch.sh
 need ctg-lab-autorun.sh

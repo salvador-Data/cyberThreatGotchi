@@ -4,6 +4,7 @@
 #
 # Windows (no guest password):
 #   New-Item C:\Users\Owner\Backups\CTG_RUN_AUTORUN_NOW -ItemType File -Force
+#   New-Item C:\Users\Owner\Backups\CTG_RUN_GATEKEEPER_INSTALL -ItemType File -Force
 #   (legacy: CTG_TRIGGER_AUTORUN still polled)
 #
 # Guest must be logged into Xfce (vboxsf readable at /media/sf_ctg-backups).
@@ -12,7 +13,7 @@ set -uo pipefail
 POLL_SEC="${CTG_TRIGGER_POLL_SEC:-8}"
 MAX_LOOPS="${CTG_TRIGGER_MAX_LOOPS:-0}"
 LOG_FILE="/var/log/ctg-watch-trigger.log"
-TRIGGER_NAMES=(CTG_TRIGGER_NMAP_INSTALL CTG_TRIGGER_AUTORUN CTG_RUN_AUTORUN_NOW)
+TRIGGER_NAMES=(CTG_TRIGGER_NMAP_INSTALL CTG_RUN_GATEKEEPER_INSTALL CTG_TRIGGER_AUTORUN CTG_RUN_AUTORUN_NOW)
 
 log() {
     local msg="[$(date -Iseconds)] [ctg-watch-trigger] $*"
@@ -67,6 +68,17 @@ run_nmap_install_trigger() {
 
 
 
+run_gatekeeper_install_trigger() {
+    local root="$1"
+    local installer="$root/gatekeeper-tor/kali/install-gatekeeper-kali.sh"
+    if [[ ! -f "$installer" ]]; then
+        log "Missing $installer - re-stage: Stage-KaliLabToBackups.ps1"
+        return 1
+    fi
+    log "Running install-gatekeeper-kali.sh (CTG_RUN_GATEKEEPER_INSTALL)"
+    sudo bash "$installer"
+}
+
 run_minimal_share_trigger() {
     local root="$1"
     local helper="$root/ctg-run-on-share-trigger.sh"
@@ -111,6 +123,12 @@ while true; do
                     remove_trigger "$trigger" || true
                 else
                     log "nmap-ask install trigger failed (sudo/password)"
+                fi
+            elif [[ "$(basename "$trigger")" == "CTG_RUN_GATEKEEPER_INSTALL" ]]; then
+                if run_gatekeeper_install_trigger "$share"; then
+                    remove_trigger "$trigger" || true
+                else
+                    log "CTG_RUN_GATEKEEPER_INSTALL failed (sudo/password)"
                 fi
             elif [[ "$(basename "$trigger")" == "CTG_RUN_AUTORUN_NOW" ]]; then
                 if run_minimal_share_trigger "$share"; then

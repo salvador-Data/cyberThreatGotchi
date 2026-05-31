@@ -10,6 +10,7 @@ param(
     [switch]$SkipStage,
     [switch]$SkipSeamless,
     [switch]$TriggerOnly,
+    [switch]$GatekeeperOnly,
     [switch]$WhatIf,
     [switch]$UseSecretVault
 )
@@ -103,6 +104,20 @@ function Get-CtgGuestLoggedInUsers {
 }
 
 function Get-CtgGuestLabChainBash {
+    param([switch]$GatekeeperOnly)
+    if ($GatekeeperOnly) {
+        $lines = @(
+            'set -e'
+            'if [ -x /media/sf_ctg-backups/ctg-mount-share.sh ]; then'
+            '  sudo bash /media/sf_ctg-backups/ctg-mount-share.sh'
+            'else'
+            '  sudo mkdir -p /mnt/ctg'
+            '  if ! mountpoint -q /mnt/ctg; then sudo mount -t vboxsf ctg-backups /mnt/ctg; fi'
+            'fi'
+            'sudo bash /mnt/ctg/gatekeeper-tor/kali/install-gatekeeper-kali.sh'
+        )
+        return ($lines -join "`n")
+    }
     $lines = @(
         'set -e'
         'if [ -x /media/sf_ctg-backups/ctg-mount-share.sh ]; then'
@@ -297,7 +312,8 @@ if (-not $SkipStage -and -not $WhatIf) {
 }
 
 $creds = Get-CtgKaliCredentials -Path $CredentialsFile -PreferVault:$UseSecretVault
-$chain = Get-CtgGuestLabChainBash
+$chain = Get-CtgGuestLabChainBash -GatekeeperOnly:$GatekeeperOnly
+$triggerName = if ($GatekeeperOnly) { 'CTG_RUN_GATEKEEPER_INSTALL' } else { $TriggerFileName }
 $vbox = Get-CtgVBoxManagePath
 $guiUser = if ($vbox) { Get-CtgGuestLoggedInUsersList -VBoxManage $vbox -Vm $VmName } else { '' }
 $tryUsers = @($guiUser, 'sal', 'kali', $creds.User) | Where-Object { $_ } | Select-Object -Unique
@@ -318,8 +334,8 @@ if ($WhatIf) {
 }
 
 if ($TriggerOnly) {
-    Set-CtgAutorunTrigger -Root $BackupRoot -Name $TriggerFileName | Out-Null
-    Wait-CtgTriggerConsumed -TriggerPath (Join-Path $BackupRoot $TriggerFileName) -TimeoutSec $TriggerWaitSec -BackupRoot $BackupRoot | Out-Null
+    Set-CtgAutorunTrigger -Root $BackupRoot -Name $triggerName | Out-Null
+    Wait-CtgTriggerConsumed -TriggerPath (Join-Path $BackupRoot $triggerName) -TimeoutSec $TriggerWaitSec -BackupRoot $BackupRoot | Out-Null
     exit 0
 }
 
@@ -342,10 +358,10 @@ $triggerPath = $null
 if (-not $ok) {
     if ($loggedIn -ge 1) {
         Write-CtgFlashLog 'LoggedInUsers>=1 - zero-touch share trigger (no Windows guest password)'
-        $triggerPath = Set-CtgAutorunTrigger -Root $BackupRoot -Name $TriggerFileName
+        $triggerPath = Set-CtgAutorunTrigger -Root $BackupRoot -Name $triggerName
     } else {
         Write-CtgFlashLog 'LoggedInUsers=0 - log into Kali Xfce GUI, then re-run this script or create trigger manually'
-        $triggerPath = Set-CtgAutorunTrigger -Root $BackupRoot -Name $TriggerFileName
+        $triggerPath = Set-CtgAutorunTrigger -Root $BackupRoot -Name $triggerName
     }
     if ($triggerPath) {
         $ok = Wait-CtgTriggerConsumed -TriggerPath $triggerPath -TimeoutSec $TriggerWaitSec -BackupRoot $BackupRoot

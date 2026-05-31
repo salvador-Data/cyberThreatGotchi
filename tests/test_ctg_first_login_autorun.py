@@ -35,7 +35,16 @@ def test_watch_trigger_share_names():
     body = (KALI / "ctg-watch-trigger.sh").read_text(encoding="utf-8")
     assert "CTG_TRIGGER_AUTORUN" in body
     assert "CTG_RUN_AUTORUN_NOW" in body
+    assert "CTG_RUN_GATEKEEPER_INSTALL" in body
+    assert "install-gatekeeper-kali.sh" in body
     assert "/media/sf_ctg-backups" in body
+
+
+def test_run_kali_lab_gatekeeper_only_flag():
+    body = (KALI / "RUN-KALI-LAB-NOW.sh").read_text(encoding="utf-8")
+    assert "--gatekeeper-only" in body
+    assert "GATEKEEPER_ONLY" in body
+    assert "install-gatekeeper-kali.sh" in body
 
 
 def test_boot_autopatch_installs_first_login():
@@ -57,6 +66,8 @@ def test_invoke_guest_flash_trigger_and_logged_in():
     assert "CTG_RUN_AUTORUN_NOW" in ps1
     assert "UseSecretVault" in ps1
     assert "TriggerOnly" in ps1
+    assert "GatekeeperOnly" in ps1
+    assert "CTG_RUN_GATEKEEPER_INSTALL" in ps1
     assert "ctg-enable-ssh" in ps1
     assert "--fit-window" in ps1
     assert "guestcontrol probe" in ps1.lower() or "guestcontrol probe user" in ps1.lower()
