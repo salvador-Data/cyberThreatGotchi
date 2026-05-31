@@ -30,6 +30,7 @@ scripts/kali/.vault_pass
 .vault/
 **/.vault/
 Backups/.vault/
+*.hash
 bitlocker-recovery*.txt
 **/bitlocker-recovery*.txt
 scripts/kali/lab-targets.conf

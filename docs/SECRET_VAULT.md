@@ -91,6 +91,135 @@ Or dot-source and call `Get-CtgProtectedSecret` (see script header).
 
 ---
 
+## Why not hash passwords inside committed scripts?
+
+Some automation ideas store a **SHA-256 hash** of a Windows or lab password directly in a `.ps1` file "so git never sees the plaintext." That pattern **does not help** for CTG lab scripts:
+
+| Problem | Detail |
+|---------|--------|
+| **Hashes are still secrets in git** | Anyone with repo access gets an offline crack target. Windows NTLM and short passphrases fall to GPU wordlists. |
+| **Hashes cannot elevate** | Scheduled tasks with `RunLevel Highest` need **plaintext** (stored in LSASS/task XML) or **Interactive/UAC** logon — a hash is useless to `Register-ScheduledTask`. |
+| **False sense of safety** | Agents may paste hashes into chat or docs; rotation requires editing tracked files. |
+
+**What we use instead:**
+
+1. **Runtime secrets** — `Protect-CtgSecrets.ps1 -SetSecret` stores DPAPI-encrypted plaintext under `%USERPROFILE%\Backups\.vault\` (gitignored). Scripts read at runtime only.
+2. **Optional hash verification** — `-SetSecretHash` / `-TestSecretHash` store the hash **inside the same DPAPI vault** (key `NAME_HASH`), never in committed scripts. Use this only to confirm you typed a password correctly after rotation — not for unattended elevation.
+3. **Admin without stored password** — `Run-AsAdmin.ps1` (UAC) or scheduled tasks with **Interactive** principal (`Register-CtgCpuOptimizeTask.ps1`).
+
+See [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) for the Andy-safe CPU optimize workflow.
+
+### Hash verification (optional, local only)
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\Protect-CtgSecrets.ps1 -SetSecretHash -Name KALI_SSH_PASSWORD
+```
+
+Prompts for the password; stores `KALI_SSH_PASSWORD_HASH` in the DPAPI vault only.
+
+```powershell
+.\scripts\windows\Protect-CtgSecrets.ps1 -TestSecretHash -Name KALI_SSH_PASSWORD
+```
+
+Exit code 0 = match, 1 = mismatch. For deploy scripts, still use `-SetSecret` (plaintext in vault) — not hash alone.
+
+---
+
+## PII vault — encrypt for recovery, hash for redaction
+
+**Cryptographic reality:** a **hash alone is not recoverable**. CTG stores recoverable PII with **Windows DPAPI** (same `secrets.dpapi` blob as lab credentials). A **dual sidecar** stores **SHA-256 of normalized value** in `.vault\<Name>.hash` and `pii-index.json` for log redaction and equality checks — **no plaintext in the index**.
+
+All files live under `%USERPROFILE%\Backups\.vault\` (gitignored — never commit).
+
+### PII key names
+
+| Vault key | Redact tag | Notes |
+|-----------|------------|-------|
+| `CTG_PII_FULL_NAME` | `name` | Full legal or display name |
+| `CTG_PII_EMAIL` | `email` | Contact email |
+| `CTG_PII_PHONE` | `phone` | E.164 preferred — **preferred SMS destination** |
+| `CTG_PII_ADDRESS` | `address` | Optional ship-to / mailing |
+| `CTG_PII_SSN_LAST4` | `ssn_last4` | Optional — **last 4 digits only**; never store full SSN |
+
+### Store PII (interactive SecureString — one command per step)
+
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+```
+
+```powershell
+.\scripts\windows\Protect-CtgSecrets.ps1 -SetPii -Name CTG_PII_FULL_NAME
+```
+
+```powershell
+.\scripts\windows\Protect-CtgSecrets.ps1 -SetPii -Name CTG_PII_EMAIL
+```
+
+```powershell
+.\scripts\windows\Protect-CtgSecrets.ps1 -SetPii -Name CTG_PII_PHONE
+```
+
+Optional:
+
+```powershell
+.\scripts\windows\Protect-CtgSecrets.ps1 -SetPii -Name CTG_PII_ADDRESS
+```
+
+```powershell
+.\scripts\windows\Protect-CtgSecrets.ps1 -SetPii -Name CTG_PII_SSN_LAST4
+```
+
+Each `-SetPii` also writes the hash sidecar and index entry automatically.
+
+### Hash only (no new DPAPI plaintext)
+
+```powershell
+.\scripts\windows\Protect-CtgSecrets.ps1 -SetPiiHash -Name CTG_PII_PHONE
+```
+
+### Recover PII in scripts (pipeline only — never Write-Host the value)
+
+```powershell
+$phone = .\scripts\windows\Protect-CtgSecrets.ps1 -GetPii -Name CTG_PII_PHONE
+```
+
+```powershell
+. .\scripts\windows\Protect-CtgSecrets.ps1
+$phone = Get-CtgPiiForScript -Name CTG_PII_PHONE
+```
+
+Object form:
+
+```powershell
+$obj = .\scripts\windows\Protect-CtgSecrets.ps1 -GetPii -Name CTG_PII_PHONE -Quiet
+```
+
+### Redact logs before SIEM / shared files
+
+```powershell
+$safe = .\scripts\windows\Redact-CtgPiiInText.ps1 -Text "IDS alert for +12155551234"
+```
+
+### SMS destination: vault vs `.env`
+
+| Source | Key | When to use |
+|--------|-----|-------------|
+| **Preferred** | `CTG_PII_PHONE` in DPAPI vault | `-UseSecretVault` on SMS scripts |
+| Alternate vault | `CTG_ALERT_SMS_TO` via `-SetSecret` | Legacy/alternate E.164 in vault |
+| Fallback | `CTG_ALERT_SMS_TO` in local `.env` | Twilio creds still in `.env`; destination can move to vault |
+
+Test SMS with vault phone:
+
+```powershell
+.\scripts\windows\Send-CtgSmsAlert.ps1 -TestMessage -UseSecretVault
+```
+
+---
+
 ## Optional: age / SOPS on Kali
 
 For **team-shared** or **offline backup** of Ansible/Kali secrets (not required for solo Andy lab):
@@ -115,12 +244,12 @@ Windows DPAPI vault remains the **primary** store for PuTTY/plink deploy from th
 
 | Layer | Control |
 |-------|---------|
-| **Windows lab host** | DPAPI vault for SSH/lab credentials; BitLocker via [DEVICE_ENCRYPTION.md](DEVICE_ENCRYPTION.md) (`Enable-BitLockerSafe.ps1`) |
-| **Backups** | `%USERPROFILE%\Backups` — vault under `.vault\`; avoid copying `secrets.dpapi` to cloud unencrypted |
+| **Windows lab host** | DPAPI vault for SSH/lab credentials **and PII** (`-SetPii`); BitLocker via [DEVICE_ENCRYPTION.md](DEVICE_ENCRYPTION.md) |
+| **Backups** | `%USERPROFILE%\Backups\.vault\` — `secrets.dpapi`, `*.hash`, `pii-index.json`; avoid copying vault to cloud unencrypted |
 | **Kali VM disk** | Full-disk **LUKS** for portable lab images; `chmod 600` on `/etc/ctg/lab-wifi.conf` |
 | **In transit** | TLS for webhooks, Stripe, Twilio API; SSH for Kali bootstrap |
-| **Logs** | CTG scripts log **source** and **username** only — never passwords, tokens, or SMS bodies with secrets |
-| **Phone** | DDG PM for PII recovery codes; see [IPHONE_HARDENING.md](IPHONE_HARDENING.md) |
+| **Logs** | `Redact-CtgPiiInText.ps1` before shared logs; hash sidecars enable tag lookup without plaintext in index |
+| **Phone** | DDG PM for recovery codes; PII phone in vault for CTG SMS — see [IPHONE_HARDENING.md](IPHONE_HARDENING.md) |
 
 ---
 
@@ -149,12 +278,12 @@ Requires local `.env`:
 | `TWILIO_ACCOUNT_SID` | Twilio API |
 | `TWILIO_AUTH_TOKEN` | Twilio API |
 | `TWILIO_FROM_NUMBER` | Sender E.164 |
-| `CTG_ALERT_SMS_TO` | Your mobile E.164 (Andy sets locally — never commit) |
+| `CTG_ALERT_SMS_TO` | Fallback mobile E.164 in `.env` — **prefer** vault `CTG_PII_PHONE` with `-UseSecretVault` |
 
-Test SMS without secrets:
+Test SMS without secrets (vault phone when `-UseSecretVault`):
 
 ```powershell
-.\scripts\windows\Send-CtgSmsAlert.ps1 -TestMessage
+.\scripts\windows\Send-CtgSmsAlert.ps1 -TestMessage -UseSecretVault
 ```
 
 Unregister reminder task:
@@ -169,8 +298,12 @@ Unregister reminder task:
 
 | Script | Purpose |
 |--------|---------|
-| `Protect-CtgSecrets.ps1` | DPAPI set/get/list/remove |
+| `Protect-CtgSecrets.ps1` | DPAPI set/get/list/remove; `-SetPii` / `-GetPii` / `-SetPiiHash`; optional `-SetSecretHash` / `-TestSecretHash` |
+| `Redact-CtgPiiInText.ps1` | Replace vault PII in strings with `[REDACTED:tag]` |
 | `Deploy-KaliLab.ps1 -UseSecretVault` | Kali bootstrap using vault |
+| `Send-CtgSmsAlert.ps1 -UseSecretVault` | Twilio SMS using `CTG_PII_PHONE` or vault `CTG_ALERT_SMS_TO` |
+| `Register-CtgCpuOptimizeTask.ps1` | Weekly CPU optimize — Interactive, no password in repo |
+| `Run-AsAdmin.ps1` | UAC elevation without stored password |
 | `Register-CtgSecretRotationReminder.ps1` | 120-day SMS reminder task |
 | `Invoke-CtgSecretRotationSms.ps1` | Runner — no secrets in body |
 | `Send-CtgSmsAlert.ps1` | Twilio wrapper (rate-limited) |

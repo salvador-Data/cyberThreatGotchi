@@ -1,41 +1,62 @@
-# CPU performance — safe Windows tweaks (no secrets in git)
+# CPU performance — safe Windows tuning (no script OC)
 
-**Hacker Planet LLC / CyberThreatGotchi** — authorized use on **Andy-owned** Windows SOC laptop only.
+**Hacker Planet LLC · Philadelphia, PA · authorized lab use only**
 
-**Scripts:** `Optimize-CpuPerformance.ps1`, `Register-CtgCpuOptimizeTask.ps1`, `Run-AsAdmin.ps1`
-
-**Related:** [SECRET_VAULT.md](SECRET_VAULT.md) — DPAPI vault; never embed passwords or hashes in repo scripts.
-
----
-
-## Laptop vs desktop (Andy hardware)
-
-| Factor | Andy (DESKTOP-G88VH3D) | Desktop |
-|--------|------------------------|---------|
-| CPU | Intel Core i9-8950HK (6C/12T, 2.9 GHz base) | Varies |
-| Form factor | **Laptop** (PCSystemType=2, battery present) | Often OC-capable in BIOS |
-| Real OC | **Not via script** — BIOS/XTU only if unlocked | BIOS may allow multiplier |
-| Safe script scope | Windows **powercfg** only | Same |
-
-Diagnose on this machine reports: likely laptop/mobile, no Intel XTU or Ryzen Master installed, High performance plan often already active.
-
----
+Conservative CPU and power posture for the Windows SOC laptop. This stack **does not** change voltage, multiplier, or BIOS settings from scripts.
 
 ## Why not hash your Windows password in the script?
 
 Embedding `$expectedHash = 'abc123…'` in a committed PowerShell file does **not** secure CPU optimization or scheduled tasks:
 
-- The hash is **crackable offline** and becomes part of git history forever.
-- Windows **cannot** use a SHA-256 hash to run an elevated scheduled task — it needs **Interactive logon**, **UAC**, or a **DPAPI/plaintext credential** registered with the Task Scheduler.
-- CTG CPU scripts apply **powercfg** tweaks only; they do not need your login password at all.
+- The hash is **crackable offline** and lives in git history forever.
+- Windows **cannot** use SHA-256 to run an elevated scheduled task — it needs **Interactive logon**, **UAC**, or a **DPAPI/plaintext credential** registered with Task Scheduler.
+- CTG CPU scripts apply **powercfg** tweaks only; they do **not** need your login password.
 
-**Andy-safe pattern:** register the weekly task with **Interactive + Highest** (logged-on only, no password in XML), or run once via **UAC** with `Run-AsAdmin.ps1`.
+**Andy-safe pattern:** register the task with **Interactive + Highest** (logged-on only, no password in XML), or run once via **UAC** with `Run-AsAdmin.ps1`. Lab SSH passwords belong in the DPAPI vault (`Protect-CtgSecrets.ps1 -SetSecret`), never as hashes in repo scripts. See [SECRET_VAULT.md](SECRET_VAULT.md).
 
----
+## Quick start
 
-## One-time: register weekly safe optimize (Administrator)
+Diagnose (default — no changes):
 
-One command per step:
+```powershell
+cd c:\Users\Owner\Projects\cyberThreatGotchi
+.\scripts\windows\Optimize-CpuPerformance.ps1
+```
+
+Apply safe Windows-level tweaks (Administrator):
+
+```powershell
+.\scripts\windows\Run-AsAdmin.ps1 -TargetScript .\scripts\windows\Optimize-CpuPerformance.ps1 -TargetArguments '-ApplySafe'
+```
+
+Log: `C:\Users\Owner\Backups\logs\optimize-cpu.log` — **no secrets in git**.
+
+## What `-ApplySafe` does
+
+On **AC power** (when plugged in):
+
+- Activates **High performance** or **Ultimate Performance** power plan
+- Sets processor minimum/maximum state to **100%** on AC for the performance plan
+- Enables **aggressive** turbo boost mode when supported
+- Reduces core parking on AC for the performance plan
+
+With **BalancedOnBattery** (default ON):
+
+- Battery stays on **Balanced** — no aggressive drain on battery
+
+## What is NOT scripted
+
+| Action | Status |
+|--------|--------|
+| Voltage / frequency OC | **Rejected** — `-ApplyUnsafe` exits 2 with manual guidance only |
+| Intel XTU / AMD Ryzen Master automation | **Not implemented** — manual tuning with thermal monitoring |
+| BIOS changes | **Manual only** |
+
+Use `-ApplyUnsafe` to print BIOS/vendor-tool guidance; it will **not** apply changes.
+
+## Scheduled task (optional)
+
+Register weekly safe optimization (Sunday 03:30 local, **Interactive + Highest** — logged-on only):
 
 ```powershell
 cd c:\Users\Owner\Projects\cyberThreatGotchi
@@ -45,80 +66,48 @@ cd c:\Users\Owner\Projects\cyberThreatGotchi
 .\scripts\windows\Register-CtgCpuOptimizeTask.ps1
 ```
 
-Default: **Sunday 03:30**, runs `Optimize-CpuPerformance.ps1 -ApplySafe` when you are logged on. No password stored in script or git.
-
-At logon instead of weekly:
+At logon instead:
 
 ```powershell
 .\scripts\windows\Register-CtgCpuOptimizeTask.ps1 -Schedule AtLogon
 ```
 
-Remove the task:
+Unregister:
 
 ```powershell
 .\scripts\windows\Register-CtgCpuOptimizeTask.ps1 -Unregister
 ```
 
----
+**No password in repo or task registration script** — `Register-CtgCpuOptimizeTask.ps1` does not call `Protect-CtgSecrets` or embed hashes. For a one-off elevated run without a stored password, use `Run-AsAdmin.ps1` (UAC prompt).
 
-## Manual run (UAC — no vault password)
+## Audit autorun integration
 
-Diagnose only:
+`CTG-AuditAutorun.ps1 -CpuOptimize` runs diagnose-only when not elevated, or `-ApplySafe` when Admin. Output: `Backups\audit\...\windows-security\cpu-optimize.txt`.
 
-```powershell
-cd c:\Users\Owner\Projects\cyberThreatGotchi
-```
+## OC possible? (manual)
 
-```powershell
-.\scripts\windows\Optimize-CpuPerformance.ps1 -DiagnoseOnly
-```
+The diagnose output reports:
 
-Apply safe tweaks (prompts UAC if not already Administrator):
+- CPU model, cores, current vs max clock
+- Laptop vs desktop heuristic (battery / chassis)
+- Intel XTU / AMD Ryzen Master detection
+- Active power plan and boost settings
+- Thermal hints (WMI when available)
 
-```powershell
-.\scripts\windows\Run-AsAdmin.ps1 -TargetScript .\scripts\windows\Optimize-CpuPerformance.ps1 -TargetArguments '-ApplySafe'
-```
+**Laptops:** BIOS voltage/frequency OC is usually locked or unsafe — prefer `-ApplySafe` only.
 
-Log file (no secrets): `%USERPROFILE%\Backups\logs\optimize-cpu.log`
+**Desktops:** BIOS OC may be possible; still **not scripted** here. Use vendor tools with stress tests and thermal limits.
 
----
+## Revert
 
-## What `-ApplySafe` does
-
-- Activates **High performance** or **Ultimate Performance** on AC when available
-- Processor min/max 100% on AC for the performance plan
-- Aggressive boost where supported; optional **Balanced on battery** (default ON)
-- Does **not** implement `-ApplyUnsafe` (voltage/frequency OC) — BIOS / Intel XTU / AMD Ryzen Master only
-
----
-
-## Secrets and this workflow
-
-| Question | Answer |
-|----------|--------|
-| Does CPU optimize need a vault secret? | **No** |
-| Should I put a password hash in `Register-CtgCpuOptimizeTask.ps1`? | **No** — use Interactive principal |
-| Where do lab SSH passwords go? | `Protect-CtgSecrets.ps1 -SetSecret` → `.vault/` (see [SECRET_VAULT.md](SECRET_VAULT.md)) |
-| Optional "did I type it right?" check | `-SetSecretHash` / `-TestSecretHash` in vault only — not in committed scripts |
-
----
-
-## Policy alignment
-
-- **NIST CSF PR.AC-1** — credentials not embedded in code.
-- **CIS Control 3** — secure configuration; power settings are reversible via `powercfg`.
-- Monitor thermals after `-ApplySafe`; revert to Balanced if the laptop runs hot.
-
-Revert to Balanced:
+Switch back to Balanced:
 
 ```powershell
 powercfg /setactive 381b4222-f694-41f0-9685-ff5bb260df2e
 ```
 
-## Audit integration
+## Related
 
-```powershell
-.\scripts\windows\CTG-AuditAutorun.ps1 -HardenAndAudit -CpuOptimize
-```
-
-Output: `Backups\audit\...\windows-security\cpu-optimize.txt`.
+- [SECRET_VAULT.md](SECRET_VAULT.md) — DPAPI vault; why not hash passwords in committed scripts
+- [CTG_NEXT_STEPS.md](CTG_NEXT_STEPS.md) — nightly checklist
+- [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) — full script index

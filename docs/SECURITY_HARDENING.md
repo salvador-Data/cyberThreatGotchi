@@ -24,7 +24,19 @@ Defensive coding and deployment practices for Hacker Planet LLC projects.
 | `TWILIO_ACCOUNT_SID` | Twilio account SID for `Send-CtgSmsAlert.ps1` (local `.env` only — never commit) |
 | `TWILIO_AUTH_TOKEN` | Twilio auth token for SMS alerts |
 | `TWILIO_FROM_NUMBER` | Twilio sender number (E.164) |
-| `CTG_ALERT_SMS_TO` | Destination mobile for CTG SOC SMS (E.164; set in local `.env` only) |
+| `CTG_ALERT_SMS_TO` | Destination mobile for CTG SOC SMS (E.164). **Prefer** DPAPI `CTG_PII_PHONE` with `-UseSecretVault`; legacy: local `.env` or vault `-SetSecret -Name CTG_ALERT_SMS_TO` |
+
+### DPAPI PII vault (Windows SOC — not env vars)
+
+| Vault key | Purpose |
+|-----------|---------|
+| `CTG_PII_FULL_NAME` | Recoverable name for scripts / fulfillment helpers |
+| `CTG_PII_EMAIL` | Recoverable contact email |
+| `CTG_PII_PHONE` | Recoverable phone (E.164) — preferred SMS `-UseSecretVault` target |
+| `CTG_PII_ADDRESS` | Optional mailing / ship-to |
+| `CTG_PII_SSN_LAST4` | Optional last-4 only — never full SSN |
+
+Set with `Protect-CtgSecrets.ps1 -SetPii`; hash sidecars in `%USERPROFILE%\Backups\.vault\*.hash` (gitignored). See [SECRET_VAULT.md](SECRET_VAULT.md).
 
 ## Windows SOC (lab / authorized hosts)
 

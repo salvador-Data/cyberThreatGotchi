@@ -19,15 +19,20 @@
 .PARAMETER TestMessage
   Send a test SMS and exit (ignores rate limit for test type once).
 
+.PARAMETER UseSecretVault
+  Read SMS destination from DPAPI vault: CTG_PII_PHONE (preferred), then CTG_ALERT_SMS_TO vault key.
+  Falls back to CTG_ALERT_SMS_TO in local .env when vault empty.
+
 .EXAMPLE
-  .\scripts\windows\Send-CtgSmsAlert.ps1 -TestMessage
+  .\scripts\windows\Send-CtgSmsAlert.ps1 -TestMessage -UseSecretVault
 #>
 [CmdletBinding()]
 param(
     [string] $AlertType = 'test',
     [string] $Message = '',
     [string] $Severity = 'info',
-    [switch] $TestMessage
+    [switch] $TestMessage,
+    [switch] $UseSecretVault
 )
 
 $ErrorActionPreference = 'Stop'
@@ -41,6 +46,35 @@ $sid = $env:TWILIO_ACCOUNT_SID
 $token = $env:TWILIO_AUTH_TOKEN
 $from = $env:TWILIO_FROM_NUMBER
 $to = $env:CTG_ALERT_SMS_TO
+
+function Get-CtgSmsDestinationNumber {
+    param([switch] $PreferVault)
+    if ($PreferVault) {
+        $vaultScript = Join-Path $PSScriptRoot 'Protect-CtgSecrets.ps1'
+        if (Test-Path $vaultScript) {
+            . $vaultScript
+            $phone = Get-CtgPiiForScript -Name 'CTG_PII_PHONE'
+            if (-not [string]::IsNullOrWhiteSpace($phone)) {
+                return $phone.Trim()
+            }
+            $vaultTo = Get-CtgProtectedSecret -SecretName 'CTG_ALERT_SMS_TO' -VaultFile (Get-CtgSecretVaultFilePath)
+            if (-not [string]::IsNullOrWhiteSpace($vaultTo)) {
+                return $vaultTo.Trim()
+            }
+        }
+    }
+    if (-not [string]::IsNullOrWhiteSpace($env:CTG_ALERT_SMS_TO)) {
+        return $env:CTG_ALERT_SMS_TO.Trim()
+    }
+    return $null
+}
+
+if ($UseSecretVault) {
+    $vaultTo = Get-CtgSmsDestinationNumber -PreferVault
+    if ($vaultTo) {
+        $to = $vaultTo
+    }
+}
 
 function Write-SmsLog([string] $Text) {
     Write-CtgWiresharkLog $Text $paths.IdsLog
