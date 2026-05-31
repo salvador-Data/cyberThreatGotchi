@@ -74,7 +74,7 @@ try_automount_symlink() {
 
 verify_staged_scripts() {
     local missing=0
-    for f in ctg-display-scale.sh ctg-seamless-guest.sh kali-boot-autopatch.sh ctg-first-login-autorun.sh ctg-watch-trigger.sh; do
+    for f in ctg-display-scale.sh ctg-seamless-guest.sh ctg-seamless-text-toggle.sh kali-boot-autopatch.sh ctg-first-login-autorun.sh ctg-watch-trigger.sh; do
         if [[ ! -f "$MOUNT_POINT/$f" && ! -f "/media/sf_ctg-backups/$f" ]]; then
             err "Missing on share: $f — on Windows run Stage-KaliLabToBackups.ps1"
             missing=$((missing + 1))

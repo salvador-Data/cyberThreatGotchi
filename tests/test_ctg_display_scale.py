@@ -104,6 +104,7 @@ def test_fit_window_in_autostart_and_wiring():
     assert "fix_login_greeter_scale" in autopatch
     assert "--login-scale" in autopatch
     assert "/etc/xdg/autostart/ctg-display-scale.desktop" in autopatch
+    assert "ctg-restore-medium-text.desktop" in autopatch
 
     flash = (ROOT / "scripts" / "windows" / "Invoke-CtgKaliGuestFlash.ps1").read_text(encoding="utf-8")
     assert "--fit-window" in flash
@@ -138,12 +139,28 @@ def test_fit_window_uses_medium_no_narrow_bump():
 def test_text_medium_mode_values():
     body = _body()
     assert "TEXT_MEDIUM=true" in body
-    assert 'APPLY_MODE="text-medium"' in body
+    assert 'APPLY_MODE="text-medium"' in body or 'APPLY_MODE="restore-medium"' in body
     assert re.search(
-        r'if \$TEXT_MEDIUM.*?apply_medium_text',
+        r'if \$RESTORE_MEDIUM \|\| \$TEXT_MEDIUM.*?apply_medium_text',
         body,
         re.DOTALL,
     )
+
+
+def test_seamless_text_flags_and_greeter_min():
+    body = _body()
+    assert "--seamless-text-reduce" in body
+    assert "--restore-medium" in body
+    assert "apply_seamless_text_reduce" in body
+    assert "CTG_TEXT_SEAMLESS_DPI" in body
+    assert "ctg-restore-medium-text.desktop" in body
+    assert "CTG_GREETER_MIN_W=1024" in body
+    assert "CTG_GREETER_MIN_H=768" in body
+    toggle = ROOT / "scripts" / "kali" / "ctg-seamless-text-toggle.sh"
+    assert toggle.is_file()
+    toggle_body = toggle.read_text(encoding="utf-8")
+    assert "--enter-seamless" in toggle_body
+    assert "--exit-seamless" in toggle_body
 
 
 def test_text_large_mode_values():
@@ -173,5 +190,7 @@ def test_help_documents_all_flags():
         "--diagnose-only",
         "--login-scale",
         "--cursor-neon",
+        "--seamless-text-reduce",
+        "--restore-medium",
     ):
         assert flag in body

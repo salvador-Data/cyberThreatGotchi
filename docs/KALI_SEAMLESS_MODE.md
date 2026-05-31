@@ -104,6 +104,41 @@ bash /mnt/ctg/ctg-seamless-guest.sh
 
 `kali-boot-autopatch.sh` runs this automatically when a graphical session is present.
 
+## Seamless mode text (smaller while seamless, medium after)
+
+Medium post-login default (**DPI 108 / Sans 11 / Monospace 12**) is restored at every session login via autostart. While **seamless is active**, text is temporarily reduced so panels and terminals fit the host viewport.
+
+**Flow:**
+
+1. Log in â†’ autostart `--restore-medium` (108/11/12)
+2. Host+L into seamless â†’ run `--enter-seamless` (or `ctg-seamless-guest.sh`, which calls it at the end)
+3. Host+L out of seamless â†’ run `--exit-seamless`
+
+**In Kali after Host+L into seamless:**
+
+```bash
+bash /mnt/ctg/ctg-seamless-text-toggle.sh --enter-seamless
+```
+
+**After Host+L back to windowed/scaled:**
+
+```bash
+bash /mnt/ctg/ctg-seamless-text-toggle.sh --exit-seamless
+```
+
+| Preset | DPI | Gtk | Terminal | When |
+|--------|-----|-----|----------|------|
+| **Medium** (default) | 108 | Sans 11 | Monospace 12 | Login, windowed, scaled, after `--exit-seamless` |
+| **Seamless reduce** | 100 | Sans 10 | Monospace 11 | Active seamless (`--enter-seamless`) |
+
+**Windows host** (prints toggle hints after you press Host+L):
+
+```powershell
+.\scripts\windows\Start-KaliSeamless.ps1 -AfterSeamlessToggle
+```
+
+See [KALI_DISPLAY_SCALING.md](KALI_DISPLAY_SCALING.md) for greeter vs desktop text layers.
+
 ## Windows â€” start / diagnose
 
 ```powershell
@@ -124,6 +159,7 @@ Parameters:
 - **`-DisplayMode Gui`** â€” normal window with menu bar **and** scrollbars
 - **`-DisplayMode Seamless`** â€” default; no chrome by design (see root cause above)
 - **`-NoShowHostToolbar`** â€” do not set mini-toolbar extradata
+- **`-AfterSeamlessToggle`** â€” print guest `--enter-seamless` / `--exit-seamless` commands (after Host+L)
 - **`-DiagnoseOnly`** â€” lists VM state, session, all `GUI/*` extradata, issues
 
 Log: `C:\Users\Owner\Backups\logs\kali-seamless.log`

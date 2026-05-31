@@ -21,7 +21,9 @@ param(
     [double]$LoginWindowScale = 0,
     # Poll LoggedInUsers + CTG_GREETER_REFRESH - re-apply greeter hint after logout (default on).
     [switch]$WatchGreeterLogout,
-    [switch]$NoWatchGreeterLogout
+    [switch]$NoWatchGreeterLogout,
+    # After Host+L seamless toggle: print guest text toggle commands (--enter-seamless / --exit-seamless).
+    [switch]$AfterSeamlessToggle
 )
 
 $ErrorActionPreference = 'Continue'
@@ -488,13 +490,21 @@ function Start-CtgGreeterLogoutWatcher {
     ) | Out-Null
 }
 
+function Write-CtgSeamlessTextToggleHint {
+    Write-CtgSeamlessLog 'Seamless text: after Host+L into seamless run in Kali:'
+    Write-CtgSeamlessLog '  bash /mnt/ctg/ctg-seamless-text-toggle.sh --enter-seamless'
+    Write-CtgSeamlessLog 'After Host+L out of seamless:'
+    Write-CtgSeamlessLog '  bash /mnt/ctg/ctg-seamless-text-toggle.sh --exit-seamless'
+    Write-CtgSeamlessLog 'Session login autostart restores medium (DPI 108) via ctg-restore-medium-text.desktop'
+}
+
 function Write-CtgHostToolbarHint {
     Write-CtgSeamlessLog 'Host toolbar: top screen edge for mini toolbar (pin thumbtack), or Host+Home (Right Ctrl+Home) for full VM menu'
     Write-CtgSeamlessLog 'Guest cut-off fix: bash /mnt/ctg/ctg-display-scale.sh --fit-window (default at login)'
     Write-CtgSeamlessLog 'Guest panel: bash /mnt/ctg/ctg-seamless-guest.sh - see docs/KALI_SEAMLESS_MODE.md'
     Write-CtgSeamlessLog 'Guest text: --fit-window (medium) | --text-medium | --text-large if needed'
     Write-CtgSeamlessLog 'Login greeter tiny text: sudo bash /mnt/ctg/ctg-display-scale.sh --login-scale (guest only; keep login box size)'
-    Write-CtgSeamlessLog 'Login greeter small after logout: -DisplayMode Gui + guest --login-scale; host watcher refreshes hint on logout'
+    Write-CtgSeamlessLog 'Login greeter small after logout: -DisplayMode Gui + guest --login-scale; host watcher saves hint on first login and refreshes on logout'
     Write-CtgSeamlessLog 'Undo over-scale: bash /mnt/ctg/ctg-display-scale.sh --reset'
     Write-CtgSeamlessLog 'Host blown-out fix: -DisplayMode Gui (AutoresizeGuest, Scale=false) - docs/KALI_DISPLAY_SCALING.md'
 }
@@ -776,17 +786,20 @@ function Start-CtgKaliSeamless {
         Invoke-CtgGuestVideoModeRefresh -Name $Name -VBoxManage $VBoxManage -LoginScale $LoginWindowScale | Out-Null
     }
     if ((Get-CtgVmState -Name $Name -VBoxManage $VBoxManage) -eq 'running') {
-        if (-not (Test-CtgGuestDesktopReady -Name $Name -VBoxManage $VBoxManage)) {
-            if ($Mode -eq 'Gui' -or $Mode -eq 'Scaled') {
-                Invoke-CtgGuestVideoModeRefresh -Name $Name -VBoxManage $VBoxManage -LoginScale $LoginWindowScale -ForceGreeter | Out-Null
-            }
+        if (Test-CtgGuestDesktopReady -Name $Name -VBoxManage $VBoxManage) {
             Save-CtgGreeterSizeHint -Name $Name -VBoxManage $VBoxManage
+        } elseif ($Mode -eq 'Gui' -or $Mode -eq 'Scaled') {
+            Invoke-CtgGuestVideoModeRefresh -Name $Name -VBoxManage $VBoxManage -LoginScale $LoginWindowScale -ForceGreeter | Out-Null
         }
         Start-CtgGreeterLogoutWatcher -Name $Name -VBoxManage $VBoxManage -LoginScale $LoginWindowScale
     }
+    if ($AfterSeamlessToggle) {
+        Write-CtgSeamlessTextToggleHint
+    }
     if ($Mode -eq 'Seamless') {
         Write-CtgSeamlessLog 'Seamless preflight: needs graphical X11 login + VBoxClient --seamless in guest.'
-        Write-CtgSeamlessLog 'Before Host+L in Kali run: bash /mnt/ctg/ctg-seamless-guest.sh (fixes Wayland glitch-revert)'
+        Write-CtgSeamlessLog 'Before Host+L in Kali run: bash /mnt/ctg/ctg-seamless-guest.sh (fixes Wayland glitch-revert + seamless text reduce)'
+        Write-CtgSeamlessTextToggleHint
         Write-CtgSeamlessLog 'Text: -DisplayMode Gui + guest ctg-display-scale.sh --fit-window (medium DPI 108) or --text-medium / --text-large'
         Write-CtgSeamlessLog 'For visible menu/scrollbars: -DisplayMode Scaled or Gui (Scaled enlarges whole desktop - not for font-only fix)'
     }

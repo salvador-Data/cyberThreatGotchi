@@ -38,10 +38,10 @@ while ($true) {
 
     $loggedIn = Get-CtgGuestLoggedInUserCount -Name $Name -VBoxManage $VBoxManage
 
-    if ($lastLoggedIn -gt 0 -and $loggedIn -eq 0) {
-        Invoke-CtgLoginGreeterRefresh -Name $Name -VBoxManage $VBoxManage -LoginScale $LoginWindowScale -Reason 'LoggedInUsers 0 (logout)' | Out-Null
-    } elseif ($lastLoggedIn -eq -1 -and $loggedIn -eq 0) {
+    if ($lastLoggedIn -le 0 -and $loggedIn -gt 0) {
         Save-CtgGreeterSizeHint -Name $Name -VBoxManage $VBoxManage
+    } elseif ($lastLoggedIn -gt 0 -and $loggedIn -eq 0) {
+        Invoke-CtgLoginGreeterRefresh -Name $Name -VBoxManage $VBoxManage -LoginScale $LoginWindowScale -Reason 'LoggedInUsers 0 (logout)' | Out-Null
     }
 
     if (Test-Path $triggerPath) {

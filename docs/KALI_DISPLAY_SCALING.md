@@ -162,8 +162,10 @@ Fix order: **host Gui â†’ `--fit-window --cursor-neon`**. If still small: *
 | `--diagnose-only` | Resolution, DPI, fonts, VBoxClient, cut-off warnings |
 | `--login-scale` | GDM `text-scaling-factor=1.0`, `font-name='Sans 11'`, `cursor-size=12`; lightdm-gtk `Sans 11` (root; greeter only) |
 | `--cursor-neon` | Install **CTG-Neon-Lemon** theme (yellow circle + black ring), xfconf size **26** (X11 only) |
+| `--seamless-text-reduce` | Smaller text for **active seamless** — DPI **100**, Sans **10**, Monospace **11** (geometry unchanged) |
+| `--restore-medium` | Restore post-login medium preset (**108 / 11 / 12**); installs `ctg-restore-medium-text.desktop` autostart |
 
-Autostart at login: `ctg-display-scale.sh --fit-window --cursor-neon` (sleep 2, **before** seamless).
+Autostart at login: `ctg-display-scale.sh --fit-window --cursor-neon` (sleep 2), then `ctg-restore-medium-text.desktop` → `--restore-medium` (sleep 3).
 
 ### Neon cursor (`--cursor-neon`)
 
@@ -183,14 +185,14 @@ The **GDM3** (or **lightdm-gtk**) greeter runs **before** any user Xfce session,
 | Display manager | File | Change |
 |-----------------|------|--------|
 | **gdm3** / **gdm** | `/etc/gdm3/greeter.dconf-defaults` + `/etc/dconf/db/gdm.d/` | `text-scaling-factor=1.0`, `font-name='Sans 11'`, `cursor-size=12`; `dconf update` + locks |
-| **gdm3** Init/PostSession | `/etc/gdm3/Init/Default/01-ctg-greeter-display` | `xrandr --auto` + `--greeter-session` every greeter (logout included) |
+| **gdm3** Init/PostSession | `/etc/gdm3/Init/Default/01-ctg-greeter-display` | `xrandr --auto` + **minimum 1024×768** if undersized + `--greeter-session` every greeter (logout included) |
 | **gdm3** PostSession | `/etc/gdm3/PostSession/Default/01-ctg-greeter-host-refresh` | Writes `CTG_GREETER_REFRESH` on Backups share after logout |
 | **lightdm** (gtk greeter) | `/etc/lightdm/lightdm-gtk-greeter.conf.d/50-ctg-login-scale.conf` | `theme-font-name` / `clock-font-name` = Sans 11 |
 | **sddm** | `/etc/sddm.conf.d/50-ctg-login-scale.conf` | Theme font Sans 11 |
 
 Detection: `detect_ctg_display_manager()` in `ctg-display-scale.sh` (default-display-manager symlink + `systemctl is-enabled`). **Reboot or log out** to see greeter changes.
 
-**Logout greeter small again (root cause):** First boot applies host `setvideomodehint` + guest `--login-scale` once; after desktop login `GUI/LastGuestSizeHint` reflects the session (often oversized or drops to 800Ã—600 on logout). CTG fixes: GDM **Init** re-runs `--greeter-session` on every greeter display; **PostSession** signals the host; `Watch-CtgGreeterLogout.ps1` (started by `Start-KaliSeamless.ps1 -DisplayMode Gui`) restores `CTG/GreeterSizeHint` and re-applies `setvideomodehint` when `LoggedInUsers` â†’ 0.
+**Logout greeter small again (root cause):** First boot applies host `setvideomodehint` + guest `--login-scale` once; after desktop login `GUI/LastGuestSizeHint` reflects the session (often oversized or drops to **800×600** on logout). CTG fixes: GDM **Init** bumps undersized greeter to **≥1024×768** and re-runs `--greeter-session` on every greeter display; **PostSession** signals the host; `Watch-CtgGreeterLogout.ps1` (started by `Start-KaliSeamless.ps1 -DisplayMode Gui`) **saves `CTG/GreeterSizeHint` on first successful login** and re-applies `setvideomodehint` when `LoggedInUsers` → 0.
 
 **Host (optional):** `-LoginWindowScale 1.25` bumps `setvideomodehint` while `LoggedInUsers=0` â€” enlarges the **whole** sign-in window. Skip when the box size is already good; use guest `--login-scale` for text only. Does not replace medium post-login fonts.
 
@@ -201,9 +203,10 @@ Detection: `detect_ctg_display_manager()` in `ctg-display-scale.sh` (default-dis
 ### Autorun chain (next GUI login)
 
 1. `ctg-display-scale.desktop` â†’ `--fit-window --cursor-neon` (sleep 2)
-2. `vboxclient-seamless.desktop` â†’ VBoxClient (sleep 5)
-3. `ctg-first-login-autorun.desktop` â†’ mount, `--fit-window --cursor-neon`, seamless, SSH, lab chain (first run only)
-4. `ctg-watch-trigger.sh` â†’ Windows `CTG_TRIGGER_AUTORUN` on Backups share
+2. `ctg-restore-medium-text.desktop` â†’ `--restore-medium` (sleep 3; medium DPI 108 after login / exiting seamless)
+3. `vboxclient-seamless.desktop` â†’ VBoxClient (sleep 5)
+4. `ctg-first-login-autorun.desktop` â†’ mount, `--fit-window --cursor-neon`, seamless, SSH, lab chain (first run only)
+5. `ctg-watch-trigger.sh` â†’ Windows `CTG_TRIGGER_AUTORUN` on Backups share
 
 ### `Start-KaliSeamless.ps1`
 
@@ -211,7 +214,8 @@ Detection: `detect_ctg_display_manager()` in `ctg-display-scale.sh` (default-dis
 - **Gui** (recommended for cut-off / blown-out): `GUI/Scale=false`, seamless off
 - **Scaled**: `GUI/Scale=true` â€” pair with guest `--fit-window`, not `--aggressive`
 - Running VM + Gui: optional `setvideomodehint` from current hint (VB7 GA refresh)
-- **Gui/Scaled:** background `Watch-CtgGreeterLogout.ps1` â€” on logout (`LoggedInUsers=0`) or `CTG_GREETER_REFRESH`, clears stale `LastGuestSizeHint` and re-applies greeter `setvideomodehint`
+- **Gui/Scaled:** background `Watch-CtgGreeterLogout.ps1` â€” on **first login** saves `CTG/GreeterSizeHint`; on logout (`LoggedInUsers=0`) or `CTG_GREETER_REFRESH`, clears stale `LastGuestSizeHint` and re-applies greeter `setvideomodehint`
+- **`-AfterSeamlessToggle`:** prints guest `--enter-seamless` / `--exit-seamless` commands after Host+L
 
 ## Permanent fix
 

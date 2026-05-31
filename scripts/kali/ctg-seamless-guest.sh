@@ -414,6 +414,37 @@ run_display_scale() {
 }
 run_optional "display scale (DPI/terminal)" run_display_scale
 
+run_seamless_text_reduce() {
+    local toggle_script=""
+    for candidate in /mnt/ctg/ctg-seamless-text-toggle.sh /opt/ctg/ctg-seamless-text-toggle.sh \
+        "$(dirname "$0")/ctg-seamless-text-toggle.sh"; do
+        if [[ -f "$candidate" ]]; then
+            toggle_script="$candidate"
+            break
+        fi
+    done
+    if [[ -n "$toggle_script" ]]; then
+        log "Seamless text: $toggle_script --enter-seamless"
+        bash "$toggle_script" --enter-seamless
+        return $?
+    fi
+    local scale_script=""
+    for candidate in /mnt/ctg/ctg-display-scale.sh /opt/ctg/ctg-display-scale.sh \
+        "$(dirname "$0")/ctg-display-scale.sh"; do
+        if [[ -f "$candidate" ]]; then
+            scale_script="$candidate"
+            break
+        fi
+    done
+    if [[ -z "$scale_script" ]]; then
+        warn "ctg-display-scale.sh not found — skip seamless text reduce"
+        return 1
+    fi
+    log "Seamless text: $scale_script --seamless-text-reduce"
+    bash "$scale_script" --seamless-text-reduce
+}
+run_optional "seamless text reduce" run_seamless_text_reduce
+
 log ""
 if $WAYLAND_BLOCK; then
     log "ACTION REQUIRED: log out of the Wayland session and log back in on X11/Xorg,"

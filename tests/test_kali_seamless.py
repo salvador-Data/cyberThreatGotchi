@@ -136,6 +136,16 @@ def test_display_scale_script_and_wiring():
     assert "Invoke-CtgLoginGreeterRefresh" in ps1
     assert "CTG/GreeterSizeHint" in ps1
     assert "CTG_GREETER_REFRESH" in ps1
+    assert "AfterSeamlessToggle" in ps1
+    assert "ctg-seamless-text-toggle" in ps1
+
+    toggle = KALI / "ctg-seamless-text-toggle.sh"
+    assert toggle.is_file()
+    toggle_body = toggle.read_text(encoding="utf-8")
+    assert "--enter-seamless" in toggle_body
+
+    seamless_guest = (KALI / "ctg-seamless-guest.sh").read_text(encoding="utf-8")
+    assert "run_seamless_text_reduce" in seamless_guest or "--enter-seamless" in seamless_guest
 
     doc = ROOT / "docs" / "KALI_DISPLAY_SCALING.md"
     assert doc.is_file()

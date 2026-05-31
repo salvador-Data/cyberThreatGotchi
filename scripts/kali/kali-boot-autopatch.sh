@@ -177,6 +177,19 @@ NoDisplay=true
 DESK
     chmod 644 "$scale_autostart"
     log "Installed $scale_autostart (--fit-window medium DPI 108 + --cursor-neon; persists via xfconf)"
+    local restore_autostart=/etc/xdg/autostart/ctg-restore-medium-text.desktop
+    cat >"$restore_autostart" <<'DESK'
+[Desktop Entry]
+Type=Application
+Name=CTG Restore Medium Text
+Comment=CTG lab — restore medium fonts (DPI 108) after login / exiting seamless
+Exec=sh -c 'sleep 3; bash /mnt/ctg/ctg-display-scale.sh --restore-medium 2>/dev/null || bash /opt/ctg/ctg-display-scale.sh --restore-medium 2>/dev/null || true'
+X-GNOME-Autostart-Delay=3
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
+DESK
+    chmod 644 "$restore_autostart"
+    log "Installed $restore_autostart (--restore-medium at login; after seamless text reduce)"
     local autostart=/etc/xdg/autostart/vboxclient-seamless.desktop
     cat >"$autostart" <<'DESK'
 [Desktop Entry]

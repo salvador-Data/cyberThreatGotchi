@@ -33,12 +33,24 @@ AGGRESSIVE=false
 LOGIN_SCALE=false
 GREETER_SESSION=false
 CURSOR_NEON=false
+SEAMLESS_TEXT_REDUCE=false
+RESTORE_MEDIUM=false
 
-# Andy-approved medium preset (23258d4) — single source of truth for all screen modes
+# Andy-approved medium preset (23258d4 / fd228f5) — post-login default everywhere except active seamless
 CTG_TEXT_MEDIUM_DPI=108
 CTG_TEXT_MEDIUM_GTK="Sans 11"
 CTG_TEXT_MEDIUM_TERM="Monospace 12"
 CTG_TEXT_MEDIUM_PANEL=30
+
+# Seamless mode temporary text (smaller than medium; restored on exit / session login)
+CTG_TEXT_SEAMLESS_DPI="${CTG_TEXT_SEAMLESS_DPI:-100}"
+CTG_TEXT_SEAMLESS_GTK="Sans 10"
+CTG_TEXT_SEAMLESS_TERM="Monospace 11"
+CTG_TEXT_SEAMLESS_PANEL=28
+
+# Greeter framebuffer minimum (fixes 800×600 after logout)
+CTG_GREETER_MIN_W=1024
+CTG_GREETER_MIN_H=768
 
 CTG_LOGIN_TEXT_SCALE="${CTG_LOGIN_TEXT_SCALE:-1.0}"
 CTG_LIGHTDM_GREETER_FONT="${CTG_LIGHTDM_GREETER_FONT:-$CTG_TEXT_MEDIUM_GTK}"
@@ -58,14 +70,18 @@ for arg in "$@"; do
         --text-medium|--text-plus15) TEXT_MEDIUM=true; TEXT_PLUS15=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_LARGE=false; AGGRESSIVE=false ;;
         --text-large) TEXT_LARGE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; AGGRESSIVE=false ;;
         --aggressive|--full-scale) AGGRESSIVE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false ;;
+        --seamless-text-reduce) SEAMLESS_TEXT_REDUCE=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_MEDIUM=false; TEXT_PLUS15=false; TEXT_LARGE=false; AGGRESSIVE=false; RESET_MODE=false; RESTORE_MEDIUM=false ;;
+        --restore-medium) RESTORE_MEDIUM=true; TEXT_MEDIUM=true; TEXT_PLUS15=true; FIT_WINDOW=false; FONTS_ONLY=false; TEXT_LARGE=false; AGGRESSIVE=false; RESET_MODE=false; SEAMLESS_TEXT_REDUCE=false ;;
         -h|--help)
-            echo "Usage: bash $(basename "$0") [--fit-window] [--text-medium] [--text-plus15] [--text-large] [--fonts-only] [--login-scale] [--cursor-neon] [--reset] [--aggressive] [--diagnose-only]"
+            echo "Usage: bash $(basename "$0") [--fit-window] [--text-medium] [--text-plus15] [--text-large] [--seamless-text-reduce] [--restore-medium] [--fonts-only] [--login-scale] [--cursor-neon] [--reset] [--aggressive] [--diagnose-only]"
             echo "  Default apply: --fit-window (VBoxClient + xrandr fit; medium DPI ${CTG_TEXT_MEDIUM_DPI}; ${CTG_TEXT_MEDIUM_GTK}; ${CTG_TEXT_MEDIUM_TERM})"
             echo "  --text-medium / --text-plus15  Text layer only — medium preset (DPI ${CTG_TEXT_MEDIUM_DPI}; ${CTG_TEXT_MEDIUM_GTK})"
             echo "  --text-large  Text layer only — DPI 120, Sans 13, Monospace 15 (no oversized xrandr)"
             echo "  --fonts-only  Lighter DPI/fonts only — minimal xrandr (after fit-window once)"
             echo "  --login-scale GDM/lightdm greeter medium fonts / ${CTG_TEXT_MEDIUM_GTK} (sudo; greeter only)"
-            echo "  --greeter-session GDM Init hook — xrandr + dconf each greeter (logout included)"
+            echo "  --seamless-text-reduce  Smaller text for active seamless (DPI ${CTG_TEXT_SEAMLESS_DPI}; ${CTG_TEXT_SEAMLESS_GTK}; ${CTG_TEXT_SEAMLESS_TERM})"
+            echo "  --restore-medium  Restore post-login medium preset (DPI ${CTG_TEXT_MEDIUM_DPI}; ${CTG_TEXT_MEDIUM_GTK}; ${CTG_TEXT_MEDIUM_TERM})"
+            echo "  --greeter-session GDM Init hook — xrandr min ${CTG_GREETER_MIN_W}×${CTG_GREETER_MIN_H} + dconf each greeter (logout included)"
             echo "  --cursor-neon CTG-Neon-Lemon cursor (yellow + black ring), size ${CTG_CURSOR_SIZE} (~10% over 24; X11)"
             echo "  --reset       Undo over-scale (DPI 96, default fonts, xrandr --auto)"
             echo "  --aggressive  Legacy HiDPI (DPI 120/144, panel scale) — not with host Scaled"
@@ -219,11 +235,27 @@ refresh_greeter_framebuffer() {
     if ! command -v xrandr >/dev/null 2>&1; then
         return 0
     fi
-    local out
+    local out cur_w cur_h need=0 mode
     out="$(xrandr 2>/dev/null | awk '/ connected/{print $1; exit}')"
     if [[ -n "$out" ]]; then
         xrandr --output "$out" --auto 2>/dev/null || xrandr --auto 2>/dev/null || true
-        log "Greeter framebuffer: xrandr --output ${out} --auto"
+        cur_w="$(xrandr 2>/dev/null | awk '/\*/ {gsub(/[^0-9x]/,"",$1); split($1,a,"x"); print a[1]; exit}')"
+        cur_h="$(xrandr 2>/dev/null | awk '/\*/ {gsub(/[^0-9x]/,"",$1); split($1,a,"x"); print a[2]; exit}')"
+        if [[ -n "$cur_w" && "$cur_w" -lt "$CTG_GREETER_MIN_W" ]] 2>/dev/null; then need=1; fi
+        if [[ -n "$cur_h" && "$cur_h" -lt "$CTG_GREETER_MIN_H" ]] 2>/dev/null; then need=1; fi
+        if [[ "$need" -eq 1 ]]; then
+            for mode in 1280x720 1366x768 1024x768 1280x800 1280x1024 1600x900; do
+                if xrandr 2>/dev/null | grep -Eq "[[:space:]]${mode}[[:space:]]"; then
+                    if xrandr --output "$out" --mode "$mode" 2>/dev/null; then
+                        log "Greeter framebuffer: bumped undersized ${cur_w}x${cur_h} -> ${mode} (min ${CTG_GREETER_MIN_W}x${CTG_GREETER_MIN_H})"
+                        return 0
+                    fi
+                fi
+            done
+            warn "Greeter framebuffer undersized (${cur_w}x${cur_h}) — no suitable xrandr mode >= ${CTG_GREETER_MIN_W}x${CTG_GREETER_MIN_H}"
+        else
+            log "Greeter framebuffer: xrandr --output ${out} --auto (${cur_w:-?}x${cur_h:-?})"
+        fi
     else
         xrandr --auto 2>/dev/null || true
         log "Greeter framebuffer: xrandr --auto"
@@ -257,10 +289,24 @@ install_gdm_greeter_init_script() {
     cat >"$init_script" <<'INITEOF'
 #!/bin/sh
 # CTG — greeter framebuffer + login scale on every greeter display (boot + logout)
+CTG_MIN_W=1024
+CTG_MIN_H=768
 if command -v xrandr >/dev/null 2>&1; then
     OUT="$(xrandr 2>/dev/null | awk '/ connected/{print $1; exit}')"
     if [ -n "$OUT" ]; then
         xrandr --output "$OUT" --auto 2>/dev/null || xrandr --auto 2>/dev/null || true
+        CUR_W="$(xrandr 2>/dev/null | awk '/\*/ {gsub(/[^0-9x]/,"",$1); split($1,a,"x"); print a[1]; exit}')"
+        CUR_H="$(xrandr 2>/dev/null | awk '/\*/ {gsub(/[^0-9x]/,"",$1); split($1,a,"x"); print a[2]; exit}')"
+        NEED=0
+        if [ -n "$CUR_W" ] && [ "$CUR_W" -lt "$CTG_MIN_W" ] 2>/dev/null; then NEED=1; fi
+        if [ -n "$CUR_H" ] && [ "$CUR_H" -lt "$CTG_MIN_H" ] 2>/dev/null; then NEED=1; fi
+        if [ "$NEED" -eq 1 ] 2>/dev/null; then
+            for MODE in 1280x720 1366x768 1024x768 1280x800 1280x1024 1600x900; do
+                if xrandr 2>/dev/null | grep -Eq "[[:space:]]${MODE}[[:space:]]"; then
+                    xrandr --output "$OUT" --mode "$MODE" 2>/dev/null && break
+                fi
+            done
+        fi
     else
         xrandr --auto 2>/dev/null || true
     fi
@@ -273,7 +319,7 @@ for ScaleSh in /opt/ctg/ctg-display-scale.sh /mnt/ctg/ctg-display-scale.sh /medi
 done
 INITEOF
     chmod 755 "$init_script"
-    log "GDM Init: $init_script (xrandr + --greeter-session each greeter)"
+    log "GDM Init: $init_script (xrandr min ${CTG_GREETER_MIN_W}x${CTG_GREETER_MIN_H} + --greeter-session each greeter)"
 }
 
 install_gdm_postsession_script() {
@@ -493,6 +539,13 @@ apply_medium_text() {
     PANEL_SIZE="$CTG_TEXT_MEDIUM_PANEL"
 }
 
+apply_seamless_text_reduce() {
+    TARGET_DPI="$CTG_TEXT_SEAMLESS_DPI"
+    GTK_FONT="$CTG_TEXT_SEAMLESS_GTK"
+    TERM_FONT="$CTG_TEXT_SEAMLESS_TERM"
+    PANEL_SIZE="$CTG_TEXT_SEAMLESS_PANEL"
+}
+
 get_current_resolution() {
     if ! has_x_display; then
         echo "0 0"
@@ -550,10 +603,20 @@ compute_target_dpi() {
         return 0
     fi
 
-    if $TEXT_MEDIUM; then
-        APPLY_MODE="text-medium"
+    if $SEAMLESS_TEXT_REDUCE; then
+        APPLY_MODE="seamless-text-reduce"
+        apply_seamless_text_reduce
+        log "Seamless-text-reduce ${w}x${h} -> DPI=$TARGET_DPI font=$TERM_FONT gtk=$GTK_FONT (geometry unchanged)"
+        return 0
+    fi
+
+    if $RESTORE_MEDIUM || $TEXT_MEDIUM; then
+        APPLY_MODE="restore-medium"
+        if $TEXT_MEDIUM && ! $RESTORE_MEDIUM; then
+            APPLY_MODE="text-medium"
+        fi
         apply_medium_text
-        log "Text-medium ${w}x${h} -> DPI=$TARGET_DPI font=$TERM_FONT gtk=$GTK_FONT (geometry unchanged; xfconf persists)"
+        log "${APPLY_MODE} ${w}x${h} -> DPI=$TARGET_DPI font=$TERM_FONT gtk=$GTK_FONT (geometry unchanged; xfconf persists)"
         return 0
     fi
 
@@ -677,7 +740,7 @@ fix_xfce_scale() {
     as_user xfconf-query -c xsettings -p /Gtk/FontName --create -t string -s "$GTK_FONT" 2>/dev/null \
         || as_user xfconf-query -c xsettings -p /Gtk/FontName -s "$GTK_FONT" 2>/dev/null || true
 
-    if [[ "$APPLY_MODE" == "aggressive" || "$APPLY_MODE" == "fit-window" || "$APPLY_MODE" == "text-medium" || "$APPLY_MODE" == "text-large" ]]; then
+    if [[ "$APPLY_MODE" == "aggressive" || "$APPLY_MODE" == "fit-window" || "$APPLY_MODE" == "text-medium" || "$APPLY_MODE" == "restore-medium" || "$APPLY_MODE" == "text-large" || "$APPLY_MODE" == "seamless-text-reduce" ]]; then
         local panel_idx
         for panel_idx in 0 1 2; do
             as_user xfconf-query -c xfce4-panel -p "/panels/panel-${panel_idx}/size" --create -t int -s "$PANEL_SIZE" 2>/dev/null \
@@ -718,11 +781,13 @@ fix_gnome_scale() {
             144) factor="1.5" ;;
             120) factor="1.25" ;;
         esac
-    elif [[ "$APPLY_MODE" == "fonts-only" || "$APPLY_MODE" == "fit-window" || "$APPLY_MODE" == "text-medium" || "$APPLY_MODE" == "text-large" ]]; then
+    elif [[ "$APPLY_MODE" == "fonts-only" || "$APPLY_MODE" == "fit-window" || "$APPLY_MODE" == "text-medium" || "$APPLY_MODE" == "restore-medium" || "$APPLY_MODE" == "text-large" || "$APPLY_MODE" == "seamless-text-reduce" ]]; then
         case "$TARGET_DPI" in
             120) factor="1.12" ;;
             108) factor="1.0" ;;
             105) factor="1.03" ;;
+            100) factor="0.98" ;;
+            96) factor="0.96" ;;
         esac
     fi
     log "GNOME: text-scaling-factor=$factor"
@@ -740,6 +805,39 @@ fix_desktop_scale() {
     if fix_gnome_scale; then return 0; fi
     log "No xfconf-query or gsettings — skip desktop DPI/font scale"
     return 1
+}
+
+ctg_restore_medium_autostart_desktop() {
+    cat <<'DESK'
+[Desktop Entry]
+Type=Application
+Name=CTG Restore Medium Text
+Comment=Hacker Planet CTG lab — restore medium fonts (DPI 108) after login / exiting seamless
+Exec=sh -c 'sleep 3; bash /mnt/ctg/ctg-display-scale.sh --restore-medium 2>/dev/null || bash /opt/ctg/ctg-display-scale.sh --restore-medium 2>/dev/null || true'
+X-GNOME-Autostart-Delay=3
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
+DESK
+}
+
+install_restore_medium_autostart() {
+    if [[ $EUID -ne 0 ]] && [[ "$(id -un)" != "$DESKTOP_USER" ]]; then
+        return 1
+    fi
+    local autostart_dir="/home/$DESKTOP_USER/.config/autostart"
+    install -d -m 0755 -o "$DESKTOP_USER" -g "$DESKTOP_USER" "$autostart_dir" 2>/dev/null || true
+    local f="$autostart_dir/ctg-restore-medium-text.desktop"
+    ctg_restore_medium_autostart_desktop >"$f"
+    chown "$DESKTOP_USER:$DESKTOP_USER" "$f" 2>/dev/null || true
+    chmod 644 "$f" 2>/dev/null || true
+    log "Installed user autostart: $f (--restore-medium at login; after seamless text reduce)"
+    if [[ $EUID -eq 0 ]]; then
+        install -d -m 0755 /etc/xdg/autostart
+        ctg_restore_medium_autostart_desktop >/etc/xdg/autostart/ctg-restore-medium-text.desktop
+        chmod 644 /etc/xdg/autostart/ctg-restore-medium-text.desktop
+        log "Installed system autostart: /etc/xdg/autostart/ctg-restore-medium-text.desktop"
+    fi
+    return 0
 }
 
 ctg_display_autostart_desktop() {
@@ -766,6 +864,7 @@ install_autostart() {
     chown "$DESKTOP_USER:$DESKTOP_USER" "$f" 2>/dev/null || true
     chmod 644 "$f" 2>/dev/null || true
     log "Installed user autostart: $f (--fit-window medium + --cursor-neon, before seamless)"
+    run_optional "restore-medium autostart" install_restore_medium_autostart
     if [[ $EUID -eq 0 ]]; then
         install -d -m 0755 /etc/xdg/autostart
         ctg_display_autostart_desktop >/etc/xdg/autostart/ctg-display-scale.desktop
@@ -795,7 +894,8 @@ print_diagnose() {
     log "Recommended default: --fit-window (VBoxClient + xrandr fit + medium DPI=$fo_dpi preset 23258d4)"
     log "Medium text only (no geometry): --text-medium / --text-plus15 -> DPI=$fo_dpi $fo_gtk $fo_term"
     log "Larger text: --text-large -> DPI=120 Sans 13 Monospace 15"
-    log "Smaller text: --fonts-only -> DPI=105 Sans 10 Monospace 11"
+    log "Smaller text (seamless): --seamless-text-reduce -> DPI=${CTG_TEXT_SEAMLESS_DPI} ${CTG_TEXT_SEAMLESS_GTK} ${CTG_TEXT_SEAMLESS_TERM}"
+    log "Restore medium: --restore-medium -> DPI=${CTG_TEXT_MEDIUM_DPI} ${CTG_TEXT_MEDIUM_GTK} ${CTG_TEXT_MEDIUM_TERM}"
     if [[ "$RES_W" -gt 2560 ]] || [[ "$RES_H" -gt 1600 ]]; then
         warn "Resolution ${RES_W}x${RES_H} exceeds VM window — cut-off likely; run --fit-window or --reset"
         note_issue
@@ -855,6 +955,8 @@ mode_label="fit-window"
 if $RESET_MODE; then mode_label="reset"
 elif $AGGRESSIVE; then mode_label="aggressive"
 elif $TEXT_LARGE; then mode_label="text-large"
+elif $SEAMLESS_TEXT_REDUCE; then mode_label="seamless-text-reduce"
+elif $RESTORE_MEDIUM; then mode_label="restore-medium"
 elif $TEXT_MEDIUM; then mode_label="text-medium"
 elif $FONTS_ONLY; then mode_label="fonts-only"
 elif $CURSOR_NEON && ! $FIT_WINDOW; then mode_label="cursor-neon"
@@ -883,7 +985,7 @@ if ! detect_desktop_user; then
     exit 1
 fi
 
-if $CURSOR_NEON && ! $FIT_WINDOW && ! $RESET_MODE && ! $AGGRESSIVE && ! $TEXT_MEDIUM && ! $TEXT_LARGE && ! $FONTS_ONLY; then
+if $CURSOR_NEON && ! $FIT_WINDOW && ! $RESET_MODE && ! $AGGRESSIVE && ! $TEXT_MEDIUM && ! $TEXT_LARGE && ! $FONTS_ONLY && ! $SEAMLESS_TEXT_REDUCE && ! $RESTORE_MEDIUM; then
     apply_cursor_neon
     exit $?
 fi
@@ -900,14 +1002,18 @@ run_optional "desktop DPI/font scale" fix_desktop_scale
 if $CURSOR_NEON; then
     run_optional "neon lemon cursor" apply_cursor_neon
 fi
-if ! $RESET_MODE; then
+if $RESTORE_MEDIUM; then
+    run_optional "restore-medium autostart" install_restore_medium_autostart
+elif ! $RESET_MODE && ! $SEAMLESS_TEXT_REDUCE; then
     run_optional "autostart install" install_autostart
 fi
 
 log "Done — open a new terminal window if font size unchanged in existing tabs."
 if [[ "$APPLY_MODE" == "fit-window" ]]; then
     log "Host: .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gui (AutoresizeGuest; clear bad LastGuestSizeHint)"
-elif [[ "$APPLY_MODE" == "text-medium" ]]; then
+elif [[ "$APPLY_MODE" == "seamless-text-reduce" ]]; then
+    log "Exit seamless: bash /mnt/ctg/ctg-seamless-text-toggle.sh --exit-seamless (restores medium DPI ${CTG_TEXT_MEDIUM_DPI})"
+elif [[ "$APPLY_MODE" == "restore-medium" || "$APPLY_MODE" == "text-medium" ]]; then
     log "Host: .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gui (text-medium — xfconf saved in ~/.config/xfce4)"
 elif [[ "$APPLY_MODE" == "text-large" ]]; then
     log "Host: .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gui (text-large — geometry should already be fit)"
