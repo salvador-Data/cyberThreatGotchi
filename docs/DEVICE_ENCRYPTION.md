@@ -108,3 +108,21 @@ Do **not** use in-place LUKS on a running Kali root â€” use VBox encryption
 | BitLocker cmdlets missing | Confirm Windows Pro/Enterprise or use Settings â†’ Privacy & security â†’ Device encryption on Home |
 | Apply blocked â€” encryption in progress | Wait for `manage-bde -status` to show 100% |
 | Forgot unlock at boot | Use 48-digit recovery password from `.vault\` file or DDG PM entry |
+
+## Run log (2026-05-31 — DESKTOP-G88VH3D)
+
+Authorized lab host encryption session via `Enable-BitLockerSafe.ps1`. **No recovery keys in this doc.**
+
+| Volume | Hardware | Before | After (session) |
+|--------|----------|--------|-----------------|
+| **C:** (OS) | Internal PM981 NVMe ~512 GB, NTFS | Fully decrypted, protection off, 0% | BitLocker **enabled** (XtsAes256, UsedSpaceOnly, TPM + recovery password); encryption may still be **in progress** until `manage-bde -status C:` shows 100% |
+| **D:** (label SSD) | External SDK SSD USB ~125 GiB, exFAT | Not BitLocker-managed | **Unchanged** — script default is OS volume only; use BitLocker To Go separately if portable encryption is required (consider NTFS for full policy alignment) |
+| **Q:** | Empty mount | N/A | Not targeted |
+
+**Diagnose (non-elevated):** Admin false; TPM reported not ready; volume query access denied.
+
+**Apply (elevated UAC):** Admin true; TPM ready/enabled/owned; Secure Boot reported off; WinRE enabled. Recovery key file written under `%USERPROFILE%\Backups\.vault\` (gitignored). Reboot when convenient for TPM unlock validation.
+
+**Kali VM:** `Encrypt-KaliVm.ps1 -DiagnoseOnly` — VM `kali` not registered in VirtualBox (no VM disk encryption this session).
+
+**Follow-up:** Run elevated `manage-bde -status C:` until fully encrypted; optional `-MountPoint D:` / BitLocker To Go for external SSD; enable Secure Boot when lab policy allows; store recovery copy in DuckDuckGo Password Manager per [SECRET_VAULT.md](SECRET_VAULT.md).

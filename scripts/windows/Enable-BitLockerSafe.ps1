@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Safe BitLocker diagnosis and optional OS-volume encryption (authorized hosts only).
 
@@ -239,7 +239,7 @@ function Get-CtgBitLockerApplyBlockers {
     if (-not (Test-CtgBitLockerCmdletAvailable)) {
         $blockers += 'BitLocker cmdlets unavailable - upgrade edition or enable feature.'
     }
-    if ($VolumeDiag.Error) {
+    if ($VolumeDiag.PSObject.Properties['Error'] -and $VolumeDiag.Error) {
         $blockers += "Volume query failed: $($VolumeDiag.Error)"
     } elseif ($VolumeDiag.PSObject.Properties['VolumeStatus']) {
         if ($VolumeDiag.VolumeStatus -eq 'FullyEncrypted' -and $VolumeDiag.ProtectionStatus -eq 'On') {
@@ -252,7 +252,7 @@ function Get-CtgBitLockerApplyBlockers {
     if (-not $TpmDiag.Available -or -not $TpmDiag.Ready) {
         $blockers += 'TPM not available or not ready - enable TPM 2.0 in firmware first.'
     }
-    return $blockers
+    return @($blockers)
 }
 
 function Save-CtgBitLockerRecoveryKeyFile {
@@ -298,7 +298,7 @@ function Invoke-CtgBitLockerApply {
         [string] $VaultDir
     )
     $blockers = Get-CtgBitLockerApplyBlockers -VolumeDiag $VolumeDiag -TpmDiag (Get-CtgTpmDiagnosis)
-    if ($blockers.Count -gt 0) {
+    if (@($blockers).Count -gt 0) {
         Write-CtgBlSection 'Apply blocked'
         foreach ($b in $blockers) {
             Write-Host " BLOCKED: $b" -ForegroundColor Red
@@ -408,7 +408,7 @@ Write-Host " $vaultDir"
 Write-Host ' (gitignored - never commit recovery files)'
 
 $blockers = Get-CtgBitLockerApplyBlockers -VolumeDiag $volDiag -TpmDiag $tpmDiag
-if ($blockers.Count -gt 0) {
+if (@($blockers).Count -gt 0) {
     Write-CtgBlSection 'Apply readiness'
     foreach ($b in $blockers) {
         Write-Host " $b" -ForegroundColor $(if ($b -match 'already fully encrypted') { 'Green' } else { 'Yellow' })

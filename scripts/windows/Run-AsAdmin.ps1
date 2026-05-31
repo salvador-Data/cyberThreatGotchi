@@ -23,7 +23,7 @@ if ($isAdmin) {
     } else {
         & $TargetScript
     }
-    exit $LASTEXITCODE
+    if ($null -ne (Get-Variable -Name LASTEXITCODE -Scope Global -ErrorAction SilentlyContinue)) { exit $global:LASTEXITCODE } else { exit 0 }
 }
 Write-Host ''
 Write-Host 'This task needs an elevated PowerShell session.'
@@ -35,4 +35,4 @@ $argList = @(
     '-File', $TargetScript
 ) + $TargetArguments
 Start-Process -FilePath 'powershell.exe' -Verb RunAs -ArgumentList $argList -Wait
-exit $LASTEXITCODE
+if ($null -ne (Get-Variable -Name LASTEXITCODE -Scope Global -ErrorAction SilentlyContinue)) { exit $global:LASTEXITCODE } else { exit 0 }

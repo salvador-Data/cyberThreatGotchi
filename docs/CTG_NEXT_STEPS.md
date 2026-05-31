@@ -103,6 +103,7 @@ cd "$env:USERPROFILE\Programs\Hacker Planet LLC\cyberThreatGotchi"
 | Kali spec-ctrl | **MANUAL** | `Harden-KaliVmSpectre.ps1 -DiagnoseOnly` |
 | PlatformIO / Cardputer COM13 | **OPTIONAL / MANUAL** | Detect only; flash on request |
 | Ecosystem clones (Programs) | **INSTALLED** | All required repos present 2026-05-31 |
+| Windows BitLocker (C:) | **APPLYING / verify** | Elevated -Apply -Force 2026-05-31; recovery in Backups\.vault\; see [DEVICE_ENCRYPTION.md](DEVICE_ENCRYPTION.md) run log |
 
 Cursor rules: `.cursor/rules/ctg-install-status.mdc`, `cybersecurity-ethics.mdc`. Ethics doc: [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md).
 
