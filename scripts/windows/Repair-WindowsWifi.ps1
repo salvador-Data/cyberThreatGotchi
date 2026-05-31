@@ -92,11 +92,53 @@ function Get-CtgWlanProfileNames {
     $names
 }
 
-
 function Get-CtgWlanProfileSecurity {
     param([string] $ProfileName)
     $out = netsh wlan show profile "name=$ProfileName" 2>&1 | Out-String
-    $auths = [regex]::Matches($out, '(?m)^\s*Authentication\s*:\s*(.+)
+    $auths = [regex]::Matches($out, '(?m)^\s*Authentication\s*:\s*(.+)$') | ForEach-Object { $_.Groups[1].Value.Trim() } | Select-Object -Unique
+    $ciphers = [regex]::Matches($out, '(?m)^\s*Cipher\s*:\s*(.+)$') | ForEach-Object { $_.Groups[1].Value.Trim() } | Select-Object -Unique
+    $summary = if ($auths -contains 'WPA3-Personal') { 'WPA3-SAE (transition or pure)' }
+               elseif ($auths -contains 'WPA2-Personal') { 'WPA2-PSK' }
+               elseif ($auths -contains 'Open') { 'Open (remove)' }
+               else { ($auths -join ' | ') }
+    [PSCustomObject]@{ Name = $ProfileName; Auths = ($auths -join ' | '); Ciphers = ($ciphers -join ' | '); Summary = $summary }
+}
+
+function Show-CtgWlanProfileList {
+    Write-CtgSection 'Profile security (-ListProfiles, no keys)'
+    foreach ($n in @(Get-CtgWlanProfileNames)) {
+        $s = Get-CtgWlanProfileSecurity -ProfileName $n
+        Write-CtgFinding $s.Name "$($s.Summary) [$($s.Auths)]"
+    }
+}
+
+function Test-CtgWeakWifiProfile {
+    param([string] $ProfileName)
+    if ($ProfileName -eq '*') { return $true }
+    $s = Get-CtgWlanProfileSecurity -ProfileName $ProfileName
+    if ($s.Auths -match 'Open|WEP') { return $true }
+    return $false
+}
+
+function Invoke-CtgPreferWpa3Client {
+    param([ref]$LogLines)
+    Write-CtgSection 'Prefer WPA3 (-PreferWpa3)'
+    Write-CtgFinding 'Router/AP' 'Enable WPA2/WPA3 or WPA3-only + PMF (script cannot change AP)' 'Info'
+    Write-CtgFinding 'Client' 'Win11 + driver WPA3-Personal (netsh wlan show drivers)' 'Info'
+    $detail = netsh wlan show interfaces 2>&1 | Out-String
+    if ($detail -match 'Authentication\s*:\s*(.+)') { Write-CtgFinding 'Live authentication' $Matches[1].Trim() }
+    foreach ($n in @(Get-CtgWlanProfileNames)) {
+        if (Test-CtgWeakWifiProfile -ProfileName $n) {
+            if ($PSCmdlet.ShouldProcess($n, 'Remove weak Wi-Fi profile')) {
+                netsh wlan delete profile "name=$n" | Out-Null
+                Write-CtgFinding 'Removed weak profile' $n 'Warn'
+                [void]$LogLines.Value.Add("PreferWpa3.Removed=$n")
+            }
+        }
+    }
+}
+
+function Get-CtgWlanInterfaceReport {
     try {
         $out = netsh wlan show interfaces 2>&1 | Out-String
         if ($out -match 'There is no wireless interface') {
@@ -116,7 +158,7 @@ function Show-CtgWpa3Documentation {
     $lines = @(
         '  Home router (manual): enable WPA3-Personal (SAE) or WPA2/WPA3 mixed; prefer 802.11w (PMF).',
         '  Lab profile: export with netsh wlan export; import via -LabWpa3ProfileXml (one SSID only).',
-        '  See docs/WINDOWS_WIFI_WPA3.md and docs/CTG_LAB_AUTORUN.md.'
+        '  See docs/WINDOWS_WIFI_REPAIR.md and docs/WINDOWS_WIFI_WPA3.md.'
     )
     Write-Host ($lines -join [Environment]::NewLine) -ForegroundColor Gray
 }
@@ -155,6 +197,8 @@ function Invoke-CtgDiagnoseWifi {
         if ($detail -match 'Band\s*:\s*(.+)') { Write-CtgFinding 'Band' $Matches[1].Trim() }
     } catch { }
     [void]$LogLines.Value.Add("WlanState=$($iface.State) SSID=$($iface.Ssid)")
+    Write-CtgSection 'WLAN driver (WPA3 capability)'
+    netsh wlan show drivers 2>&1 | ForEach-Object { Write-CtgFinding 'Driver' $_.ToString().Trim() }
     Write-CtgSection 'Saved profiles (not deleted by this script)'
     $profiles = Get-CtgWlanProfileNames
     Write-CtgFinding 'Profile count' $profiles.Count
@@ -223,18 +267,15 @@ function Invoke-CtgApplyWifiFixes {
     }
     if ($RemoveBrokenProfiles) {
         foreach ($n in @(Get-CtgWlanProfileNames)) {
-            if ($n -eq '*') {
-                if ($PSCmdlet.ShouldProcess($n, 'Remove broken profile')) {
-                    netsh wlan delete profile "name=$n" | Out-Null
-                    Write-CtgFinding 'Removed broken' $n 'Warn'
-                    [void]$LogLines.Value.Add("Fix.RemoveBroken=$n")
-                }
+            if ($n -eq '*' -and $PSCmdlet.ShouldProcess($n, 'Remove broken profile')) {
+                netsh wlan delete profile "name=$n" | Out-Null
+                Write-CtgFinding 'Removed broken profile' $n 'Warn'
+                [void]$LogLines.Value.Add("Fix.RemoveBroken=$n")
             }
         }
-    } else {
-        Write-CtgFinding 'Avoided' 'Mass profile deletion; use -RemoveBrokenProfiles for * etc.' 'Info'
-    }
-    Write-CtgFinding 'Avoided' 'DNS server changes (DDG VPN/DNS preserved)' 'Info'
+    } else { Write-CtgFinding 'Avoided' 'Profile deletion (use -RemoveBrokenProfiles or -PreferWpa3)' 'Info' }
+    Write-CtgFinding 'Avoided' 'DNS server changes (DDG preserved)' 'Info'
+    [void]$LogLines.Value.Add('Avoided.ProfileDelete=Yes')
     if ($LabWpa3ProfileXml -and (Test-Path -LiteralPath $LabWpa3ProfileXml) -and $PSCmdlet.ShouldProcess($LabWpa3ProfileXml, 'Import profile')) {
         netsh wlan add profile filename="$LabWpa3ProfileXml" user=all | Out-Null
         Write-CtgFinding 'Lab profile' 'Imported' 'Ok'
