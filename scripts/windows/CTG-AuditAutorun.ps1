@@ -23,11 +23,17 @@
 .PARAMETER CpuOptimize
   Run Optimize-CpuPerformance.ps1 -ApplySafe when elevated (diagnose-only if not Admin).
 
+.PARAMETER RamMitigationCheck
+  Run Enforce-CtgRamMitigations.ps1 -DiagnoseOnly into windows-security compartment.
+
 .EXAMPLE
   .\scripts\windows\CTG-AuditAutorun.ps1 -AuditOnly
 
 .EXAMPLE
   .\scripts\windows\CTG-AuditAutorun.ps1 -HardenAndAudit -SinkCloud
+
+.EXAMPLE
+  .\scripts\windows\CTG-AuditAutorun.ps1 -AuditOnly -RamMitigationCheck
 #>
 [CmdletBinding()]
 param(
@@ -35,7 +41,8 @@ param(
     [switch] $HardenAndAudit,
     [switch] $SinkCloud,
     [switch] $SkipSsdBackup,
-    [switch] $CpuOptimize
+    [switch] $CpuOptimize,
+    [switch] $RamMitigationCheck
 )
 
 $ErrorActionPreference = 'Continue'
@@ -478,7 +485,7 @@ function Invoke-CtgCloudSink {
 
 # --- Main ---
 Write-AuditLog "=== CTG Audit Autorun started === run=$RunId Admin=$script:CtgIsAdmin ==="
-Write-AuditLog "Mode: $(if ($HardenAndAudit) { 'HardenAndAudit' } else { 'AuditOnly' }) SinkCloud=$($SinkCloud.IsPresent) CpuOptimize=$($CpuOptimize.IsPresent)"
+Write-AuditLog "Mode: $(if ($HardenAndAudit) { 'HardenAndAudit' } else { 'AuditOnly' }) SinkCloud=$($SinkCloud.IsPresent) CpuOptimize=$($CpuOptimize.IsPresent) RamMitigationCheck=$($RamMitigationCheck.IsPresent)"
 
 New-Item -ItemType Directory -Path $RunRoot -Force | Out-Null
 foreach ($c in @('windows-security', 'network-ids', 'soc-ctg', 'kali-bridge')) {
@@ -528,6 +535,21 @@ if ($CpuOptimize -and -not $HardenAndAudit) {
 }
 
 $wsDir = Join-Path $RunRoot 'windows-security'
+
+if ($RamMitigationCheck) {
+    $ramScript = Join-Path $Win 'Enforce-CtgRamMitigations.ps1'
+    if (Test-Path $ramScript) {
+        Write-AuditLog 'RamMitigationCheck: Enforce-CtgRamMitigations -DiagnoseOnly'
+        $ramOut = Join-Path $wsDir 'ram-mitigation-enforcer.txt'
+        & $ramScript -DiagnoseOnly *>&1 | Tee-Object -FilePath $ramOut
+        if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) {
+            Add-AuditError "RAM mitigation enforcer exit $LASTEXITCODE"
+        }
+    } else {
+        Add-AuditError 'Enforce-CtgRamMitigations.ps1 missing'
+    }
+}
+
 Invoke-CtgWindowsSecurityAudit -CompDir $wsDir
 Invoke-CtgNetworkIdsAudit -CompDir (Join-Path $RunRoot 'network-ids')
 Invoke-CtgSocCtgAudit -CompDir (Join-Path $RunRoot 'soc-ctg')

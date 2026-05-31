@@ -64,11 +64,14 @@ Network IDS/IPS (**Snort 2.9**, **Suricata**, OPNsense) inspect **packets on the
 | **RAM / CPU side-channel** | Spectre v2, **RETBleed**, Meltdown, MDS/L1TF | **No** — not a packet signature problem | Host **microcode** + **Windows Update**; Kali **kernel** + `intel-microcode`/`amd64-microcode`; VirtualBox **`--spec-ctrl on`** for Kali guest ([KALI_RETBLEED_SPECTRE.md](KALI_RETBLEED_SPECTRE.md)) |
 | **iPhone when tethered** | Malicious traffic through hotspot/USB | **Partial** — laptop IDS sees tunneled IP traffic | iOS **Settings** checklist ([IPHONE_LAPTOP_CONNECTION.md](IPHONE_LAPTOP_CONNECTION.md)); no fake “MAC changer” from Windows |
 
-**Scripts (do not alter Signal/IDS wiring):**
+**Scripts (RAM enforcer + patch helpers):**
 
 | Script | Role |
 |--------|------|
-| `scripts/windows/Update-CtgExploitMitigations.ps1` | `-DiagnoseOnly`: speculation registry, Defender, Kali VM spec-ctrl, pending reboot; `-ApplySafe`: USOClient WU scan only |
+| `scripts/windows/Enforce-CtgRamMitigations.ps1` | **RAM IPS enforcer** (host): HVCI, DEP, SpeculationControl, Kali spec-ctrl, `-Monitor` → Signal via `Send-CtgIdsAlert` — see [RAM_MITIGATION_IPS.md](RAM_MITIGATION_IPS.md) |
+| `scripts/windows/Register-CtgRamMitigationTask.ps1` | Scheduled `-Monitor` companion (Interactive + Highest) |
+| `scripts/windows/Update-CtgExploitMitigations.ps1` | `-DiagnoseOnly`: speculation registry, Defender, Kali VM spec-ctrl, extended RAM enforcer; `-ApplySafe`: USOClient WU scan only |
+| `scripts/kali/ctg-ram-mitigation-enforcer.sh` | Guest `/sys/.../vulnerabilities` + security apt dry-run/`--apply`; exit non-zero if **Vulnerable** |
 | `scripts/kali/ctg-exploit-mitigations-check.sh` | Guest `/sys/.../vulnerabilities` + security `apt list --upgradable`; `--apply-safe` = `apt update` only |
 | `scripts/windows/Sync-CtgVulnerabilityFeeds.ps1` | Download CISA KEV (and optional MSRC index) to `Backups\ctg-cve-cache\` — cache only, no auto-install |
 

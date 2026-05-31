@@ -38,7 +38,10 @@ def _parse_ps1(path: Path) -> None:
 NEW_PS1 = [
     IPHONE / "iphone_tethering_privacy_checklist.ps1",
     WIN / "Update-CtgExploitMitigations.ps1",
+    WIN / "Enforce-CtgRamMitigations.ps1",
+    WIN / "Register-CtgRamMitigationTask.ps1",
     WIN / "Sync-CtgVulnerabilityFeeds.ps1",
+    WIN / "Start-CtgIphoneTetherIds.ps1",
     PUBLISH / "Set-CtgPrivateRepos.ps1",
 ]
 
@@ -77,9 +80,49 @@ def test_exploit_mitigations_windows_script():
     assert "ApplySafe" in text
     assert "USOClient" in text
     assert "Harden-KaliVmCpu" in text
+    assert "Enforce-CtgRamMitigations" in text
     assert "Snort" in text or "IDS" in text
     assert "Send-CtgIdsAlert" not in text
     assert "Send-CtgSignalAlert" not in text
+
+
+def test_ram_mitigation_enforcer_windows_script():
+    text = (WIN / "Enforce-CtgRamMitigations.ps1").read_text(encoding="utf-8")
+    for needle in (
+        "DiagnoseOnly",
+        "ApplySafe",
+        "Monitor",
+        "SpeculationControl",
+        "RETBleed",
+        "Memory integrity",
+        "Send-CtgIdsAlert",
+        "Update-CtgExploitMitigations",
+        "Harden-KaliVmCpu",
+        "NOT network IPS",
+    ):
+        assert needle in text, needle
+    assert "CTG_PII_PHONE" not in text
+
+
+def test_register_ram_mitigation_task():
+    text = (WIN / "Register-CtgRamMitigationTask.ps1").read_text(encoding="utf-8")
+    assert "Enforce-CtgRamMitigations" in text
+    assert "Interactive" in text
+    assert "Highest" in text
+    assert "-Monitor" in text
+
+
+def test_kali_ram_mitigation_enforcer_shell():
+    script = KALI / "ctg-ram-mitigation-enforcer.sh"
+    assert script.is_file()
+    body = script.read_text(encoding="utf-8")
+    assert "authorized" in body.lower()
+    assert "vulnerabilities" in body
+    assert "retbleed" in body
+    assert "--apply-safe" in body
+    assert "mitigations=auto" in body
+    assert "Snort" in body or "Suricata" in body
+    assert "Vulnerable" in body
 
 
 def test_kali_exploit_mitigations_shell():
@@ -119,7 +162,62 @@ def test_iphone_laptop_connection_doc():
     assert "MAC" in body
     assert "DuckDuckGo" in body
     assert "Private Wi" in body
+    assert "IPHONE_TETHER_MONITORING" in body
     assert not PHONE_PATTERN.search(body)
+
+
+def test_iphone_tether_monitoring_doc():
+    doc = ROOT / "docs" / "IPHONE_TETHER_MONITORING.md"
+    assert doc.is_file()
+    body = doc.read_text(encoding="utf-8")
+    for needle in (
+        "monitor tether egress",
+        "YourHotspotSSID",
+        "DuckDuckGo",
+        "172.20.10",
+        "BLE",
+        "Cellular",
+        "Start-CtgIphoneTetherIds",
+    ):
+        assert needle in body, needle
+    assert "emulate" not in body.lower() or "not emulation" in body.lower()
+    assert not PHONE_PATTERN.search(body)
+
+
+def test_iphone_tether_ids_script_honest_scope():
+    script = WIN / "Start-CtgIphoneTetherIds.ps1"
+    assert script.is_file()
+    text = script.read_text(encoding="utf-8")
+    for needle in (
+        "DiagnoseOnly",
+        "RunMinutes",
+        "monitor tether egress",
+        "iphone_tethering_privacy_checklist",
+        "Start-CtgSuricataIDS",
+        "Start-CtgSnortIDS",
+        "HotspotSsidPattern",
+        "172.20.10",
+    ):
+        assert needle in text, needle
+    assert "emulate" not in text.lower()
+    assert "Sal" not in text
+
+
+def test_kali_tether_bridge_shell():
+    script = KALI / "ctg-tether-bridge-ids.sh"
+    assert script.is_file()
+    body = script.read_text(encoding="utf-8")
+    assert "authorized" in body.lower()
+    assert "172.20.10" in body
+    assert "emulate" in body.lower()
+    assert "IPHONE_TETHER_MONITORING" in body
+
+
+def test_sync_device_hardening_includes_tether():
+    text = (PUBLISH / "Sync-CtgDeviceHardeningRepo.ps1").read_text(encoding="utf-8")
+    assert "IPHONE_TETHER_MONITORING.md" in text
+    assert "Start-CtgIphoneTetherIds.ps1" in text
+    assert "ctg-tether-bridge-ids.sh" in text
 
 
 def test_security_hardening_ids_ram_section():
@@ -128,3 +226,18 @@ def test_security_hardening_ids_ram_section():
     assert "IDS vs CPU side-channel" in body
     assert "RETBleed" in body
     assert "Update-CtgExploitMitigations" in body
+    assert "Enforce-CtgRamMitigations" in body
+
+
+def test_ram_mitigation_ips_doc():
+    doc = ROOT / "docs" / "RAM_MITIGATION_IPS.md"
+    assert doc.is_file()
+    body = doc.read_text(encoding="utf-8")
+    assert "cannot block" in body.lower() or "Not blocked" in body
+    assert "RETBleed" in body
+    assert "NIST CSF" in body
+    assert "Intel SA-00702" in body or "SA-00702" in body
+    assert "CIS Control 7" in body
+    assert "ctg-device-hardening" in body
+    assert "Enforce-CtgRamMitigations" in body
+    assert not PHONE_PATTERN.search(body)

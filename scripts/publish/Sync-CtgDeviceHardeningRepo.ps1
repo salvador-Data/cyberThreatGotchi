@@ -43,18 +43,25 @@ if (-not (Test-Path $DestRepo)) {
 
 $files = @(
     @{ S = 'docs\IPHONE_LAPTOP_CONNECTION.md'; D = 'docs\IPHONE_LAPTOP_CONNECTION.md' }
+    @{ S = 'docs\IPHONE_TETHER_MONITORING.md'; D = 'docs\IPHONE_TETHER_MONITORING.md' }
     @{ S = 'docs\IPHONE_HARDENING.md'; D = 'docs\IPHONE_HARDENING.md' }
     @{ S = 'docs\IPHONE_USB_HARDENING.md'; D = 'docs\IPHONE_USB_HARDENING.md' }
     @{ S = 'docs\SIGNAL_ALERTS.md'; D = 'docs\SIGNAL_ALERTS.md' }
     @{ S = 'docs\WINDOWS_SNORT_IDS_SMS.md'; D = 'docs\WINDOWS_SNORT_IDS_SMS.md' }
     @{ S = 'docs\SECURITY_HARDENING.md'; D = 'docs\SECURITY_HARDENING.md' }
     @{ S = 'docs\KALI_RETBLEED_SPECTRE.md'; D = 'docs\KALI_RETBLEED_SPECTRE.md' }
+    @{ S = 'docs\RAM_MITIGATION_IPS.md'; D = 'docs\RAM_MITIGATION_IPS.md' }
     @{ S = 'docs\device-hardening\README.md'; D = 'README.md' }
     @{ S = 'scripts\iphone\iphone_tethering_privacy_checklist.ps1'; D = 'scripts\iphone\iphone_tethering_privacy_checklist.ps1' }
+    @{ S = 'scripts\windows\Start-CtgIphoneTetherIds.ps1'; D = 'scripts\windows\Start-CtgIphoneTetherIds.ps1' }
+    @{ S = 'scripts\kali\ctg-tether-bridge-ids.sh'; D = 'scripts\kali\ctg-tether-bridge-ids.sh' }
     @{ S = 'scripts\windows\Update-CtgExploitMitigations.ps1'; D = 'scripts\windows\Update-CtgExploitMitigations.ps1' }
+    @{ S = 'scripts\windows\Enforce-CtgRamMitigations.ps1'; D = 'scripts\windows\Enforce-CtgRamMitigations.ps1' }
+    @{ S = 'scripts\windows\Register-CtgRamMitigationTask.ps1'; D = 'scripts\windows\Register-CtgRamMitigationTask.ps1' }
     @{ S = 'scripts\windows\Sync-CtgVulnerabilityFeeds.ps1'; D = 'scripts\windows\Sync-CtgVulnerabilityFeeds.ps1' }
     @{ S = 'scripts\windows\Harden-KaliVmCpu.ps1'; D = 'scripts\windows\Harden-KaliVmCpu.ps1' }
     @{ S = 'scripts\kali\ctg-exploit-mitigations-check.sh'; D = 'scripts\kali\ctg-exploit-mitigations-check.sh' }
+    @{ S = 'scripts\kali\ctg-ram-mitigation-enforcer.sh'; D = 'scripts\kali\ctg-ram-mitigation-enforcer.sh' }
     @{ S = 'scripts\kali\ctg-retbleed-check.sh'; D = 'scripts\kali\ctg-retbleed-check.sh' }
     @{ S = 'scripts\publish\Set-CtgPrivateRepos.ps1'; D = 'scripts\publish\Set-CtgPrivateRepos.ps1' }
 )
