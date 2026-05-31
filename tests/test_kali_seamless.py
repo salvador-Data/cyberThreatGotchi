@@ -1,0 +1,40 @@
+"""Kali VirtualBox seamless mode — repo asset checks (no VM required)."""
+from __future__ import annotations
+
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+WIN = ROOT / "scripts" / "windows"
+
+
+def test_start_kali_seamless_script_exists():
+    p = WIN / "Start-KaliSeamless.ps1"
+    text = p.read_text(encoding="utf-8")
+    assert p.is_file()
+    assert "Hacker Planet" in text
+    assert "--type seamless" in text or "GUI/Seamless" in text
+    assert "controlvm" in text or "Host+L" in text
+    assert "kali-seamless.log" in text
+    assert "kali-boot-autopatch.sh" in text
+
+
+def test_seamless_wired_in_lab_scripts():
+    deploy = (WIN / "Deploy-KaliLab.ps1").read_text(encoding="utf-8")
+    start = (WIN / "Start-CTGLab.ps1").read_text(encoding="utf-8")
+    playground = (WIN / "CTG-Lab-Playground.ps1").read_text(encoding="utf-8")
+    assert "Start-KaliSeamless.ps1" in deploy
+    assert "Start-KaliSeamless.ps1" in start
+    assert "Start-KaliSeamless.ps1" in playground
+
+
+def test_seamless_doc_and_autopatch_note():
+    doc = ROOT / "docs" / "KALI_VIRTUALBOX_SEAMLESS.md"
+    assert doc.is_file()
+    body = doc.read_text(encoding="utf-8")
+    assert "Start-KaliSeamless.ps1" in body
+    assert "Host + L" in body or "Host+L" in body
+    assert "virtualbox-guest-x11" in body
+
+    autopatch = (ROOT / "scripts" / "kali" / "kali-boot-autopatch.sh").read_text(encoding="utf-8")
+    assert "virtualbox-guest-x11" in autopatch
+    assert "KALI_VIRTUALBOX_SEAMLESS" in autopatch

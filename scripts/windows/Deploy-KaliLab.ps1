@@ -276,12 +276,35 @@ function Ensure-CtgVBoxNatSsh {
 function Start-CtgVirtualBoxVm {
     param([string]$Name, [string]$VBoxManage)
     $state = (Get-CtgVmStateVirtualBox -Name $Name -VBoxManage $VBoxManage).State
-    if ($state -eq 'running') { return }
+    if ($state -eq 'running') {
+        $seamlessScript = Join-Path $PSScriptRoot 'Start-KaliSeamless.ps1'
+        if ((Test-Path $seamlessScript) -and $Name -eq 'kali') {
+            Write-CtgLog "VM $Name already running — ensuring seamless mode"
+            if ($WhatIf) {
+                Write-CtgLog '[WhatIf] Start-KaliSeamless.ps1 (seamless on running VM)'
+            } else {
+                . $seamlessScript
+                Start-CtgKaliSeamless -Name $Name -VBoxManage $VBoxManage -WhatIfParam:$WhatIf | Out-Null
+            }
+        }
+        return
+    }
     if (-not $StartVmIfStopped) {
         Write-CtgLog "VM $Name is $state - pass -StartVmIfStopped to power on"
         return
     }
-    Write-CtgLog "Starting VirtualBox VM: $Name"
+    $seamlessScript = Join-Path $PSScriptRoot 'Start-KaliSeamless.ps1'
+    if ((Test-Path $seamlessScript) -and $Name -eq 'kali') {
+        Write-CtgLog "Starting VirtualBox VM in seamless mode: $Name"
+        if ($WhatIf) {
+            Write-CtgLog '[WhatIf] Start-KaliSeamless.ps1'
+        } else {
+            . $seamlessScript
+            Start-CtgKaliSeamless -Name $Name -VBoxManage $VBoxManage -WhatIfParam:$WhatIf | Out-Null
+        }
+        return
+    }
+    Write-CtgLog "Starting VirtualBox VM: $Name (headless — non-kali VM)"
     if (-not $WhatIf) { & $VBoxManage startvm $Name --type headless }
 }
 

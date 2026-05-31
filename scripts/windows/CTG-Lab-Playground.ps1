@@ -112,31 +112,12 @@ function Invoke-CtgPlaySmsTest {
 }
 
 function Invoke-CtgPlayKaliVm {
-    Write-CtgProfessor 'Kali playground runs inside the VM after mounting the ctg-backups share. Windows host starts the VM; in-guest menu is root-only.'
-    $VBoxManage = Join-Path ${env:ProgramFiles} 'Oracle\VirtualBox\VBoxManage.exe'
-    $vmNames = @('kali', 'Kali-Lab', 'Kali', 'kali-linux')
-    $vmFound = $null
-    if (Test-Path $VBoxManage) {
-        foreach ($name in $vmNames) {
-            $list = & $VBoxManage list vms 2>$null
-            if ($list -match "`"$name`"") {
-                $vmFound = $name
-                break
-            }
-        }
-        if ($vmFound) {
-            $state = (& $VBoxManage showvminfo $vmFound --machinereadable 2>$null | Select-String 'VMState=').ToString()
-            if ($state -notmatch 'running') {
-                Write-CtgPlayLine "Starting VM: $vmFound" 'Green'
-                & $VBoxManage startvm $vmFound --type headless 2>&1 | ForEach-Object { Write-CtgPlayLine $_ }
-            } else {
-                Write-CtgPlayLine "VM already running: $vmFound" 'Green'
-            }
-        } else {
-            Write-CtgPlayLine 'No Kali VM found — create one or run Deploy-KaliLab.ps1 first.' 'Yellow'
-        }
+    Write-CtgProfessor 'Kali playground runs inside the VM after mounting the ctg-backups share. Windows host starts Kali in VirtualBox seamless mode (Guest Additions required); in-guest menu is root-only. Host+L toggles seamless.'
+    $seamlessScript = Join-Path $PSScriptRoot 'Start-KaliSeamless.ps1'
+    if (Test-Path $seamlessScript) {
+        & $seamlessScript
     } else {
-        Write-CtgPlayLine 'VirtualBox not installed — start Kali manually.' 'Yellow'
+        Write-CtgPlayLine "Not found: $seamlessScript — run Deploy-KaliLab.ps1 first." 'Yellow'
     }
     Write-Host ''
     Write-CtgPlayLine 'In Kali (after mount):' 'Cyan'

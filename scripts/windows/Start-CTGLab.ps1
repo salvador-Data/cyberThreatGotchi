@@ -259,6 +259,20 @@ try {
         }
     }
 
+    $seamlessScript = Join-Path $PSScriptRoot 'Start-KaliSeamless.ps1'
+    if (Test-Path $seamlessScript) {
+        Write-CtgAutorunLog '=== Start-KaliSeamless.ps1 (ensure seamless GUI) ==='
+        if ($WhatIf) {
+            Write-CtgAutorunLog '[WhatIf] Start-KaliSeamless.ps1'
+        } else {
+            try {
+                & $seamlessScript 2>&1 | ForEach-Object { Write-CtgAutorunLog "Seamless: $_" }
+            } catch {
+                Write-CtgAutorunLog "Start-KaliSeamless warning (non-blocking): $($_.Exception.Message)"
+            }
+        }
+    }
+
     Invoke-CtgWiresharkNonBlocking
     Invoke-CtgOpnsenseNonBlocking
     Write-CtgKaliScramblerInstructions
