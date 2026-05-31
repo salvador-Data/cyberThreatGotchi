@@ -222,10 +222,18 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 ### `harden-password-policy.sh` / `fix-retbleed-mitigation.sh`
 - **Path:** `scripts/kali/harden-password-policy.sh` - `scripts/kali/fix-retbleed-mitigation.sh`
 - **Tagline:** *Guest faillock + chage - RETBleed/IBRS microcode diagnose for lab VM.*
-- **Does:** Linux password policy (faillock, max age); checks kernel mitigations and suggests host/VM tuning.
+- **Does:** Linux password policy (faillock, max age); checks kernel mitigations, reads `/sys` retbleed verdict, and recommends host `--spec-ctrl on` when vulnerable in a VM.
 - **When:** During `kali-lab-bootstrap.sh` or manual hardening pass.
 - **Admin:** **sudo**
 - **Docs:** [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) - [KALI_RETBLEED.md](KALI_RETBLEED.md)
+
+### `Harden-KaliVmCpu.ps1`
+- **Path:** `scripts/windows/Harden-KaliVmCpu.ps1`
+- **Tagline:** *The real RETBleed VM fix - expose SPEC_CTRL/PRED_CMD MSRs to the guest.*
+- **Does:** Host-side `VBoxManage modifyvm kali --spec-ctrl on` (+ IBPB on VM exit/entry); graceful ACPI shutdown only when `-StopVmIfRunning`; idempotent; `-DiagnoseOnly` reports current state.
+- **When:** Kali boot prints "Spectre v2 ... vulnerable to RETBleed"; VM must be powered off to apply.
+- **Admin:** **Yes** (Windows host) - VM **off** for `modifyvm`
+- **Docs:** [KALI_RETBLEED.md](KALI_RETBLEED.md)
 
 ### `ctg-lab-autorun.sh`
 - **Path:** `scripts/kali/ctg-lab-autorun.sh`

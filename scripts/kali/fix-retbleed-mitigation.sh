@@ -85,6 +85,42 @@ capture_mitigation_state() {
     } >>"$LOG_FILE"
 }
 
+analyze_and_recommend() {
+    # Read the kernel's own verdict and, in a VM, point to the host-side spec-ctrl fix.
+    local vuln_dir="/sys/devices/system/cpu/vulnerabilities"
+    local retbleed="n/a" spectre_v2="n/a"
+    [[ -r "$vuln_dir/retbleed" ]] && retbleed="$(cat "$vuln_dir/retbleed" 2>/dev/null || echo n/a)"
+    [[ -r "$vuln_dir/spectre_v2" ]] && spectre_v2="$(cat "$vuln_dir/spectre_v2" 2>/dev/null || echo n/a)"
+    log "retbleed: ${retbleed}"
+    log "spectre_v2: ${spectre_v2}"
+
+    local in_vm=false virt="none"
+    if command -v systemd-detect-virt >/dev/null 2>&1 && systemd-detect-virt -q 2>/dev/null; then
+        in_vm=true
+        virt="$(systemd-detect-virt 2>/dev/null || echo unknown)"
+    fi
+
+    # IBRS/IBPB-based spectre_v2 mitigation needs the IA32_SPEC_CTRL/PRED_CMD MSRs.
+    # In VirtualBox these are only present when the host set: VBoxManage modifyvm <vm> --spec-ctrl on
+    if printf '%s' "$retbleed" | grep -qi 'vulnerable'; then
+        log "ASSESSMENT: kernel reports RETBleed VULNERABLE"
+        if $in_vm; then
+            log "VM detected (virt=${virt}). Most likely cause: hypervisor does not expose IA32_SPEC_CTRL/PRED_CMD MSRs."
+            log "HOST FIX (VirtualBox, VM powered OFF): VBoxManage modifyvm <vm> --spec-ctrl on"
+            log "  Windows helper: scripts\\windows\\Harden-KaliVmCpu.ps1 -StopVmIfRunning -StartAfter"
+            log "Then ensure Windows HOST BIOS + Intel/AMD microcode are current (primary mitigation)."
+        else
+            log "Bare metal: update CPU microcode (intel-microcode/amd64-microcode) + BIOS, then reboot."
+        fi
+    elif printf '%s' "$retbleed" | grep -qiE 'mitigation|not affected'; then
+        log "ASSESSMENT: RETBleed mitigated or CPU not affected — posture OK"
+    fi
+
+    if printf '%s' "$spectre_v2" | grep -qi 'retbleed'; then
+        log "NOTE: spectre_v2 line references RETBleed — Spectre v2 mitigation alone leaves RETBleed exposure; see HOST FIX above."
+    fi
+}
+
 audit_grub_cmdline() {
     local grub_default="/etc/default/grub"
     local issues=0
@@ -155,6 +191,7 @@ ensure_grub_mitigations_on() {
 
 log "=== CTG RETBleed mitigation start (apply=$DO_APPLY) ==="
 capture_mitigation_state "BEFORE"
+analyze_and_recommend
 audit_grub_cmdline || true
 
 if $DO_APPLY; then
@@ -162,7 +199,9 @@ if $DO_APPLY; then
     run_kernel_upgrade
     ensure_grub_mitigations_on
     capture_mitigation_state "AFTER"
+    analyze_and_recommend
     log "Apply complete — reboot guest; also update Windows HOST BIOS + microcode if warnings persist in VirtualBox"
+    log "If still RETBleed-vulnerable in VirtualBox: power VM off and set --spec-ctrl on (scripts\\windows\\Harden-KaliVmCpu.ps1)"
 else
     log "Diagnose-only — pass --apply to install microcode and kernel upgrade"
     if audit_grub_cmdline; then

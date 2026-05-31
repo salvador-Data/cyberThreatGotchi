@@ -59,6 +59,43 @@ def test_kali_retbleed_script():
     assert "mitigations=off" in body
     assert "--diagnose-only" in body
     assert "--apply" in body
+    # Guest script must read the retbleed verdict and recommend the host spec-ctrl fix
+    assert "analyze_and_recommend" in body
+    assert "system/cpu/vulnerabilities" in body
+    assert "--spec-ctrl on" in body
+
+
+def test_harden_kali_vm_cpu_ps1():
+    script = WIN / "Harden-KaliVmCpu.ps1"
+    assert script.is_file()
+    text = script.read_text(encoding="utf-8")
+    assert "--spec-ctrl" in text
+    assert "ibpb-on-vm-exit" in text
+    assert "StopVmIfRunning" in text
+    assert "DiagnoseOnly" in text
+    # Must never force-poweroff; graceful ACPI only
+    assert "acpipowerbutton" in text
+    assert "harden-kali-vm-cpu.log" in text
+    assert "SpectreControl" in text
+    _parse_ps1(script)
+
+
+def test_deploy_autopatch_applies_spec_ctrl():
+    deploy = WIN / "Deploy-KaliBootAutopatch.ps1"
+    text = deploy.read_text(encoding="utf-8")
+    assert "Set-CtgSpecCtrlHardening" in text
+    assert "--spec-ctrl" in text
+    assert "NoSpecCtrlHardening" in text
+    _parse_ps1(deploy)
+
+
+def test_retbleed_docs_spec_ctrl():
+    ret = ROOT / "docs" / "KALI_RETBLEED.md"
+    text = ret.read_text(encoding="utf-8")
+    assert "--spec-ctrl on" in text
+    assert "Harden-KaliVmCpu.ps1" in text
+    assert "IA32_SPEC_CTRL" in text
+    assert "i9-8950HK" in text or "Coffee Lake" in text
 
 
 def test_kali_password_policy_script():

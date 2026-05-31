@@ -11,6 +11,7 @@ param(
     [switch]$StartVmIfStopped,
     [switch]$EnableSeamless,
     [switch]$NoSeamless,
+    [switch]$NoSpecCtrlHardening,
     [switch]$WhatIf
 )
 
@@ -79,6 +80,39 @@ function Stop-CtgVmIfRunning {
     $ErrorActionPreference = 'Stop'
     Start-Sleep -Seconds 5
     return $true
+}
+
+function Set-CtgSpecCtrlHardening {
+    # RETBleed / Spectre v2: expose IA32_SPEC_CTRL/PRED_CMD MSRs to the guest.
+    # Requires VM powered off (caller stops it first). See docs/KALI_RETBLEED.md.
+    param([string]$Name)
+    $cfg = (& $VBoxManage showvminfo $Name --machinereadable 2>&1 | Out-String)
+    $cfgFile = if ($cfg -match 'CfgFile="([^"]+)"') { ($Matches[1] -replace '\\\\', '\') } else { $null }
+    $already = $false
+    if ($cfgFile -and (Test-Path $cfgFile) -and ((Get-Content -Path $cfgFile -Raw) -match 'SpectreControl="true"')) {
+        $already = $true
+    }
+    if ($already) {
+        Write-CtgDeployLog 'spec-ctrl already ON (RETBleed/Spectre v2 MSRs exposed) - no change'
+        return
+    }
+    $st = (Get-CtgVmState -Name $Name).State
+    if ($st -eq 'running') {
+        Write-CtgDeployLog 'spec-ctrl hardening skipped - VM still running (modifyvm needs power-off)'
+        return
+    }
+    if ($WhatIf) {
+        Write-CtgDeployLog "[WhatIf] modifyvm $Name --spec-ctrl on --ibpb-on-vm-exit on --ibpb-on-vm-entry on"
+        return
+    }
+    foreach ($pair in @(@('--spec-ctrl', 'on'), @('--ibpb-on-vm-exit', 'on'), @('--ibpb-on-vm-entry', 'on'))) {
+        & $VBoxManage modifyvm $Name $pair[0] $pair[1] 2>&1 | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            Write-CtgDeployLog "spec-ctrl hardening: modifyvm $Name $($pair[0]) $($pair[1])"
+        } else {
+            Write-CtgDeployLog "spec-ctrl hardening WARNING: modifyvm $($pair[0]) failed"
+        }
+    }
 }
 
 function Enable-CtgVBoxSharedFolder {
@@ -277,6 +311,10 @@ if (Test-Path $stageScript) {
 
 Stop-CtgVmIfRunning -Name $VmName | Out-Null
 if (-not $WhatIf) { Start-Sleep -Seconds 5 }
+
+if (-not $NoSpecCtrlHardening) {
+    Set-CtgSpecCtrlHardening -Name $VmName
+}
 
 if ($RunBlankScreenFix) {
     $blankPs1 = Join-Path $PSScriptRoot 'Fix-KaliBlankScreen.ps1'
