@@ -221,18 +221,24 @@ function Set-CtgAutorunTrigger {
 }
 
 function Wait-CtgTriggerConsumed {
-    param([string]$TriggerPath, [int]$TimeoutSec)
-    if ($WhatIf -or -not (Test-Path $TriggerPath)) { return $false }
+    param([string]$TriggerPath, [int]$TimeoutSec, [string]$BackupRoot)
+    if ($WhatIf) { return $false }
+    $donePath = Join-Path $BackupRoot 'CTG_AUTORUN_DONE'
     $deadline = (Get-Date).AddSeconds($TimeoutSec)
-    Write-CtgFlashLog "Waiting up to ${TimeoutSec}s for guest to consume trigger..."
+    Write-CtgFlashLog "Waiting up to ${TimeoutSec}s for guest (trigger removed or CTG_AUTORUN_DONE)..."
     while ((Get-Date) -lt $deadline) {
         if (-not (Test-Path $TriggerPath)) {
             Write-CtgFlashLog 'Trigger file removed — guest autorun likely ran'
             return $true
         }
+        if (Test-Path $donePath) {
+            Write-CtgFlashLog 'CTG_AUTORUN_DONE on share — guest chain completed'
+            Remove-Item $TriggerPath -Force -ErrorAction SilentlyContinue
+            return $true
+        }
         Start-Sleep -Seconds 5
     }
-    Write-CtgFlashLog 'Trigger still present — guest may need kali-boot-autopatch.sh --install or GUI login'
+    Write-CtgFlashLog 'Trigger still present — guest may need kali-boot-autopatch.sh --install or ctg-watch-trigger running'
     return $false
 }
 
@@ -267,7 +273,7 @@ if ($WhatIf) {
 
 if ($TriggerOnly) {
     Set-CtgAutorunTrigger -Root $BackupRoot -Name $TriggerFileName | Out-Null
-    Wait-CtgTriggerConsumed -TriggerPath (Join-Path $BackupRoot $TriggerFileName) -TimeoutSec $TriggerWaitSec | Out-Null
+    Wait-CtgTriggerConsumed -TriggerPath (Join-Path $BackupRoot $TriggerFileName) -TimeoutSec $TriggerWaitSec -BackupRoot $BackupRoot | Out-Null
     exit 0
 }
 
@@ -296,7 +302,7 @@ if (-not $ok) {
         $triggerPath = Set-CtgAutorunTrigger -Root $BackupRoot -Name $TriggerFileName
     }
     if ($triggerPath) {
-        $ok = Wait-CtgTriggerConsumed -TriggerPath $triggerPath -TimeoutSec $TriggerWaitSec
+        $ok = Wait-CtgTriggerConsumed -TriggerPath $triggerPath -TimeoutSec $TriggerWaitSec -BackupRoot $BackupRoot
     }
 }
 

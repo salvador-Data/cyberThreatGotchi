@@ -61,6 +61,11 @@ need ctg-lab-autorun.sh
 need ctg-reboot-if-needed.sh
 need kali-lab-bootstrap.sh
 
+if [[ -f "$CTG_MOUNT/ctg-enable-ssh.sh" ]]; then
+    log "Phase 0a: openssh-server (Windows SSH 127.0.0.1:2222)"
+    bash "$CTG_MOUNT/ctg-enable-ssh.sh" || log "ctg-enable-ssh returned non-zero (continuing)"
+fi
+
 if [[ -f "$CTG_MOUNT/fix-kali-blank-screen.sh" ]]; then
     log "Phase 0: blank-screen / GDM X11 fix (non-fatal)"
     bash "$CTG_MOUNT/fix-kali-blank-screen.sh" || log "blank-screen fix returned non-zero (continuing)"

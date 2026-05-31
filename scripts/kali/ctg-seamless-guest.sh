@@ -427,6 +427,20 @@ log "      Windows:  .\\scripts\\windows\\Start-KaliSeamless.ps1 -DisplayMode Gu
 log "      In-VM toggle: Host+L (seamless), Host+C (scaled), Host+Home (menu), Host+F (fullscreen)"
 log "Docs: docs/KALI_SEAMLESS_MODE.md"
 
+spawn_ctg_trigger_watch() {
+    local root w
+    for root in /mnt/ctg /media/sf_ctg-backups /media/sf_ctg; do
+        w="$root/ctg-watch-trigger.sh"
+        if [[ -f "$w" ]] && ! pgrep -f "ctg-watch-trigger.sh" >/dev/null 2>&1; then
+            log "Starting share trigger watch (CTG_TRIGGER_AUTORUN from Windows host)"
+            CTG_TRIGGER_MAX_LOOPS=0 nohup bash "$w" >>/var/log/ctg-watch-trigger.log 2>&1 &
+            return 0
+        fi
+    done
+    return 1
+}
+spawn_ctg_trigger_watch || true
+
 if [[ $ISSUES -gt 0 ]]; then
     warn "Completed with $ISSUES non-fatal issue(s) — see messages above"
     exit 1
