@@ -65,3 +65,5 @@ Windows read-only status: `scripts/windows/CTG-Shield-Status.ps1`
 - [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md) — Phase 7 Privacy Router
 
 **DuckDuckGo:** bootstrap and shield preserve `94.140.14.14` / `94.140.15.15` in `resolv.conf` when already configured; Windows host uses `Preserve-DuckDuckGoVpn.ps1` — no competing CTG VPN installers.
+
+**Gatekeeper.TOR:** branded tray + safest torrc — [GATEKEEPER_TOR.md](GATEKEEPER_TOR.md) (`scripts/gatekeeper-tor/`). Daemon bridges modes `tor`/`https` to scrambler `tor`/`http`.

@@ -12,6 +12,13 @@ Hacker Planet LLC splits defensive automation into focused public repos so labs 
 | [ctg-kali-lab](https://github.com/salvador-Data/ctg-kali-lab) | Kali VM bootstrap, IDS/IPS, WiFi lab, Tor scrambler | `git clone https://github.com/salvador-Data/ctg-kali-lab.git` |
 | [ctg-windows-soc](https://github.com/salvador-Data/ctg-windows-soc) | Windows hardening, Sysmon, Wazuh, nightly, Wireshark IDS | `git clone https://github.com/salvador-Data/ctg-windows-soc.git` |
 | [ctg-device-hardening](https://github.com/salvador-Data/ctg-device-hardening) | iPhone laptop connection, exploit mitigations, CVE feeds, IDS/RAM honesty docs | `git clone https://github.com/salvador-Data/ctg-device-hardening.git` |
+| [ctg-gatekeeper-tor](https://github.com/salvador-Data/ctg-gatekeeper-tor) | Gatekeeper.TOR tray, daemon, lit Tor/HTTPS icons | `git clone https://github.com/salvador-Data/ctg-gatekeeper-tor.git` |
+
+Sync Gatekeeper.TOR subtree:
+
+```powershell
+.\scripts\publish\Sync-CtgGatekeeperTorRepo.ps1
+```
 
 Sync device-hardening subtree:
 

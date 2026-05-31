@@ -2,7 +2,7 @@
 
 **Authorized defensive lab use only.** Andy Kowal · Philadelphia, PA · systems you **own** or are **explicitly permitted** to administer (`lab-targets.conf`, `lab-wifi.conf`). This document expands five complementary architectures for UTMS (Unified Threat Management System) Wi-Fi awareness plus **anti-jam/deauth detection and failover** — never active RF countermeasures.
 
-**Related:** [DEFENSE_DDOS_ROGUE_WIFI.md](DEFENSE_DDOS_ROGUE_WIFI.md) · [LAB_AP_UTMS.md](LAB_AP_UTMS.md) · [CARDPUTER_UTMS_WIFI.md](CARDPUTER_UTMS_WIFI.md) · [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md) · [IPHONE_HARDENING.md](IPHONE_HARDENING.md)
+**Related:** [DEFENSE_DDOS_ROGUE_WIFI.md](DEFENSE_DDOS_ROGUE_WIFI.md) · [LAB_AP_UTMS.md](LAB_AP_UTMS.md) · [CARDPUTER_UTMS_WIFI.md](CARDPUTER_UTMS_WIFI.md) · [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md) · [IPHONE_HARDENING.md](IPHONE_HARDENING.md) · [GATEKEEPER_TOR.md](GATEKEEPER_TOR.md) (Tor/HTTPS tray — no RF counter-jam)
 
 ---
 

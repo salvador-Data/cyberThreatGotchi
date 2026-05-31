@@ -28,6 +28,7 @@ Print and run: **[DUCKDUCKGO_PRESERVE_PRINT.md](DUCKDUCKGO_PRESERVE_PRINT.md)** 
 | 5 | GitHub + email | [GITHUB_EMAIL_AUDIT_PRINT.md](GITHUB_EMAIL_AUDIT_PRINT.md) | Bridge `-GithubOnly` |
 | 6 | UTMS Wi‑Fi AI | [UTMS_WIFI_AUDIT_PRINT.md](UTMS_WIFI_AUDIT_PRINT.md) | Jam detect diagnose |
 | 7 | Kali lab | [KALI_LAB_AUDIT_PRINT.md](KALI_LAB_AUDIT_PRINT.md) | CLICK-ME in guest |
+| 7b | Gatekeeper.TOR | [GATEKEEPER_TOR_PRINT.md](GATEKEEPER_TOR_PRINT.md) | Lit tray = active mode |
 | 8 | Lab maturity | [LAB_MATURITY_AUDIT_PRINT.md](LAB_MATURITY_AUDIT_PRINT.md) | NIST self-score |
 
 ---
@@ -69,6 +70,7 @@ Optional Defender apply (Admin, after ASR review):
 | [../IPHONE_AUDIT_PRINT.md](../IPHONE_AUDIT_PRINT.md) | iPhone 15 Pro Max |
 | [../WINDOWS_SOC_AUDIT_PRINT.md](../WINDOWS_SOC_AUDIT_PRINT.md) | Windows SOC |
 | [KALI_LAB_AUDIT_PRINT.md](KALI_LAB_AUDIT_PRINT.md) | Kali VM lab |
+| [GATEKEEPER_TOR_PRINT.md](GATEKEEPER_TOR_PRINT.md) | Gatekeeper.TOR tray (lit icon) |
 | [MEMORY_PROTECTION_AUDIT_PRINT.md](MEMORY_PROTECTION_AUDIT_PRINT.md) | HVCI / RETBleed |
 | [UTMS_WIFI_AUDIT_PRINT.md](UTMS_WIFI_AUDIT_PRINT.md) | Event bus / jam detect |
 | [LAB_MATURITY_AUDIT_PRINT.md](LAB_MATURITY_AUDIT_PRINT.md) | NIST CSF worksheet |

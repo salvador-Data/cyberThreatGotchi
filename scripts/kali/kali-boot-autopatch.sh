@@ -772,6 +772,12 @@ if [[ "${CTG_SKIP_AUTO_REBOOT:-}" != "1" ]]; then
     ctg_reboot_helper --auto-reboot
 fi
 log "GUI scrambler (manual): python3 /opt/ctg/tor-http-scrambler/ctg-scrambler-gui.py"
+if [[ -f /mnt/ctg/gatekeeper-tor/kali/install-gatekeeper-kali.sh ]]; then
+    log "Gatekeeper.TOR (optional): sudo bash /mnt/ctg/gatekeeper-tor/kali/install-gatekeeper-kali.sh"
+fi
+if [[ -x /opt/ctg/gatekeeper-tor/gatekeeper-daemon.sh ]]; then
+    log "Gatekeeper status: $(/opt/ctg/gatekeeper-tor/gatekeeper-daemon.sh status 2>/dev/null || echo n/a)"
+fi
 log "One-shot lab: sudo bash /mnt/ctg/ctg-lab-autorun.sh"
 log "Nmap ask (lab): a\$k <target> or ctg-nmap-ask --help — state /var/log/ctg/nmap-ask/"
 log "Seamless (host): .\\scripts\\windows\\Start-KaliSeamless.ps1 — toggle Host+L after GNOME login"

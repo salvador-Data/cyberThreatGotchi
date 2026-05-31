@@ -61,6 +61,8 @@ CTG memory protection = host exploit mitigation + VBS/HVCI + VirtualBox guest sp
 
 Full-stack printable audit: **`docs/print/PRINT_ALL.html`** (index: `docs/print/README_PRINT_ALL.md`).
 
+Gatekeeper.TOR quick ref: **`docs/print/GATEKEEPER_TOR_PRINT.md`** (lit icon = active mode).
+
 `Invoke-CtgPrintAllAudit.ps1 -OpenPrintFolder` lists all sheets; orchestrator skips duplicate stack work when called from One Working.
 
 ## Cybersecurity ethics
@@ -92,3 +94,11 @@ Deep reference: `docs/CYBERSECURITY_ETHICS.md` · `docs/CTG_ONE_WORKING.md`
 | Proton Bridge / email vault | User installs Bridge; vault titles in PM |
 | Docker + Wazuh | Docker Desktop install |
 | Cardputer flash | COM13 detect only unless Andy requests flash |
+| Gatekeeper.TOR tray | Kali GUI systray pin; Windows `-InstallTray`; Tor Expert Bundle manual on Windows |
+
+## Gatekeeper.TOR
+
+- **Branding:** Gatekeeper.TOR (`gatekeeper-tor.mdc`) — Tor \| HTTPS switch; evolves tor-http-scrambler
+- **DDG:** Preserve DuckDuckGo VPN/DNS/PM — Gatekeeper is overlay/opt-in SOCKS only on Windows
+- **Trays:** Kali `gatekeeper-tray.py` (Xfce top bar); Windows `Start-GatekeeperTorTray.ps1`
+- **Docs:** `docs/GATEKEEPER_TOR.md`

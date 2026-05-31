@@ -474,6 +474,14 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **Admin:** **sudo**
 - **Docs:** [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md) - [KALI_LAB_ARCHITECTURE.md](KALI_LAB_ARCHITECTURE.md)
 
+### Gatekeeper.TOR suite
+- **Paths:** `scripts/gatekeeper-tor/gatekeeper-daemon.sh`, `kali/gatekeeper-tray.py`, `kali/install-gatekeeper-kali.sh`, `windows/Start-GatekeeperTorTray.ps1`, `windows/Install-GatekeeperTorWindows.ps1`, `core/gatekeeper_tor.py`, `assets/gatekeeper-tor/logo.svg`
+- **Tagline:** *Neon shield tray — TOR (onion) or HTTPS (TLS 1.3 probe); preserves DuckDuckGo VPN.*
+- **Does:** Safest client Tor torrc (`ExitPolicy reject *:*`); mode state JSON in Backups; Xfce + Windows systray; `Sync-CtgGatekeeperTorRepo.ps1` → `ctg-gatekeeper-tor`.
+- **When:** Lab privacy routing after scrambler install; Windows tray for DDG coexistence + optional Tor Expert Bundle SOCKS.
+- **Admin:** **sudo** on Kali; Windows tray runs as user
+- **Docs:** [GATEKEEPER_TOR.md](GATEKEEPER_TOR.md) - [CTG_TOR_HTTP_SCRAMBLER.md](CTG_TOR_HTTP_SCRAMBLER.md) - [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md)
+
 ---
 
 ## iPhone hardening (monorepo + windows-soc)

@@ -2,7 +2,7 @@
 
 One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized defensive use only.
 
-**Related docs:** [CTG_ONE_WORKING.md](CTG_ONE_WORKING.md) · [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) · [LAB_MATURITY.md](LAB_MATURITY.md) · [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) · [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md) · [LAB_VLAN.md](LAB_VLAN.md) · [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [SHELL_PERFORMANCE.md](SHELL_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
+**Related docs:** [CTG_ONE_WORKING.md](CTG_ONE_WORKING.md) · [SCRIPTS_CATALOG.md](SCRIPTS_CATALOG.md) · [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md) · [SECURITY_HARDENING.md](SECURITY_HARDENING.md) · [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) · [GATEKEEPER_TOR.md](GATEKEEPER_TOR.md) · [LAB_MATURITY.md](LAB_MATURITY.md) · [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) · [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md) · [LAB_VLAN.md](LAB_VLAN.md) · [MEMORY_PROTECTION.md](MEMORY_PROTECTION.md) · [PASSWORD_HARDENING.md](PASSWORD_HARDENING.md) · [SECRET_VAULT.md](SECRET_VAULT.md) · [CPU_PERFORMANCE.md](CPU_PERFORMANCE.md) · [SHELL_PERFORMANCE.md](SHELL_PERFORMANCE.md) · [KALI_RETBLEED.md](KALI_RETBLEED.md) · [KALI_VIRTUALBOX_SEAMLESS.md](KALI_VIRTUALBOX_SEAMLESS.md) · [KALI_SEAMLESS_MODE.md](KALI_SEAMLESS_MODE.md) · [CTG_LAB_AUTORUN.md](CTG_LAB_AUTORUN.md)
 
 ---
 
@@ -21,6 +21,7 @@ One-page checklist for **Hacker Planet LLC** lab + website rollout. Authorized d
 | Email → Kali | [EMAIL_NOTIFICATIONS.md](EMAIL_NOTIFICATIONS.md) | `Initialize-CtgEmailVault.ps1`; Proton Bridge |
 | GitHub CI mail | [GITHUB_NOTIFICATIONS.md](GITHUB_NOTIFICATIONS.md) | Proton filter + fix CI first |
 | UTMS Wi-Fi AI | [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md) | Event bus + jam/deauth detect (no RF counter-jam) |
+| Gatekeeper.TOR | [GATEKEEPER_TOR.md](GATEKEEPER_TOR.md) | Kali tray + torrc; Windows tray (DDG preserved); split `ctg-gatekeeper-tor` |
 | iOS MDM checklist | `Export-CtgIosProfileChecklist.ps1` | Supervision optional (fleet only) |
 | **Print = run (iPhone)** | [IPHONE_AUDIT_PRINT.md](IPHONE_AUDIT_PRINT.md) | Manual Settings on device; preserve DDG VPN/DNS/PM |
 | **Print = run (Windows SOC)** | [WINDOWS_SOC_AUDIT_PRINT.md](WINDOWS_SOC_AUDIT_PRINT.md) | `Invoke-CtgPreserveStackAudit.ps1` |
@@ -521,6 +522,8 @@ Device-hardening subtree sync:
 | `fix-retbleed-mitigation.sh` | RETBleed / IBRS diagnose |
 | `rogue-ap-guard.sh` | Passive evil-twin scan |
 | `tor-http-scrambler/` | CTG Shield + scrambler |
+| `gatekeeper-tor/` | Gatekeeper.TOR tray + daemon (lit icon) |
+| `GATEKEEPER_TOR.md` | Tor/HTTPS mode doc + DDG coexistence |
 | `CTG-Shield-Status.ps1` | Windows host status |
 | `CTG_SHIELD_SIEM_PLAYBOOK.md` | SIEM hook playbook |
 

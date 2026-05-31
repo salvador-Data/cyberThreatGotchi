@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Gatekeeper.TOR  Tor mode lit">
+  <defs>
+    <linearGradient id="torNeon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8FF66"/>
+      <stop offset="50%" stop-color="#B8FF00"/>
+      <stop offset="100%" stop-color="#66FF88"/>
+    </linearGradient>
+    <filter id="torGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="#0d1117"/>
+  <path filter="url(#torGlow)" fill="url(#torNeon)" d="M32 6 L52 14 V30 C52 44 42 54 32 58 C22 54 12 44 12 30 V14 Z"/>
+  <path fill="#0d1117" d="M32 14 L44 19 V29 C44 39 38 46 32 48 C26 46 20 39 20 29 V19 Z"/>
+  <text x="32" y="40" text-anchor="middle" font-family="Segoe UI, DejaVu Sans, sans-serif" font-size="18" font-weight="700" fill="#E8FF66">G</text>
+  <circle cx="52" cy="12" r="5" fill="#B8FF00" filter="url(#torGlow)"/>
+</svg>

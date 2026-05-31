@@ -60,6 +60,46 @@ foreach ($f in $topFiles) {
 }
 
 $subDirs = @('tor-http-scrambler', 'ansible', 'nse')
+$gkSrc = Join-Path (Split-Path $KaliSrc -Parent) 'gatekeeper-tor'
+$gkDest = Join-Path $BackupRoot 'gatekeeper-tor'
+if (Test-Path $gkSrc) {
+    if ($WhatIf) {
+        Write-CtgStageLog "[WhatIf] Copy tree $gkSrc -> $gkDest"
+    } else {
+        New-Item -ItemType Directory -Path $gkDest -Force | Out-Null
+        Copy-Item -Path (Join-Path $gkSrc '*') -Destination $gkDest -Recurse -Force
+        Get-ChildItem -Path $gkDest -Recurse -File -Filter '*.sh' -ErrorAction SilentlyContinue | ForEach-Object {
+            Copy-CtgGuestFile -Source $_.FullName -Dest $_.FullName
+        }
+        Write-CtgStageLog "Staged tree: $gkDest"
+    }
+}
+$gkSrc = Join-Path (Split-Path $KaliSrc -Parent) 'gatekeeper-tor'
+if (Test-Path $gkSrc) {
+    $gkDest = Join-Path $BackupRoot 'gatekeeper-tor'
+    if ($WhatIf) {
+        Write-CtgStageLog "[WhatIf] Copy tree $gkSrc -> $gkDest"
+    } else {
+        New-Item -ItemType Directory -Path $gkDest -Force | Out-Null
+        Copy-Item -Path (Join-Path $gkSrc '*') -Destination $gkDest -Recurse -Force
+        Get-ChildItem -Path $gkDest -Recurse -File -Filter '*.sh' -ErrorAction SilentlyContinue | ForEach-Object {
+            Copy-CtgGuestFile -Source $_.FullName -Dest $_.FullName
+        }
+        $assetSrc = Join-Path $RepoRoot 'assets\gatekeeper-tor'
+        if (Test-Path $assetSrc) {
+            $assetDest = Join-Path $gkDest 'assets'
+            New-Item -ItemType Directory -Path $assetDest -Force | Out-Null
+            Copy-Item -Path (Join-Path $assetSrc '*') -Destination $assetDest -Force
+        }
+        $coreSrc = Join-Path $RepoRoot 'core\gatekeeper_tor.py'
+        if (Test-Path $coreSrc) {
+            $coreDest = Join-Path $gkDest 'core'
+            New-Item -ItemType Directory -Path $coreDest -Force | Out-Null
+            Copy-Item -Path $coreSrc -Destination (Join-Path $coreDest 'gatekeeper_tor.py') -Force
+        }
+        Write-CtgStageLog "Staged tree: $gkDest"
+    }
+}
 foreach ($dirName in $subDirs) {
     $srcDir = Join-Path $KaliSrc $dirName
     if (-not (Test-Path $srcDir)) { continue }
@@ -111,7 +151,8 @@ $docs = @(
     @{ Src = 'docs\LAB_MATURITY.md'; Dest = 'LAB_MATURITY.md' },
     @{ Src = 'docs\LAB_VLAN.md'; Dest = 'LAB_VLAN.md' },
     @{ Src = 'docs\EMAIL_NOTIFICATIONS.md'; Dest = 'EMAIL_NOTIFICATIONS.md' },
-    @{ Src = 'docs\NMAP_ASK_ANALYSIS.md'; Dest = 'NMAP_ASK_ANALYSIS.md' }
+    @{ Src = 'docs\NMAP_ASK_ANALYSIS.md'; Dest = 'NMAP_ASK_ANALYSIS.md' },
+    @{ Src = 'docs\GATEKEEPER_TOR.md'; Dest = 'GATEKEEPER_TOR.md' }
 )
 foreach ($d in $docs) {
     $srcPath = Join-Path $RepoRoot $d.Src
