@@ -80,6 +80,8 @@ cd C:\Users\Owner\Projects\cyberThreatGotchi
 
 **Log:** `C:\Users\Owner\Backups\logs\ctg-lab-autorun.log`
 
+**Kali VM disk encryption (one-time, interactive):** after host BitLocker, run `.\scripts\windows\Encrypt-KaliVm.ps1 -DiagnoseOnly` then `.\scripts\windows\Encrypt-KaliVm.ps1 -Apply -BackupFirst` - see [KALI_DISK_ENCRYPTION.md](KALI_DISK_ENCRYPTION.md). Not part of nightly autorun.
+
 **Order:** Defender pause (optional) → DDG preserve → stage scripts to Backups → `Deploy-KaliLab.ps1 -StartVmIfStopped` → Wireshark (non-blocking) → OPNsense if ISO in Downloads (non-blocking) → Kali GUI instructions → Defender resume.
 
 ---

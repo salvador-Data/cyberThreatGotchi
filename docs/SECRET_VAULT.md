@@ -115,7 +115,7 @@ Windows DPAPI vault remains the **primary** store for PuTTY/plink deploy from th
 
 | Layer | Control |
 |-------|---------|
-| **Windows lab host** | DPAPI vault for SSH/lab credentials; BitLocker on system drive where feasible |
+| **Windows lab host** | DPAPI vault for SSH/lab credentials; BitLocker via [DEVICE_ENCRYPTION.md](DEVICE_ENCRYPTION.md) (`Enable-BitLockerSafe.ps1`) |
 | **Backups** | `%USERPROFILE%\Backups` — vault under `.vault\`; avoid copying `secrets.dpapi` to cloud unencrypted |
 | **Kali VM disk** | Full-disk **LUKS** for portable lab images; `chmod 600` on `/etc/ctg/lab-wifi.conf` |
 | **In transit** | TLS for webhooks, Stripe, Twilio API; SSH for Kali bootstrap |
