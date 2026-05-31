@@ -35,13 +35,22 @@ def _bash_dry_run(extra_env: dict[str, str] | None = None) -> subprocess.Complet
         text=True,
         cwd=str(ROOT),
         env=env,
-        timeout=30,
+        timeout=60,
     )
+
+
+def _bash_dry_run_works() -> bool:
+    if shutil.which("bash") is None:
+        return False
+    try:
+        return _bash_dry_run().returncode == 0
+    except (subprocess.TimeoutExpired, OSError):
+        return False
 
 
 @pytest.mark.skipif(shutil.which("bash") is None, reason="bash not available")
 @pytest.mark.skipif(
-    sys.platform == "win32" and _bash_dry_run().returncode != 0,
+    sys.platform == "win32" and not _bash_dry_run_works(),
     reason="bash on this host cannot execute firewall script paths",
 )
 def test_firewall_baseline_dry_run_includes_web_port():

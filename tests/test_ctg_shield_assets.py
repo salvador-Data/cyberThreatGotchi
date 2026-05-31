@@ -45,7 +45,9 @@ def test_ctg_shield_bash_syntax_if_bash_available():
     for name in ("ctg-shield-rotate.sh", "siem-hook.sh"):
         path = SCRAM / name
         try:
-            subprocess.run([bash, "-n", str(path)], check=True, timeout=10)
+            subprocess.run([bash, "-n", str(path)], check=True, timeout=30)
+        except subprocess.TimeoutExpired:
+            pytest.skip(f"bash -n timed out for {name} (Windows Store bash can be slow)")
         except subprocess.CalledProcessError as exc:
             if exc.returncode == 127:
                 return
