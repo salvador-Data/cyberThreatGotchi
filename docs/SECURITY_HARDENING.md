@@ -44,6 +44,8 @@ Free stack orchestration: `scripts/windows/README_WINDOWS_SOC.md`. Scripts use e
 
 Wireshark IDS + Twilio SMS: [WIRESHARK_IDS_SMS.md](WIRESHARK_IDS_SMS.md) — capture and heuristics on Windows; full IPS remains OPNsense Suricata.
 
+Windows Snort IDS (detect-only, Snort 2.9.x + Npcap): [WINDOWS_SNORT_IDS_SMS.md](WINDOWS_SNORT_IDS_SMS.md) — passive Snort on Win11 Pro with SMS on high severity; Snort 3 is Linux-only; fallback to Wireshark IDS when binary unavailable.
+
 ## iPhone (personal device hardening)
 
 iOS has **no traditional filesystem AV** — App Store “antivirus” apps cannot scan other apps like Windows Defender. Prefer Settings hardening plus reputable DNS/Safari/SMS tools. Step-by-step for iPhone 15 Pro Max (iOS 17/18): [IPHONE_HARDENING.md](IPHONE_HARDENING.md).
