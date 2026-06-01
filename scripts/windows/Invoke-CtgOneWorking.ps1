@@ -189,7 +189,19 @@ if ($ApplySafe) {
     Add-OwStep -Step 6 -Name 'Kali staging' -Result $(if (Test-Path $clickMe) { 'OK' } else { 'WARN' }) -Detail $(if (Test-Path $clickMe) { 'CLICK-ME present (DiagnoseOnly — no re-stage)' } else { 'CLICK-ME missing; run -ApplySafe to stage' })
 }
 
-# Step 7 â€” Summary
+# Step 7 - Daily UTMS alert + iPhone timezone
+Add-OwLine ''
+Add-OwLine '--- Step 7: Daily UTMS alert + iPhone timezone ---'
+$tzResult = Invoke-OwScript -RelativePath 'Update-CtgTimezoneFromIphone.ps1' -Splat @{ DiagnoseOnly = $true }
+$dailyResult = Invoke-OwScript -RelativePath 'Send-CtgDailyUtmsAlert.ps1' -Splat @{ DiagnoseOnly = $true }
+$hourlyResult = Invoke-OwScript -RelativePath 'Invoke-CtgDailyUtmsAlertIfLocal6Am.ps1' -Splat @{ DiagnoseOnly = $true }
+$tzOk = $tzResult.Ok -and ($tzResult.ExitCode -eq 0 -or $tzResult.ExitCode -eq 1)
+$dailyOk = $dailyResult.Ok
+$signalNote = if ($dailyResult.ExitCode -eq 0) { 'Signal ready' } elseif ($dailyResult.ExitCode -eq 1) { 'Signal setup needed' } else { 'check log' }
+Add-OwStep -Step 7 -Name 'Daily UTMS alert' -Result $(if ($dailyOk -and $dailyResult.ExitCode -eq 0) { 'OK' } elseif ($dailyOk) { 'WARN' } else { 'FAIL' }) -Detail ("tz=$tzOk hourly=$($hourlyResult.Ok); $signalNote")
+Add-OwLine '  Docs: docs\IPHONE_TIMEZONE_SYNC.md | Task: Register-CtgDailyUtmsAlertTask.ps1 (Admin)'
+
+# Step 8 - Summary
 Add-OwLine ''
 Add-OwLine '=== FINAL SUMMARY ==='
 Add-OwLine ''
@@ -220,6 +232,7 @@ Add-OwLine ''
 Add-OwLine '=== MANUAL ONLY (never automated here) ==='
 $manualBlock = @(
     'Scheduled tasks - Register-Ctg*.ps1 (Admin UAC)',
+    'HackerPlanet-CTG-Daily-Utms-6AM - Register-CtgDailyUtmsAlertTask.ps1 (Admin)',
     'Ctg-CredentialVault.ps1 -InitVault (interactive master password)',
     'Kali CLICK-ME lab chain (guest GUI login + sudo once)',
     'Defender -ApplySafe (Admin + ASR audit review)',

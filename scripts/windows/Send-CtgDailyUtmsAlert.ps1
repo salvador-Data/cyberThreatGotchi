@@ -149,18 +149,14 @@ $splat = @{
 }
 if ($UseSecretVault) { $splat['UseSecretVault'] = $true }
 
-if ($PSCmdlet.ShouldProcess('Signal recipient', 'Send daily UTMS alert')) {
-    & $idsScript @splat
-    $code = $LASTEXITCODE
-    if ($code -eq 0) {
-        $tzData = Read-CtgIphoneTimezoneJson -AllowAlias
-        $tzId = if ($tzData -and $tzData.Valid) { $tzData.Timezone } else { Get-CtgDefaultUtmsAlertTimezone }
-        Set-CtgDailyUtmsAlertSentToday -TimezoneId $tzId
-        Write-DailyLog 'Daily UTMS alert sent'
-    } else {
-        Write-DailyLog "Send failed exit=$code"
-    }
-    exit $code
+& $idsScript @splat
+$code = $LASTEXITCODE
+if ($code -eq 0) {
+    $tzData = Read-CtgIphoneTimezoneJson -AllowAlias
+    $tzId = if ($tzData -and $tzData.Valid) { $tzData.Timezone } else { Get-CtgDefaultUtmsAlertTimezone }
+    Set-CtgDailyUtmsAlertSentToday -TimezoneId $tzId
+    Write-DailyLog 'Daily UTMS alert sent'
+} else {
+    Write-DailyLog "Send failed exit=$code"
 }
-
-exit 0
+exit $code
