@@ -3,6 +3,17 @@
 **Product:** Gatekeeper.TOR (evolves [CTG Tor/HTTP scrambler](CTG_TOR_HTTP_SCRAMBLER.md))  
 **Authorized use:** Hacker Planet LLC lab, Andy-owned hosts, written pentest scope only — **not** for illegal evasion, credential theft, or unauthorized third-party access.
 
+## HTTPS sandbox (Kali lab)
+
+**HTTPS ≠ sandbox.** TLS protects the wire, not malware inside the browser. For authorized lab clearnet browsing, combine **HTTPS mode** with **Firejail** (`ctg-https-sandbox.profile`). Full threat model: [GATEKEEPER_SANDBOX.md](GATEKEEPER_SANDBOX.md).
+
+```bash
+sudo bash /mnt/ctg/gatekeeper-tor/kali/install-gatekeeper-kali.sh --with-sandbox
+bash /opt/ctg/gatekeeper-tor/kali/ctg-https-sandbox.sh -LaunchBrowser
+```
+
+HTTP clearnet is **lab captive/legacy only** — see `templates/site-rules.gatekeeper.conf` (block HTTP except allowlist).
+
 ## Honest crypto language
 
 | Mode | What it means |
@@ -78,6 +89,12 @@ bash /mnt/ctg/gatekeeper-tor/kali/install-gatekeeper-kali.sh --diagnose-only
 ```
 
 Optional: `sudo apt install -y tor python3-pil python3-pystray`
+
+HTTPS Firejail sandbox (optional):
+
+```bash
+sudo bash /mnt/ctg/gatekeeper-tor/kali/install-gatekeeper-kali.sh --with-sandbox
+```
 
 ### Windows
 

@@ -207,6 +207,9 @@ $ddgActive = Test-CtgDdgVpnActive
 $socksUp = Test-CtgLocalTorSocks
 Write-Host "DDG VPN adapter signal: $ddgActive (Gatekeeper does NOT replace DDG)"
 Write-Host "Local Tor SOCKS 9050:    $socksUp"
+Write-Host 'HTTPS health check:      TLS 1.3-preferring curl probe only (core/gatekeeper_tor.py) — not system-wide TLS policy'
+Write-Host 'Untrusted links (host):  Windows Sandbox or Edge Application Guard — doc: docs/GATEKEEPER_SANDBOX.md'
+Write-Host 'HTTPS != sandbox:        TLS protects wire; use Kali Firejail for lab browser containment'
 
 $st = Get-GatekeeperPythonStatus
 if ($st.ok) {

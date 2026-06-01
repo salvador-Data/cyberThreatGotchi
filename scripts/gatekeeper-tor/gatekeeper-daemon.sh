@@ -7,6 +7,7 @@ GK_ROOT="${CTG_GATEKEEPER_ROOT:-/opt/ctg/gatekeeper-tor}"
 SCRAMBLER="${CTG_SCRAMBLER_ROOT:-/opt/ctg/tor-http-scrambler}"
 SCRAMBLER_DAEMON="${SCRAMBLER}/scrambler-daemon.sh"
 MODE_FILE="${CTG_GATEKEEPER_MODE_FILE:-/var/lib/ctg/gatekeeper-mode}"
+SANDBOX_ENV="${CTG_GATEKEEPER_SANDBOX_ENV:-/var/lib/ctg/gatekeeper-tor/sandbox.env}"
 LOG_FILE="/var/log/ctg-gatekeeper.log"
 TORRC_SNIPPET="/etc/tor/torrc.d/gatekeeper.conf"
 DEFAULT_MODE="tor"
@@ -51,7 +52,10 @@ set_mode() {
         "$SCRAMBLER_DAEMON" set-mode "$(scrambler_alias)" || true
     fi
     case "$m" in
-        tor) apply_tor_service ;;
+        tor)
+            apply_tor_hint
+            apply_tor_service
+            ;;
         https) apply_https_hint ;;
     esac
 }
@@ -67,10 +71,28 @@ apply_tor_service() {
     log "Tor SOCKS 127.0.0.1:9050 — browser/lab apps opt-in; not a system VPN"
 }
 
+write_sandbox_env() {
+    local on="${1:-0}"
+    ensure_dirs
+    if [[ "$on" == "1" ]]; then
+        printf 'export CTG_SANDBOX=1\n' >"$SANDBOX_ENV"
+        log "CTG_SANDBOX=1 (HTTPS lab lane — use Firejail browser: kali/ctg-https-sandbox.sh -LaunchBrowser)"
+    else
+        printf 'export CTG_SANDBOX=0\n' >"$SANDBOX_ENV"
+    fi
+}
+
 apply_https_hint() {
+    write_sandbox_env 1
     log "HTTPS mode: clearnet for authorized lab targets only"
     log "Health probe uses TLS 1.3 preference (Gatekeeper curl check — not system-wide)"
+    log "Browser sandbox: Firejail profile ctg-https-sandbox (HTTPS ≠ sandbox; TLS ≠ malware protection)"
     log "Do NOT use for unauthorized scanning, credential attacks, or illegal evasion"
+}
+
+apply_tor_hint() {
+    write_sandbox_env 0
+    log "TOR mode: opt-in SOCKS 127.0.0.1:9050 — Firejail HTTPS sandbox not required"
 }
 
 apply_torrc_template() {

@@ -14,6 +14,7 @@ from pathlib import Path
 
 GK_ROOT = Path(os.environ.get("CTG_GATEKEEPER_ROOT", "/opt/ctg/gatekeeper-tor"))
 DAEMON = GK_ROOT / "gatekeeper-daemon.sh"
+SANDBOX_LAUNCHER = GK_ROOT / "kali" / "ctg-https-sandbox.sh"
 ASSETS = GK_ROOT / "assets"
 MODE_FILE = Path(os.environ.get("CTG_GATEKEEPER_MODE_FILE", "/var/lib/ctg/gatekeeper-mode"))
 
@@ -94,6 +95,19 @@ def run_health() -> None:
         run_cmd(["sudo", str(DAEMON), "health"], timeout=45)
 
 
+def launch_sandbox_browser() -> None:
+    if read_mode() != "https":
+        return
+    script = SANDBOX_LAUNCHER
+    if not script.is_file():
+        script = Path(__file__).resolve().parent / "ctg-https-sandbox.sh"
+    if script.is_file():
+        threading.Thread(
+            target=lambda: run_cmd(["bash", str(script), "-LaunchBrowser"], timeout=120),
+            daemon=True,
+        ).start()
+
+
 def _load_pystray():
     try:
         import pystray
@@ -152,6 +166,12 @@ def main() -> int:
     def on_health(_icon, _item):
         threading.Thread(target=run_health, daemon=True).start()
 
+    def on_sandbox(_icon, _item):
+        launch_sandbox_browser()
+
+    def visible_sandbox(_item):
+        return read_mode() == "https"
+
     def on_quit(icon, _item):
         icon.stop()
 
@@ -170,6 +190,11 @@ def main() -> int:
     menu = pystray.Menu(
         pystray.MenuItem(label_tor, on_tor, checked=checked_tor),
         pystray.MenuItem(label_https, on_https, checked=checked_https),
+        pystray.MenuItem(
+            "Open sandboxed browser (HTTPS mode)",
+            on_sandbox,
+            visible=visible_sandbox,
+        ),
         pystray.MenuItem("Health check", on_health),
         pystray.MenuItem("Quit", on_quit),
     )

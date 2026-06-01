@@ -4,9 +4,11 @@
 set -euo pipefail
 
 DIAGNOSE_ONLY=0
+WITH_SANDBOX=0
 for arg in "$@"; do
     case "$arg" in
         --diagnose-only|-DiagnoseOnly) DIAGNOSE_ONLY=1 ;;
+        --with-sandbox|-WithSandbox) WITH_SANDBOX=1 ;;
     esac
 done
 
@@ -21,7 +23,7 @@ log() { printf '[install-gatekeeper-kali] %s\n' "$*"; }
 diag() {
     log "=== Gatekeeper.TOR diagnose ==="
     log "Source: $GK_SRC"
-    for f in gatekeeper-daemon.sh templates/gatekeeper.conf kali/gatekeeper-tray.py; do
+    for f in gatekeeper-daemon.sh templates/gatekeeper.conf kali/gatekeeper-tray.py kali/ctg-https-sandbox.sh kali/ctg-https-sandbox.profile; do
         if [[ -f "$GK_SRC/$f" ]]; then
             log "  OK $f"
         else
@@ -39,6 +41,16 @@ diag() {
         log "  tor binary: $(command -v tor)"
     else
         log "  tor: not installed (apt install tor)"
+    fi
+    if command -v firejail >/dev/null; then
+        log "  firejail: $(command -v firejail)"
+    else
+        log "  firejail: not installed (re-run with --with-sandbox)"
+    fi
+    if [[ -x "$INSTALL_ROOT/kali/ctg-https-sandbox.sh" ]]; then
+        bash "$INSTALL_ROOT/kali/ctg-https-sandbox.sh" -DiagnoseOnly || true
+    elif [[ -f "$GK_SRC/kali/ctg-https-sandbox.sh" ]]; then
+        bash "$GK_SRC/kali/ctg-https-sandbox.sh" -DiagnoseOnly || true
     fi
     if [[ -x "$INSTALL_ROOT/gatekeeper-daemon.sh" ]]; then
         "$INSTALL_ROOT/gatekeeper-daemon.sh" status || true
@@ -63,6 +75,23 @@ mkdir -p "$INSTALL_ROOT/templates" "$CORE_DEST" /var/lib/ctg/gatekeeper-tor
 install -m 755 "$GK_SRC/gatekeeper-daemon.sh" "$INSTALL_ROOT/"
 install -m 644 "$GK_SRC/templates/gatekeeper.conf" "$INSTALL_ROOT/templates/"
 install -m 755 "$GK_SRC/kali/gatekeeper-tray.py" "$INSTALL_ROOT/"
+mkdir -p "$INSTALL_ROOT/kali"
+install -m 755 "$GK_SRC/kali/ctg-https-sandbox.sh" "$INSTALL_ROOT/kali/"
+install -m 644 "$GK_SRC/kali/ctg-https-sandbox.profile" "$INSTALL_ROOT/kali/"
+if [[ -f "$GK_SRC/templates/site-rules.gatekeeper.conf" ]]; then
+    install -m 644 "$GK_SRC/templates/site-rules.gatekeeper.conf" "$INSTALL_ROOT/templates/"
+fi
+
+if [[ "$WITH_SANDBOX" -eq 1 ]]; then
+    log "Installing firejail + firefox-esr (HTTPS sandbox — authorized lab only)"
+    apt-get update -qq
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -qq firejail firefox-esr || \
+        DEBIAN_FRONTEND=noninteractive apt-get install -y -qq firejail firefox || true
+    if [[ -f "$GK_SRC/kali/ctg-https-sandbox.profile" ]]; then
+        install -m 644 "$GK_SRC/kali/ctg-https-sandbox.profile" /etc/firejail/ctg-https-sandbox.profile
+        log "Installed /etc/firejail/ctg-https-sandbox.profile"
+    fi
+fi
 
 for py in "$GK_SRC/../../core/gatekeeper_tor.py" "$GK_SRC/core/gatekeeper_tor.py"; do
     if [[ -f "$py" ]]; then
@@ -128,3 +157,4 @@ log "Installed $INSTALL_ROOT"
 log "Tray: python3 $INSTALL_ROOT/gatekeeper-tray.py"
 log "Daemon: sudo $INSTALL_ROOT/gatekeeper-daemon.sh status"
 log "Optional deps: apt install -y tor python3-pil python3-pystray"
+log "HTTPS sandbox: sudo $0 --with-sandbox  (firejail + firefox-esr)"

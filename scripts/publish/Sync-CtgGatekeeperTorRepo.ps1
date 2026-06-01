@@ -48,7 +48,9 @@ $maps = @(
     @{ S = 'core\gatekeeper_tor.py'; D = 'core\gatekeeper_tor.py' }
     @{ S = 'assets\gatekeeper-tor'; D = 'assets\gatekeeper-tor' }
     @{ S = 'docs\GATEKEEPER_TOR.md'; D = 'docs\GATEKEEPER_TOR.md' }
+    @{ S = 'docs\GATEKEEPER_SANDBOX.md'; D = 'docs\GATEKEEPER_SANDBOX.md' }
     @{ S = 'tests\test_gatekeeper_tor.py'; D = 'tests\test_gatekeeper_tor.py' }
+    @{ S = 'tests\test_gatekeeper_sandbox.py'; D = 'tests\test_gatekeeper_sandbox.py' }
 )
 
 foreach ($m in $maps) {
