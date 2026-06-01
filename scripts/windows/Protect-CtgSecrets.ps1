@@ -365,6 +365,7 @@ $script:CtgPiiCatalog = @{
     'CTG_PII_PHONE'     = 'phone'
     'CTG_PII_ADDRESS'   = 'address'
     'CTG_PII_SSN_LAST4' = 'ssn_last4'
+    'CTG_SIGNAL_USERNAME' = 'signal_username'
 }
 
 function Test-CtgPiiName {
@@ -473,6 +474,11 @@ function Normalize-CtgPiiValue {
                 $digits = $digits.Substring($digits.Length - 4)
             }
             return $digits
+        }
+        'CTG_SIGNAL_USERNAME' {
+            $v = $v.Trim().ToLowerInvariant()
+            $v = $v -replace '^@', ''
+            return $v
         }
         default { return $v }
     }

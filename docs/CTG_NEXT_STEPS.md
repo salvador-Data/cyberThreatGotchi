@@ -72,6 +72,8 @@ cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
 
 ```powershell
 .\scripts\windows\Send-CtgDailyUtmsAlert.ps1 -DiagnoseOnly
+
+**UTMS Signal recipient:** `CTG_SIGNAL_USERNAME` configured in DPAPI vault (see [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md)); link signal-cli once via QR if `Signal:setup`.
 ```
 
 ```powershell

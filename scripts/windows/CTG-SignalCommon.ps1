@@ -1,4 +1,4 @@
-# Shared helpers for CTG Signal alerts via signal-cli (authorized defensive lab use only).
+﻿# Shared helpers for CTG Signal alerts via signal-cli (authorized defensive lab use only).
 
 . (Join-Path $PSScriptRoot 'CTG-WiresharkCommon.ps1')
 
@@ -20,6 +20,7 @@ function Get-CtgSignalCliPath {
         return $null
     }
     foreach ($candidate in @(
+        (Join-Path $env:LOCALAPPDATA 'Programs\signal-cli\signal-cli.cmd'),
         (Join-Path $env:LOCALAPPDATA 'Programs\signal-cli\signal-cli.exe'),
         (Join-Path $env:USERPROFILE '.local\bin\signal-cli.exe'),
         (Join-Path $env:USERPROFILE 'scoop\shims\signal-cli.exe'),
@@ -42,10 +43,19 @@ function Get-CtgSignalAccount {
     if (-not (Test-Path $dataDir)) { return $null }
     $accounts = Get-ChildItem -Path $dataDir -Directory -ErrorAction SilentlyContinue |
         Where-Object { $_.Name -match '^\d+$' }
-    if ($accounts.Count -eq 1) {
+    if (@($accounts).Count -eq 1) {
         return '+' + $accounts[0].Name
     }
     return $null
+}
+
+
+function Format-CtgSignalRecipient {
+    param([Parameter(Mandatory = $true)][string] $To)
+    $t = $To.Trim()
+    if ($t -match '^\+?\d') { return $t }
+    $t = $t.ToLowerInvariant() -replace '^@', ''
+    return $t
 }
 
 function Get-CtgSignalDestination {
@@ -54,26 +64,31 @@ function Get-CtgSignalDestination {
         $vaultScript = Join-Path $PSScriptRoot 'Protect-CtgSecrets.ps1'
         if (Test-Path $vaultScript) {
             . $vaultScript
+            $username = Get-CtgPiiForScript -Name 'CTG_SIGNAL_USERNAME'
+            if (-not [string]::IsNullOrWhiteSpace($username)) {
+                return (Format-CtgSignalRecipient -To $username)
+            }
             $phone = Get-CtgPiiForScript -Name 'CTG_PII_PHONE'
             if (-not [string]::IsNullOrWhiteSpace($phone)) {
-                return $phone.Trim()
+                return (Format-CtgSignalRecipient -To $phone)
             }
             $vaultTo = Get-CtgProtectedSecret -SecretName 'CTG_ALERT_SIGNAL_TO' -VaultFile (Get-CtgSecretVaultFilePath)
             if (-not [string]::IsNullOrWhiteSpace($vaultTo)) {
-                return $vaultTo.Trim()
+                return (Format-CtgSignalRecipient -To $vaultTo)
             }
         }
     }
     if (-not [string]::IsNullOrWhiteSpace($env:CTG_ALERT_SIGNAL_TO)) {
-        return $env:CTG_ALERT_SIGNAL_TO.Trim()
+        return (Format-CtgSignalRecipient -To $env:CTG_ALERT_SIGNAL_TO)
     }
     return $null
 }
 
 function Test-CtgSignalConfigured {
+    param([switch] $PreferVault)
     $cli = Get-CtgSignalCliPath
     if (-not $cli) { return $false }
-    $to = Get-CtgSignalDestination
+    $to = Get-CtgSignalDestination -PreferVault:$PreferVault
     if (-not $to) { return $false }
     $configDir = Get-CtgSignalConfigDir
     if (-not (Test-Path $configDir)) { return $false }

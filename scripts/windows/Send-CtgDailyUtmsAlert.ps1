@@ -71,7 +71,7 @@ function Get-CtgIdsStatusLine {
     if ($snort) { $parts += 'Snort:ready' } else { $parts += 'Snort:off' }
     $suricata = Test-CtgSuricataInstalled
     if ($suricata) { $parts += 'Suricata:ready' } else { $parts += 'Suricata:off' }
-    $signalOk = Test-CtgSignalConfigured
+    $signalOk = Test-CtgSignalConfigured -PreferVault
     if ($signalOk) { $parts += 'Signal:ok' } else { $parts += 'Signal:setup' }
     return ($parts -join ' ')
 }
@@ -111,7 +111,7 @@ if (-not $SkipTimezoneUpdate) {
 }
 
 $message = Build-CtgDailyUtmsMessage
-$signalReady = Test-CtgSignalConfigured
+$signalReady = Test-CtgSignalConfigured -PreferVault
 
 Write-DailyLog "Message: $message"
 Write-DailyLog "Signal ready: $signalReady"
@@ -125,7 +125,7 @@ if ($DiagnoseOnly) {
     if (-not $signalReady) {
         Write-Host ''
         Write-Host 'Signal setup: .\scripts\windows\Install-CtgSignalCli.ps1' -ForegroundColor Yellow
-        Write-Host 'Vault phone: .\scripts\windows\Protect-CtgSecrets.ps1 -SetPii -Name CTG_PII_PHONE' -ForegroundColor Yellow
+        Write-Host 'Vault recipient: Protect-CtgSecrets.ps1 -SetPii -Name CTG_SIGNAL_USERNAME (or CTG_PII_PHONE)' -ForegroundColor Yellow
     }
     exit $(if ($signalReady) { 0 } else { 1 })
 }

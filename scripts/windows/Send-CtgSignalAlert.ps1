@@ -5,7 +5,7 @@
 .DESCRIPTION
   Rate-limited: max one message per alert_type per 15 minutes (shared with SMS rate file).
   Set CTG_ALERT_SIGNAL_TO in local .env (E.164 or Signal uuid) - do not commit .env.
-  Prefer DPAPI vault CTG_PII_PHONE with -UseSecretVault.
+  Prefer DPAPI vault CTG_SIGNAL_USERNAME or CTG_PII_PHONE with -UseSecretVault.
   Account data: gitignored %USERPROFILE%\.local\share\signal-cli\ or Backups\.vault\signal-cli\
 
 .PARAMETER AlertType
@@ -46,6 +46,8 @@ $configDir = Get-CtgSignalConfigDir
 $account = Get-CtgSignalAccount
 $to = Get-CtgSignalDestination -PreferVault:$UseSecretVault
 
+$vaultScriptForRedact = Join-Path $PSScriptRoot 'Protect-CtgSecrets.ps1'
+
 function Write-SignalLog([string] $Text) {
     Write-CtgWiresharkLog $Text $paths.IdsLog
 }
@@ -67,7 +69,7 @@ if (-not $cli) {
 }
 
 if ([string]::IsNullOrWhiteSpace($to)) {
-    Write-SignalLog 'Signal skipped: CTG_ALERT_SIGNAL_TO not set (configure in local .env or vault - never commit)'
+    Write-SignalLog 'Signal skipped: no recipient (vault CTG_SIGNAL_USERNAME / CTG_PII_PHONE or env CTG_ALERT_SIGNAL_TO)'
     exit 2
 }
 
@@ -106,6 +108,10 @@ try {
     $code = $LASTEXITCODE
     if ($code -ne 0) {
         $errText = ($output | Out-String).Trim()
+        if (Test-Path $vaultScriptForRedact) {
+            . $vaultScriptForRedact
+            $errText = Redact-CtgPiiInText -Text $errText
+        }
         Write-SignalLog "Signal failed alert_type=$AlertType exit=$code error=$errText"
         exit 1
     }
@@ -113,6 +119,11 @@ try {
     Set-CtgAlertRateTimestamp -AlertType $AlertType
     exit 0
 } catch {
-    Write-SignalLog "Signal failed alert_type=$AlertType error=$($_.Exception.Message)"
+    $errMsg = $_.Exception.Message
+    if (Test-Path $vaultScriptForRedact) {
+        . $vaultScriptForRedact
+        $errMsg = Redact-CtgPiiInText -Text $errMsg
+    }
+    Write-SignalLog "Signal failed alert_type=$AlertType error=$errMsg"
     exit 1
 }

@@ -36,8 +36,8 @@ Write-Host '========================================' -ForegroundColor Cyan
 $cli = Get-CtgSignalCliPath
 $configDir = Get-CtgSignalConfigDir
 $account = Get-CtgSignalAccount
-$signalTo = Get-CtgSignalDestination
-$configured = Test-CtgSignalConfigured
+$signalTo = Get-CtgSignalDestination -PreferVault
+$configured = Test-CtgSignalConfigured -PreferVault
 
 $java = Get-Command java -ErrorAction SilentlyContinue
 Write-Step "Java on PATH: $(if ($java) { $java.Source } else { 'NOT FOUND (required for signal-cli JAR builds)' })" `
@@ -46,7 +46,7 @@ Write-Step "signal-cli: $(if ($cli) { $cli } else { 'NOT FOUND - set CTG_SIGNAL_
     $(if ($cli) { 'Green' } else { 'Red' })
 Write-Step "Config dir: $configDir exists=$(Test-Path $configDir)"
 Write-Step "Linked account: $(if ($account) { $account } else { 'none' })"
-Write-Step "CTG_ALERT_SIGNAL_TO set: $(-not [string]::IsNullOrWhiteSpace($signalTo))"
+Write-Step "Signal recipient configured (vault/env): $(-not [string]::IsNullOrWhiteSpace($signalTo))"
 Write-Step "CTG_SIGNAL_ACCOUNT: $(if ($env:CTG_SIGNAL_ACCOUNT) { $env:CTG_SIGNAL_ACCOUNT } else { '(auto-detect if one account)' })"
 Write-Step "CTG_USE_TWILIO: $(if (Test-CtgUseTwilioPreferred) { '1 (SMS preferred)' } else { 'unset (Signal preferred when configured)' })"
 Write-Step "Signal ready: $configured" $(if ($configured) { 'Green' } else { 'Yellow' })
@@ -84,13 +84,14 @@ Write-Host ''
 Write-Step '--- .env (local only - never commit) ---' 'Cyan'
 Write-Step 'CTG_SIGNAL_CLI_PATH=C:\Users\Owner\AppData\Local\Programs\signal-cli\signal-cli.exe'
 Write-Step 'CTG_SIGNAL_CONFIG_DIR=%USERPROFILE%\.local\share\signal-cli'
-Write-Step 'CTG_ALERT_SIGNAL_TO=+1XXXXXXXXXX'
+Write-Step 'CTG_ALERT_SIGNAL_TO=+1XXXXXXXXXX   # or Signal username (YourSignalUsername)'
 Write-Step 'CTG_SIGNAL_ACCOUNT=+1XXXXXXXXXX'
 Write-Step '# CTG_USE_TWILIO=1   # optional - force Twilio instead of Signal'
 
 Write-Host ''
-Write-Step '--- Vault phone (preferred over .env) ---' 'Cyan'
-Write-Step '.\scripts\windows\Protect-CtgSecrets.ps1 -SetPii -Name CTG_PII_PHONE'
+Write-Step '--- Vault recipient (preferred over .env) ---' 'Cyan'
+Write-Step '.\scripts\windows\Protect-CtgSecrets.ps1 -SetPii -Name CTG_SIGNAL_USERNAME'
+Write-Step '  or phone: -SetPii -Name CTG_PII_PHONE'
 
 Write-Host ''
 Write-Step '--- Test alert ---' 'Cyan'

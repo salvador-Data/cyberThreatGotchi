@@ -71,6 +71,7 @@ Add to `C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi\.env` (gitig
 CTG_SIGNAL_CLI_PATH=C:\Users\Owner\AppData\Local\Programs\signal-cli\signal-cli.exe
 CTG_SIGNAL_CONFIG_DIR=%USERPROFILE%\.local\share\signal-cli
 CTG_ALERT_SIGNAL_TO=+1XXXXXXXXXX
+# Or use vault username (see below) instead of phone in .env
 CTG_SIGNAL_ACCOUNT=+1XXXXXXXXXX
 ```
 
@@ -78,16 +79,21 @@ CTG_SIGNAL_ACCOUNT=+1XXXXXXXXXX
 |----------|---------|
 | `CTG_SIGNAL_CLI_PATH` | Full path to `signal-cli.exe` or JAR launcher |
 | `CTG_SIGNAL_CONFIG_DIR` | Gitignored account data (default `%USERPROFILE%\.local\share\signal-cli`) |
-| `CTG_ALERT_SIGNAL_TO` | Destination E.164 or Signal uuid |
+| `CTG_ALERT_SIGNAL_TO` | Destination E.164, Signal uuid, or username |
 | `CTG_SIGNAL_ACCOUNT` | Sender linked account (auto-detected when only one account) |
 | `CTG_USE_TWILIO=1` | Force Twilio SMS instead of Signal |
 
-**Prefer** DPAPI vault for the phone number (same key as SMS):
+**Prefer** DPAPI vault for the recipient (username or phone — never commit values):
+
+```powershell
+.\scripts\windows\Protect-CtgSecrets.ps1 -SetPii -Name CTG_SIGNAL_USERNAME
+```
 
 ```powershell
 .\scripts\windows\Protect-CtgSecrets.ps1 -SetPii -Name CTG_PII_PHONE
 ```
 
+Username example (placeholder only): `YourSignalUsername` — signal-cli uses the `-u` flag when the destination is not E.164.
 Use `-UseSecretVault` on alert scripts when reading from vault.
 
 ## Test alert (no attack traffic)

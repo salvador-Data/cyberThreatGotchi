@@ -74,7 +74,7 @@ function Invoke-CtgTwilioChannel {
     return $LASTEXITCODE
 }
 
-$signalReady = Test-CtgSignalConfigured
+$signalReady = Test-CtgSignalConfigured -PreferVault:$UseSecretVault
 $twilioVars = @(
     $env:TWILIO_ACCOUNT_SID, $env:TWILIO_AUTH_TOKEN,
     $env:TWILIO_FROM_NUMBER

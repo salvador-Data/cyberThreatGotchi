@@ -71,6 +71,7 @@ def test_send_signal_alert_flags():
         "CTG: test alert",
         "UseSecretVault",
         "CTG_PII_PHONE",
+        "CTG_SIGNAL_USERNAME",
         "15 min",
     ):
         assert needle in text, needle
@@ -101,6 +102,8 @@ def test_install_signal_cli_diagnose():
 def test_signal_common_helpers():
     text = (WIN / "CTG-SignalCommon.ps1").read_text(encoding="utf-8")
     for needle in (
+        "Get-CtgSignalDestination",
+        "CTG_SIGNAL_USERNAME",
         "Get-CtgSignalCliPath",
         "Get-CtgSignalConfigDir",
         "Test-CtgSignalConfigured",
@@ -126,6 +129,7 @@ def test_suricata_ids_uses_ids_alert_dispatcher():
 def test_signal_alerts_doc_no_pii():
     doc = (ROOT / "docs" / "SIGNAL_ALERTS.md").read_text(encoding="utf-8")
     assert "Send-CtgSignalAlert.ps1" in doc
+    assert "YourSignalUsername" in doc
     assert "+1XXXXXXXXXX" in doc
     assert not PHONE_PATTERN.search(doc)
     assert "2677730449" not in doc
