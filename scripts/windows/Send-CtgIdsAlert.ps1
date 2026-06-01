@@ -75,11 +75,11 @@ function Invoke-CtgTwilioChannel {
 }
 
 $signalReady = Test-CtgSignalConfigured
-$twilioReady = @(
+$twilioVars = @(
     $env:TWILIO_ACCOUNT_SID, $env:TWILIO_AUTH_TOKEN,
     $env:TWILIO_FROM_NUMBER
 ) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
-$twilioReady = ($twilioReady.Count -eq 3) -and (
+$twilioReady = (@($twilioVars).Count -eq 3) -and (
     -not [string]::IsNullOrWhiteSpace($env:CTG_ALERT_SMS_TO) -or $UseSecretVault
 )
 

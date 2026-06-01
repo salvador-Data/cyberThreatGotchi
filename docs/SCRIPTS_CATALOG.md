@@ -546,6 +546,38 @@ Every `.ps1`, `.sh`, and `.py` under `scripts/` - inventoried for authorized def
 - **Admin:** **Yes**
 - **Docs:** [PORTFOLIO_AUTOMATION_SOC.md](PORTFOLIO_AUTOMATION_SOC.md)
 
+### `Send-CtgDailyUtmsAlert.ps1` / `Invoke-CtgDailyUtmsAlertIfLocal6Am.ps1`
+- **Path:** `scripts/windows/Send-CtgDailyUtmsAlert.ps1` - `Invoke-CtgDailyUtmsAlertIfLocal6Am.ps1`
+- **Tagline:** *Daily UTMS status ping — IDS, Gatekeeper, lab maturity via Signal.*
+- **Does:** Builds short defensive status one-liner; sends via `Send-CtgIdsAlert.ps1`. Hourly gate fires at 6:00–6:04 local (iPhone `timezone.json` or `America/New_York`).
+- **When:** Manual test, or scheduled via `Register-CtgDailyUtmsAlertTask.ps1`.
+- **Admin:** **No** (send); task registration needs Admin
+- **Docs:** [IPHONE_TIMEZONE_SYNC.md](IPHONE_TIMEZONE_SYNC.md) - [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md) - [UTMS_WIFI_AI.md](UTMS_WIFI_AI.md)
+
+### `Update-CtgTimezoneFromIphone.ps1`
+- **Path:** `scripts/windows/Update-CtgTimezoneFromIphone.ps1`
+- **Tagline:** *Validate iPhone-exported IANA timezone JSON — no live GPS from Windows.*
+- **Does:** Reads gitignored `Backups\iphone-location\timezone.json`; validates IANA id for daily alert window.
+- **When:** Before daily alert; Shortcuts sync from iPhone.
+- **Admin:** **No**
+- **Docs:** [IPHONE_TIMEZONE_SYNC.md](IPHONE_TIMEZONE_SYNC.md) - [IPHONE_HARDENING.md](IPHONE_HARDENING.md)
+
+### `Register-CtgDailyUtmsAlertTask.ps1`
+- **Path:** `scripts/windows/Register-CtgDailyUtmsAlertTask.ps1`
+- **Tagline:** *Register `HackerPlanet-CTG-Daily-Utms-6AM` — hourly 6 AM local gate.*
+- **Does:** Scheduled task every hour → `Invoke-CtgDailyUtmsAlertIfLocal6Am.ps1 -UseSecretVault`. Interactive + Highest.
+- **When:** After Signal + vault configured.
+- **Admin:** **Yes**
+- **Docs:** [IPHONE_TIMEZONE_SYNC.md](IPHONE_TIMEZONE_SYNC.md) - [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md)
+
+### `scripts/iphone/shortcut-timezone-export.example.json`
+- **Path:** `scripts/iphone/shortcut-timezone-export.example.json`
+- **Tagline:** *Shortcuts recipe text — export timezone JSON for Windows.*
+- **Does:** Step-by-step JSON recipe for Apple Shortcuts (not a binary shortcut).
+- **When:** Setting up travel-aware 6 AM alerts.
+- **Admin:** N/A (iPhone manual)
+- **Docs:** [IPHONE_TIMEZONE_SYNC.md](IPHONE_TIMEZONE_SYNC.md)
+
 ### `ctg_website_nightly.ps1`
 - **Path:** `scripts/windows/ctg_website_nightly.ps1`
 - **Tagline:** *hackerplanet.dev hygiene - backup, sync, health GET, optional deploy.*

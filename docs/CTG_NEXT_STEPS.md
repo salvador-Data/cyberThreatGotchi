@@ -70,6 +70,29 @@ cd "C:\Users\Owner\Programs\Hacker Planet LLC\cyberThreatGotchi"
 .\scripts\windows\Start-CtgEventBus.ps1 -DiagnoseOnly
 ```
 
+```powershell
+.\scripts\windows\Send-CtgDailyUtmsAlert.ps1 -DiagnoseOnly
+```
+
+```powershell
+.\scripts\windows\Update-CtgTimezoneFromIphone.ps1 -DiagnoseOnly
+```
+
+---
+
+## Daily UTMS Signal alert (6 AM local)
+
+**Docs:** [IPHONE_TIMEZONE_SYNC.md](IPHONE_TIMEZONE_SYNC.md) · [SIGNAL_ALERTS.md](SIGNAL_ALERTS.md)
+
+| Step | Command | Notes |
+|------|---------|-------|
+| Signal setup | `Install-CtgSignalCli.ps1 -DiagnoseOnly` | Link device; vault `CTG_PII_PHONE` |
+| Test message | `Send-CtgDailyUtmsAlert.ps1 -WhatIf` | No send; shows body |
+| iPhone tz | Shortcuts → `Backups\iphone-location\timezone.json` | See `scripts/iphone/shortcut-timezone-export.example.json` |
+| Register task | `Register-CtgDailyUtmsAlertTask.ps1` | **Admin** — `HackerPlanet-CTG-Daily-Utms-6AM` |
+
+Hourly checker sends once per day at **6:00–6:04** in iPhone-reported timezone (fallback **America/New_York**).
+
 ---
 
 ## Install audit (2026-05-31)
@@ -95,6 +118,7 @@ cd "$env:USERPROFILE\Programs\Hacker Planet LLC\cyberThreatGotchi"
 | `Ctg-CredentialVault` | **MANUAL** | `-InitVault -WithDpapiWrap` (interactive) |
 | All `HackerPlanet-CTG-*` tasks | **MANUAL** | Admin: `Register-Ctg*.ps1` |
 | signal-cli / Snort / Suricata | **OPTIONAL** | Install scripts exist; not on PATH |
+| Daily UTMS 6 AM Signal | **MANUAL** | `Register-CtgDailyUtmsAlertTask.ps1` (Admin) + Signal vault |
 | Proton Mail Bridge | **MANUAL** | User install; email vault titles in PM |
 | Docker + Wazuh lab | **MANUAL** | Docker Desktop not installed |
 | Defender ASR `-ApplySafe` | **MANUAL** | Admin after `-DiagnoseOnly` review |

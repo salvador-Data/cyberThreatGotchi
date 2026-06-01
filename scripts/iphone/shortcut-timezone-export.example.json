@@ -1,0 +1,79 @@
+{
+  "name": "CTG Export Timezone for Windows",
+  "description": "Apple Shortcuts recipe (text instructions). Import manually — not a binary .shortcut file.",
+  "version": 1,
+  "author": "Hacker Planet LLC",
+  "notes": [
+    "Windows cannot read live iPhone GPS. This Shortcut writes timezone JSON for CTG daily 6 AM alerts.",
+    "Do not commit real coordinates or phone numbers to git.",
+    "Sync output to PC: iCloud Drive, OneDrive, or email yourself and save to Backups\\iphone-location\\timezone.json"
+  ],
+  "trigger_options": [
+    {
+      "type": "Time of Day",
+      "suggestion": "Daily at 5:55 AM",
+      "reason": "Refresh timezone before 6 AM Windows hourly check"
+    },
+    {
+      "type": "When I arrive / leave",
+      "suggestion": "Optional — home vs travel",
+      "reason": "Update IANA timezone when crossing regions"
+    }
+  ],
+  "shortcut_steps": [
+    {
+      "order": 1,
+      "action": "Get Current Location",
+      "optional": true,
+      "comment": "Skip if you only need timezone, not coords"
+    },
+    {
+      "order": 2,
+      "action": "Get Details of Location",
+      "fields": ["Time Zone"],
+      "comment": "Prefer IANA id if Shortcuts exposes it; else map known places manually"
+    },
+    {
+      "order": 3,
+      "action": "Text",
+      "template": "{\n  \"timezone\": \"TIMEZONE_IANA_HERE\",\n  \"lat\": null,\n  \"lon\": null,\n  \"updated\": \"ISO8601_TIMESTAMP\"\n}",
+      "variables": {
+        "TIMEZONE_IANA_HERE": "Replace with America/New_York or detected zone",
+        "ISO8601_TIMESTAMP": "Use Format Date → ISO 8601"
+      }
+    },
+    {
+      "order": 4,
+      "action": "Save File",
+      "filename": "timezone.json",
+      "destination": "iCloud Drive/CTG/iphone-location/",
+      "comment": "Mirror to %USERPROFILE%\\Backups\\iphone-location\\ on Windows"
+    }
+  ],
+  "alternative_delivery": [
+    {
+      "method": "Send Email",
+      "to": "your-proton-or-bridge-address",
+      "subject": "CTG timezone export",
+      "body": "Attach timezone.json; save to Backups\\iphone-location\\ on Windows"
+    },
+    {
+      "method": "Manual",
+      "steps": [
+        "Create timezone.json with timezone and updated fields",
+        "Copy to %USERPROFILE%\\Backups\\iphone-location\\timezone.json"
+      ]
+    }
+  ],
+  "windows_verify": [
+    ".\\scripts\\windows\\Update-CtgTimezoneFromIphone.ps1 -DiagnoseOnly",
+    ".\\scripts\\windows\\Invoke-CtgDailyUtmsAlertIfLocal6Am.ps1 -DiagnoseOnly",
+    ".\\scripts\\windows\\Send-CtgDailyUtmsAlert.ps1 -WhatIf"
+  ],
+  "example_timezone_values": [
+    "America/New_York",
+    "America/Chicago",
+    "America/Los_Angeles",
+    "Europe/London"
+  ]
+}
