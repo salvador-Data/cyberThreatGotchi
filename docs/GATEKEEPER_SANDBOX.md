@@ -1,6 +1,6 @@
 # Gatekeeper HTTPS sandbox — honest security model
 
-**Product:** Gatekeeper.TOR · **Scope:** Hacker Planet LLC **Kali lab VM** only  
+**Product:** Gatekeeper.TOR · **Scope:** Hacker Planet LLC **Kali lab VM** + **Windows 11 Pro host**  
 **Related:** [GATEKEEPER_TOR.md](GATEKEEPER_TOR.md) · [CTG_TOR_HTTP_SCRAMBLER.md](CTG_TOR_HTTP_SCRAMBLER.md) · [CYBERSECURITY_ETHICS.md](CYBERSECURITY_ETHICS.md)
 
 ## Professor summary: is HTTPS + sandbox a good idea?
@@ -9,14 +9,16 @@
 
 | Claim | Reality |
 |-------|---------|
-| “HTTPS mode is a sandbox” | **False.** TLS protects data **on the wire** (confidentiality + integrity in transit). It does **not** stop malware, malicious downloads, or a compromised browser from reading files you can access inside the VM. |
-| “HTTP clearnet in a sandbox” | **Good lab pattern** when HTTP is required for **legacy/captive** targets — but only as an **isolated low-trust lane** inside the **Kali VM**, with **Firejail** (namespaces, seccomp, restricted writes). |
-| “TOR mode” | **Different threat model:** anonymity and path separation via Tor — not the same as application sandboxing. Use TOR for paths that should not touch clearnet directly. |
-| **iPhone / Windows host** | Already sandboxed by the OS (iOS sandbox, Windows app isolation). Gatekeeper on Windows **documents** Windows Sandbox / Edge isolation for untrusted links — it does **not** replace **DuckDuckGo VPN/DNS/Password Manager**. |
+| “HTTPS mode is a sandbox” | **False.** TLS protects data **on the wire** (confidentiality + integrity in transit). It does **not** stop malware, malicious downloads, or a compromised browser from reading files you can access inside the VM or host profile. |
+| “HTTP clearnet in a sandbox” | **Good lab pattern** when HTTP is required for **legacy/captive** targets — but only as an **isolated low-trust lane**, with **Firejail on Kali** or **Windows Sandbox / InPrivate fallback on Windows**. |
+| “TOR mode” | **Different threat model:** anonymity and path separation via Tor — not application sandboxing. Use TOR for paths that should not touch clearnet directly. **Unchanged** by this feature. |
+| **Windows host** | Gatekeeper sandbox is an **optional lane** — **DuckDuckGo VPN/DNS/Password Manager stay primary** when active. No conflicting system-wide routes. |
 
-**Bottom line:** Combine **HTTPS (TLS 1.3 health probe in Gatekeeper)** with **Firejail browser sandbox on Kali** for authorized lab browsing of untrusted or unknown sites. Do **not** use HTTP clearnet for banking, credential entry, or production secrets.
+**Bottom line:** Combine **HTTPS (TLS 1.3 health probe in Gatekeeper)** with **browser sandboxing** for authorized lab browsing of untrusted or unknown sites. Do **not** use HTTP clearnet for banking, credential entry, or production secrets.
 
-## What CTG implements (Kali)
+## What CTG implements
+
+### Kali (Firejail)
 
 | Component | Role |
 |-----------|------|
@@ -32,39 +34,38 @@ Install optional Firejail:
 sudo bash /opt/ctg/gatekeeper-tor/kali/install-gatekeeper-kali.sh --with-sandbox
 ```
 
+### Windows 11 Pro (Windows Sandbox + fallback)
+
+| Component | Role |
+|-----------|------|
+| `Start-CtgHttpsSandbox.ps1` | `-DiagnoseOnly`, `-EnableSandboxFeature` (Admin), `-LaunchSandboxBrowser`, `-LaunchHttpLabOnly` |
+| Windows Sandbox (primary) | Ephemeral `.wsb` in `%USERPROFILE%\Backups\ctg-sandbox\` — mapped read-only launcher, Edge InPrivate inside VM |
+| Edge InPrivate (fallback) | When Sandbox feature disabled — **weaker**; script warns loudly |
+| `Start-GatekeeperTorTray.ps1` | Menu **Open HTTPS Sandbox Browser** when HTTPS (lit); sets `CTG_SANDBOX=1` |
+| `core/gatekeeper_sandbox.py` | Shared allowlist check + HTTPS mode validation |
+
+**Admin required:** `-EnableSandboxFeature` runs `Enable-WindowsOptionalFeature -Online -FeatureName Containers-DisposableClientVM` via `Run-AsAdmin.ps1`. Reboot may be required.
+
+**Hyper-V / WSL2:** Windows Sandbox uses Hyper-V. WSL2 on Win11 also uses Hyper-V — they **coexist**; CTG does not change DDG routes or disable mitigations.
+
 ## When NOT to use
 
 - **Banking, payroll, email login, MFA, or any credential entry over HTTP** — use HTTPS on a trusted device; prefer TOR or bank app on iPhone with existing VPN posture.
 - **Bypassing authorization** — sandbox does not grant permission to test third-party systems.
 - **Disabling mitigations** — never turn off HVCI/VBS, DuckDuckGo VPN, or kernel mitigations for “performance.”
-- **Replacing DDG on Windows** — Gatekeeper tray is coexistence + optional local Tor SOCKS; DDG remains primary when active.
-
-## Windows (document only)
-
-Gatekeeper does **not** auto-install Windows Sandbox or Hyper-V.
-
-| Option | Use |
-|--------|-----|
-| **Windows Sandbox** | One-off untrusted link or attachment — ephemeral desktop, no persistence |
-| **Microsoft Edge — Browse in Microsoft Defender Application Guard** | Enterprise/isolated browsing window (if licensed and enabled) |
-| **DuckDuckGo VPN** | Stays **primary** system VPN when active — do not stack conflicting routes |
-
-Diagnose (no tray):
-
-```powershell
-.\scripts\gatekeeper-tor\windows\Start-GatekeeperTorTray.ps1 -DiagnoseOnly
-```
-
-HTTPS health on Windows uses the same **TLS 1.3–preferring curl probe** in `core/gatekeeper_tor.py` — not a system-wide TLS policy.
+- **Replacing DDG on Windows** — Gatekeeper tray and sandbox are coexistence layers; DDG remains primary when active.
 
 ## HTTP allowlist (lab only)
 
-Template: `scripts/gatekeeper-tor/templates/site-rules.gatekeeper.conf`
+- **Windows:** `%USERPROFILE%\Backups\ctg-sandbox\http-allowlist.txt` (created on first run; gitignored)
+- **Template rules:** `scripts/gatekeeper-tor/templates/site-rules.gatekeeper.conf`
+- **Kali scrambler copy:** `/opt/ctg/tor-http-scrambler/site-rules.conf` (mode `600`)
 
-- Default posture: **prefer HTTPS and TOR**; cleartext HTTP only for entries on the allowlist (captive portal lab AP, legacy HTTP-only lab targets).
-- Scrambler copy path: `/opt/ctg/tor-http-scrambler/site-rules.conf` (mode `600`)
+Default posture: **prefer HTTPS and TOR**; cleartext HTTP only for entries on the allowlist (captive portal lab AP, legacy HTTP-only lab targets).
 
-## Kali commands (after install)
+## Commands
+
+### Kali
 
 Diagnose Firejail + profile:
 
@@ -72,7 +73,7 @@ Diagnose Firejail + profile:
 bash /opt/ctg/gatekeeper-tor/kali/ctg-https-sandbox.sh -DiagnoseOnly
 ```
 
-Launch sandboxed browser (HTTPS mode should be active; sets `CTG_SANDBOX=1` in jail):
+Launch sandboxed browser (HTTPS mode should be active):
 
 ```bash
 sudo /opt/ctg/gatekeeper-tor/gatekeeper-daemon.sh set-mode https
@@ -81,13 +82,39 @@ bash /opt/ctg/gatekeeper-tor/kali/ctg-https-sandbox.sh -LaunchBrowser
 
 Or from tray: **Open sandboxed browser (HTTPS mode)** when the HTTPS icon is lit.
 
+### Windows
+
+Diagnose:
+
+```powershell
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -DiagnoseOnly
+```
+
+Enable Windows Sandbox feature (Admin — UAC):
+
+```powershell
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -EnableSandboxFeature
+```
+
+Launch sandbox browser (HTTPS mode lit in tray):
+
+```powershell
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -LaunchSandboxBrowser
+```
+
+HTTP lab URL (allowlist only):
+
+```powershell
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -LaunchHttpLabOnly -Url "http://lab-ap.local/"
+```
+
 ## NIST / defensive mapping
 
 | Function | Control |
 |----------|---------|
-| **Protect** | Application containment (Firejail), least-privilege browser profile under `/tmp/ctg-sandbox` |
+| **Protect** | Application containment (Firejail / Windows Sandbox), least-privilege browser profile |
 | **Detect** | Gatekeeper health + SIEM hooks via scrambler (separate path) |
-| **Recover** | Ephemeral sandbox profile — discard `/tmp/ctg-sandbox` after session |
+| **Recover** | Ephemeral sandbox — discard session scratch after use |
 
 ## Cross-references
 

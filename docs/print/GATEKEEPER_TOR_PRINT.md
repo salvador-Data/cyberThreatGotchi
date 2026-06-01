@@ -55,6 +55,12 @@ Diagnose:
 .\scripts\gatekeeper-tor\windows\Start-GatekeeperTorTray.ps1 -DiagnoseOnly
 ```
 
+HTTPS sandbox diagnose:
+
+```powershell
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -DiagnoseOnly
+```
+
 Start tray (lit icon):
 
 ```powershell
@@ -65,6 +71,18 @@ Autostart at login:
 
 ```powershell
 .\scripts\gatekeeper-tor\windows\Start-GatekeeperTorTray.ps1 -InstallTray
+```
+
+HTTPS sandbox browser (HTTPS lit; tray menu or direct):
+
+```powershell
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -LaunchSandboxBrowser
+```
+
+Enable Windows Sandbox (Admin UAC):
+
+```powershell
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -EnableSandboxFeature
 ```
 
 Optional Tor bundle info:
@@ -119,6 +137,25 @@ Tray (top bar):
 
 ```bash
 python3 /opt/ctg/gatekeeper-tor/gatekeeper-tray.py
+```
+
+HTTPS sandbox diagnose:
+
+```bash
+bash /opt/ctg/gatekeeper-tor/kali/ctg-https-sandbox.sh -DiagnoseOnly
+```
+
+HTTPS sandbox browser:
+
+```bash
+sudo /opt/ctg/gatekeeper-tor/gatekeeper-daemon.sh set-mode https
+bash /opt/ctg/gatekeeper-tor/kali/ctg-https-sandbox.sh -LaunchBrowser
+```
+
+Install with Firejail:
+
+```bash
+sudo bash /mnt/ctg/gatekeeper-tor/kali/install-gatekeeper-kali.sh --with-sandbox
 ```
 
 Lab chain:

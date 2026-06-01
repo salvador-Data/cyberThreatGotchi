@@ -97,6 +97,12 @@ if (Test-Path $gkSrc) {
             New-Item -ItemType Directory -Path $coreDest -Force | Out-Null
             Copy-Item -Path $coreSrc -Destination (Join-Path $coreDest 'gatekeeper_tor.py') -Force
         }
+        $sandboxSrc = Join-Path $RepoRoot 'core\gatekeeper_sandbox.py'
+        if (Test-Path $sandboxSrc) {
+            $coreDest = Join-Path $gkDest 'core'
+            New-Item -ItemType Directory -Path $coreDest -Force | Out-Null
+            Copy-Item -Path $sandboxSrc -Destination (Join-Path $coreDest 'gatekeeper_sandbox.py') -Force
+        }
         Write-CtgStageLog "Staged tree: $gkDest"
     }
 }

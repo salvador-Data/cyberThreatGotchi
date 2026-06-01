@@ -3,16 +3,26 @@
 **Product:** Gatekeeper.TOR (evolves [CTG Tor/HTTP scrambler](CTG_TOR_HTTP_SCRAMBLER.md))  
 **Authorized use:** Hacker Planet LLC lab, Andy-owned hosts, written pentest scope only — **not** for illegal evasion, credential theft, or unauthorized third-party access.
 
-## HTTPS sandbox (Kali lab)
+## HTTPS sandbox (Kali + Windows)
 
-**HTTPS ≠ sandbox.** TLS protects the wire, not malware inside the browser. For authorized lab clearnet browsing, combine **HTTPS mode** with **Firejail** (`ctg-https-sandbox.profile`). Full threat model: [GATEKEEPER_SANDBOX.md](GATEKEEPER_SANDBOX.md).
+**HTTPS ≠ sandbox.** TLS protects the wire, not malware inside the browser. For authorized lab clearnet browsing, combine **HTTPS mode** with:
+
+- **Kali:** Firejail (`ctg-https-sandbox.profile`)
+- **Windows 11 Pro:** Windows Sandbox or Edge InPrivate fallback (`Start-CtgHttpsSandbox.ps1`)
+
+Full threat model: [GATEKEEPER_SANDBOX.md](GATEKEEPER_SANDBOX.md).
 
 ```bash
 sudo bash /mnt/ctg/gatekeeper-tor/kali/install-gatekeeper-kali.sh --with-sandbox
 bash /opt/ctg/gatekeeper-tor/kali/ctg-https-sandbox.sh -LaunchBrowser
 ```
 
-HTTP clearnet is **lab captive/legacy only** — see `templates/site-rules.gatekeeper.conf` (block HTTP except allowlist).
+```powershell
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -DiagnoseOnly
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -LaunchSandboxBrowser
+```
+
+HTTP clearnet is **lab captive/legacy only** — see `templates/site-rules.gatekeeper.conf` and `%USERPROFILE%\Backups\ctg-sandbox\http-allowlist.txt`.
 
 ## Honest crypto language
 
@@ -51,8 +61,10 @@ scripts/gatekeeper-tor/
     gatekeeper-tray.py        # Xfce systray (pystray)
   windows/
     Start-GatekeeperTorTray.ps1
+    Start-CtgHttpsSandbox.ps1
     Install-GatekeeperTorWindows.ps1
 core/gatekeeper_tor.py        # State JSON + health checks
+core/gatekeeper_sandbox.py    # HTTP allowlist + mode validation
 assets/gatekeeper-tor/logo.svg
 ```
 
@@ -106,6 +118,22 @@ Tor Expert Bundle is **not** bundled in git. Install from [Tor Project](https://
 
 ```powershell
 .\scripts\gatekeeper-tor\windows\Start-GatekeeperTorTray.ps1 -InstallTray
+```
+
+HTTPS sandbox:
+
+```powershell
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -DiagnoseOnly
+```
+
+```powershell
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -LaunchSandboxBrowser
+```
+
+Enable Windows Sandbox feature (Admin UAC):
+
+```powershell
+.\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -EnableSandboxFeature
 ```
 
 ## Tray usage

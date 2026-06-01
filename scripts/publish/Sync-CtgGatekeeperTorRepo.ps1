@@ -46,6 +46,7 @@ if (-not (Test-Path $DestRepo)) {
 $maps = @(
     @{ S = 'scripts\gatekeeper-tor'; D = 'scripts\gatekeeper-tor' }
     @{ S = 'core\gatekeeper_tor.py'; D = 'core\gatekeeper_tor.py' }
+    @{ S = 'core\gatekeeper_sandbox.py'; D = 'core\gatekeeper_sandbox.py' }
     @{ S = 'assets\gatekeeper-tor'; D = 'assets\gatekeeper-tor' }
     @{ S = 'docs\GATEKEEPER_TOR.md'; D = 'docs\GATEKEEPER_TOR.md' }
     @{ S = 'docs\GATEKEEPER_SANDBOX.md'; D = 'docs\GATEKEEPER_SANDBOX.md' }

@@ -102,6 +102,11 @@ function Test-CtgLocalTorSocks {
 
 function Invoke-GatekeeperSetMode {
     param([string] $Mode)
+    if ($Mode -eq 'https') {
+        $env:CTG_SANDBOX = '1'
+    } else {
+        $env:CTG_SANDBOX = '0'
+    }
     $pyLauncher = Get-Command py -ErrorAction SilentlyContinue
     if ($pyLauncher) {
         & py -3 $CorePy set-mode $Mode | Out-Null
@@ -110,6 +115,29 @@ function Invoke-GatekeeperSetMode {
     $py = Get-Command python -ErrorAction SilentlyContinue
     if (-not $py) { return }
     & $py.Source $CorePy set-mode $Mode | Out-Null
+}
+
+function Invoke-CtgHttpsSandboxBrowser {
+    $sandboxPs1 = Join-Path $PSScriptRoot 'Start-CtgHttpsSandbox.ps1'
+    if (-not (Test-Path $sandboxPs1)) {
+        [System.Windows.Forms.MessageBox]::Show(
+            "Missing $sandboxPs1",
+            'CTG HTTPS Sandbox'
+        ) | Out-Null
+        return
+    }
+    if (Get-GatekeeperMode -ne 'https') {
+        [System.Windows.Forms.MessageBox]::Show(
+            'Set HTTPS mode first — sandbox lane is for clearnet lab browsing only.',
+            'CTG HTTPS Sandbox'
+        ) | Out-Null
+        return
+    }
+    $env:CTG_SANDBOX = '1'
+    Start-Process -FilePath 'powershell.exe' -ArgumentList @(
+        '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $sandboxPs1,
+        '-LaunchSandboxBrowser'
+    ) -WindowStyle Hidden
 }
 
 function Update-GatekeeperTrayUi {
@@ -136,6 +164,9 @@ function Update-GatekeeperTrayUi {
         $Menu.Items[0].Text = if ($mode -eq 'tor') { '* TOR (lit)' } else { '  TOR' }
         $Menu.Items[1].Text = if ($mode -eq 'https') { '* HTTPS (lit)' } else { '  HTTPS' }
     }
+    if ($Menu.Items.Count -ge 4 -and $Menu.Items[3].Text -match 'HTTPS Sandbox') {
+        $Menu.Items[3].Visible = ($mode -eq 'https')
+    }
 }
 
 function Start-GatekeeperTrayUi {
@@ -156,6 +187,11 @@ function Start-GatekeeperTrayUi {
         $null,
         { Invoke-GatekeeperSetMode 'https'; Update-GatekeeperTrayUi $script:NotifyIcon $script:ContextMenu }
     )
+    [void]$script:ContextMenu.Items.Add('-')
+    $sandboxItem = $script:ContextMenu.Items.Add('Open HTTPS Sandbox Browser', $null, {
+        Invoke-CtgHttpsSandboxBrowser
+    })
+    $sandboxItem.Visible = ($mode -eq 'https')
     [void]$script:ContextMenu.Items.Add('-')
     $ddg = Test-CtgDdgVpnActive
     $ddgLabel = if ($ddg) { 'DDG VPN: active (preserved)' } else { 'DDG VPN: verify Preserve-DuckDuckGoVpn.ps1' }
@@ -208,8 +244,9 @@ $socksUp = Test-CtgLocalTorSocks
 Write-Host "DDG VPN adapter signal: $ddgActive (Gatekeeper does NOT replace DDG)"
 Write-Host "Local Tor SOCKS 9050:    $socksUp"
 Write-Host 'HTTPS health check:      TLS 1.3-preferring curl probe only (core/gatekeeper_tor.py) — not system-wide TLS policy'
-Write-Host 'Untrusted links (host):  Windows Sandbox or Edge Application Guard — doc: docs/GATEKEEPER_SANDBOX.md'
-Write-Host 'HTTPS != sandbox:        TLS protects wire; use Kali Firejail for lab browser containment'
+Write-Host 'HTTPS sandbox:           .\scripts\gatekeeper-tor\windows\Start-CtgHttpsSandbox.ps1 -DiagnoseOnly'
+Write-Host 'Untrusted links (host):  Windows Sandbox (primary) or Edge InPrivate fallback — docs/GATEKEEPER_SANDBOX.md'
+Write-Host 'HTTPS != sandbox:        TLS protects wire; sandbox contains the browser process/VM'
 
 $st = Get-GatekeeperPythonStatus
 if ($st.ok) {

@@ -99,6 +99,12 @@ for py in "$GK_SRC/../../core/gatekeeper_tor.py" "$GK_SRC/core/gatekeeper_tor.py
         break
     fi
 done
+for py in "$GK_SRC/../../core/gatekeeper_sandbox.py" "$GK_SRC/core/gatekeeper_sandbox.py"; do
+    if [[ -f "$py" ]]; then
+        install -m 644 "$py" "$CORE_DEST/gatekeeper_sandbox.py"
+        break
+    fi
+done
 
 ASSETS_DEST="$INSTALL_ROOT/assets"
 mkdir -p "$ASSETS_DEST"
